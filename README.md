@@ -66,6 +66,27 @@ results = index.search(model.encode_queries(["authenticate user"])[0], top_k=5)
 
 Install the heavy backends with `pip install -e ".[retrieval]"`.
 
+## Sandbox & test immutability guard
+
+`hackproof.sandbox` runs untrusted code and locks pre-existing tests
+against AI reward hacking:
+
+```python
+from pathlib import Path
+from hackproof.sandbox import ImmutableTestGuard, LocalSubprocessRunner
+
+baseline = ImmutableTestGuard.lock_test_baseline("tests")
+result = LocalSubprocessRunner().run_in_sandbox(
+    ["pytest", "-q"], cwd=".", timeout_sec=300, network_disabled=True
+)
+ImmutableTestGuard.verify_test_integrity("tests", baseline)  # raises on tampering
+```
+
+`LocalSubprocessRunner` scrubs proxy/endpoint variables from the child
+environment and enforces timeouts via SIGTERM-then-SIGKILL.
+`ImmutableTestGuard` proves zero existing test files were deleted,
+truncated, modified, or had assertions removed.
+
 ## Testing
 
 ```bash
