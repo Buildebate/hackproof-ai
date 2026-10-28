@@ -47,6 +47,25 @@ The CLI runs in two modes with an identical interface:
 
 `hackproof info` reports which backend is active.
 
+## Dense retrieval
+
+`hackproof.retrieval` provides Meta-Native semantic code search:
+`ContrieverEmbeddingModel` (CPU-first `facebook/contriever-msmarco`,
+768-dim, with an offline deterministic fallback) and `FaissCodeIndexer`
+(in-memory `IndexFlatIP` with a numpy cosine-similarity fallback).
+
+```python
+from hackproof.retrieval import ContrieverEmbeddingModel, FaissCodeIndexer
+
+model = ContrieverEmbeddingModel()  # offline synthetic mode when weights are unavailable
+chunks = [{"path": "auth.py", "content": "def authenticate_user(...): ..."}]
+index = FaissCodeIndexer()
+index.add_chunks(chunks, model.encode_code_chunks(chunks))
+results = index.search(model.encode_queries(["authenticate user"])[0], top_k=5)
+```
+
+Install the heavy backends with `pip install -e ".[retrieval]"`.
+
 ## Testing
 
 ```bash
