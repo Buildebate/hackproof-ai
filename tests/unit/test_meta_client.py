@@ -1,7 +1,6 @@
 """Step 2.1 (Part A): production MetaClient caps, auth, retry, parity."""
 
 import inspect
-import json
 import os
 
 import pytest
