@@ -62,6 +62,25 @@ The CLI runs in two modes with an identical interface:
 
 `hackproof info` reports which backend is active.
 
+## GitHub Action
+
+Secure pull requests with a 3-line workflow (`.github/workflows/verify.yml`):
+
+```yaml
+- uses: actions/checkout@v4
+- uses: hackproof-ai/action@v1
+  with:
+    meta-api-key: ${{ secrets.META_API_KEY }}
+    issue-url: https://github.com/${{ github.repository }}/issues/${{ github.event.pull_request.number }}
+```
+
+The composite action installs only the published `hackproof-ai` package
+(lean: no torch/contriever/faiss on PR runners) and runs
+`hackproof verify`. Inputs: `meta-api-key` (required),
+`issue-url` (required), `runner-mode` (`local`), `python-version`
+(`3.11`). This repository dogfoods the action on itself — see
+[`.github/workflows/verify.yml`](.github/workflows/verify.yml).
+
 ## Dense retrieval
 
 `hackproof.retrieval` provides Meta-Native semantic code search:

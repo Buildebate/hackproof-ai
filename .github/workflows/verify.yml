@@ -1,0 +1,20 @@
+# Zero-Trust Code Verification (dogfood: the public repo verifies itself).
+#
+# Developers copy-paste this file into their own repository and add the
+# Meta API key secret. The pull request is verified through the shared
+# issues namespace: every PR number is also a valid /issues/<n> address,
+# which is exactly what `hackproof verify --issue` consumes.
+name: Zero-Trust Code Verification
+
+"on":
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: ./
+        with:
+          meta-api-key: ${{ secrets.META_API_KEY }}
+          issue-url: https://github.com/${{ github.repository }}/issues/${{ github.event.pull_request.number }}
