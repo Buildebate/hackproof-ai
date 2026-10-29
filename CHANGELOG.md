@@ -38,5 +38,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sections, offline dry-run mode), Verification Passport PR body,
   self-contained SVG trust badge.
 
+### Fixed
+- Test-runner stub now resolves relative JUnit report paths against the
+  sandbox working directory instead of the repository root (plus a
+  regression test); previously a stray `hackproof-green-junit.xml` file
+  leaked into the repo root on CLI test runs.
+- Removed an unused `json` import in `test_meta_client.py` (pre-existing
+  F401); `ruff check` is clean across the whole package.
+
 [Unreleased]: https://github.com/Buildebate/hackproof-ai
 [0.2.0rc1]: https://test.pypi.org/project/hackproof-ai/0.2.0rc1/
