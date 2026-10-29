@@ -31,7 +31,22 @@ Requires Python 3.10 or newer.
 ```bash
 hackproof --version   # print the engine version
 hackproof info        # print build information
+
+# Full red-to-green pipeline for a GitHub issue:
+hackproof verify --issue https://github.com/<owner>/<repo>/issues/42
+hackproof verify --issue <url> --repo /path/to/checkout --runner local
+hackproof verify --issue <url> --runner oci   # gVisor sandbox on OCI over SSH
+
+# Pre-commit test immutability guard against a baseline ref:
+hackproof test-guard --baseline HEAD~1
 ```
+
+Exit codes: `0` verified-clean, `1` pipeline failure, `2` usage error,
+`3` guard/tamper breach (details printed per file). Live runs need
+`META_API_KEY` (model calls) and optionally `GITHUB_TOKEN` (issue fetch
+rate limits); `--runner oci` additionally needs `OCI_SSH_HOST`,
+`OCI_SSH_USER`, `OCI_SSH_KEY`. Every live run appends token usage to
+`finops_ledger.json`.
 
 ### Dual-mode CLI
 
@@ -87,6 +102,47 @@ environment and enforces timeouts via SIGTERM-then-SIGKILL.
 `ImmutableTestGuard` proves zero existing test files were deleted,
 truncated, modified, or had assertions removed.
 
+## Asymmetric debate
+
+`hackproof.debate` runs the fixed 6-role loop between Muse Spark 1.3 and
+Muse Wonder 1.0 (at most 2 rounds, early stop at consensus ≥ 0.85):
+
+```python
+from hackproof.debate import DebateOrchestrator
+from hackproof.llm import MetaClient
+
+orchestrator = DebateOrchestrator(
+    MetaClient("muse-spark-1.3"), MetaClient("muse-wonder-1.0")
+)
+report = orchestrator.run(issue_description, code_context)
+print(report.patch_candidate, report.converged, report.total_tokens)
+```
+
+Convergence is scored deterministically from `APPROVE` / `REVISE`
+markers, and every turn records token usage for the FinOps ledger.
+Unit tests inject the offline `MockMetaClient` ($0 cost).
+
+## Deterministic patching & provenance
+
+`hackproof.patcher` applies debate output inside an isolated git
+worktree — every `SEARCH` block must match exactly once, otherwise the
+whole patch is rejected and the file stays untouched:
+
+```python
+from hackproof.patcher import WorkspacePatcher
+
+patcher = WorkspacePatcher()
+with patcher.isolated_worktree("/path/to/repo") as worktree:
+    patcher.apply_patch_text(worktree, "src/app.py", patch_text)
+    check = patcher.verify_post_patch(worktree, "python")
+    assert check.passed
+```
+
+`hackproof.provenance` seals the run: `TGRESProvenanceVerifier.mint_receipt`
+binds base commit, test, patch and both JUnit reports under one SHA-256,
+while `verify_red_to_green` enforces the machine proof (pre-patch Red,
+post-patch exit 0, guard clean — tampering raises).
+
 ## Testing
 
 ```bash
@@ -94,8 +150,10 @@ source .venv/bin/activate
 pytest
 ```
 
-The suite verifies package import, version reporting, and both CLI backends
-(`--version`, `info`, and bare invocation).
+The suite verifies package import, version reporting, both CLI backends
+(`--version`, `info`, `verify`, `test-guard`, exit codes), retrieval,
+sandbox guards, debate, patching, and provenance — all offline via
+injected mocks except opt-in `--live` API smokes.
 
 ## License
 

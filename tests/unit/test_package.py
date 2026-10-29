@@ -13,8 +13,8 @@ def test_package_imports() -> None:
 
 
 def test_version() -> None:
-    assert hackproof.__version__ == "0.1.0"
-    assert cli.__version__ == "0.1.0"
+    assert hackproof.__version__ == "0.2.0rc1"
+    assert cli.__version__ == "0.2.0rc1"
 
 
 def test_cli_version_via_main(
@@ -24,7 +24,7 @@ def test_cli_version_via_main(
     with pytest.raises(SystemExit) as exc_info:
         cli.main()
     assert exc_info.value.code == 0
-    assert "0.1.0" in capsys.readouterr().out
+    assert "0.2.0rc1" in capsys.readouterr().out
 
 
 def test_cli_info_via_main(
@@ -41,7 +41,7 @@ def test_argparse_fallback_version(capsys: pytest.CaptureFixture[str]) -> None:
     with pytest.raises(SystemExit) as exc_info:
         cli._argparse_main(["--version"])
     assert exc_info.value.code == 0
-    assert "hackproof 0.1.0" in capsys.readouterr().out
+    assert "hackproof 0.2.0rc1" in capsys.readouterr().out
 
 
 def test_argparse_fallback_info(capsys: pytest.CaptureFixture[str]) -> None:
@@ -64,7 +64,7 @@ def test_typer_backend_when_available() -> None:
     runner = CliRunner()
     version_result = runner.invoke(cli.app, ["--version"])
     assert version_result.exit_code == 0
-    assert "0.1.0" in version_result.output
+    assert "0.2.0rc1" in version_result.output
     info_result = runner.invoke(cli.app, ["info"])
     assert info_result.exit_code == 0
     assert "HackProof" in info_result.output
