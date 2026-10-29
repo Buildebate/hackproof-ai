@@ -81,6 +81,24 @@ The composite action installs only the published `hackproof-ai` package
 (`3.11`). This repository dogfoods the action on itself — see
 [`.github/workflows/verify.yml`](.github/workflows/verify.yml).
 
+## GitHub native audit artifacts
+
+`hackproof.github` renders the live audit trail:
+
+```python
+from hackproof.github import AuditTrace, IssueAuditor, PRGenerator
+
+trace = AuditTrace(issue_url=..., status="verified-clean", ...)
+auditor = IssueAuditor(dry_run=True)  # zero API calls
+comment = auditor.post_or_update_comment("owner", "repo", 42, trace)["body"]
+
+svg = PRGenerator.build_badge_svg()  # self-contained, no external service
+```
+
+`IssueAuditor` keeps exactly one comment per issue (find-by-marker,
+edit-in-place) with five collapsible sections. `PRGenerator` builds the
+Verification Passport PR body and the SVG trust badge.
+
 ## Dense retrieval
 
 `hackproof.retrieval` provides Meta-Native semantic code search:
