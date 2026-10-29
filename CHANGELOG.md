@@ -17,6 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Standalone CLI (`hackproof verify --issue <url> [--runner local|oci]`,
   `hackproof test-guard --baseline <ref>`, exit codes 0/1/2/3) with typer and
   argparse backends and a zero-dependency fallback.
+- Install extras (`hackproof-ai[cli]`, `hackproof-ai[retrieval]`,
+  `hackproof-ai[test]`); requires Python ≥3.10; Apache-2.0 licensed.
 - Dense semantic code retrieval (Contriever 768-dim + Faiss, CPU-first with
   offline and numpy fallbacks).
 - Air-gapped sandbox runners (local subprocess + OCI gVisor over SSH) and the
@@ -26,12 +28,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - System One regression-test synthesis guarded by the Red Baseline Invariant.
 - Six-role asymmetric debate protocol (Spark + Wonder, max 2 rounds,
   deterministic convergence scoring, FinOps token accounting).
+- FinOps ledger (`finops_ledger.json`): per-call token usage from every run
+  tracked against the $150 grant budget.
 - Deterministic `WorkspacePatcher` (exact SEARCH/REPLACE in isolated git
   worktrees) and TGRES provenance receipts with red-to-green machine proof.
 - Lean composite GitHub Action (`action.yml`) + dogfood `verify.yml`
   workflow for pull requests.
 - GitHub native audit artifacts: single live issue comment (5 collapsible
-  sections), Verification Passport PR body, self-contained SVG trust badge.
+  sections, offline dry-run mode), Verification Passport PR body,
+  self-contained SVG trust badge.
 
 [Unreleased]: https://github.com/Buildebate/hackproof-ai
 [0.2.0rc1]: https://test.pypi.org/project/hackproof-ai/0.2.0rc1/
