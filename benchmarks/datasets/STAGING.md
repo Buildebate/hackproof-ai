@@ -25,7 +25,14 @@ runs `pnpm run test --no-watch`).
 - All 12 `base_ref` commits verified to exist upstream; all 12
   `dataset_sha256` values computed from live `git` tree hashes.
 - Sources pinned: Verified HF rev `78f471bf…`, Multilingual HF rev `846e647b…`.
-- Host: local scratch (no `OCI_SSH_HOST` in `.env`). OCI staging is
-  **deferred to 4.2**: re-run the procedure above on OCI and re-verify
-  all 12 hashes before the first live run. No dataset mutation is allowed
-  after staging — the manifest hashes are the freeze record.
+- Host: OCI `buildebate-oci` (`100.112.52.73`, Ampere A1 aarch64) at
+  `~/hackproof-bench/staging` — staged 2026-10-29 over Tailscale SSH,
+  **12/12 `dataset_sha256` verified** against the manifest.
+- Runner image: `python:3.11-slim` pre-pulled (215MB); gVisor smoke
+  (`docker run --rm --runtime=runsc --network=none …`) passed.
+- Access: Tailscale auth key in `.env` (`TAILSCALE_AUTH_KEY`); SSH as
+  `ubuntu@100.112.52.73` (see `~/.ssh/config` `Host oci`). No dataset
+  mutation is allowed after staging — the manifest hashes are the freeze
+  record. Re-verify hashes before the first 4.2 live run.
+- Known gap for 4.2: no `node`/`pnpm` on OCI yet — TypeScript (vitest)
+  runs need a Node toolchain decision (runner image or host install).
