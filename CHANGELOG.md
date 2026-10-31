@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Red-path hardening (Step 12a.1): red resynthesis escalated from
+  Spark to Wonder; red synthesis sees the full top-1 file; empty
+  resynthesis gets exactly one grounded format retry with a machine
+  defect quote (5787-B returned 0 bytes) instead of a burned judge
+  round; every attempt archived.
 - R9 remap fix + 6028 rescore (Step 12a.0): retry-run JUnit is now
   remapped with the retry run's own resolution (`retry_agent_index`;
   TS keeps the first-attempt map); committed `rescore_wave2_6028.py`

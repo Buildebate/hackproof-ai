@@ -2265,6 +2265,22 @@ def red_retry_feedback(red_record: dict) -> str:
     )
 
 
+def red_format_defect(data: bytes) -> str | None:
+    """Machine defect quote for an unusable red body (Step 12a.1).
+
+    Empty/whitespace-only synthesis output can never prove red
+    (observed: 5787-B retry emitted 0 bytes); quote the defect for one
+    grounded format retry instead of burning a judge round on it.
+    Returns None when the body carries non-whitespace bytes.
+    """
+    if data.strip():
+        return None
+    return (
+        f"red body unusable: {len(data)} bytes, "
+        "0 non-whitespace characters"
+    )
+
+
 class DebatePromptRecorder:
     """Shared sink for exact debate prompts (Step 4.3b.7/R12).
 
@@ -2379,17 +2395,20 @@ def run_mode_b_agent(
         wonder = MetaClient("muse-wonder-1.0")
     except Exception as exc:  # noqa: BLE001 (auth/env -> infra upstream)
         raise RuntimeError(f"client construction failed: {exc}") from exc
-    synthesizer = RegressionTestSynthesizer(spark)
+    spark_synth = RegressionTestSynthesizer(spark)
+    wonder_synth = RegressionTestSynthesizer(wonder)
     red_out = clone / red_test_dir_for(task)
     red_out.mkdir(parents=True, exist_ok=True)
 
     def _synthesize(
-        feedback: str | None, role: str, archive: str
+        feedback: str | None, role: str, archive: str,
+        synth: RegressionTestSynthesizer, client: object, model: str,
     ) -> tuple[str, bytes]:
         try:
-            path = synthesizer.synthesize_test(
+            path = synth.synthesize_test(
                 issue_description=issue_text,
-                code_snippets=snippets,
+                # Step 12a.1: full top-1 file context (was 12k snippets).
+                code_snippets=builder_code_context,
                 repo_structure=structure,
                 language=task["language"],
                 output_dir=red_out,
@@ -2398,32 +2417,52 @@ def run_mode_b_agent(
         except MetaAPIError as exc:
             tee.log(f"agent[B]: red synthesis API error ({exc}); retrying ...")
             time.sleep(10)
-            path = synthesizer.synthesize_test(
+            path = synth.synthesize_test(
                 issue_description=issue_text,
-                code_snippets=snippets,
+                code_snippets=builder_code_context,
                 repo_structure=structure,
                 language=task["language"],
                 output_dir=red_out,
                 feedback=feedback,
             )
-        usage.drain(spark, role, "muse-spark-1.3")
+        usage.drain(client, role, model)
         rel = str(path.relative_to(clone))
         data = path.read_bytes()
         tee.log(f"agent[B]: red test synthesized at {rel}")
         (prompt_dir / archive).write_bytes(data)
         return rel, data
 
-    red_rel, red_bytes = _synthesize(None, "SparkRedSynthesis", "red_test.txt")
+    red_rel, red_bytes = _synthesize(
+        None, "SparkRedSynthesis", "red_test.txt",
+        spark_synth, spark, "muse-spark-1.3",
+    )
     red_record = prove_red(red_rel, red_bytes)
     if not red_record.get("accepted"):
         tee.log(
             f"agent[B]: red rejected ({red_record.get('reason')}); "
             "resynthesizing once with judge feedback ..."
         )
+        # Step 12a.1: Wonder escalation for the resynthesis (was Spark).
+        judge_feedback = red_retry_feedback(red_record)
         red_rel, red_bytes = _synthesize(
-            red_retry_feedback(red_record), "SparkRedSynthesis-retry",
+            judge_feedback, "WonderRedSynthesis-retry",
             "red_test_retry.txt",
+            wonder_synth, wonder, "muse-wonder-1.0",
         )
+        # Step 12a.1: format guard — empty output gets one grounded
+        # retry with a machine defect quote instead of a judge round.
+        defect = red_format_defect(red_bytes)
+        if defect is not None:
+            tee.log(
+                f"agent[B]: red retry format defect ({defect}); "
+                "one format retry ..."
+            )
+            red_rel, red_bytes = _synthesize(
+                judge_feedback + "\n\nFORMAT DEFECT — FIX IT:\n" + defect,
+                "WonderRedSynthesis-retry-format",
+                "red_test_retry_format.txt",
+                wonder_synth, wonder, "muse-wonder-1.0",
+            )
         red_record = prove_red(red_rel, red_bytes)
         if not red_record.get("accepted"):
             return {

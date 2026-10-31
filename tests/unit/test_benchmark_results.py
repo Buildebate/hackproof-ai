@@ -1050,12 +1050,14 @@ class _ScriptedSpark:
     def __init__(self, bodies: list[str]) -> None:
         self._bodies = list(bodies)
         self.issues: list[str] = []
+        self.contexts: list[str] = []
         self.usage_log: list[dict] = []
 
     def generate_regression_test(
         self, issue_description: str, code_context: str
     ) -> str:
         self.issues.append(issue_description)
+        self.contexts.append(code_context)
         self.usage_log.append(
             {
                 "prompt_tokens": 10,
@@ -1067,6 +1069,17 @@ class _ScriptedSpark:
         return self._bodies[
             min(len(self.issues) - 1, len(self._bodies) - 1)
         ]
+
+
+class _StrictNoRetryWonder:
+    """Wonder double that fails loud if a red retry is attempted."""
+
+    usage_log: list[dict] = []
+
+    def generate_regression_test(
+        self, issue_description: str, code_context: str
+    ) -> str:
+        raise AssertionError("red retry must not happen in this vector")
 
 
 class _ScriptedDebate:
@@ -1121,12 +1134,16 @@ def _b_task() -> dict:
 
 
 def _wire_mode_b(
-    monkeypatch, spark: _ScriptedSpark, tmp_path: Path
+    monkeypatch, spark: _ScriptedSpark, tmp_path: Path,
+    wonder_bodies: list[str] | None = None,
 ) -> tuple:
     """Stage a Mode B agent run with scripted LLM/debate/localize."""
-    from types import SimpleNamespace
-
     _ScriptedDebate.calls.clear()
+    wonder = (
+        _ScriptedSpark(wonder_bodies)
+        if wonder_bodies is not None
+        else _StrictNoRetryWonder()
+    )
     monkeypatch.setattr(
         run_benchmark, "localize_for_task",
         lambda task, clone, issue, tee: ([], ["a.py"], 1, "test"),
@@ -1137,7 +1154,6 @@ def _wire_mode_b(
     monkeypatch.setattr(
         "hackproof.cli.repo_structure_sketch", lambda *a: "struct"
     )
-    wonder = SimpleNamespace(usage_log=[])
     monkeypatch.setattr(
         "hackproof.llm.meta_client.MetaClient",
         lambda model: {"muse-spark-1.3": spark,
@@ -1148,7 +1164,7 @@ def _wire_mode_b(
     )
     clone = tmp_path / "clone"
     clone.mkdir()
-    return clone, tmp_path / "prompts"
+    return clone, tmp_path / "prompts", wonder
 
 
 def test_red_retry_feedback_quotes_judge_reason() -> None:
@@ -1166,8 +1182,10 @@ def test_mode_b_vacuous_red_rejected_then_rescued(
 ) -> None:
     """10081-B shape: vacuous red rejected, retry accepted, debate runs."""
     assert len(VACUOUS_RED_JUNIT_10081.encode("utf-8")) == 485
-    spark = _ScriptedSpark([VACUOUS_RED_10081, FIXED_RED])
-    clone, prompt_dir = _wire_mode_b(monkeypatch, spark, tmp_path)
+    spark = _ScriptedSpark([VACUOUS_RED_10081])
+    clone, prompt_dir, wonder = _wire_mode_b(
+        monkeypatch, spark, tmp_path, [FIXED_RED]
+    )
     prove = _prove_scripted(
         [(0, VACUOUS_RED_JUNIT_10081), (1, FAILING_RED_JUNIT)]
     )
@@ -1183,9 +1201,11 @@ def test_mode_b_vacuous_red_rejected_then_rescued(
         tee.close()
     # The vacuous red was rejected by the real judge on archived XML...
     assert len(prove.calls) == 2
-    assert len(spark.issues) == 2
+    assert len(spark.issues) == 1
+    # ...and the retry escalated to Wonder with judge feedback...
+    assert len(wonder.issues) == 1
     assert "red run exited 0 (test passed on unpatched base)" in (
-        spark.issues[1]
+        wonder.issues[0]
     )
     # ...the retry was accepted, so the debate ran (empty patch out).
     assert agent["red_record"]["accepted"] is True
@@ -1194,7 +1214,10 @@ def test_mode_b_vacuous_red_rejected_then_rescued(
         "debate produced no complete SEARCH/REPLACE blocks"
     )
     assert [e["role"] for e in usage.per_call] == [
-        "SparkRedSynthesis", "SparkRedSynthesis-retry",
+        "SparkRedSynthesis", "WonderRedSynthesis-retry",
+    ]
+    assert [e["model"] for e in usage.per_call] == [
+        "muse-spark-1.3", "muse-wonder-1.0",
     ]
     assert (prompt_dir / "red_test.txt").read_bytes().decode("utf-8") == (
         VACUOUS_RED_10081
@@ -1202,14 +1225,21 @@ def test_mode_b_vacuous_red_rejected_then_rescued(
     assert (prompt_dir / "red_test_retry.txt").read_bytes().decode(
         "utf-8"
     ) == FIXED_RED
+    # Step 12a.1: red synthesis sees the full top-1 file context.
+    assert len(spark.contexts) == 1
+    assert len(wonder.contexts) == 1
+    assert spark.contexts[0].endswith("bctx")
+    assert wonder.contexts[0].endswith("bctx")
 
 
 def test_mode_b_double_reject_skips_debate(
     tmp_path: Path, monkeypatch
 ) -> None:
     """Two vacuous reds: no debate spend, loud red-rejected reason."""
-    spark = _ScriptedSpark([VACUOUS_RED_10081, VACUOUS_RED_10081])
-    clone, prompt_dir = _wire_mode_b(monkeypatch, spark, tmp_path)
+    spark = _ScriptedSpark([VACUOUS_RED_10081])
+    clone, prompt_dir, wonder = _wire_mode_b(
+        monkeypatch, spark, tmp_path, [VACUOUS_RED_10081]
+    )
     prove = _prove_scripted([(0, VACUOUS_RED_JUNIT_10081)] * 2)
     tee = run_benchmark.Tee(tmp_path / "t.log")
     try:
@@ -1227,10 +1257,58 @@ def test_mode_b_double_reject_skips_debate(
     assert len(_ScriptedDebate.calls) == 0
     assert agent["debate"]["rounds_used"] == 0
     assert agent["red_record"]["accepted"] is False
-    assert len(spark.issues) == 2
+    assert len(spark.issues) == 1
+    assert len(wonder.issues) == 1
     assert [e["role"] for e in usage.per_call] == [
-        "SparkRedSynthesis", "SparkRedSynthesis-retry",
+        "SparkRedSynthesis", "WonderRedSynthesis-retry",
     ]
+
+
+def test_red_format_defect_quotes_empty_body() -> None:
+    assert run_benchmark.red_format_defect(b"") == (
+        "red body unusable: 0 bytes, 0 non-whitespace characters"
+    )
+    assert run_benchmark.red_format_defect(b"  \n\t ") is not None
+    assert run_benchmark.red_format_defect(b"def test_x():\n    assert 1\n") is None
+
+
+def test_mode_b_empty_retry_rescued_by_format_retry(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """5787-B shape: vacuous red, empty retry, format retry accepted."""
+    spark = _ScriptedSpark([VACUOUS_RED_10081])
+    clone, prompt_dir, wonder = _wire_mode_b(
+        monkeypatch, spark, tmp_path, ["", FIXED_RED]
+    )
+    prove = _prove_scripted(
+        [(0, VACUOUS_RED_JUNIT_10081), (1, FAILING_RED_JUNIT)]
+    )
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        usage = run_benchmark.UsageCollector()
+        agent = run_benchmark.run_mode_b_agent(
+            _b_task(), clone,
+            {"problem_statement": "bug", "hints_text": "hint"},
+            prompt_dir, tee, usage, prove_red=prove,
+        )
+    finally:
+        tee.close()
+    # Empty retry never reached the judge: 2 prove calls, 3 syntheses.
+    assert len(prove.calls) == 2
+    assert len(wonder.issues) == 2
+    assert "FORMAT DEFECT" in wonder.issues[1]
+    assert "0 bytes" in wonder.issues[1]
+    assert agent["red_record"]["accepted"] is True
+    assert len(_ScriptedDebate.calls) == 1
+    assert [e["role"] for e in usage.per_call] == [
+        "SparkRedSynthesis",
+        "WonderRedSynthesis-retry",
+        "WonderRedSynthesis-retry-format",
+    ]
+    assert (prompt_dir / "red_test_retry.txt").read_bytes() == b""
+    assert (prompt_dir / "red_test_retry_format.txt").read_bytes().decode(
+        "utf-8"
+    ) == FIXED_RED
 
 
 # ---------------------------------------------------------------------------
@@ -1465,7 +1543,7 @@ def test_mode_b_agent_archives_debate_prompts_and_flags(
 ) -> None:
     """Accepted red → debate runs → prompts file + evidence flag land."""
     spark = _ScriptedSpark([FIXED_RED])
-    clone, prompt_dir = _wire_mode_b(monkeypatch, spark, tmp_path)
+    clone, prompt_dir, _ = _wire_mode_b(monkeypatch, spark, tmp_path)
     prove = _prove_scripted([(1, FAILING_RED_JUNIT)])
     tee = run_benchmark.Tee(tmp_path / "t.log")
     try:
