@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Ledger correction to founder dashboard truth ($89.58 balance):
+  -$5.07 priced reconciliation entry (upper-bound bias: unmeasured
+  cache discounts + estimate rows), zero reprice drift; dossier and
+  SUMMARY updated. R9 scoring bug found (retry JUnit remapped with
+  stale resolution) — offline rescore flips 6028-B to resolved.
 - Wave 2 final dossier (Steps 4.3c.2–4.3c.3): `benchmarks/SUMMARY.md` +
   `benchmarks/evidence_dossier.json` — honest B 7/12 / A 5/12 (goal 9/12
   not met), reconciled against ledger and both 12/12 matrices; Wave 2

@@ -189,13 +189,13 @@
   "score_max": 1.0
  },
  "finops": {
-  "ledger_total_spent_usd": 64.96,
-  "founder_truth_spent_usd": 65.49,
+  "ledger_total_spent_usd": 59.89,
+  "founder_truth_spent_usd": 60.42,
   "budget_usd": 150.0,
   "stop_rule_usd": 110.0,
   "stop_rule": "not triggered",
   "waves": {
-   "account-reconciliation": 5.91,
+   "account-reconciliation": 0.84,
    "bench4.2": 14.93,
    "bench4.3-ablation": 2.75,
    "bench4.3-wave1": 19.61,
@@ -359,7 +359,9 @@
   ],
   "cost_basis": "upper-bound at full input rates; cached-input share unmeasured (client records no cached_tokens); calls with unknown model/split excluded as unpriced",
   "avg_upper_bound_per_B_run_cumulative": 1.48,
-  "gate4_sub_035_note": "NOT MET on measured upper bounds (cache discounts unmeasured by design); Gate 4 stays open"
+  "gate4_sub_035_note": "NOT MET on measured upper bounds (cache discounts unmeasured by design); Gate 4 stays open",
+  "dashboard_balance_usd": 89.58,
+  "reconciliation_2026_10_31": "Founder dashboard truth $89.58 balance (-> $60.42 spent) vs upper-bound books $65.49; delta -$5.07 booked as priced reconciliation entry (no per-call splits); cause mix: unmeasured cache discounts + pre-ledger $5.91/$0.53 estimates; direction consistent with upper-bound basis"
  },
  "r9_r13_live": {
   "green_retry_attempts": 3,

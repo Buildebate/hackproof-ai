@@ -53,9 +53,12 @@ misses `2931`/`6028` p2p-broken, `10081` f2p-not-fixed+p2p-broken, `5787` SEARCH
 
 ## 4. FinOps (upper bounds; cache discounts unmeasured by design)
 
-Ledger total **$64.96** (founder truth **$65.49** incl. $0.53 agent sessions);
-budget $150, stop-rule $110 not triggered. Waves: 4.2 `$14.93`, W1 `$19.61`,
-ablation `$2.75`, **W2 `$21.76`** (B `$17.78` + A `$3.98`).
+Ledger total **$59.89** (founder dashboard truth **$60.42** spent, **$89.58** balance,
+incl. $0.53 agent-session estimate); budget $150, stop-rule $110 not triggered.
+Waves: 4.2 `$14.93`, W1 `$19.61`, ablation `$2.75`, **W2 `$21.76`** (B `$17.78` + A `$3.98`).
+Correction 2026-10-31: upper-bound books ($65.49) exceeded dashboard truth by $5.07 —
+delta booked as a priced reconciliation entry (unmeasured cache discounts + estimate rows;
+direction consistent with the upper-bound basis), zero reprice drift.
 
 **W2 envelope verdict: OVERRUN +$3.76 over $18** (incl. ablation).
 Measured cause: TS ramble — `11739` $4.69 (5 truncations) + `11589` $4.66

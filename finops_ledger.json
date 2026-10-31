@@ -1,6 +1,6 @@
 {
   "budget_usd": 150.0,
-  "total_spent_usd": 64.96,
+  "total_spent_usd": 59.89,
   "entries": [
     {
       "ts": "2026-10-30T04:11:08.685381+00:00",
@@ -4632,6 +4632,19 @@
           "finish_reason": "stop"
         }
       ]
+    },
+    {
+      "ts": "2026-10-31T14:55:27.771689+00:00",
+      "issue": "account-reconciliation: founder-truth-2026-10-31 (dashboard balance $89.58 -> spent $60.42; books were $65.49 upper-bound incl $0.53 agent est; delta booked to dashboard)",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 0,
+      "est_cost_usd": -5.07,
+      "priced": true,
+      "per_call": [],
+      "reconciliation": true
     }
   ],
   "pricing": {
