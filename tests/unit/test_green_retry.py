@@ -278,3 +278,345 @@ def test_retry_remap_keeps_first_attempt_map_for_typescript() -> None:
     assert retry_agent_index(
         {"language": "typescript"}, {}, base, full_index
     )[mid] == "passed"
+
+
+def test_green_progressed_requires_f2p_advance_without_new_breaks() -> None:
+    prog = run_benchmark._green_progressed
+    assert prog(
+        {"f2p_not_fixed": ["a", "b"], "p2p_broken": ["x"]},
+        {"f2p_not_fixed": ["a"], "p2p_broken": ["x"]},
+    ) is True
+    assert prog(
+        {"f2p_not_fixed": ["a"], "p2p_broken": []},
+        {"f2p_not_fixed": ["a"], "p2p_broken": []},
+    ) is False
+    assert prog(
+        {"f2p_not_fixed": ["a", "b"], "p2p_broken": []},
+        {"f2p_not_fixed": ["a"], "p2p_broken": ["y"]},
+    ) is False
+
+
+def test_collectfix_report_quotes_observed_tails() -> None:
+    report = run_benchmark._collectfix_report(
+        {"stderr_tail": "E " + "x" * 5000, "stdout_tail": "collected 0"}
+    )
+    assert "COLLECTION BREAKAGE" in report
+    assert "collected 0" in report
+    assert len(report) < 5000  # tails capped, not full streams
+
+
+def test_suffixed_stem_keeps_legacy_name_on_empty_tag() -> None:
+    stem = run_benchmark._suffixed_stem(Path("/tmp/x/t"), "-green-retry")
+    assert str(stem).endswith("t-green-retry")
+    assert run_benchmark._suffixed_stem("/tmp/x/t", "") == Path("/tmp/x/t")
+
+
+def test_revision_prompt_carries_applied_diff() -> None:
+    seen: list[str] = []
+
+    class _Client:
+        def debate_round(self, role: str, prompt: str, history: list) -> str:
+            seen.append(prompt)
+            return "PATCH"
+
+    out = architectural_builder.revise_patch_from_green(
+        _Client(),
+        issue_description="bug",
+        code_context="CTX",
+        previous_patch="P1",
+        green_report="RED",
+        applied_diff="DIFF-LANDED",
+    )
+    assert out == "PATCH"
+    assert "APPLIED DIFF OF YOUR PREVIOUS PATCH" in seen[0]
+    assert "DIFF-LANDED" in seen[0]
+    out2 = architectural_builder.revise_patch_from_green(
+        _Client(),
+        issue_description="bug",
+        code_context="CTX",
+        previous_patch="P1",
+        green_report="RED",
+    )
+    assert out2 == "PATCH"
+    assert "APPLIED DIFF" not in seen[1]
+
+
+# Step 12a.2: bounded-lap flow vectors for both retry tiers. Transports
+# are scripted; resolution/scoring/condense run for real.
+RK_F1 = "t.py::test_f1"
+RK_F2 = "t.py::test_f2"
+RK_P = "t.py::test_p"
+RK_IDS = [RK_F1, RK_F2, RK_P]
+
+RK_TASK = {
+    "id": "demo__pkg-9",
+    "language": "python",
+    "base_ref": "abc",
+    "fail_to_pass": [RK_F1, RK_F2],
+    "pass_to_pass": [RK_P],
+}
+
+RK_AGENT = {
+    "files": ["a.py"],
+    "issue_text": "bug",
+    "builder_code_context": "CTX",
+    "patch_text": "P1",
+    "diff_text": "D1",
+    "baseline": {},
+    "red_rel": "",
+    "red_bytes": b"",
+}
+
+RK_BASE_INDEX = {RK_F1: "failed", RK_F2: "failed", RK_P: "passed"}
+RK_BASE_RES = {i: [i] for i in RK_IDS}
+
+
+def _rk_junit(results: dict[str, str]) -> bytes:
+    cases = []
+    for name, status in results.items():
+        short = name.split("::")[-1]
+        body = (
+            f'<failure message="assert {short}">assert {short}</failure>'
+            if status != "passed"
+            else ""
+        )
+        cases.append(
+            f'<testcase file="t.py" classname="t" name="{short}">'
+            f"{body}</testcase>"
+        )
+    return ("<testsuite>" + "".join(cases) + "</testsuite>").encode()
+
+
+RK_JUNIT_FIRST = _rk_junit({RK_F1: "failed", RK_F2: "failed", RK_P: "passed"})
+RK_JUNIT_NONE = _rk_junit({RK_F1: "failed", RK_F2: "failed", RK_P: "passed"})
+RK_JUNIT_HALF = _rk_junit({RK_F1: "passed", RK_F2: "failed", RK_P: "passed"})
+RK_JUNIT_FULL = _rk_junit({RK_F1: "passed", RK_F2: "passed", RK_P: "passed"})
+
+RK_REV = {"patch_text": "PREV", "routed": [("a.py", "s", "r")]}
+
+
+class _RkExit:
+    def __init__(self, code: int) -> None:
+        self.exit_code = code
+        self.timed_out = False
+
+
+class _RkStage:
+    """Scripted transports for one retry-tier flow vector."""
+
+    def __init__(
+        self, monkeypatch, tmp_path: Path, tier: str,
+        collects: list, evals: list, revisions: list,
+    ) -> None:
+        self.tier = tier
+        self._collects = list(collects)
+        self._evals = list(evals)
+        self._revisions = list(revisions)
+        self.collect_stems: list[str] = []
+        self.revision_calls: list[dict] = []
+        self.apply_calls: list[dict] = []
+        rb = run_benchmark
+        mp = monkeypatch.setattr
+        mp(rb, "git_reset_hard", lambda *a: None)
+        mp(rb, "verify_local_guard", lambda *a: [])
+        mp(rb, "git_diff_text", lambda *a: "DIFF")
+        mp(rb, "classify_remote_guard", lambda *a: [])
+        mp(rb, "get_test_patch", lambda *a: {"test_patch": ""})
+        mp(
+            "hackproof.llm.meta_client.MetaClient",
+            lambda model: object(),
+        )
+        mp(rb, "run_green_revision", self._revision)
+        mp(rb, "apply_blocks_to_candidates", self._apply)
+        from types import SimpleNamespace
+
+        if tier == "oci":
+            self.cfg = SimpleNamespace()
+            mp(rb, "fresh_run_dir", lambda *a: "/tmp/rd")
+            mp(rb, "ssh_write_file", lambda *a: 0)
+            mp(rb, "apply_text_patch", lambda *a: None)
+            mp(rb, "remote_changed_paths", lambda *a: [])
+            mp(rb, "reset_remote_test_files", lambda *a: None)
+            mp(rb, "collect_ids_remote_full", self._collect)
+            mp(rb, "archive_venv_freeze_remote", lambda *a: None)
+            mp(rb, "run_remote_eval", self._eval)
+        else:
+            mp(rb, "local_fresh_run_dir", lambda *a: tmp_path / "rd")
+            mp(rb, "local_apply_patch", lambda *a: None)
+            mp(rb, "git_status_names", lambda *a: ([], None))
+            mp(rb, "collect_ids_local_full", self._collect)
+            mp(rb, "archive_venv_freeze_local", lambda *a: None)
+            mp(rb, "local_run_eval", self._eval)
+        self.config = SimpleNamespace(
+            mode="B", work_dir=tmp_path, out_dir=tmp_path
+        )
+
+    def _collect(self, *args, **kwargs):
+        self.collect_stems.append(str(kwargs.get("archive", "")))
+        return self._collects.pop(0)
+
+    def _eval(self, *args, **kwargs):
+        code, junit = self._evals.pop(0)
+        if junit is None:
+            return _RkExit(code), None
+        return _RkExit(code), junit
+
+    def _revision(
+        self, task, agent, report, prompt_dir, tee, usage,
+        role="ArchitecturalBuilder-green-retry",
+        report_name="green_retry_report.txt",
+        patch_name="patch_text_green_retry.txt",
+    ):
+        self.revision_calls.append(
+            {
+                "role": role,
+                "report_name": report_name,
+                "patch_name": patch_name,
+                "report": report,
+                "agent_diff": agent.get("diff_text"),
+            }
+        )
+        return self._revisions.pop(0)
+
+    def _apply(self, *args, **kwargs):
+        self.apply_calls.append(kwargs)
+        return ["a.py"]
+
+    def run(self, tmp_path: Path):
+        rb = run_benchmark
+        clone = tmp_path / "clone"
+        clone.mkdir(exist_ok=True)
+        paths = {
+            "prompts": tmp_path / "prompts",
+            "collect": tmp_path / "collect" / "t",
+            "freeze": tmp_path / "freeze" / "t",
+        }
+        agent_first = dict(RK_BASE_INDEX)
+        scoring = rb.score_task(RK_TASK, dict(RK_BASE_INDEX), agent_first)
+        tee = rb.Tee(tmp_path / "t.log")
+        try:
+            usage = rb.UsageCollector()
+            if self.tier == "oci":
+                out = rb.run_green_retry_oci(
+                    self.cfg, self.config, RK_TASK, clone,
+                    dict(RK_AGENT), scoring, RK_JUNIT_FIRST,
+                    dict(RK_BASE_RES), dict(RK_BASE_INDEX),
+                    paths, usage, tee,
+                )
+            else:
+                out = rb.run_green_retry_local(
+                    self.config, RK_TASK, clone,
+                    dict(RK_AGENT), scoring, RK_JUNIT_FIRST,
+                    dict(RK_BASE_RES), dict(RK_BASE_INDEX),
+                    paths, usage, tee,
+                )
+        finally:
+            tee.close()
+        return out
+
+
+def _rk_ok_report() -> dict:
+    return {"exit_code": 0, "n_ids": 3, "stdout_tail": "", "stderr_tail": ""}
+
+
+def _rk_bad_report() -> dict:
+    return {
+        "exit_code": 2,
+        "n_ids": 0,
+        "stdout_tail": "ERROR collecting t.py",
+        "stderr_tail": "SyntaxError: bad patch",
+    }
+
+
+def _assert_r6_region_retry(stage: _RkStage) -> None:
+    assert stage.apply_calls, "apply must run at least once"
+    first = stage.apply_calls[0]
+    assert first.get("retry_client") is not None
+    assert first.get("usage") is not None
+    assert str(first.get("retry_archive", "")).endswith(
+        "patch_text_green_retry_r6-green-retry.txt"
+    )
+
+
+def _rk_vector_single(monkeypatch, tmp_path: Path, tier: str) -> None:
+    # No-progress lap: single revision, standing failed verdict, laps 1.
+    stage = _RkStage(
+        monkeypatch, tmp_path, tier,
+        collects=[(RK_IDS, _rk_ok_report())],
+        evals=[(1, RK_JUNIT_NONE)],
+        revisions=[dict(RK_REV)],
+    )
+    out = stage.run(tmp_path)
+    assert out["ok"] is True
+    assert out["laps"] == 1
+    assert len(stage.revision_calls) == 1
+    assert out["scoring"]["resolved_functional"] is False
+    _assert_r6_region_retry(stage)
+
+
+def _rk_vector_collectfix(monkeypatch, tmp_path: Path, tier: str) -> None:
+    stage = _RkStage(
+        monkeypatch, tmp_path, tier,
+        collects=[([], _rk_bad_report()), (RK_IDS, _rk_ok_report())],
+        evals=[(0, RK_JUNIT_FULL)],
+        revisions=[dict(RK_REV), dict(RK_REV)],
+    )
+    out = stage.run(tmp_path)
+    assert out["ok"] is True
+    assert out["laps"] == 2
+    roles = [c["role"] for c in stage.revision_calls]
+    assert roles == [
+        "ArchitecturalBuilder-green-retry",
+        "ArchitecturalBuilder-green-retry-collect",
+    ]
+    assert stage.revision_calls[1]["report_name"].endswith("-fix.txt")
+    assert "COLLECTION BREAKAGE" in stage.revision_calls[1]["report"]
+    assert "SyntaxError: bad patch" in stage.revision_calls[1]["report"]
+    assert [s.endswith("t-green-retry") for s in stage.collect_stems] == [
+        True, False,
+    ]
+    assert stage.collect_stems[1].endswith("t-green-retry-fix")
+    assert out["scoring"]["resolved_functional"] is True
+
+
+def _rk_vector_progress(monkeypatch, tmp_path: Path, tier: str) -> None:
+    stage = _RkStage(
+        monkeypatch, tmp_path, tier,
+        collects=[(RK_IDS, _rk_ok_report()), (RK_IDS, _rk_ok_report())],
+        evals=[(1, RK_JUNIT_HALF), (0, RK_JUNIT_FULL)],
+        revisions=[dict(RK_REV), dict(RK_REV)],
+    )
+    out = stage.run(tmp_path)
+    assert out["ok"] is True
+    assert out["laps"] == 2
+    roles = [c["role"] for c in stage.revision_calls]
+    assert roles == [
+        "ArchitecturalBuilder-green-retry",
+        "ArchitecturalBuilder-green-retry-iter2",
+    ]
+    assert out["scoring"]["resolved_functional"] is True
+    assert out["scoring"]["f2p_not_fixed"] == []
+
+
+def test_retry_laps_oci_single(monkeypatch, tmp_path: Path) -> None:
+    _rk_vector_single(monkeypatch, tmp_path, "oci")
+
+
+def test_retry_laps_oci_collectfix(monkeypatch, tmp_path: Path) -> None:
+    _rk_vector_collectfix(monkeypatch, tmp_path, "oci")
+
+
+def test_retry_laps_oci_progress(monkeypatch, tmp_path: Path) -> None:
+    _rk_vector_progress(monkeypatch, tmp_path, "oci")
+
+
+def test_retry_laps_local_single(monkeypatch, tmp_path: Path) -> None:
+    _rk_vector_single(monkeypatch, tmp_path, "local")
+
+
+def test_retry_laps_local_collectfix(monkeypatch, tmp_path: Path) -> None:
+    _rk_vector_collectfix(monkeypatch, tmp_path, "local")
+
+
+def test_retry_laps_local_progress(monkeypatch, tmp_path: Path) -> None:
+    _rk_vector_progress(monkeypatch, tmp_path, "local")

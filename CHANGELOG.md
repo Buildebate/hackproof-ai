@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Green-v2 bounded laps (Step 12a.2): collection-repair lap on
+  collect exit=2 with traceback brief; second content iteration
+  gated on strict F2P progress; revision prompt carries the applied
+  diff; one R6 region retry per revision apply (ADR-029 §6.1
+  amendment); lap-suffixed archives preserve first-attempt streams.
 - Red-path hardening (Step 12a.1): red resynthesis escalated from
   Spark to Wonder; red synthesis sees the full top-1 file; empty
   resynthesis gets exactly one grounded format retry with a machine

@@ -109,17 +109,27 @@ def revise_patch_from_green(
     code_context: str,
     previous_patch: str,
     green_report: str,
+    applied_diff: str = "",
 ) -> str:
-    """Single-retry patch revision after a green-eval failure.
+    """Patch revision after a green-eval failure (R9, green-v2 12a.2).
 
-    Step 4.3c.1 (R9): exactly one extra builder turn when the applied
-    patch leaves FAIL_TO_PASS tests red or breaks PASS_TO_PASS tests.
+    Step 4.3c.1 (R9): extra builder turn(s) when the applied patch
+    leaves FAIL_TO_PASS tests red or breaks PASS_TO_PASS tests.
     ``green_report`` is the condensed harness verdict — failed test
     names plus assertion-diff excerpts from the observed JUnit, never
     gold sources — so the model revises against measured behavior.
-    Callers must invoke this at most once per run and drain the extra
-    usage into the ledger as ``ArchitecturalBuilder-green-retry``.
+    ``applied_diff`` (when given) shows what actually landed in the
+    tree, grounding SEARCH blocks against the real post-patch state.
+    Bounded laps (Step 12a.2): one content revision, one collection
+    repair, one progress-gated second iteration — each drained under
+    its own ``ArchitecturalBuilder-green-retry*`` ledger role.
     """
+    diff_section = (
+        f"\n\nAPPLIED DIFF OF YOUR PREVIOUS PATCH "
+        f"(what actually landed in the tree):\n{applied_diff}"
+        if applied_diff
+        else ""
+    )
     prompt = (
         f"{ROLE_SYSTEM_PROMPT}\n\nISSUE:\n{issue_description}\n\n"
         f"CODE CONTEXT:\n{code_context}\n\n"
@@ -129,7 +139,7 @@ def revise_patch_from_green(
         "the context below). Address the failing assertions; do not "
         "touch test files.\n\n"
         f"GREEN FAILURE (harness verdict, observed behavior only):\n{green_report}\n\n"
-        f"PREVIOUS PATCH:\n{previous_patch}"
+        f"PREVIOUS PATCH:\n{previous_patch}{diff_section}"
     )
     return client.debate_round(ROLE_NAME, prompt, [])
 

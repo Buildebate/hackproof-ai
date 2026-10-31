@@ -3272,6 +3272,7 @@ def run_task_mode_oci(
                     "first": describe_failure(scoring),
                     "first_scoring": scoring,
                     "second": describe_failure(retry["scoring"]),
+                    "laps": retry.get("laps", 1),
                 }
                 scoring = retry["scoring"]
                 junit = retry["junit"]
@@ -3300,6 +3301,7 @@ def run_task_mode_oci(
                     "completed": False,
                     "reason": retry["reason"],
                     "first": describe_failure(scoring),
+                    "laps": retry.get("laps", 1),
                 }
                 tee.log(f"green-retry: retry ended ({retry['reason']})")
         if mode == "B" and functional:
@@ -3574,28 +3576,35 @@ def run_green_revision(
     prompt_dir: Path,
     tee: Tee,
     usage: UsageCollector,
+    role: str = "ArchitecturalBuilder-green-retry",
+    report_name: str = "green_retry_report.txt",
+    patch_name: str = "patch_text_green_retry.txt",
+    previous_patch: str | None = None,
+    applied_diff: str | None = None,
 ) -> dict | None:
-    """Execute the single R9 builder revision; None when unusable.
+    """Execute one R9 builder revision lap; None when unusable.
 
     Builds the green-feedback prompt from the archived agent context
-    (issue + builder code context + previous patch — all already
-    model-visible, no harness input), records the report and the
-    revision output under ``prompt_dir`` for audit, and drains the
-    call into ``usage``. Returns ``{"patch_text", "routed"}`` when
-    the revision carries complete blocks, else None (no eval spent).
+    (issue + builder code context + previous patch + applied diff —
+    all already model-visible or observed, no harness input), records
+    the report and the revision output under ``prompt_dir`` for audit,
+    and drains the call into ``usage``. Returns ``{"patch_text",
+    "routed"}`` when the revision carries complete blocks, else None
+    (no eval spent). Step 12a.2 laps override role/names/context.
     """
     from hackproof.debate.roles import architectural_builder
     from hackproof.llm.meta_client import MetaClient
 
     issue_text = agent.get("issue_text", "")
     code_context = agent.get("builder_code_context", "")
-    previous_patch = agent.get("patch_text", "")
+    if previous_patch is None:
+        previous_patch = agent.get("patch_text", "")
+    if applied_diff is None:
+        applied_diff = agent.get("diff_text", "")
     if not issue_text or not previous_patch:
         tee.log("green-retry: missing agent context; skipping revision")
         return None
-    (prompt_dir / "green_retry_report.txt").write_text(
-        green_report, encoding="utf-8"
-    )
+    (prompt_dir / report_name).write_text(green_report, encoding="utf-8")
     try:
         wonder = MetaClient("muse-wonder-1.0")
     except Exception as exc:  # noqa: BLE001 (auth/env -> skip retry)
@@ -3608,19 +3617,58 @@ def run_green_revision(
             code_context=code_context,
             previous_patch=previous_patch,
             green_report=green_report,
+            applied_diff=applied_diff,
         )
     except Exception as exc:  # noqa: BLE001 (API error -> skip retry)
         tee.log(f"green-retry: revision call failed ({exc}); skipping")
         return None
-    usage.drain(wonder, "ArchitecturalBuilder-green-retry", "muse-wonder-1.0")
-    (prompt_dir / "patch_text_green_retry.txt").write_text(
-        revision, encoding="utf-8"
-    )
+    usage.drain(wonder, role, "muse-wonder-1.0")
+    (prompt_dir / patch_name).write_text(revision, encoding="utf-8")
     routed = architectural_builder.extract_routed_blocks(revision)
     tee.log(f"green-retry: revision carries {len(routed)} complete block(s)")
     if not routed:
         return None
     return {"patch_text": revision, "routed": routed}
+
+
+def _green_progressed(first: dict, second: dict) -> bool:
+    """True when a retry lap strictly advanced F2P (Step 12a.2).
+
+    Progress = fewer ``f2p_not_fixed`` with no growth in
+    ``p2p_broken``; gates the second content iteration so bounded
+    extra spend chases measured movement, not hope.
+    """
+    f1 = first.get("f2p_not_fixed", []) or []
+    f2 = second.get("f2p_not_fixed", []) or []
+    p1 = first.get("p2p_broken", []) or []
+    p2 = second.get("p2p_broken", []) or []
+    return len(f2) < len(f1) and len(p2) <= len(p1)
+
+
+def _suffixed_stem(path: Path | str, tag: str) -> Path:
+    """Archive stem with a lap tag (Step 12a.2 provenance).
+
+    Retry laps must not overwrite first-attempt streams (observed:
+    1142-B retry clobbered the first collect streams, leaving a mixed
+    archive pair). Empty tag keeps the legacy name.
+    """
+    return Path(str(path) + tag)
+
+
+def _collectfix_report(collect_report: dict) -> str:
+    """Failure brief for the collection-repair lap (Step 12a.2).
+
+    Observed harness tails only — the patched tree does not collect,
+    so the model repairs just the breakage, keeping prior intent.
+    """
+    err = (collect_report.get("stderr_tail") or "")[-2000:]
+    out = (collect_report.get("stdout_tail") or "")[-2000:]
+    return (
+        "COLLECTION BREAKAGE (observed harness output — the patched "
+        "tree does not even collect; fix ONLY this breakage, keep the "
+        "previous patch's intent):\n"
+        f"--- stderr tail ---\n{err}\n--- stdout tail ---\n{out}"
+    )
 
 
 def run_green_retry_oci(
@@ -3636,30 +3684,43 @@ def run_green_retry_oci(
     paths: dict[str, Path],
     usage: UsageCollector,
     tee: Tee,
+    _rk_depth: int = 0,
+    _rk_tag: str = "-green-retry",
+    _rk_rev: dict | None = None,
 ) -> dict:
-    """Execute the single R9 revision + re-eval on the OCI tier.
+    """Execute R9 revision laps + re-eval on the OCI tier (green-v2).
 
-    Returns ``{"ok": True, ...}`` with the second attempt's scoring,
-    JUnit, diff, guard report and eval outcome, or ``{"ok": False,
-    "reason": ...}`` when the retry cannot proceed (revision
-    unusable, apply failure, guard tamper, broken collection, no
-    JUnit). The retry runs in a FRESH run dir from pristine prep —
-    the first attempt's tree is never mutated — with the accepted
-    red test shipped, the guard re-locked, and test files reset
-    before the harness test_patch, exactly like the first attempt.
-    No nested R6 retry: the revision applies once or the retry ends.
+    Bounded recursion (depth ≤ 1): the content-revision lap, plus at
+    most one follow-up — a collection-repair lap when the revision
+    breaks collection, or a second content iteration when the first
+    strictly advanced F2P without new P2P breaks. Returns ``{"ok":
+    True, ...}`` with the standing lap's scoring, JUnit, diff, guard
+    report, eval outcome and lap count, or ``{"ok": False, "reason":
+    ...}`` when no lap completed (first attempt stands). Revision
+    applies carry one R6 region retry (12a.2 override of the 4.3c.1
+    no-nesting rule — 11899-B evidence; ADR-029 amendment).
     """
     task_id = task["id"]
-    green_report = condense_green_failures(
-        task, junit, scoring, base_resolution
-    )
-    tee.log(f"green-retry: condensed report ({len(green_report)} chars)")
-    rev = run_green_revision(
-        task, agent, green_report, paths["prompts"], tee, usage
-    )
-    if rev is None:
-        return {"ok": False, "reason": "revision unusable (no blocks)"}
-    git_reset_hard(clone, task["base_ref"])
+    if _rk_rev is None:
+        green_report = condense_green_failures(
+            task, junit, scoring, base_resolution
+        )
+        tee.log(f"green-retry: condensed report ({len(green_report)} chars)")
+        rev = run_green_revision(
+            task, agent, green_report, paths["prompts"], tee, usage,
+            report_name=f"green_retry_report{_rk_tag}.txt",
+            patch_name=f"patch_text_green_retry{_rk_tag}.txt",
+        )
+        if rev is None:
+            return {
+                "ok": False,
+                "reason": "revision unusable (no blocks)",
+                "laps": 1,
+            }
+    else:
+        rev = _rk_rev
+    if _rk_depth == 0:
+        git_reset_hard(clone, task["base_ref"])
     red_rel = agent.get("red_rel", "")
     red_bytes = agent.get("red_bytes", b"")
     if red_rel and red_bytes:
@@ -3667,18 +3728,36 @@ def run_green_retry_oci(
         red_target.parent.mkdir(parents=True, exist_ok=True)
         red_target.write_bytes(red_bytes)
     try:
+        from hackproof.llm.meta_client import MetaClient
+        try:
+            rk_wonder: object | None = MetaClient("muse-wonder-1.0")
+        except Exception:  # noqa: BLE001 (no region retry w/o client)
+            rk_wonder = None
         applied = apply_blocks_to_candidates(
             task_id, clone, agent.get("files", []), rev["routed"],
             guard_files_for(task), tee,
+            retry_client=rk_wonder,
+            retry_issue=agent.get("issue_text", ""),
+            retry_context=agent.get("builder_code_context", ""),
+            retry_patch_text=rev["patch_text"],
+            usage=usage,
+            retry_archive=(
+                paths["prompts"] / f"patch_text_green_retry_r6{_rk_tag}.txt"
+            ),
         )
     except Exception as exc:  # noqa: BLE001 (retry ends, first stands)
-        return {"ok": False, "reason": f"revision apply failed: {exc}"[:400]}
+        return {
+            "ok": False,
+            "reason": f"revision apply failed: {exc}"[:400],
+            "laps": 1,
+        }
     local_violations = verify_local_guard(clone, agent.get("baseline", {}))
     if local_violations:
         return {
             "ok": False,
             "reason": "retry tampers guard files: "
             f"{local_violations[:3]}",
+            "laps": 1,
         }
     diff_text = git_diff_text(clone)
     run_dir = fresh_run_dir(cfg, task, f"{config.mode}-green-retry", tee)
@@ -3694,12 +3773,14 @@ def run_green_retry_oci(
             "ok": False,
             "reason": "guard divergence on retry: "
             f"{local_violations} vs {remote_violations}",
+            "laps": 1,
         }
     if remote_violations:
         return {
             "ok": False,
             "reason": "retry tampers guard files: "
             f"{remote_violations[:3]}",
+            "laps": 1,
         }
     guard_report: dict = {
         "task": task_id,
@@ -3707,19 +3788,20 @@ def run_green_retry_oci(
         "binding": True,
         "verdict": "clean",
         "violations": [],
-        "note": "green-retry second attempt",
+        "note": f"green-retry attempt ({_rk_tag or 'base'})",
     }
     reset_remote_test_files(cfg, task, run_dir, changed, tee)
     harness = get_test_patch(task, config.out_dir / "harness_cache", tee)
     apply_text_patch(cfg, run_dir, harness["test_patch"], tee, "green-retry")
     agent_argv_ids: list[str] | None = None
     if task["language"] == "python":
-        collected = collect_ids_remote(
+        collected, collect_report = collect_ids_remote_full(
             cfg, task, run_dir, tee, "green-retry",
-            archive=paths["collect"],
+            archive=_suffixed_stem(paths["collect"], _rk_tag),
         )
         archive_venv_freeze_remote(
-            cfg, task, run_dir, paths["freeze"], tee, "green-retry"
+            cfg, task, run_dir,
+            _suffixed_stem(paths["freeze"], _rk_tag), tee, "green-retry",
         )
         resolution = resolve_manifest_ids(
             manifest_ids_of(task), collected
@@ -3727,9 +3809,43 @@ def run_green_retry_oci(
         log_resolution(tee, "green-retry", resolution)
         agent_argv_ids = flatten_resolution(resolution)
         if not agent_argv_ids:
+            if _rk_depth >= 1:
+                return {
+                    "ok": False,
+                    "reason": "retry patch breaks test collection",
+                    "laps": 1,
+                }
+            tee.log("green-retry: collect broken; one repair lap ...")
+            agent_fix = dict(
+                agent, patch_text=rev["patch_text"], diff_text=diff_text
+            )
+            fix = run_green_revision(
+                task, agent_fix,
+                _collectfix_report(collect_report),
+                paths["prompts"], tee, usage,
+                role="ArchitecturalBuilder-green-retry-collect",
+                report_name="green_retry_report-green-retry-fix.txt",
+                patch_name="patch_text_green_retry-fix.txt",
+            )
+            if fix is None:
+                return {
+                    "ok": False,
+                    "reason": "retry patch breaks test collection",
+                    "laps": 1,
+                }
+            sub = run_green_retry_oci(
+                cfg, config, task, clone, agent_fix, scoring, junit,
+                base_resolution, base_index, paths, usage, tee,
+                _rk_depth=_rk_depth + 1,
+                _rk_tag="-green-retry-fix", _rk_rev=fix,
+            )
+            sub["laps"] = sub.get("laps", 1) + 1
+            if sub.get("ok"):
+                return sub
             return {
                 "ok": False,
                 "reason": "retry patch breaks test collection",
+                "laps": sub["laps"],
             }
     res, junit2 = run_remote_eval(
         cfg, task, run_dir, tee,
@@ -3740,6 +3856,7 @@ def run_green_retry_oci(
         return {
             "ok": False,
             "reason": f"retry eval produced no JUnit (exit={res.exit_code})",
+            "laps": 1,
         }
     full_index = index_results(task, junit2, tee, "green-retry")
     # Fresh map exists only for python (TS builds none); the conditional
@@ -3747,6 +3864,34 @@ def run_green_retry_oci(
     fresh = resolution if task["language"] == "python" else {}
     agent_index = retry_agent_index(task, fresh, base_resolution, full_index)
     scoring2 = score_task(task, base_index, agent_index)
+    if (
+        not scoring2.get("resolved_functional")
+        and _rk_depth == 0
+        and _green_progressed(scoring, scoring2)
+    ):
+        tee.log("green-retry: progress measured; one more iteration ...")
+        agent2 = dict(
+            agent, patch_text=rev["patch_text"], diff_text=diff_text
+        )
+        report2 = condense_green_failures(
+            task, junit2, scoring2,
+            fresh if task["language"] == "python" else base_resolution,
+        )
+        rev2 = run_green_revision(
+            task, agent2, report2, paths["prompts"], tee, usage,
+            role="ArchitecturalBuilder-green-retry-iter2",
+            report_name="green_retry_report-green-retry-2.txt",
+            patch_name="patch_text_green_retry-2.txt",
+        )
+        if rev2 is not None:
+            sub = run_green_retry_oci(
+                cfg, config, task, clone, agent2, scoring2, junit2,
+                base_resolution, base_index, paths, usage, tee,
+                _rk_depth=1, _rk_tag="-green-retry-2", _rk_rev=rev2,
+            )
+            if sub.get("ok"):
+                sub["laps"] = sub.get("laps", 1) + 1
+                return sub
     return {
         "ok": True,
         "scoring": scoring2,
@@ -3757,6 +3902,7 @@ def run_green_retry_oci(
         "guard": guard_report,
         "eval_exit": res.exit_code,
         "eval_timed_out": res.timed_out,
+        "laps": 1,
     }
 
 
@@ -3772,22 +3918,35 @@ def run_green_retry_local(
     paths: dict[str, Path],
     usage: UsageCollector,
     tee: Tee,
+    _rk_depth: int = 0,
+    _rk_tag: str = "-green-retry",
+    _rk_rev: dict | None = None,
 ) -> dict:
     """Local-tier mirror of :func:`run_green_retry_oci` (smoke only).
 
-    Same single-revision contract, same guard/test-hygiene ordering,
+    Same bounded-lap contract, same guard/test-hygiene ordering,
     via local subprocesses instead of Tailnet SSH + gVisor.
     """
-    green_report = condense_green_failures(
-        task, junit, scoring, base_resolution
-    )
-    tee.log(f"green-retry: condensed report ({len(green_report)} chars)")
-    rev = run_green_revision(
-        task, agent, green_report, paths["prompts"], tee, usage
-    )
-    if rev is None:
-        return {"ok": False, "reason": "revision unusable (no blocks)"}
-    git_reset_hard(clone, task["base_ref"])
+    if _rk_rev is None:
+        green_report = condense_green_failures(
+            task, junit, scoring, base_resolution
+        )
+        tee.log(f"green-retry: condensed report ({len(green_report)} chars)")
+        rev = run_green_revision(
+            task, agent, green_report, paths["prompts"], tee, usage,
+            report_name=f"green_retry_report{_rk_tag}.txt",
+            patch_name=f"patch_text_green_retry{_rk_tag}.txt",
+        )
+        if rev is None:
+            return {
+                "ok": False,
+                "reason": "revision unusable (no blocks)",
+                "laps": 1,
+            }
+    else:
+        rev = _rk_rev
+    if _rk_depth == 0:
+        git_reset_hard(clone, task["base_ref"])
     red_rel = agent.get("red_rel", "")
     red_bytes = agent.get("red_bytes", b"")
     if red_rel and red_bytes:
@@ -3795,12 +3954,29 @@ def run_green_retry_local(
         red_target.parent.mkdir(parents=True, exist_ok=True)
         red_target.write_bytes(red_bytes)
     try:
+        from hackproof.llm.meta_client import MetaClient
+        try:
+            rk_wonder: object | None = MetaClient("muse-wonder-1.0")
+        except Exception:  # noqa: BLE001 (no region retry w/o client)
+            rk_wonder = None
         applied = apply_blocks_to_candidates(
             task["id"], clone, agent.get("files", []), rev["routed"],
             guard_files_for(task), tee,
+            retry_client=rk_wonder,
+            retry_issue=agent.get("issue_text", ""),
+            retry_context=agent.get("builder_code_context", ""),
+            retry_patch_text=rev["patch_text"],
+            usage=usage,
+            retry_archive=(
+                paths["prompts"] / f"patch_text_green_retry_r6{_rk_tag}.txt"
+            ),
         )
     except Exception as exc:  # noqa: BLE001 (retry ends, first stands)
-        return {"ok": False, "reason": f"revision apply failed: {exc}"[:400]}
+        return {
+            "ok": False,
+            "reason": f"revision apply failed: {exc}"[:400],
+            "laps": 1,
+        }
     diff_text = git_diff_text(clone)
     run_dir = local_fresh_run_dir(
         config.work_dir, task, f"{config.mode}-green-retry", tee
@@ -3819,6 +3995,7 @@ def run_green_retry_local(
         return {
             "ok": False,
             "reason": f"retry tampers guard files: {violations[:3]}",
+            "laps": 1,
         }
     guard_report: dict = {
         "task": task["id"],
@@ -3826,7 +4003,7 @@ def run_green_retry_local(
         "binding": config.mode == "B",
         "verdict": "clean",
         "violations": [],
-        "note": "green-retry second attempt",
+        "note": f"green-retry attempt ({_rk_tag or 'base'})",
     }
     touched = sorted(set(changed) & set(guard_files_for(task)))
     if touched:
@@ -3840,11 +4017,13 @@ def run_green_retry_local(
     local_apply_patch(run_dir, harness["test_patch"], tee, "green-retry")
     agent_argv_ids: list[str] | None = None
     if task["language"] == "python":
-        collected = collect_ids_local(
-            task, run_dir, tee, "green-retry", archive=paths["collect"]
+        collected, collect_report = collect_ids_local_full(
+            task, run_dir, tee, "green-retry",
+            archive=_suffixed_stem(paths["collect"], _rk_tag),
         )
         archive_venv_freeze_local(
-            run_dir, paths["freeze"], tee, "green-retry"
+            run_dir, _suffixed_stem(paths["freeze"], _rk_tag),
+            tee, "green-retry",
         )
         resolution = resolve_manifest_ids(
             manifest_ids_of(task), collected
@@ -3852,9 +4031,43 @@ def run_green_retry_local(
         log_resolution(tee, "green-retry", resolution)
         agent_argv_ids = flatten_resolution(resolution)
         if not agent_argv_ids:
+            if _rk_depth >= 1:
+                return {
+                    "ok": False,
+                    "reason": "retry patch breaks test collection",
+                    "laps": 1,
+                }
+            tee.log("green-retry: collect broken; one repair lap ...")
+            agent_fix = dict(
+                agent, patch_text=rev["patch_text"], diff_text=diff_text
+            )
+            fix = run_green_revision(
+                task, agent_fix,
+                _collectfix_report(collect_report),
+                paths["prompts"], tee, usage,
+                role="ArchitecturalBuilder-green-retry-collect",
+                report_name="green_retry_report-green-retry-fix.txt",
+                patch_name="patch_text_green_retry-fix.txt",
+            )
+            if fix is None:
+                return {
+                    "ok": False,
+                    "reason": "retry patch breaks test collection",
+                    "laps": 1,
+                }
+            sub = run_green_retry_local(
+                config, task, clone, agent_fix, scoring, junit,
+                base_resolution, base_index, paths, usage, tee,
+                _rk_depth=_rk_depth + 1,
+                _rk_tag="-green-retry-fix", _rk_rev=fix,
+            )
+            sub["laps"] = sub.get("laps", 1) + 1
+            if sub.get("ok"):
+                return sub
             return {
                 "ok": False,
                 "reason": "retry patch breaks test collection",
+                "laps": sub["laps"],
             }
     res, junit2 = local_run_eval(
         task, run_dir, tee,
@@ -3865,6 +4078,7 @@ def run_green_retry_local(
         return {
             "ok": False,
             "reason": f"retry eval produced no JUnit (exit={res.exit_code})",
+            "laps": 1,
         }
     full_index = index_results(task, junit2, tee, "green-retry")
     # Fresh map exists only for python (TS builds none); the conditional
@@ -3872,6 +4086,34 @@ def run_green_retry_local(
     fresh = resolution if task["language"] == "python" else {}
     agent_index = retry_agent_index(task, fresh, base_resolution, full_index)
     scoring2 = score_task(task, base_index, agent_index)
+    if (
+        not scoring2.get("resolved_functional")
+        and _rk_depth == 0
+        and _green_progressed(scoring, scoring2)
+    ):
+        tee.log("green-retry: progress measured; one more iteration ...")
+        agent2 = dict(
+            agent, patch_text=rev["patch_text"], diff_text=diff_text
+        )
+        report2 = condense_green_failures(
+            task, junit2, scoring2,
+            fresh if task["language"] == "python" else base_resolution,
+        )
+        rev2 = run_green_revision(
+            task, agent2, report2, paths["prompts"], tee, usage,
+            role="ArchitecturalBuilder-green-retry-iter2",
+            report_name="green_retry_report-green-retry-2.txt",
+            patch_name="patch_text_green_retry-2.txt",
+        )
+        if rev2 is not None:
+            sub = run_green_retry_local(
+                config, task, clone, agent2, scoring2, junit2,
+                base_resolution, base_index, paths, usage, tee,
+                _rk_depth=1, _rk_tag="-green-retry-2", _rk_rev=rev2,
+            )
+            if sub.get("ok"):
+                sub["laps"] = sub.get("laps", 1) + 1
+                return sub
     return {
         "ok": True,
         "scoring": scoring2,
@@ -3882,6 +4124,7 @@ def run_green_retry_local(
         "guard": guard_report,
         "eval_exit": res.exit_code,
         "eval_timed_out": res.timed_out,
+        "laps": 1,
     }
 
 
@@ -4150,6 +4393,7 @@ def run_task_mode_local(
                     "first": describe_failure(scoring),
                     "first_scoring": scoring,
                     "second": describe_failure(retry["scoring"]),
+                    "laps": retry.get("laps", 1),
                 }
                 scoring = retry["scoring"]
                 junit = retry["junit"]
@@ -4178,6 +4422,7 @@ def run_task_mode_local(
                     "completed": False,
                     "reason": retry["reason"],
                     "first": describe_failure(scoring),
+                    "laps": retry.get("laps", 1),
                 }
                 tee.log(f"green-retry: retry ended ({retry['reason']})")
         resolved = functional
