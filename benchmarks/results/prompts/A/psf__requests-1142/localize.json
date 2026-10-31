@@ -6,7 +6,7 @@
   "requests/utils.py",
   "requests/cookies.py"
  ],
- "elapsed_ms": 1403,
+ "elapsed_ms": 1071,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "7636e87075303040a565ea7a336f46deb43ef2b515343b04b28793d4b18f1bc2"
 }

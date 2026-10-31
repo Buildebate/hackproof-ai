@@ -2,7 +2,7 @@
  "task": "vuejs__core-11739",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:50:20.330145+00:00",
+ "ts": "2026-10-31T14:17:30.393855+00:00",
  "base_ref": "cb843e0be31f9e563ccfc30eca0c06f2a224b505",
  "agent": {
   "ok": false,
@@ -14,21 +14,21 @@
    "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
    "packages/compiler-sfc/src/compileScript.ts"
   ],
-  "localize_ms": 4444,
+  "localize_ms": 3895,
   "backend": "hybrid-rrf-hash-cpu"
  },
  "usage": {
-  "prompt_tokens": 15030,
-  "completion_tokens": 13898,
-  "total_tokens": 28928,
+  "prompt_tokens": 15023,
+  "completion_tokens": 32768,
+  "total_tokens": 47791,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 15030,
-    "completion_tokens": 13898,
-    "total_tokens": 28928,
-    "finish_reason": "stop"
+    "prompt_tokens": 15023,
+    "completion_tokens": 32768,
+    "total_tokens": 47791,
+    "finish_reason": "length"
    }
   ]
  },

@@ -1,396 +1,309 @@
-packages/shared/src/normalizeProp.ts
-<<<<<<< SEARCH
-export function stringifyStyle(
-  styles: NormalizedStyle | string | undefined,
-): string {
-  let ret = ''
-  if (!styles || isString(styles)) {
-    return ret
-  }
-  for (const key in styles) {
-    const value = styles[key]
-    const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
-    if (isString(value) || typeof value === 'number') {
-      ret += `${normalizedKey}:${value};`
-    }
-  }
-  return ret
-}
-=======
-export function stringifyStyle(
-  styles: NormalizedStyle | string | undefined,
-): string {
-  let ret = ''
-  if (!styles || isString(styles)) {
-    return ret
-  }
-  for (const key in styles) {
-    const value = styles[key]
-    const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
-    if ((isString(value) && value !== '') || typeof value === 'number') {
-      ret += `${normalizedKey}:${value};`
-    }
-  }
-  return ret
-}
->>>>>>> REPLACE
-
-packages/runtime-core/src/helpers/useCssVars.ts
-<<<<<<< SEARCH
-      const style = el.style!
-      for (const key in vars) {
-        style.setProperty(`--${key}`, vars[key])
-      }
-=======
-      const style = el.style!
-      for (const key in vars) {
-        const value: unknown = (vars as Record<string, unknown>)[key]
-        if (value == null || value === '' || typeof value === 'boolean') {
-          style.removeProperty(`--${key}`)
-        } else {
-          style.setProperty(`--${key}`, String(value))
-        }
-      }
->>>>>>> REPLACE
-
-packages/runtime-core/src/helpers/useCssVars.ts
-<<<<<<< SEARCH
-    const style = (el as HTMLElement).style
-    for (const key in vars) {
-      style.setProperty(`--${key}`, vars[key])
-    }
-=======
-    const style = (el as HTMLElement).style
-    for (const key in vars) {
-      const value: unknown = (vars as Record<string, unknown>)[key]
-      if (value == null || value === '' || typeof value === 'boolean') {
-        style.removeProperty(`--${key}`)
-      } else {
-        style.setProperty(`--${key}`, String(value))
-      }
-    }
->>>>>>> REPLACE
-
-packages/runtime-core/src/helpers/useCssVars.ts
-<<<<<<< SEARCH
-  } else if (
-    vnode.shapeFlag &
-    (ShapeFlags.ELEMENT | ShapeFlags.COMPONENT | ShapeFlags.TEXT)
-  ) {
-=======
-  } else if (vnode.shapeFlag & ShapeFlags.COMPONENT && vnode.component) {
-    setVarsOnVNode(vnode.component.subTree, vars)
-  } else if (
-    vnode.shapeFlag &
-    (ShapeFlags.ELEMENT | ShapeFlags.COMPONENT | ShapeFlags.TEXT)
-  ) {
->>>>>>> REPLACE
-
-packages/runtime-core/src/helpers/useCssVars.ts
-<<<<<<< SEARCH
-  if (__SSR__) {
-    instance.getCssVars = () =>
-      getter(instance.proxy!, instance.exposedProxy || {})
-  } else {
-    watchPostEffect(setVars)
-  }
-=======
-  if (__SSR__) {
-    // Live getter, not a setup-time snapshot: async setup may mutate
-    // values before SSR render completes.
-    instance.getCssVars = () =>
-      getter(instance.proxy!, instance.exposedProxy || {})
-  } else {
-    // Post-effect runs after hydration, overwriting/removing stale
-    // SSR vars with the latest client values.
-    watchPostEffect(setVars)
-  }
->>>>>>> REPLACE
-
 packages/runtime-dom/src/modules/style.ts
 <<<<<<< SEARCH
-        for (const prevStyle of prev.split(';')) {
-          const key = prevStyle.slice(0, prevStyle.indexOf(':')).trim()
-          if (next[key] == null) {
-            setStyle(style, key, '')
-          }
-        }
+    for (const key in next) {
+      if (key === 'display') {
+        hasControlledDisplay = true
+      }
+      setStyle(style, key, next[key as keyof StyleValue])
+    }
 =======
-        for (const prevStyle of prev.split(';')) {
-          const key = prevStyle.slice(0, prevStyle.indexOf(':')).trim()
-          if (!key.startsWith('--') && next[key] == null) {
-            setStyle(style, key, '')
-          }
-        }
+    for (const key in next) {
+      if (key === 'display') {
+        hasControlledDisplay = true
+      }
+      setStyle(style, key, next[key as keyof StyleValue])
+    }
+    applyCssVars(style)
 >>>>>>> REPLACE
-
 packages/runtime-dom/src/modules/style.ts
 <<<<<<< SEARCH
-        style.cssText = next as string
-=======
-        const preservedCssVars: [string, string][] = []
-        for (let i = 0; i < style.length; i++) {
-          const name = style.item(i)
-          if (name.startsWith('--')) {
-            preservedCssVars.push([name, style.getPropertyValue(name)])
-          }
+    if (isCssString) {
+      if (prev !== next) {
+        // #9821
+        const cssVarText = (style as any)[CSS_VAR_TEXT]
+        if (cssVarText) {
+          ;(next as string) += ';' + cssVarText
         }
         style.cssText = next as string
-        for (const [name, value] of preservedCssVars) {
-          if (value && !(next as string).includes(`${name}:`)) {
-            style.setProperty(name, value)
-          }
-        }
->>>>>>> REPLACE
-
-packages/runtime-dom/src/modules/style.ts
-<<<<<<< SEARCH
+        hasControlledDisplay = displayRE.test(next)
+      }
     } else if (prev) {
       el.removeAttribute('style')
     }
 =======
-    } else if (prev) {
-      const preservedCssVars: [string, string][] = []
-      for (let i = 0; i < style.length; i++) {
-        const name = style.item(i)
-        if (name.startsWith('--')) {
-          preservedCssVars.push([name, style.getPropertyValue(name)])
-        }
+    if (isCssString) {
+      if (prev !== next) {
+        const cssVars = snapshotCssVars(style)
+        style.cssText = next as string
+        hasControlledDisplay = displayRE.test(next)
+        applyCssVars(style, cssVars)
       }
+    } else if (prev) {
+      const cssVars = snapshotCssVars(style)
       el.removeAttribute('style')
-      for (const [name, value] of preservedCssVars) {
+      applyCssVars(style, cssVars)
+    }
+>>>>>>> REPLACE
+packages/runtime-dom/src/modules/style.ts
+<<<<<<< SEARCH
+const displayRE = /(^|;)\s*display\s*:/
+const importantRE = /\s*!important$/
+=======
+const displayRE = /(^|;)\s*display\s*:/
+const importantRE = /\s*!important$/
+
+type CssVarsSnapshot = Record<string, string>
+
+function snapshotCssVars(style: CSSStyleDeclaration): CssVarsSnapshot {
+  const cache = (style as any)[CSS_VAR_TEXT] as
+    | CssVarsSnapshot
+    | string
+    | undefined
+  const vars: CssVarsSnapshot = {}
+  if (!cache) {
+    return vars
+  }
+  if (isString(cache)) {
+    // Legacy string cache: trust only custom-property names, never its
+    // interpolated text (values may contain `;`, quotes or `/*`).
+    for (const decl of cache.split(';')) {
+      const key = decl.slice(0, decl.indexOf(':')).trim()
+      if (key.startsWith('--')) {
+        const value = style.getPropertyValue(key)
         if (value) {
-          style.setProperty(name, value)
+          vars[key] = value
         }
       }
     }
->>>>>>> REPLACE
+  } else {
+    for (const key in cache) {
+      const value = cache[key]
+      if (value != null && value !== '') {
+        vars[key] = String(value)
+      }
+    }
+  }
+  return vars
+}
 
+function applyCssVars(
+  style: CSSStyleDeclaration,
+  vars: CssVarsSnapshot = snapshotCssVars(style),
+): void {
+  for (const key in vars) {
+    // setProperty passes the value literally: no cssText interpolation,
+    // no implicit units, and `;`/quotes/unicode cannot create new
+    // declarations.
+    style.setProperty(key, vars[key])
+  }
+}
+>>>>>>> REPLACE
 packages/runtime-dom/src/modules/style.ts
 <<<<<<< SEARCH
-    if (val == null) val = ''
+  } else {
+    if (val == null) {
+      val = ''
+    }
+    // ie prefix
+    if (name.startsWith('--')) {
 =======
-    if (val == null || typeof (val as unknown) === 'boolean') val = ''
-    else if (typeof val !== 'string') val = String(val)
+  } else {
+    if (val == null) {
+      val = ''
+    } else if (typeof val !== 'string') {
+      // Numbers are stringified verbatim: custom properties must not
+      // gain implicit units, and normal properties keep existing
+      // CSSStyleDeclaration semantics (e.g. 20 stays invalid, not 20px).
+      val = String(val)
+    }
+    // ie prefix
+    if (name.startsWith('--')) {
 >>>>>>> REPLACE
-
-packages/runtime-dom/src/modules/style.ts
+packages/runtime-dom/src/helpers/useCssVars.ts
 <<<<<<< SEARCH
-      if (semicolonRE.test(val)) {
+    const style = (el as Element).style
+    let cssText = ''
+    for (const key in vars) {
+      const value = vars[key]
+      if (value != null) {
+        style.setProperty(`--${key}`, String(value))
+        cssText += `--${key}: ${value};`
+      }
+    }
+    ;(style as any)[CSS_VAR_TEXT] = cssText
 =======
-      if (!name.startsWith('--') && semicolonRE.test(val)) {
+    const style = (el as Element).style
+    // Store literal values in a map, never interpolated cssText, so
+    // `;`, quotes, `/* */` and unicode cannot escape the declaration.
+    // Merge into any existing map: parent and child components may
+    // both contribute vars to the same root element.
+    const cache = ((style as any)[CSS_VAR_TEXT] =
+      (style as any)[CSS_VAR_TEXT] &&
+      typeof (style as any)[CSS_VAR_TEXT] === 'object'
+        ? (style as any)[CSS_VAR_TEXT]
+        : {}) as Record<string, string>
+    for (const key in vars) {
+      const value = vars[key]
+      const normalizedKey = key.startsWith('--') ? key : `--${key}`
+      if (value == null || value === '') {
+        // null/undefined/'' all mean removed: never `--x: null`,
+        // `--x: undefined` or a stale previous value.
+        delete cache[normalizedKey]
+        style.removeProperty(normalizedKey)
+      } else {
+        const normalizedValue = String(value)
+        cache[normalizedKey] = normalizedValue
+        style.setProperty(normalizedKey, normalizedValue)
+      }
+    }
 >>>>>>> REPLACE
-
-packages/vue/__tests__/cssVars.spec.ts
+packages/runtime-dom/src/helpers/useCssVars.ts
+<<<<<<< SEARCH
+      if (instance.ssrContext) {
+        ;(instance.ssrContext.__cssVars ||
+          (instance.ssrContext.__cssVars = {}))[instance.uid] = vars
+      }
+=======
+      if (instance.ssrContext) {
+        const normalizedVars: Record<string, string> = {}
+        for (const key in vars) {
+          const value = vars[key]
+          if (value == null || value === '') {
+            continue
+          }
+          const text = String(value)
+          // Serialized SSR style text cannot safely contain these:
+          // they would terminate/escape the custom-property
+          // declaration. Omit here; hydration re-applies the literal
+          // value via setProperty().
+          if (/[;{}'"\r\n]/.test(text) || text.includes('/*')) {
+            continue
+          }
+          normalizedVars[key] = text
+        }
+        ;(instance.ssrContext.__cssVars ||
+          (instance.ssrContext.__cssVars = {}))[instance.uid] =
+          normalizedVars
+      }
+>>>>>>> REPLACE
+packages/runtime-dom/src/helpers/useCssVars.ts
+<<<<<<< SEARCH
+      for (const key in getter(instance.proxy!, instance.exposeProxy!)) {
+        style.removeProperty(`--${key}`)
+      }
+=======
+      const cache = (style as any)[CSS_VAR_TEXT]
+      for (const key in getter(instance.proxy!, instance.exposeProxy!)) {
+        const normalizedKey = key.startsWith('--') ? key : `--${key}`
+        style.removeProperty(normalizedKey)
+        if (cache && typeof cache === 'object') {
+          delete cache[normalizedKey]
+        }
+      }
+>>>>>>> REPLACE
+packages/runtime-dom/__tests__/helpers/useCssVarsStyle.spec.ts
 <<<<<<< SEARCH
 =======
 import {
-  createApp,
   createSSRApp,
   defineComponent,
   h,
   nextTick,
   ref,
+  render,
   useCssVars,
-} from 'vue'
+} from '../../src'
 import { renderToString } from '@vue/server-renderer'
 
-const Child = defineComponent({
-  props: { rootStyle: { type: null, default: undefined } },
-  setup(props: any, { slots }: any) {
-    return () =>
-      h(
-        'div',
-        { class: 'root', style: props.rootStyle },
-        slots.default ? slots.default() : [],
-      )
-  },
-})
-
-function parentWith(
-  vars: () => Record<string, unknown>,
-  rootStyle: any,
-  slot?: string,
-) {
-  return defineComponent({
-    setup() {
-      useCssVars(vars as any)
-      return () =>
-        h(Child, { rootStyle }, slot === undefined ? undefined : () => slot)
-    },
-  })
-}
-
-function mount(comp: any, props?: any) {
-  const container = document.createElement('div')
-  createApp(comp, props).mount(container)
-  return container.querySelector('.root') as HTMLElement
-}
-
-describe('cssVars fallthrough to child root', () => {
-  test('default blue for undefined, removal for null/empty', async () => {
-    const WithDefault = defineComponent({
-      props: {
-        backgroundColor: { type: String, default: 'blue' },
-        padding: { type: String, default: undefined },
-      },
-      setup(props: any) {
-        useCssVars(
-          () =>
-            ({
-              'case-color': props.backgroundColor,
-              'case-padding': props.padding,
-            }) as any,
-        )
-        return () => h(Child, { rootStyle: { display: 'block' } })
+describe('useCssVars with :style patching', () => {
+  test('null/undefined/empty vars, style variants and injection values', async () => {
+    const color = ref<any>('red')
+    const size = ref<any>(20)
+    const childStyle = ref<any>({ display: 'flex' })
+    const App = defineComponent({
+      setup() {
+        useCssVars(() => ({
+          color: color.value,
+          size: size.value,
+        }))
+        return () => h('div', { style: childStyle.value })
       },
     })
-    expect(
-      mount(WithDefault, {}).style.getPropertyValue('--case-color'),
-    ).toBe('blue')
-    expect(
-      mount(WithDefault, { backgroundColor: undefined }).style.getPropertyValue(
-        '--case-color',
-      ),
-    ).toBe('blue')
-    const nullEl = mount(WithDefault, { backgroundColor: null })
-    expect(nullEl.style.getPropertyValue('--case-color')).toBe('')
-    expect(nullEl.style.cssText).not.toContain('--case-padding:')
+    const root = document.createElement('div')
+    render(h(App), root)
+    await nextTick()
+    const el = root.firstChild as HTMLElement
+    expect(el.style.getPropertyValue('--color')).toBe('red')
+    expect(el.style.getPropertyValue('--size')).toBe('20')
+    expect(el.style.display).toBe('flex')
 
-    const color = ref<any>('red')
-    const padding = ref<any>('')
-    const el = mount(
-      parentWith(
-        () => ({ 'case-color': color.value, 'case-padding': padding.value }),
-        { display: 'block' },
-      ),
-    )
-    expect(el.style.getPropertyValue('--case-padding')).toBe('')
-    padding.value = 0
-    await nextTick()
-    expect(el.style.getPropertyValue('--case-padding')).toBe('0')
-    padding.value = 20
-    await nextTick()
-    expect(el.style.getPropertyValue('--case-padding')).toBe('20')
-    color.value = null
-    await nextTick()
-    expect(el.style.getPropertyValue('--case-color')).toBe('')
-    color.value = undefined
-    await nextTick()
-    expect(el.style.getPropertyValue('--case-color')).toBe('')
-    color.value = 123
-    await nextTick()
-    expect(el.style.getPropertyValue('--case-color')).toBe('123')
-  })
-
-  test('child :style null/{} /[]/"" preserves vars; display true/0 dropped', async () => {
-    const rootStyle = ref<any>({ display: 'block' })
-    const el = mount(
-      parentWith(() => ({ 'case-color': 'red' }), rootStyle.value, 'x'),
-    )
-    // Re-mount through a reactive wrapper by patching via rootStyle values
-    // on a fresh app for each style form.
-    for (const next of [null, {}, [], ''] as any[]) {
-      const e = mount(parentWith(() => ({ 'case-color': 'red' }), next))
-      expect(e.style.getPropertyValue('--case-color')).toBe('red')
-    }
-    for (const display of [true, 0] as any[]) {
-      const e = mount(
-        parentWith(() => ({ 'case-color': 'red' }), { display }),
-      )
-      expect(e.style.display).toBe('')
-      expect(e.style.getPropertyValue('--case-color')).toBe('red')
-    }
-    expect(rootStyle.value.display).toBe('block')
-    await nextTick()
-  })
-
-  test('0 vs 1 vs 2 vars alongside child :style="{ display }"', () => {
-    for (const [vars, a, b] of [
-      [{}, '', ''],
-      [{ 'case-a': 'red' }, 'red', ''],
-      [{ 'case-a': 'red', 'case-b': '20px' }, 'red', '20px'],
+    for (const style of [
+      'display:flex',
+      [{ display: 'flex' }],
+      { display: 'flex' },
+      [],
+      [{ display: 'flex' }, { padding: '20px' }],
     ] as any[]) {
-      const el = mount(parentWith(() => vars, { display: 'block' }))
-      expect(el.style.display).toBe('block')
-      expect(el.style.getPropertyValue('--case-a')).toBe(a)
-      expect(el.style.getPropertyValue('--case-b')).toBe(b)
+      childStyle.value = style
+      await nextTick()
+      expect(el.style.getPropertyValue('--color')).toBe('red')
+      expect(el.style.getPropertyValue('--size')).toBe('20')
     }
+    expect(el.style.padding).toBe('20px')
+
+    for (const style of [{ display: null }, {}, null, undefined] as any[]) {
+      childStyle.value = style
+      await nextTick()
+      expect(el.style.getPropertyValue('--color')).toBe('red')
+      expect(el.style.getPropertyValue('--size')).toBe('20')
+      expect(el.style.display).toBe('')
+    }
+
+    childStyle.value = { '--pad': 20, padding: 20 } as any
+    await nextTick()
+    expect(el.style.getPropertyValue('--pad')).toBe('20')
+    expect(el.style.padding).not.toBe('20px')
+
+    for (const value of [null, undefined, '']) {
+      color.value = value
+      await nextTick()
+      expect(el.style.getPropertyValue('--color')).toBe('')
+      expect(el.style.cssText).not.toContain('--color: null')
+      expect(el.style.cssText).not.toContain('--color: undefined')
+    }
+
+    color.value = 'red; color: blue'
+    size.value = '20px /* */'
+    await nextTick()
+    expect(el.style.color).toBe('')
+    expect(el.style.getPropertyValue('--size')).toContain('20px')
+    color.value = `"'--x:1`
+    await nextTick()
+    expect(el.style.getPropertyValue('--x')).toBe('')
+    color.value = '👋'
+    await nextTick()
+    expect(el.style.getPropertyValue('--color')).toBe('👋')
   })
 
-  test('unicode/empty slot and "", "a;b", quote, emoji values', () => {
-    const el = mount(
-      parentWith(
-        () => ({
-          'case-empty': '',
-          'case-semi': 'a;b',
-          'case-quote': `'\"quote`,
-          'case-uni': '👋',
-        }),
-        { display: 'block' },
-        'Hello 👋',
-      ),
+  test('SSR to hydration reconciles client vars', async () => {
+    const make = (color: string, style: any) =>
+      defineComponent({
+        setup() {
+          useCssVars(() => ({ color }))
+          return () => h('div', { style })
+        },
+      })
+    const html = await renderToString(
+      createSSRApp(make('red', { display: null })),
     )
-    expect(el.textContent).toBe('Hello 👋')
-    expect(el.style.getPropertyValue('--case-empty')).toBe('')
-    expect(el.style.getPropertyValue('--case-semi')).toBe('a;b')
-    expect(el.style.getPropertyValue('--case-quote')).toBe(`'\"quote`)
-    expect(el.style.getPropertyValue('--case-uni')).toBe('👋')
-
-    const empty = mount(
-      parentWith(() => ({ 'case-uni': '👋' }), { display: 'block' }, ''),
-    )
-    expect(empty.textContent).toBe('')
-    expect(empty.style.getPropertyValue('--case-uni')).toBe('👋')
-  })
-
-  test('SSR serialization and async/hydration synchronization', async () => {
-    const Server = parentWith(
-      () => ({
-        'case-color': 'red',
-        'case-padding': '',
-        'case-num': 123,
-        'case-quote': `'\"quote`,
-        'case-uni': '👋',
-      }),
-      { display: 'block' },
-      'Hello 👋',
-    )
-    const html = await renderToString(createSSRApp(Server))
-    expect(html).toContain('--case-color:red')
-    expect(html).not.toContain('--case-padding:')
-    expect(html).toContain('--case-num:123')
-    expect(html).toContain('👋')
-    expect(html).toContain('&quot;')
-    expect(html).toContain('Hello 👋')
-
+    expect(html).not.toContain('--color:null')
     const container = document.createElement('div')
     container.innerHTML = html
-    const Client = parentWith(
-      () => ({ 'case-color': 'blue' }),
-      { display: 'block' },
-      'Hello 👋',
-    )
-    createSSRApp(Client).mount(container, true)
+    createSSRApp(make('blue', { display: undefined })).mount(container, true)
     await nextTick()
-    expect(
-      (
-        container.querySelector('.root') as HTMLElement
-      ).style.getPropertyValue('--case-color'),
-    ).toBe('blue')
-
-    const Async = defineComponent({
-      async setup() {
-        const color = ref('red')
-        useCssVars(() => ({ 'case-color': color.value }) as any)
-        await Promise.resolve()
-        color.value = 'blue'
-        return () => h(Child, { rootStyle: { display: 'block' } })
-      },
-    })
-    const asyncHtml = await renderToString(createSSRApp(Async))
-    expect(asyncHtml).toContain('--case-color:blue')
-    expect(asyncHtml).not.toContain('--case-color:red')
+    const el = container.firstChild as HTMLElement
+    expect(el.style.getPropertyValue('--color')).toBe('blue')
+    expect(el.style.display).toBe('')
   })
 })
 >>>>>>> REPLACE

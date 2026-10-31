@@ -2,11 +2,11 @@
  "task": "psf__requests-1142",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:41:10.125337+00:00",
+ "ts": "2026-10-31T14:01:26.649490+00:00",
  "base_ref": "22623bd8c265b78b161542663ee980738441c307",
  "agent": {
-  "ok": false,
-  "reason": "no complete SEARCH/REPLACE blocks",
+  "ok": true,
+  "reason": "",
   "files": [
    "requests/packages/charade/hebrewprober.py",
    "requests/packages/urllib3/request.py",
@@ -14,31 +14,108 @@
    "requests/utils.py",
    "requests/cookies.py"
   ],
-  "localize_ms": 1403,
-  "backend": "hybrid-rrf-hash-cpu"
+  "localize_ms": 1071,
+  "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 1,
+  "applied_file": "requests/models.py",
+  "applied_files": [
+   "requests/models.py"
+  ]
  },
  "usage": {
-  "prompt_tokens": 13522,
-  "completion_tokens": 1081,
-  "total_tokens": 14603,
+  "prompt_tokens": 27431,
+  "completion_tokens": 7265,
+  "total_tokens": 34696,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 13522,
-    "completion_tokens": 1081,
-    "total_tokens": 14603,
+    "prompt_tokens": 13515,
+    "completion_tokens": 4953,
+    "total_tokens": 18468,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 13916,
+    "completion_tokens": 2312,
+    "total_tokens": 16228,
     "finish_reason": "stop"
    }
   ]
  },
  "evidence": {
   "language": "python",
-  "collect": false,
-  "freeze": false,
+  "collect": true,
+  "freeze": true,
   "debate_prompts": false
  },
- "status": "failed",
- "reason": "no complete SEARCH/REPLACE blocks",
+ "diff_sha256": "763408fd6ab47b10c1740a85d21befbde5ca4c6bffae130733ba0d6cd78c4656",
+ "guard": {
+  "task": "psf__requests-1142",
+  "mode": "A",
+  "binding": false,
+  "verdict": "clean",
+  "violations": [],
+  "note": "post-hoc measurement; does not gate Mode A"
+ },
+ "junit_sha256": "928746b07a6aceba03e80f882e4bff639fdb523d035835912c92ae38017c84c2",
+ "eval_exit": 0,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "test_requests.py::RequestsTestCase::test_no_content_length": {
+    "base": "failed",
+    "agent": "passed"
+   }
+  },
+  "p2p": {
+   "test_requests.py::RequestsTestCase::test_basic_building": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "test_requests.py::RequestsTestCase::test_entry_points": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "test_requests.py::RequestsTestCase::test_invalid_url": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [
+   "test_requests.py::RequestsTestCase::test_no_content_length"
+  ],
+  "f2p_not_fixed": [],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "test_requests.py::RequestsTestCase::test_basic_building",
+   "test_requests.py::RequestsTestCase::test_entry_points",
+   "test_requests.py::RequestsTestCase::test_invalid_url",
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment",
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
+  ],
+  "resolved_functional": true,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "status": "resolved",
+ "reason": "",
  "done": true
 }

@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="27" failures="2" errors="0" time="1.869">
+    <testsuite name="packages/compiler-sfc/__tests__/compileStyle.spec.ts" timestamp="2026-10-31T13:56:57.803Z" hostname="8df296865d5d" tests="26" failures="1" errors="0" skipped="0" time="0.344">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; simple selectors" time="0.01">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; descendent selector" time="0.002">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; nesting selector" time="0.003">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; nesting selector with atrule and comment" time="0.016">
+            <failure message="expected &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n}…&apos; to match &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n/…&apos;" type="AssertionError">
+AssertionError: expected &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n}…&apos; to match &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n/…&apos;
+
+- Expected
++ Received
+
+  h1 {
+  &amp;[data-v-test] {
+  color: red
++ }
+  /*background-color: pink;*/
+- }
+- @media only screen and (max-width: 800px) {
+- &amp;[data-v-test] {
++ @media only screen and (max-width: 800px) {&amp; {
+    background-color: green
+  }
+  .bar[data-v-test] { color: white
+  }
+  }
+  .foo[data-v-test] { color: red;
+  }
+  }
+
+ ❯ packages/compiler-sfc/__tests__/compileStyle.spec.ts:63:7
+            </failure>
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; multiple selectors" time="0.002">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; pseudo class" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; pseudo element" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; spaces before pseudo element" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; ::v-deep" time="0.008">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; ::v-slotted" time="0.003">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; ::v-global" time="0.002">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; :is() and :where() with multiple selectors" time="0.002">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; :is() and :where() in compound selectors" time="0.005">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; media query" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; supports query" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; scoped keyframes" time="0.002">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; spaces after selector" time="0">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; ::v-deep as combinator" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; &gt;&gt;&gt; (deprecated syntax)" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; /deep/ (deprecated syntax)" time="0.001">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC CSS modules &gt; should include resulting classes object in result" time="0.009">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC CSS modules &gt; postcss-modules options" time="0.005">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss @import" time="0.251">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss respect user-defined string options.additionalData" time="0.009">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss respect user-defined function options.additionalData" time="0.003">
+        </testcase>
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; should mount scope on correct selector when have universal selector" time="0.002">
+        </testcase>
+    </testsuite>
+    <testsuite name="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" timestamp="2026-10-31T13:56:57.815Z" hostname="8df296865d5d" tests="1" failures="1" errors="0" skipped="0" time="0.032">
+        <testcase classname="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" name="scoped nested at-rule regression &gt; wraps declarations inside nested @media with scoped nesting selector" time="0.031">
+            <failure message="expected 1 to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts:13:28
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

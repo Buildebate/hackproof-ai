@@ -2,7 +2,7 @@
  "task": "psf__requests-2931",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T08:16:33.754633+00:00",
+ "ts": "2026-10-31T12:51:26.773716+00:00",
  "base_ref": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
  "agent": {
   "ok": true,
@@ -14,9 +14,9 @@
    "requests/packages/__init__.py",
    "requests/utils.py"
   ],
-  "localize_ms": 792,
+  "localize_ms": 809,
   "backend": "hybrid-rrf-hash-cpu",
-  "blocks": 1,
+  "blocks": 2,
   "applied_file": "requests/models.py",
   "applied_files": [
    "requests/models.py"
@@ -24,79 +24,127 @@
   "red_rel": "test_repro_ca1831d0715b.py",
   "local_violations": [],
   "debate": {
-   "rounds_used": 1,
+   "rounds_used": 2,
    "converged": true,
-   "score": 1.0,
-   "duration_ms": 109984
+   "score": 0.9166666666666666,
+   "duration_ms": 291580
   }
  },
  "usage": {
-  "prompt_tokens": 19185,
-  "completion_tokens": 20908,
-  "total_tokens": 40093,
+  "prompt_tokens": 34929,
+  "completion_tokens": 53893,
+  "total_tokens": 88822,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
     "prompt_tokens": 6795,
-    "completion_tokens": 2681,
-    "total_tokens": 9476,
+    "completion_tokens": 2248,
+    "total_tokens": 9043,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
     "prompt_tokens": 2885,
-    "completion_tokens": 1584,
-    "total_tokens": 4469,
+    "completion_tokens": 1436,
+    "total_tokens": 4321,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 7126,
-    "completion_tokens": 7909,
-    "total_tokens": 15035,
+    "prompt_tokens": 7109,
+    "completion_tokens": 13868,
+    "total_tokens": 20977,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 323,
-    "completion_tokens": 1531,
-    "total_tokens": 1854,
+    "prompt_tokens": 337,
+    "completion_tokens": 2463,
+    "total_tokens": 2800,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 315,
-    "completion_tokens": 1786,
-    "total_tokens": 2101,
+    "prompt_tokens": 329,
+    "completion_tokens": 876,
+    "total_tokens": 1205,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 662,
-    "completion_tokens": 4047,
-    "total_tokens": 4709,
+    "prompt_tokens": 676,
+    "completion_tokens": 14167,
+    "total_tokens": 14843,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 546,
-    "completion_tokens": 970,
-    "total_tokens": 1516,
+    "prompt_tokens": 622,
+    "completion_tokens": 7923,
+    "total_tokens": 8545,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 3442,
+    "completion_tokens": 1454,
+    "total_tokens": 4896,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 7666,
+    "completion_tokens": 2261,
+    "total_tokens": 9927,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1000,
+    "completion_tokens": 1285,
+    "total_tokens": 2285,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 992,
+    "completion_tokens": 472,
+    "total_tokens": 1464,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1339,
+    "completion_tokens": 4318,
+    "total_tokens": 5657,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1131,
+    "completion_tokens": 657,
+    "total_tokens": 1788,
     "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 533,
-    "completion_tokens": 400,
-    "total_tokens": 933,
+    "prompt_tokens": 606,
+    "completion_tokens": 465,
+    "total_tokens": 1071,
     "finish_reason": "stop"
    }
   ]
@@ -107,18 +155,18 @@
   "freeze": true,
   "debate_prompts": true
  },
- "diff_sha256": "e103a13cef39cb5d6de671ca23d6e7f102bb540c86a88bf8043ece3c14c6182c",
+ "diff_sha256": "50dfecaa5a13c490e0b162c06ad023b6381fd7005405566cca55b67338678138",
  "red": {
   "rel": "test_repro_ca1831d0715b.py",
-  "sha256": "38d01786393440ba4112551507b1dba86caeeab2c92d5eff46f1327b0c165e2f",
+  "sha256": "8fc81300a8cb9150b93853844bfb84eb7c1ab322044a543cbb9eb3b1623509bd",
   "exit_code": 1,
   "timed_out": false,
   "accepted": true,
   "reason": "red accepted (1 failure(s), 0 errors)",
   "failures": 1,
   "errors": 0,
-  "junit_bytes": 2467,
-  "junit_sha256": "062d09565c1dd6a06a5b0d39f8fd68efc357564233e6ef198613047072f75745"
+  "junit_bytes": 2646,
+  "junit_sha256": "d31f238808cc24897930cf16914c381b82927198f4aabb9ff9b7c267dd3d204c"
  },
  "guard": {
   "task": "psf__requests-2931",
@@ -127,7 +175,7 @@
   "verdict": "clean",
   "violations": []
  },
- "junit_sha256": "fe838f895615a105fd1bc423f18bbb5ac6ce8b5189e2ecd8ac455c391ffea6df",
+ "junit_sha256": "edc55286d9ab13faa34ce82db18c4cf0ac5ccacf305b0b29077a4554505e7f7d",
  "eval_exit": 1,
  "eval_timed_out": false,
  "scoring": {
@@ -170,7 +218,7 @@
    },
    "test_requests.py::TestRequests::test_params_bytes_are_encoded": {
     "base": "passed",
-    "agent": "failed",
+    "agent": "passed",
     "golden": "no"
    },
    "test_requests.py::TestRequests::test_connection_error_invalid_domain": {
@@ -564,9 +612,7 @@
   ],
   "f2p_not_fixed": [],
   "f2p_not_red_at_base": [],
-  "p2p_broken": [
-   "test_requests.py::TestRequests::test_params_bytes_are_encoded"
-  ],
+  "p2p_broken": [],
   "p2p_env_limited": [
    "test_requests.py::TestTimeout::test_connect_timeout",
    "test_requests.py::TestTimeout::test_total_timeout_connect"
@@ -578,6 +624,7 @@
    "test_requests.py::TestRequests::test_path_is_not_double_encoded",
    "test_requests.py::TestRequests::test_params_are_added_before_fragment",
    "test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default",
+   "test_requests.py::TestRequests::test_params_bytes_are_encoded",
    "test_requests.py::TestRequests::test_connection_error_invalid_domain",
    "test_requests.py::TestRequests::test_connection_error_invalid_port",
    "test_requests.py::TestRequests::test_LocationParseError",
@@ -654,11 +701,22 @@
    "test_requests.py::test_prepare_unicode_url",
    "test_requests.py::test_vendor_aliases"
   ],
-  "resolved_functional": false,
+  "resolved_functional": true,
   "unmatched_agent_cases": [],
   "missing_agent_ids": []
  },
- "status": "failed",
- "reason": "p2p-broken:1",
+ "receipt": {
+  "receipt_version": "1.0",
+  "base_commit": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
+  "test_hash": "8fc81300a8cb9150b93853844bfb84eb7c1ab322044a543cbb9eb3b1623509bd",
+  "patch_hash": "bd4c82fe722a91e27b37315f155e94e4e8bc16945b942d2b180e5f9a4853c258",
+  "red_junit_hash": "d31f238808cc24897930cf16914c381b82927198f4aabb9ff9b7c267dd3d204c",
+  "green_junit_hash": "edc55286d9ab13faa34ce82db18c4cf0ac5ccacf305b0b29077a4554505e7f7d",
+  "minted_at_utc": "2026-10-31T12:51:50.591336+00:00",
+  "receipt_sha256": "d21c405225de8ffc9e2962c16a0025895f6cae5dbcba62efb40d2cb989bf9731"
+ },
+ "machine_proof": true,
+ "status": "resolved",
+ "reason": "",
  "done": true
 }

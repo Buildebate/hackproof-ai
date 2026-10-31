@@ -1,20 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.792">
-    <testsuite name="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" timestamp="2026-10-31T09:34:10.371Z" hostname="8d05a1277245" tests="1" failures="1" errors="0" skipped="0" time="0.021">
-        <testcase classname="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" name="scoped nested @media regression &gt; adds nesting scoping inside @media nested in rule" time="0.019">
-            <failure message="expected &apos;@media only screen and (max-width: 80…&apos; to contain &apos;[data-v-test]&apos;" type="AssertionError">
-AssertionError: expected &apos;@media only screen and (max-width: 80…&apos; to contain &apos;[data-v-test]&apos;
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.85">
+    <testsuite name="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" timestamp="2026-10-31T13:44:16.328Z" hostname="2c4485efcacf" tests="1" failures="1" errors="0" skipped="0" time="0.02">
+        <testcase classname="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" name="scoped nested at-rule regression &gt; wraps declarations inside nested @media with scoped nesting selector" time="0.019">
+            <failure message="expected 1 to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected 1 to be 2 // Object.is equality
 
 - Expected
 + Received
 
-- [data-v-test]
-+ @media only screen and (max-width: 800px) {
-+     background-color: green;
-+ }
-+ }
+- 2
++ 1
 
- ❯ packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts:14:23
+ ❯ packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts:13:28
             </failure>
         </testcase>
     </testsuite>

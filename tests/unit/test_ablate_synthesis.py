@@ -17,10 +17,10 @@ import pytest
 BENCH_DIR = Path(__file__).resolve().parent.parent.parent / "benchmarks"
 sys.path.insert(0, str(BENCH_DIR))
 
-import ablate_synthesis
 from ablate_synthesis import (
     MARKER_SPAN,
     SUBJECTS,
+    WAVE1_ROLE_SYSTEM_PROMPT,
     analyze_response,
     build_plan,
     build_variant_b,
@@ -47,13 +47,23 @@ def real():
 APPROVE"""
 
 
-def test_marker_span_is_verbatim_suffix_of_role_prompt() -> None:
-    assert ROLE_SYSTEM_PROMPT.endswith(MARKER_SPAN.strip())
-    assert MARKER_SPAN.strip() in ROLE_SYSTEM_PROMPT
+def test_marker_span_is_verbatim_suffix_of_wave1_prompt() -> None:
+    assert WAVE1_ROLE_SYSTEM_PROMPT.endswith(MARKER_SPAN.strip())
+    assert MARKER_SPAN.strip() in WAVE1_ROLE_SYSTEM_PROMPT
+
+
+def test_live_builder_prompt_carries_no_marker_span() -> None:
+    # Step 4.3c.1 (R13): the live builder prompt is narrowed; the span
+    # survives only in the frozen wave-1 replay literal.
+    assert MARKER_SPAN not in ROLE_SYSTEM_PROMPT
+    assert MARKER_SPAN.strip() not in ROLE_SYSTEM_PROMPT
 
 
 def test_variant_b_removes_exactly_the_span() -> None:
-    prompt_a = ROLE_SYSTEM_PROMPT + "\n\nISSUE:\nx\n\nCODE CONTEXT:\ny\n\nROUND: 2"
+    prompt_a = (
+        WAVE1_ROLE_SYSTEM_PROMPT
+        + "\n\nISSUE:\nx\n\nCODE CONTEXT:\ny\n\nROUND: 2"
+    )
     prompt_b = build_variant_b(prompt_a)
     assert MARKER_SPAN not in prompt_b
     assert len(prompt_a) - len(prompt_b) == len(MARKER_SPAN)
@@ -115,7 +125,7 @@ def test_dry_run_plan_builds_all_subjects() -> None:
 def test_replay_inputs_are_faithful_to_wave1_archive() -> None:
     for task_id in SUBJECTS:
         prompt, history = load_builder_turn(task_id)
-        assert prompt.startswith(ROLE_SYSTEM_PROMPT)
+        assert prompt.startswith(WAVE1_ROLE_SYSTEM_PROMPT)
         assert isinstance(history, list) and history
         assert MARKER_SPAN in prompt
 

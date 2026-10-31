@@ -2,11 +2,11 @@
  "task": "psf__requests-1142",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T08:13:32.017444+00:00",
+ "ts": "2026-10-31T12:43:46.180889+00:00",
  "base_ref": "22623bd8c265b78b161542663ee980738441c307",
  "agent": {
-  "ok": false,
-  "reason": "debate produced no complete SEARCH/REPLACE blocks",
+  "ok": true,
+  "reason": "",
   "files": [
    "requests/packages/charade/hebrewprober.py",
    "requests/packages/urllib3/request.py",
@@ -14,154 +14,237 @@
    "requests/utils.py",
    "requests/cookies.py"
   ],
-  "localize_ms": 1120,
+  "localize_ms": 939,
   "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 2,
+  "applied_file": "requests/packages/urllib3/request.py",
+  "applied_files": [
+   "requests/packages/urllib3/request.py"
+  ],
   "red_rel": "test_repro_e401728e8b83.py",
+  "local_violations": [],
   "debate": {
    "rounds_used": 2,
    "converged": false,
-   "score": 0.3333333333333333,
-   "duration_ms": 334320
+   "score": 0.5833333333333334,
+   "duration_ms": 587410
   }
  },
  "usage": {
-  "prompt_tokens": 53941,
-  "completion_tokens": 57202,
-  "total_tokens": 111143,
+  "prompt_tokens": 70674,
+  "completion_tokens": 93205,
+  "total_tokens": 163879,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
     "prompt_tokens": 10536,
-    "completion_tokens": 3975,
-    "total_tokens": 14511,
+    "completion_tokens": 2235,
+    "total_tokens": 12771,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
     "prompt_tokens": 4396,
-    "completion_tokens": 1093,
-    "total_tokens": 5489,
+    "completion_tokens": 1089,
+    "total_tokens": 5485,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 13660,
-    "completion_tokens": 3207,
-    "total_tokens": 16867,
+    "prompt_tokens": 13597,
+    "completion_tokens": 13537,
+    "total_tokens": 27134,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 316,
-    "completion_tokens": 841,
-    "total_tokens": 1157,
+    "prompt_tokens": 1256,
+    "completion_tokens": 4033,
+    "total_tokens": 5289,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 308,
-    "completion_tokens": 827,
-    "total_tokens": 1135,
+    "prompt_tokens": 1379,
+    "completion_tokens": 788,
+    "total_tokens": 2167,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 645,
-    "completion_tokens": 1652,
-    "total_tokens": 2297,
+    "prompt_tokens": 1716,
+    "completion_tokens": 27040,
+    "total_tokens": 28756,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 602,
-    "completion_tokens": 2662,
-    "total_tokens": 3264,
+    "prompt_tokens": 1443,
+    "completion_tokens": 4554,
+    "total_tokens": 5997,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 4889,
-    "completion_tokens": 1935,
-    "total_tokens": 6824,
+    "prompt_tokens": 5729,
+    "completion_tokens": 1977,
+    "total_tokens": 7706,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 14153,
-    "completion_tokens": 2755,
-    "total_tokens": 16908,
+    "prompt_tokens": 14957,
+    "completion_tokens": 8663,
+    "total_tokens": 23620,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 809,
-    "completion_tokens": 2085,
-    "total_tokens": 2894,
+    "prompt_tokens": 3324,
+    "completion_tokens": 3742,
+    "total_tokens": 7066,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 801,
-    "completion_tokens": 1452,
-    "total_tokens": 2253,
+    "prompt_tokens": 3528,
+    "completion_tokens": 325,
+    "total_tokens": 3853,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1138,
-    "completion_tokens": 973,
-    "total_tokens": 2111,
+    "prompt_tokens": 3865,
+    "completion_tokens": 19072,
+    "total_tokens": 22937,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1095,
-    "completion_tokens": 977,
-    "total_tokens": 2072,
+    "prompt_tokens": 3123,
+    "completion_tokens": 2541,
+    "total_tokens": 5664,
     "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 593,
-    "completion_tokens": 32768,
-    "total_tokens": 33361,
-    "finish_reason": "length"
+    "prompt_tokens": 1825,
+    "completion_tokens": 3609,
+    "total_tokens": 5434,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-green-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 14468,
+    "completion_tokens": 14028,
+    "total_tokens": 28496,
+    "finish_reason": "stop"
    }
   ]
  },
  "evidence": {
   "language": "python",
-  "collect": false,
-  "freeze": false,
+  "collect": true,
+  "freeze": true,
   "debate_prompts": true
  },
- "status": "failed",
- "reason": "debate produced no complete SEARCH/REPLACE blocks",
- "done": true,
+ "diff_sha256": "a81b36a06bf142573e5bd2003cac61643dad276e08b37bc116bcce75f0f41515",
  "red": {
   "rel": "test_repro_e401728e8b83.py",
-  "sha256": "9df80e9f6ca5223f02233e62bb3e78fc792afb6bf4cfdce1077202c20704f608",
+  "sha256": "5d6d2799c8431c7b918c40f103b117c9778a4622dca58a9cb1629958d87cc1d0",
   "exit_code": 1,
   "timed_out": false,
   "accepted": true,
   "reason": "red accepted (1 failure(s), 0 errors)",
   "failures": 1,
   "errors": 0,
-  "junit_bytes": 1142,
-  "junit_sha256": "60c04b5953d49b84fa7911714c8903fbda2a970290c030c16cea9902f6fb3f7d"
- }
+  "junit_bytes": 741,
+  "junit_sha256": "51afd1d3f1e66fe88d4ae34b500eebd6bb1989605e4186b2d2bf2fcfac2f8cc0"
+ },
+ "guard": {
+  "task": "psf__requests-1142",
+  "mode": "B",
+  "binding": true,
+  "verdict": "clean",
+  "violations": []
+ },
+ "junit_sha256": "e0a255d7b2056b2e4d67d26185d8a46c8ce723003a78afc48f86e98544ac6f83",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "test_requests.py::RequestsTestCase::test_no_content_length": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "test_requests.py::RequestsTestCase::test_basic_building": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "test_requests.py::RequestsTestCase::test_entry_points": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "test_requests.py::RequestsTestCase::test_invalid_url": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "test_requests.py::RequestsTestCase::test_no_content_length"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "test_requests.py::RequestsTestCase::test_basic_building",
+   "test_requests.py::RequestsTestCase::test_entry_points",
+   "test_requests.py::RequestsTestCase::test_invalid_url",
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment",
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "green_retry": {
+  "attempted": true,
+  "completed": false,
+  "reason": "retry patch breaks test collection",
+  "first": "f2p-not-fixed:1"
+ },
+ "status": "failed",
+ "reason": "f2p-not-fixed:1",
+ "done": true
 }

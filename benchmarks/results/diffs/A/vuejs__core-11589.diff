@@ -1,0 +1,23 @@
+diff --git a/packages/reactivity/src/effect.ts b/packages/reactivity/src/effect.ts
+index 6b18318..1accecf 100644
+--- a/packages/reactivity/src/effect.ts
++++ b/packages/reactivity/src/effect.ts
+@@ -174,8 +174,16 @@ export class ReactiveEffect<T = any>
+     }
+     if (!(this.flags & EffectFlags.NOTIFIED)) {
+       this.flags |= EffectFlags.NOTIFIED
+-      this.nextEffect = batchedEffect
+-      batchedEffect = this
++      this.nextEffect = undefined
++      if (batchedEffect) {
++        let tail = batchedEffect
++        while (tail.nextEffect) {
++          tail = tail.nextEffect
++        }
++        tail.nextEffect = this
++      } else {
++        batchedEffect = this
++      }
+     }
+   }
+ 

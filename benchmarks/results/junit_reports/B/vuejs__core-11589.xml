@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="80" failures="2" errors="0" time="2.219">
-    <testsuite name="packages/runtime-core/__tests__/apiWatch.spec.ts" timestamp="2026-10-31T09:07:15.390Z" hostname="d3bd8cc19d60" tests="79" failures="1" errors="0" skipped="0" time="0.105">
+<testsuites name="vitest tests" tests="80" failures="0" errors="0" time="2.086">
+    <testsuite name="packages/runtime-core/__tests__/apiWatch.spec.ts" timestamp="2026-10-31T13:29:43.527Z" hostname="223a176afdf8" tests="79" failures="0" errors="0" skipped="0" time="0.092">
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect" time="0.004">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: getter" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: ref" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: ref" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: array" time="0.003">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not call functions inside a reactive source array" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not call functions inside a reactive source array" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not unwrap refs in a reactive source array" time="0.002">
         </testcase>
@@ -19,17 +19,17 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching primitive with deep: true" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object (with automatic deep: true)" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object (with automatic deep: true)" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object with explicit deep: false" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive array with explicit deep: false" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive array with explicit deep: false" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching shallow reactive array with deep: false" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should still respect deep: true on shallowReactive source" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should still respect deep: true on shallowReactive source" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources" time="0">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: undefined initial values and immediate: true" time="0.001">
         </testcase>
@@ -49,7 +49,7 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; cleanup registration (with source)" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: pre (default)" time="0.006">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: pre (default)" time="0.005">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: post" time="0.002">
         </testcase>
@@ -71,29 +71,29 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre triggered in component setup should be buffered and called before mounted" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: post watcher should fire after template refs updated" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: post watcher should fire after template refs updated" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep" time="0.003">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching deep ref" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching deep ref" time="0">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep with symbols" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is null" time="0">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is undefined" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn immediate option when using effect" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn immediate option when using effect" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn and not respect deep option when using effect" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn and not respect deep option when using effect" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; onTrack" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; onTrack" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; onTrigger" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; onTrigger" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should work sync" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should work sync" time="0">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should force trigger on triggerRef when watching a shallow ref" time="0">
         </testcase>
@@ -115,9 +115,9 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching keypath" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching sources: ref&lt;any[]&gt;" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching sources: ref&lt;any[]&gt;" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: computed" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: computed" time="0">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watch should not register in owner component if created inside detached scope" time="0.001">
         </testcase>
@@ -145,9 +145,9 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; shallowReactive" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive with deep: false" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive with deep: false" time="0.004">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect should be removed from scope&apos;s effects after it is stopped" time="0.004">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect should be removed from scope&apos;s effects after it is stopped" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; sync watcher should not be batched" time="0">
         </testcase>
@@ -155,41 +155,13 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; circular reference" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watch immediate error in effect scope should be catched by onErrorCaptured" time="0.003">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watch immediate error in effect scope should be catched by onErrorCaptured" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should be executed correctly" time="0.011">
-            <failure message="expected &apos;21&apos; to be &apos;12&apos; // Object.is equality" type="AssertionError">
-AssertionError: expected &apos;21&apos; to be &apos;12&apos; // Object.is equality
-
-Expected: &quot;12&quot;
-Received: &quot;21&quot;
-
- ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1885:17
-            </failure>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should be executed correctly" time="0.001">
         </testcase>
     </testsuite>
-    <testsuite name="packages/runtime-core/__tests__/repro-6b02d58382c1.test.ts" timestamp="2026-10-31T09:07:15.412Z" hostname="d3bd8cc19d60" tests="1" failures="1" errors="0" skipped="0" time="0.015">
-        <testcase classname="packages/runtime-core/__tests__/repro-6b02d58382c1.test.ts" name="sync watcher execution order &gt; executes sync watchers in definition order (FIFO) for ref and computed" time="0.014">
-            <failure message="expected [ 4, 3, 2, 1, +0 ] to deeply equal [ +0, 1, 2, 3, 4 ]" type="AssertionError">
-AssertionError: expected [ 4, 3, 2, 1, +0 ] to deeply equal [ +0, 1, 2, 3, 4 ]
-
-- Expected
-+ Received
-
-  Array [
--   0,
--   1,
--   2,
--   3,
-    4,
-+   3,
-+   2,
-+   1,
-+   0,
-  ]
-
- ❯ packages/runtime-core/__tests__/repro-6b02d58382c1.test.ts:18:22
-            </failure>
+    <testsuite name="packages/runtime-core/__tests__/repro-6b02d58382c1.test.ts" timestamp="2026-10-31T13:29:43.544Z" hostname="223a176afdf8" tests="1" failures="0" errors="0" skipped="0" time="0.006">
+        <testcase classname="packages/runtime-core/__tests__/repro-6b02d58382c1.test.ts" name="sync watcher order on computed &gt; triggers sync watchers in definition order (FIFO)" time="0.005">
         </testcase>
     </testsuite>
 </testsuites>

@@ -1,0 +1,45 @@
+src/_pytest/reports.py
+<<<<<<< SEARCH
+            "sections": rep.sections,
+        }
+        return data
+=======
+            "sections": rep.sections,
+        }
+        if hasattr(rep, "chain"):
+            data["chain"] = []
+            for reprtraceback, reprcrash, descr in rep.chain:
+                data["chain"].append(
+                    (
+                        serialize_repr_traceback(reprtraceback),
+                        serialize_repr_crash(reprcrash),
+                        descr,
+                    )
+                )
+        return data
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        exception_info = ReprExceptionInfo(reprtraceback, reprcrash)
+=======
+        if data.get("chain"):
+            from _pytest._code.code import ExceptionChainRepr
+
+            chain = []
+            for reprtraceback_data, reprcrash_data, descr in data["chain"]:
+                chain.append(
+                    (
+                        deserialize_repr_traceback(reprtraceback_data),
+                        deserialize_repr_crash(reprcrash_data),
+                        descr,
+                    )
+                )
+            try:
+                exception_info = ExceptionChainRepr(
+                    chain, reprtraceback, reprcrash
+                )
+            except TypeError:
+                exception_info = ExceptionChainRepr(chain)
+        else:
+            exception_info = ReprExceptionInfo(reprtraceback, reprcrash)
+>>>>>>> REPLACE

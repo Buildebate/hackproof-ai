@@ -1,97 +1,46 @@
-packages/runtime-core/__tests__/apiWatch.spec.ts
+packages/reactivity/src/dep.ts
 <<<<<<< SEARCH
-describe('api: watch', () => {
+      for (let link = this.subs; link; link = link.prevSub) {
 =======
-describe('api: watch', () => {
-  test('sync edge 1: watch(null) does not fire when parent ref is triggered', () => {
-    const parent = ref(0)
-    const cb = vi.fn()
-    watch(null as any, cb, { flush: 'sync' })
-    expect('Invalid watch source').toHaveBeenWarned()
-    parent.value++
-    expect(cb).not.toHaveBeenCalled()
-  })
-
-  test('sync edge 2: watch([]) with zero sources does not fire on computed change', () => {
-    const n = ref(0)
-    const c = computed(() => n.value)
-    const cb = vi.fn()
-    watch([], cb, { flush: 'sync' })
-    n.value++
-    expect(c.value).toBe(1)
-    expect(cb).not.toHaveBeenCalled()
-  })
-
-  test('sync edge 3: computed number vs string type mismatch is a change', () => {
-    const n = ref(1)
-    const cb = vi.fn()
-    watch(computed(() => n.value as any), cb, { flush: 'sync' })
-    n.value = '1' as any
-    expect(cb).toHaveBeenCalledTimes(1)
-    expect(cb).toHaveBeenCalledWith('1', 1, expect.any(Function))
-    n.value = 1 as any
-    expect(cb).toHaveBeenCalledTimes(2)
-    expect(cb).toHaveBeenLastCalledWith(1, '1', expect.any(Function))
-  })
-
-  test('sync edge 4a: single sync watcher on computed, first-is-last, fires once', () => {
-    const n = ref(0)
-    const c = computed(() => n.value * 2)
-    const cb = vi.fn()
-    watch(c, cb, { flush: 'sync' })
-    n.value++
-    expect(cb).toHaveBeenCalledTimes(1)
-    expect(cb).toHaveBeenCalledWith(2, 0, expect.any(Function))
-  })
-
-  test('sync edge 4b: 5 sync watchers on computed each fire once', () => {
-    const n = ref(0)
-    const c = computed(() => n.value * 2)
-    const cbs = Array.from({ length: 5 }, () => vi.fn())
-    cbs.forEach(cb => watch(c, cb, { flush: 'sync' }))
-    n.value++
-    cbs.forEach(cb => {
-      expect(cb).toHaveBeenCalledTimes(1)
-      expect(cb).toHaveBeenCalledWith(2, 0, expect.any(Function))
-    })
-  })
-
-  test('sync edge 5: empty-string to unicode value is a change', () => {
-    const s = ref('')
-    const cb = vi.fn()
-    watch(computed(() => s.value), cb, { flush: 'sync' })
-    s.value = '\u0000\ud83d\ude00'
-    expect(cb).toHaveBeenCalledTimes(1)
-    expect(cb).toHaveBeenCalledWith(
-      '\u0000\ud83d\ude00',
-      '',
-      expect.any(Function),
-    )
-    s.value = ''
-    expect(cb).toHaveBeenCalledTimes(2)
-    expect(cb).toHaveBeenLastCalledWith(
-      '',
-      '\u0000\ud83d\ude00',
-      expect.any(Function),
-    )
-  })
-
-  test('sync edge 6: nested n.value++ in sync callback re-enters in order', () => {
-    const n = ref(0)
-    const seen: number[] = []
-    watch(
-      () => n.value,
-      v => {
-        seen.push(v)
-        if (v < 2) {
-          n.value++
-        }
-      },
-      { flush: 'sync' },
-    )
-    n.value++
-    expect(seen).toEqual([1, 2])
-    expect(n.value).toBe(2)
-  })
-
+      const links: Link[] = []
+      for (let link = this.subs; link; link = link.prevSub) {
+        links.push(link)
+      }
+      for (let i = links.length - 1; i >= 0; i--) {
+        const link = links[i]!
+>>>>>>> REPLACE
+packages/reactivity/src/effect.ts
+<<<<<<< SEARCH
+let batchedSub: Subscriber | undefined
+let batchedComputed: Subscriber | undefined
+=======
+let batchedSub: Subscriber | undefined
+let batchedSubTail: Subscriber | undefined
+let batchedComputed: Subscriber | undefined
+>>>>>>> REPLACE
+packages/reactivity/src/effect.ts
+<<<<<<< SEARCH
+  while (batchedSub) {
+    let e: Subscriber | undefined = batchedSub
+    batchedSub = undefined
+=======
+  while (batchedSub) {
+    let e: Subscriber | undefined = batchedSub
+    batchedSub = undefined
+    batchedSubTail = undefined
+>>>>>>> REPLACE
+packages/reactivity/src/effect.ts
+<<<<<<< SEARCH
+  sub.next = batchedSub
+  batchedSub = sub
+}
+=======
+  sub.next = undefined
+  if (batchedSub && batchedSubTail) {
+    batchedSubTail.next = sub
+  } else {
+    batchedSub = sub
+  }
+  batchedSubTail = sub
+}
 >>>>>>> REPLACE

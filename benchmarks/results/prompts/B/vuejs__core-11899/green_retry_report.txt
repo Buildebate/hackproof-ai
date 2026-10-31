@@ -1,0 +1,3 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [F2P] packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment (base=failed agent=failed):
+  expected 'h1 {\n&[data-v-test] {\ncolor: red\n}…' to match 'h1 {\n&[data-v-test] {\ncolor: red\n/…'

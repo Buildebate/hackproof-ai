@@ -1,13 +1,67 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.061" timestamp="2026-10-31T08:17:55.978510+00:00" hostname="01c0213ad7db"><testcase classname="tests.test_repro_7abca3f4919a" name="test_leading_dot_host_raises_invalid_url" time="0.001"><failure message="AssertionError: expected InvalidURL for http://.example.com, got no exception&#10;assert False">def test_leading_dot_host_raises_invalid_url():
-        req = requests.PreparedRequest()
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.141" timestamp="2026-10-31T12:52:49.635283+00:00" hostname="4f8514416829"><testcase classname="tests.test_repro_7abca3f4919a" name="test_dot_leading_host_raises_invalid_url" time="0.004"><failure message="AssertionError: Expected InvalidURL, got LocationParseError: Failed to parse: '.example.com', label empty or too long&#10;assert False">def test_dot_leading_host_raises_invalid_url():
         try:
-            req.prepare_url("http://.example.com", None)
+&gt;           requests.get("http://.example.com", timeout=5)
+
+tests/test_repro_7abca3f4919a.py:7: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/api.py:75: in get
+    return request('get', url, params=params, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+requests/api.py:61: in request
+    return session.request(method=method, url=url, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+requests/sessions.py:529: in request
+    resp = self.send(prep, **send_kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+requests/sessions.py:645: in send
+    r = adapter.send(request, **kwargs)
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+requests/adapters.py:440: in send
+    resp = conn.urlopen(
+.bench-venv/lib/python3.11/site-packages/urllib3/connectionpool.py:716: in urlopen
+    httplib_response = self._make_request(
+.bench-venv/lib/python3.11/site-packages/urllib3/connectionpool.py:416: in _make_request
+    conn.request(method, url, **httplib_request_kw)
+.bench-venv/lib/python3.11/site-packages/urllib3/connection.py:244: in request
+    super(HTTPConnection, self).request(method, url, body=body, headers=headers)
+/usr/local/lib/python3.11/http/client.py:1351: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+/usr/local/lib/python3.11/http/client.py:1397: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+/usr/local/lib/python3.11/http/client.py:1346: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+/usr/local/lib/python3.11/http/client.py:1106: in _send_output
+    self.send(msg)
+/usr/local/lib/python3.11/http/client.py:1044: in send
+    self.connect()
+.bench-venv/lib/python3.11/site-packages/urllib3/connection.py:205: in connect
+    conn = self._new_conn()
+           ^^^^^^^^^^^^^^^^
+.bench-venv/lib/python3.11/site-packages/urllib3/connection.py:174: in _new_conn
+    conn = connection.create_connection(
+.bench-venv/lib/python3.11/site-packages/urllib3/util/connection.py:68: in create_connection
+    return six.raise_from(
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+value = None, from_value = None
+
+&gt;   ???
+E   urllib3.exceptions.LocationParseError: Failed to parse: '.example.com', label empty or too long
+
+&lt;string&gt;:3: LocationParseError
+
+During handling of the above exception, another exception occurred:
+
+    def test_dot_leading_host_raises_invalid_url():
+        try:
+            requests.get("http://.example.com", timeout=5)
         except InvalidURL:
             return
         except UnicodeError as e:
-            assert False, f"expected InvalidURL, got UnicodeError: {e}"
-&gt;       assert False, "expected InvalidURL for http://.example.com, got no exception"
-E       AssertionError: expected InvalidURL for http://.example.com, got no exception
-E       assert False
+            assert False, f"Expected InvalidURL, got UnicodeError: {e}"
+        except Exception as e:
+&gt;           assert False, f"Expected InvalidURL, got {type(e).__name__}: {e}"
+E           AssertionError: Expected InvalidURL, got LocationParseError: Failed to parse: '.example.com', label empty or too long
+E           assert False
 
 tests/test_repro_7abca3f4919a.py:13: AssertionError</failure></testcase></testsuite></testsuites>

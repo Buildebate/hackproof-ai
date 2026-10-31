@@ -2,11 +2,11 @@
  "task": "vuejs__core-11589",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:48:18.572138+00:00",
+ "ts": "2026-10-31T14:13:38.325872+00:00",
  "base_ref": "3653bc0f45d6fedf84e29b64ca52584359c383c0",
  "agent": {
-  "ok": false,
-  "reason": "no complete SEARCH/REPLACE blocks",
+  "ok": true,
+  "reason": "",
   "files": [
    "packages/runtime-core/src/apiSetupHelpers.ts",
    "packages/compiler-core/src/compat/compatConfig.ts",
@@ -14,20 +14,33 @@
    "packages/compiler-core/src/options.ts",
    "packages/runtime-core/src/scheduler.ts"
   ],
-  "localize_ms": 3125,
-  "backend": "hybrid-rrf-hash-cpu"
+  "localize_ms": 3967,
+  "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 1,
+  "applied_file": "packages/reactivity/src/effect.ts",
+  "applied_files": [
+   "packages/reactivity/src/effect.ts"
+  ]
  },
  "usage": {
-  "prompt_tokens": 14853,
-  "completion_tokens": 464,
-  "total_tokens": 15317,
+  "prompt_tokens": 30159,
+  "completion_tokens": 30864,
+  "total_tokens": 61023,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 14853,
-    "completion_tokens": 464,
-    "total_tokens": 15317,
+    "prompt_tokens": 14846,
+    "completion_tokens": 21595,
+    "total_tokens": 36441,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15313,
+    "completion_tokens": 9269,
+    "total_tokens": 24582,
     "finish_reason": "stop"
    }
   ]
@@ -38,7 +51,509 @@
   "freeze": false,
   "debate_prompts": false
  },
+ "diff_sha256": "671b8679a5c00a65e231a64880a9a1a30335c6080b89e2a5e23711af07275c47",
+ "guard": {
+  "task": "vuejs__core-11589",
+  "mode": "A",
+  "binding": false,
+  "verdict": "clean",
+  "violations": [],
+  "note": "post-hoc measurement; does not gate Mode A"
+ },
+ "junit_sha256": "efed40e422474937b1b9a372205a3b636349b790ebfbc930a23989d2b9eb5b55",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should be executed correctly": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > effect": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: getter": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: ref": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: array": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not call functions inside a reactive source array": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not unwrap refs in a reactive source array": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire if watched getter result did not change": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: computed ref": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching primitive with deep: true": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive object (with automatic deep: true)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive object with explicit deep: false": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive array with explicit deep: false": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching shallow reactive array with deep: false": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should still respect deep: true on shallowReactive source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: undefined initial values and immediate: true": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: readonly array": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: reactive object (with automatic deep: true)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn invalid watch source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn invalid watch source: multiple sources": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > stopping the watcher (effect)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > stopping the watcher (with source)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > cleanup registration (effect)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > cleanup registration (with source)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: pre (default)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: post": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchPostEffect": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: sync": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchSyncEffect": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire on component unmount w/ flush: post": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire on component unmount w/ flush: pre": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire on child component unmount w/ flush: pre": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre watcher in child component should not fire before parent update": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre watcher watching props should fire before child update": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre triggered in component setup should be buffered and called before mounted": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: post watcher should fire after template refs updated": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > deep": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching deep ref": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > deep with symbols": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > immediate": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > immediate: triggers when initial value is null": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > immediate: triggers when initial value is undefined": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn immediate option when using effect": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn and not respect deep option when using effect": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > onTrack": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > onTrigger": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should work sync": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should force trigger on triggerRef when watching a shallow ref": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should force trigger on triggerRef when watching multiple sources: shallow ref array": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should force trigger on triggerRef with toRef from reactive": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchEffect should not recursively trigger itself": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > computed refs should not trigger watch if value has no change": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > $watch should always register its effects with its own instance": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > this.$watch should pass `this.proxy` to watch source as the first argument": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not leak `this.proxy` to setup()": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > pre watcher callbacks should not track dependencies": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching keypath": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: computed": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watch should not register in owner component if created inside detached scope": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchEffect should keep running if created in a detached scope": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch'": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with deep'": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with flush: s\u2026'": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with flush: p\u2026'": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with immediate'": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > OnCleanup also needs to be cleaned\uff0c": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching reactive depth": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching ref depth": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching array depth": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > pause / resume": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > shallowReactive": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching reactive with deep: false": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > effect should be removed from scope's effects after it is stopped": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > sync watcher should not be batched": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchEffect should not fire on computed deps that did not change": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > circular reference": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watch immediate error in effect scope should be catched by onErrorCaptured": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should be executed correctly"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > effect",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: getter",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: ref",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: array",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not call functions inside a reactive source array",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not unwrap refs in a reactive source array",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire if watched getter result did not change",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: computed ref",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching primitive with deep: true",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive object (with automatic deep: true)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive object with explicit deep: false",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive array with explicit deep: false",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching shallow reactive array with deep: false",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should still respect deep: true on shallowReactive source",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: undefined initial values and immediate: true",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: readonly array",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: reactive object (with automatic deep: true)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn invalid watch source",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn invalid watch source: multiple sources",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > stopping the watcher (effect)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > stopping the watcher (with source)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > cleanup registration (effect)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > cleanup registration (with source)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: pre (default)",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: post",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchPostEffect",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: sync",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchSyncEffect",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire on component unmount w/ flush: post",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire on component unmount w/ flush: pre",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire on child component unmount w/ flush: pre",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre watcher in child component should not fire before parent update",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre watcher watching props should fire before child update",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre triggered in component setup should be buffered and called before mounted",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: post watcher should fire after template refs updated",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > deep",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching deep ref",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > deep with symbols",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > immediate",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > immediate: triggers when initial value is null",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > immediate: triggers when initial value is undefined",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn immediate option when using effect",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > warn and not respect deep option when using effect",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > onTrack",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > onTrigger",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should work sync",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should force trigger on triggerRef when watching a shallow ref",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should force trigger on triggerRef when watching multiple sources: shallow ref array",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should force trigger on triggerRef with toRef from reactive",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchEffect should not recursively trigger itself",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > computed refs should not trigger watch if value has no change",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > $watch should always register its effects with its own instance",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > this.$watch should pass `this.proxy` to watch source as the first argument",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not leak `this.proxy` to setup()",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > pre watcher callbacks should not track dependencies",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching keypath",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: computed",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watch should not register in owner component if created inside detached scope",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchEffect should keep running if created in a detached scope",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch'",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with deep'",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with flush: s\u2026'",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with flush: p\u2026'",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > 'only trigger once watch with immediate'",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > OnCleanup also needs to be cleaned\uff0c",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching reactive depth",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching ref depth",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching array depth",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > pause / resume",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > shallowReactive",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching reactive with deep: false",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > effect should be removed from scope's effects after it is stopped",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > sync watcher should not be batched",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchEffect should not fire on computed deps that did not change",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > circular reference",
+   "packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watch immediate error in effect scope should be catched by onErrorCaptured"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
  "status": "failed",
- "reason": "no complete SEARCH/REPLACE blocks",
+ "reason": "f2p-not-fixed:1",
  "done": true
 }

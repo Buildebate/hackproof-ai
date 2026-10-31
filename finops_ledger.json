@@ -1,6 +1,6 @@
 {
   "budget_usd": 150.0,
-  "total_spent_usd": 43.2,
+  "total_spent_usd": 64.96,
   "entries": [
     {
       "ts": "2026-10-30T04:11:08.685381+00:00",
@@ -3364,6 +3364,1272 @@
           "completion_tokens": 32768,
           "total_tokens": 48428,
           "finish_reason": "length"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T12:46:02.041112+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-1142:B",
+      "rounds_used": 2,
+      "converged": false,
+      "prompt_tokens": 85142,
+      "completion_tokens": 107233,
+      "total_tokens": 192375,
+      "est_cost_usd": 1.9284202,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 10536,
+          "completion_tokens": 2235,
+          "total_tokens": 12771,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 4396,
+          "completion_tokens": 1089,
+          "total_tokens": 5485,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13597,
+          "completion_tokens": 13537,
+          "total_tokens": 27134,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1256,
+          "completion_tokens": 4033,
+          "total_tokens": 5289,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1379,
+          "completion_tokens": 788,
+          "total_tokens": 2167,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1716,
+          "completion_tokens": 27040,
+          "total_tokens": 28756,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1443,
+          "completion_tokens": 4554,
+          "total_tokens": 5997,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 5729,
+          "completion_tokens": 1977,
+          "total_tokens": 7706,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14957,
+          "completion_tokens": 8663,
+          "total_tokens": 23620,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3324,
+          "completion_tokens": 3742,
+          "total_tokens": 7066,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3528,
+          "completion_tokens": 325,
+          "total_tokens": 3853,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 3865,
+          "completion_tokens": 19072,
+          "total_tokens": 22937,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3123,
+          "completion_tokens": 2541,
+          "total_tokens": 5664,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1825,
+          "completion_tokens": 3609,
+          "total_tokens": 5434,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-green-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14468,
+          "completion_tokens": 14028,
+          "total_tokens": 28496,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T12:51:50.593517+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-2931:B",
+      "rounds_used": 2,
+      "converged": true,
+      "prompt_tokens": 34929,
+      "completion_tokens": 53893,
+      "total_tokens": 88822,
+      "est_cost_usd": 0.7766801,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 6795,
+          "completion_tokens": 2248,
+          "total_tokens": 9043,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2885,
+          "completion_tokens": 1436,
+          "total_tokens": 4321,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 7109,
+          "completion_tokens": 13868,
+          "total_tokens": 20977,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 337,
+          "completion_tokens": 2463,
+          "total_tokens": 2800,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 329,
+          "completion_tokens": 876,
+          "total_tokens": 1205,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 676,
+          "completion_tokens": 14167,
+          "total_tokens": 14843,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 622,
+          "completion_tokens": 7923,
+          "total_tokens": 8545,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3442,
+          "completion_tokens": 1454,
+          "total_tokens": 4896,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 7666,
+          "completion_tokens": 2261,
+          "total_tokens": 9927,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1000,
+          "completion_tokens": 1285,
+          "total_tokens": 2285,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 992,
+          "completion_tokens": 472,
+          "total_tokens": 1464,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1339,
+          "completion_tokens": 4318,
+          "total_tokens": 5657,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1131,
+          "completion_tokens": 657,
+          "total_tokens": 1788,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 606,
+          "completion_tokens": 465,
+          "total_tokens": 1071,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T13:00:50.368448+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-5414:B",
+      "rounds_used": 2,
+      "converged": false,
+      "prompt_tokens": 39014,
+      "completion_tokens": 81127,
+      "total_tokens": 120141,
+      "est_cost_usd": 1.0154164,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 7177,
+          "completion_tokens": 8994,
+          "total_tokens": 16171,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3371,
+          "completion_tokens": 1213,
+          "total_tokens": 4584,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 7852,
+          "completion_tokens": 16197,
+          "total_tokens": 24049,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 632,
+          "completion_tokens": 7196,
+          "total_tokens": 7828,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 640,
+          "completion_tokens": 1459,
+          "total_tokens": 2099,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 962,
+          "completion_tokens": 11154,
+          "total_tokens": 12116,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 726,
+          "completion_tokens": 4419,
+          "total_tokens": 5145,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3987,
+          "completion_tokens": 862,
+          "total_tokens": 4849,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 8468,
+          "completion_tokens": 13399,
+          "total_tokens": 21867,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 998,
+          "completion_tokens": 4335,
+          "total_tokens": 5333,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 993,
+          "completion_tokens": 449,
+          "total_tokens": 1442,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1315,
+          "completion_tokens": 5341,
+          "total_tokens": 6656,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1202,
+          "completion_tokens": 5732,
+          "total_tokens": 6934,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 691,
+          "completion_tokens": 377,
+          "total_tokens": 1068,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T13:12:21.385233+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-6028:B",
+      "rounds_used": 2,
+      "converged": false,
+      "prompt_tokens": 92845,
+      "completion_tokens": 103224,
+      "total_tokens": 196069,
+      "est_cost_usd": 1.9595815,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 8309,
+          "completion_tokens": 3579,
+          "total_tokens": 11888,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 4064,
+          "completion_tokens": 1605,
+          "total_tokens": 5669,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15508,
+          "completion_tokens": 31326,
+          "total_tokens": 46834,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2435,
+          "completion_tokens": 2818,
+          "total_tokens": 5253,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2516,
+          "completion_tokens": 768,
+          "total_tokens": 3284,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 2833,
+          "completion_tokens": 9692,
+          "total_tokens": 12525,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2177,
+          "completion_tokens": 1752,
+          "total_tokens": 3929,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 6132,
+          "completion_tokens": 2745,
+          "total_tokens": 8877,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 17585,
+          "completion_tokens": 32768,
+          "total_tokens": 50353,
+          "finish_reason": "length"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3331,
+          "completion_tokens": 2740,
+          "total_tokens": 6071,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3371,
+          "completion_tokens": 500,
+          "total_tokens": 3871,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 3688,
+          "completion_tokens": 3557,
+          "total_tokens": 7245,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 3414,
+          "completion_tokens": 506,
+          "total_tokens": 3920,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1381,
+          "completion_tokens": 1738,
+          "total_tokens": 3119,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-green-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 16101,
+          "completion_tokens": 7130,
+          "total_tokens": 23231,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T13:14:34.860501+00:00",
+      "issue": "bench4.3c-wave2:pytest-dev__pytest-5787:B",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 17612,
+      "completion_tokens": 18966,
+      "total_tokens": 36578,
+      "est_cost_usd": 0.005554400000000001,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 8766,
+          "completion_tokens": 6678,
+          "total_tokens": 15444,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SparkRedSynthesis-retry",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 8846,
+          "completion_tokens": 12288,
+          "total_tokens": 21134,
+          "finish_reason": "length"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T13:29:49.438178+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11589:B",
+      "rounds_used": 2,
+      "converged": false,
+      "prompt_tokens": 108307,
+      "completion_tokens": 227974,
+      "total_tokens": 336281,
+      "est_cost_usd": 4.657873199999999,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 11692,
+          "completion_tokens": 2548,
+          "total_tokens": 14240,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 4806,
+          "completion_tokens": 1349,
+          "total_tokens": 6155,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15026,
+          "completion_tokens": 32768,
+          "total_tokens": 47794,
+          "finish_reason": "length"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 355,
+          "completion_tokens": 732,
+          "total_tokens": 1087,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 347,
+          "completion_tokens": 681,
+          "total_tokens": 1028,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 773,
+          "completion_tokens": 947,
+          "total_tokens": 1720,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 544,
+          "completion_tokens": 2045,
+          "total_tokens": 2589,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 5240,
+          "completion_tokens": 1670,
+          "total_tokens": 6910,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15452,
+          "completion_tokens": 26221,
+          "total_tokens": 41673,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 924,
+          "completion_tokens": 576,
+          "total_tokens": 1500,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 916,
+          "completion_tokens": 438,
+          "total_tokens": 1354,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1342,
+          "completion_tokens": 14464,
+          "total_tokens": 15806,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1230,
+          "completion_tokens": 1740,
+          "total_tokens": 2970,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 830,
+          "completion_tokens": 25445,
+          "total_tokens": 26275,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15026,
+          "completion_tokens": 32768,
+          "total_tokens": 47794,
+          "finish_reason": "length"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 773,
+          "completion_tokens": 947,
+          "total_tokens": 1720,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15452,
+          "completion_tokens": 26221,
+          "total_tokens": 41673,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1342,
+          "completion_tokens": 14464,
+          "total_tokens": 15806,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 830,
+          "completion_tokens": 25445,
+          "total_tokens": 26275,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15407,
+          "completion_tokens": 16505,
+          "total_tokens": 31912,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T13:43:22.438993+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11739:B",
+      "rounds_used": 2,
+      "converged": false,
+      "prompt_tokens": 112422,
+      "completion_tokens": 238195,
+      "total_tokens": 350617,
+      "est_cost_usd": 4.6937426,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 11858,
+          "completion_tokens": 12288,
+          "total_tokens": 24146,
+          "finish_reason": "length"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 4528,
+          "completion_tokens": 1118,
+          "total_tokens": 5646,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15153,
+          "completion_tokens": 32768,
+          "total_tokens": 47921,
+          "finish_reason": "length"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 305,
+          "completion_tokens": 428,
+          "total_tokens": 733,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 297,
+          "completion_tokens": 625,
+          "total_tokens": 922,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 725,
+          "completion_tokens": 5009,
+          "total_tokens": 5734,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 838,
+          "completion_tokens": 2664,
+          "total_tokens": 3502,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 5256,
+          "completion_tokens": 1810,
+          "total_tokens": 7066,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15889,
+          "completion_tokens": 32768,
+          "total_tokens": 48657,
+          "finish_reason": "length"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1041,
+          "completion_tokens": 416,
+          "total_tokens": 1457,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1033,
+          "completion_tokens": 353,
+          "total_tokens": 1386,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1461,
+          "completion_tokens": 2962,
+          "total_tokens": 4423,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 1568,
+          "completion_tokens": 1289,
+          "total_tokens": 2857,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 874,
+          "completion_tokens": 31510,
+          "total_tokens": 32384,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15153,
+          "completion_tokens": 32768,
+          "total_tokens": 47921,
+          "finish_reason": "length"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 725,
+          "completion_tokens": 5009,
+          "total_tokens": 5734,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15889,
+          "completion_tokens": 32768,
+          "total_tokens": 48657,
+          "finish_reason": "length"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1461,
+          "completion_tokens": 2962,
+          "total_tokens": 4423,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 874,
+          "completion_tokens": 31510,
+          "total_tokens": 32384,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 17494,
+          "completion_tokens": 7170,
+          "total_tokens": 24664,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T13:59:30.626451+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11899:B",
+      "rounds_used": 2,
+      "converged": false,
+      "prompt_tokens": 88283,
+      "completion_tokens": 151930,
+      "total_tokens": 240213,
+      "est_cost_usd": 2.7414169,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 10638,
+          "completion_tokens": 6469,
+          "total_tokens": 17107,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 4004,
+          "completion_tokens": 1039,
+          "total_tokens": 5043,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 16751,
+          "completion_tokens": 26417,
+          "total_tokens": 43168,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 845,
+          "completion_tokens": 7856,
+          "total_tokens": 8701,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 898,
+          "completion_tokens": 1074,
+          "total_tokens": 1972,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1326,
+          "completion_tokens": 18535,
+          "total_tokens": 19861,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 961,
+          "completion_tokens": 2916,
+          "total_tokens": 3877,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "EdgeScout",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 4855,
+          "completion_tokens": 3357,
+          "total_tokens": 8212,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 17648,
+          "completion_tokens": 30020,
+          "total_tokens": 47668,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "OccamsRazorCritic",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2444,
+          "completion_tokens": 3094,
+          "total_tokens": 5538,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "SignatureFactChecker",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2947,
+          "completion_tokens": 383,
+          "total_tokens": 3330,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "FormalAdversaryCritic",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 3375,
+          "completion_tokens": 17307,
+          "total_tokens": 20682,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ConsensusJudge",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 2637,
+          "completion_tokens": 702,
+          "total_tokens": 3339,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 1821,
+          "completion_tokens": 8367,
+          "total_tokens": 10188,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-green-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 17133,
+          "completion_tokens": 24394,
+          "total_tokens": 41527,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:01:46.271183+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-1142:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 27431,
+      "completion_tokens": 7265,
+      "total_tokens": 34696,
+      "est_cost_usd": 0.25502400000000003,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13515,
+          "completion_tokens": 4953,
+          "total_tokens": 18468,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13916,
+          "completion_tokens": 2312,
+          "total_tokens": 16228,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:02:39.316099+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-2931:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 7062,
+      "completion_tokens": 1737,
+      "total_tokens": 8799,
+      "est_cost_usd": 0.062988,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 7062,
+          "completion_tokens": 1737,
+          "total_tokens": 8799,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:04:37.851610+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-5414:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 7796,
+      "completion_tokens": 12194,
+      "total_tokens": 19990,
+      "est_cost_usd": 0.275064,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 7796,
+          "completion_tokens": 12194,
+          "total_tokens": 19990,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:05:23.135132+00:00",
+      "issue": "bench4.3c-wave2:psf__requests-6028:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 15361,
+      "completion_tokens": 953,
+      "total_tokens": 16314,
+      "est_cost_usd": 0.080504,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15361,
+          "completion_tokens": 953,
+          "total_tokens": 16314,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:06:49.024349+00:00",
+      "issue": "bench4.3c-wave2:pytest-dev__pytest-10081:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 14963,
+      "completion_tokens": 6119,
+      "total_tokens": 21082,
+      "est_cost_usd": 0.182232,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14963,
+          "completion_tokens": 6119,
+          "total_tokens": 21082,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:09:46.741390+00:00",
+      "issue": "bench4.3c-wave2:pytest-dev__pytest-5787:A",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 28692,
+      "completion_tokens": 28936,
+      "total_tokens": 57628,
+      "est_cost_usd": 0.693488,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13747,
+          "completion_tokens": 8490,
+          "total_tokens": 22237,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14945,
+          "completion_tokens": 20446,
+          "total_tokens": 35391,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:13:57.852410+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11589:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 30159,
+      "completion_tokens": 30864,
+      "total_tokens": 61023,
+      "est_cost_usd": 0.737916,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14846,
+          "completion_tokens": 21595,
+          "total_tokens": 36441,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15313,
+          "completion_tokens": 9269,
+          "total_tokens": 24582,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:17:30.398006+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11739:A",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 15023,
+      "completion_tokens": 32768,
+      "total_tokens": 47791,
+      "est_cost_usd": 0.715452,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15023,
+          "completion_tokens": 32768,
+          "total_tokens": 47791,
+          "finish_reason": "length"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:20:53.039858+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11870:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 27551,
+      "completion_tokens": 28700,
+      "total_tokens": 56251,
+      "est_cost_usd": 0.684204,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13594,
+          "completion_tokens": 19334,
+          "total_tokens": 32928,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13957,
+          "completion_tokens": 9366,
+          "total_tokens": 23323,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T14:22:43.791451+00:00",
+      "issue": "bench4.3c-wave2:vuejs__core-11899:A",
+      "rounds_used": 0,
+      "converged": true,
+      "prompt_tokens": 16598,
+      "completion_tokens": 11230,
+      "total_tokens": 27828,
+      "est_cost_usd": 0.290992,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "ArchitecturalBuilder-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 16598,
+          "completion_tokens": 11230,
+          "total_tokens": 27828,
+          "finish_reason": "stop"
         }
       ]
     }

@@ -27,6 +27,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -171,6 +172,12 @@ def wave_of(issue: object) -> str:
     if issue.startswith("bench4.2:"):
         return "bench4.2"
     if issue.startswith("bench4.3"):
+        parts = issue.split(":")
+        if len(parts) > 1 and parts[1] == "ablation":
+            return "bench4.3-ablation"
+        match = re.search(r"wave(\d+)", parts[0])
+        if match:
+            return f"bench4.3-wave{match.group(1)}"
         return "bench4.3-wave1"
     return "other"
 

@@ -39,7 +39,6 @@ sys.path.insert(0, str(PKG_ROOT / "src"))
 sys.path.insert(0, str(BENCH_DIR))
 
 from hackproof.debate.roles.architectural_builder import (  # noqa: E402
-    ROLE_SYSTEM_PROMPT,
     extract_blocks,
 )
 from hackproof.debate.roles.consensus_judge import verdict_marker  # noqa: E402
@@ -76,11 +75,28 @@ SUBJECTS = [
     "vuejs__core-11739",
 ]
 
-# The exact Step 4.3b.8 marker span inside ROLE_SYSTEM_PROMPT (the ONLY
-# ablated variable). Kept as a literal so drift fails loud instead of
-# silently ablating nothing.
+# The exact Step 4.3b.8 marker span inside the wave-1 builder prompt
+# (the ONLY ablated variable). Kept as a literal so drift fails loud
+# instead of silently ablating nothing.
 MARKER_SPAN = (
     " After the blocks, end your verdict with exactly one marker word on "
+    "its own final line: APPROVE if the patch is complete, or REVISE if "
+    "the context is insufficient to write one."
+)
+
+# Frozen wave-1 ArchitecturalBuilder role prompt (byte-identical to the
+# Step 4.3b.8 text the ablation replayed). Step 4.3c.1 removed the
+# marker sentences from the live prompt, so replay fidelity is pinned
+# to this literal — never to the evolving live prompt.
+WAVE1_ROLE_SYSTEM_PROMPT = (
+    "You are ArchitecturalBuilder, a System Two patch synthesizer in Active "
+    "Focus mode. Output exact SEARCH/REPLACE blocks "
+    "(<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no "
+    "line numbers, no prose, no markdown fences. Prefix each block with "
+    "its repo-relative target file path on its own line. Copy every "
+    "SEARCH block byte-for-byte from the shown CODE CONTEXT (exact "
+    "indentation and punctuation); never reconstruct code from memory. "
+    "After the blocks, end your verdict with exactly one marker word on "
     "its own final line: APPROVE if the patch is complete, or REVISE if "
     "the context is insufficient to write one."
 )
@@ -93,7 +109,8 @@ def load_builder_turn(task_id: str) -> tuple[str, list[dict]]:
     """Return the LAST archived builder (prompt, history) for a task.
 
     Fails loud when the wave-1 archive lacks the turn or the prompt no
-    longer starts with the role prompt (replay would be unfaithful).
+    longer starts with the frozen wave-1 role prompt (replay would be
+    unfaithful).
     """
     path = (
         BENCH_DIR / "results" / "prompts" / "B" / task_id / "debate_prompts.json"
@@ -106,10 +123,10 @@ def load_builder_turn(task_id: str) -> tuple[str, list[dict]]:
     if not builder:
         raise SystemExit(f"ablate: no ArchitecturalBuilder turn for {task_id}")
     prompt = builder[-1].get("prompt", "")
-    if not prompt.startswith(ROLE_SYSTEM_PROMPT):
+    if not prompt.startswith(WAVE1_ROLE_SYSTEM_PROMPT):
         raise SystemExit(
-            f"ablate: {task_id} archived prompt diverges from ROLE_SYSTEM_PROMPT; "
-            "replay would be unfaithful"
+            f"ablate: {task_id} archived prompt diverges from "
+            "WAVE1_ROLE_SYSTEM_PROMPT; replay would be unfaithful"
         )
     history = builder[-1].get("history", [])
     if not isinstance(history, list):

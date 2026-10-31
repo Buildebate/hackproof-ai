@@ -2,11 +2,11 @@
  "task": "pytest-dev__pytest-5787",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:46:16.204554+00:00",
+ "ts": "2026-10-31T14:09:46.737902+00:00",
  "base_ref": "955e54221008aba577ecbaefa15679f6777d3bf8",
  "agent": {
   "ok": false,
-  "reason": "no complete SEARCH/REPLACE blocks",
+  "reason": "patch application failed: pytest-dev__pytest-5787: routed patch rejected: src/_pytest/reports.py: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 184-186, similarity 0.74):\n176 |                         entry_data[\"data\"][key] = value.__dict__.copy()\n177 |                 new_entries.append(entry_data)\n178 | \n179 |             reprtraceback[\"reprentries\"] = new_entries\n180 | \n181 |             return {\n182 |                 \"reprcrash\": reprcrash,\n183 |                 \"reprtraceback\": reprtraceback,\n184 |                 \"sections\": rep.longrepr.sections,\n185 |             }\n186 | \n187 |         d = self.__dict__.copy()\n188 |         if hasattr(self.longrepr, \"toterminal\"):\n189 |             if hasattr(self.longrepr, \"reprtraceback\") and hasattr(\n190 |                 self.longrepr, \"reprcrash\"\n191 |             ):\n192 |                 d[\"longrepr\"] = disassembled_report(self)\n193 |             else:\n194 |                 d[\"longrepr\"] = str(self.longrepr)",
   "files": [
    "src/_pytest/main.py",
    "src/_pytest/_io/saferepr.py",
@@ -14,20 +14,28 @@
    "src/_pytest/assertion/util.py",
    "src/_pytest/unittest.py"
   ],
-  "localize_ms": 1996,
+  "localize_ms": 1701,
   "backend": "hybrid-rrf-hash-cpu"
  },
  "usage": {
-  "prompt_tokens": 13754,
-  "completion_tokens": 1699,
-  "total_tokens": 15453,
+  "prompt_tokens": 28692,
+  "completion_tokens": 28936,
+  "total_tokens": 57628,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 13754,
-    "completion_tokens": 1699,
-    "total_tokens": 15453,
+    "prompt_tokens": 13747,
+    "completion_tokens": 8490,
+    "total_tokens": 22237,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 14945,
+    "completion_tokens": 20446,
+    "total_tokens": 35391,
     "finish_reason": "stop"
    }
   ]
@@ -39,6 +47,6 @@
   "debate_prompts": false
  },
  "status": "failed",
- "reason": "no complete SEARCH/REPLACE blocks",
+ "reason": "patch application failed: pytest-dev__pytest-5787: routed patch rejected: src/_pytest/reports.py: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 184-186, similarity 0.74):\n176 |                         entry_data[\"data\"][key] = value.__dict__.copy()\n177 |                 new_entries.append(entry_data)\n178 | \n179 |             reprtraceback[\"reprentries\"] = new_entries\n180 | \n181 |             return {\n182 |                 \"reprcrash\": reprcrash,\n183 |                 \"reprtraceback\": reprtraceback,\n184 |                 \"sections\": rep.longrepr.sections,\n185 |             }\n186 | \n187 |         d = self.__dict__.copy()\n188 |         if hasattr(self.longrepr, \"toterminal\"):\n189 |             if hasattr(self.longrepr, \"reprtraceback\") and hasattr(\n190 |                 self.longrepr, \"reprcrash\"\n191 |             ):\n192 |                 d[\"longrepr\"] = disassembled_report(self)\n193 |             else:\n194 |                 d[\"longrepr\"] = str(self.longrepr)",
  "done": true
 }

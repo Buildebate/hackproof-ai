@@ -1,10 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.062" timestamp="2026-10-31T08:24:02.219176+00:00" hostname="fbc787d62f47"><testcase classname="tests.test_repro_c71617b9d571" name="test_prepend_scheme_preserves_proxy_auth" time="0.001"><failure message="AssertionError: assert 'http://127.0.0.1:3128/' == 'http://user:...7.0.0.1:3128/'&#10;  &#10;  - http://user:pass@127.0.0.1:3128/&#10;  ?        ----------&#10;  + http://127.0.0.1:3128/">def test_prepend_scheme_preserves_proxy_auth():
-        proxy = "http://user:pass@127.0.0.1:3128/"
-&gt;       assert prepend_scheme_if_needed(proxy, "http") == proxy
-E       AssertionError: assert 'http://127.0.0.1:3128/' == 'http://user:...7.0.0.1:3128/'
-E         
-E         - http://user:pass@127.0.0.1:3128/
-E         ?        ----------
-E         + http://127.0.0.1:3128/
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.062" timestamp="2026-10-31T13:01:29.070148+00:00" hostname="46e14d7b6e0a"><testcase classname="tests.test_repro_c71617b9d571" name="test_prepend_scheme_if_needed_preserves_proxy_auth" time="0.001"><failure message="AssertionError: assert 'user:pwd@' in 'http://host:8080'">def test_prepend_scheme_if_needed_preserves_proxy_auth():
+        result = prepend_scheme_if_needed("http://user:pwd@host:8080", "http")
+&gt;       assert "user:pwd@" in result
+E       AssertionError: assert 'user:pwd@' in 'http://host:8080'
 
 tests/test_repro_c71617b9d571.py:6: AssertionError</failure></testcase></testsuite></testsuites>

@@ -2,11 +2,11 @@
  "task": "vuejs__core-11899",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T09:39:46.360796+00:00",
+ "ts": "2026-10-31T13:56:44.432817+00:00",
  "base_ref": "706d4ac1d0210b2d9134b3228280187fe02fc971",
  "agent": {
-  "ok": false,
-  "reason": "patch application failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 69-72, similarity 0.60):\n61 |           }\n62 |         })\n63 |       }\n64 |     },\n65 |   }\n66 | }\n67 | \n68 | const processedRules = new WeakSet<Rule>()\n69 | \n70 | function processRule(id: string, rule: Rule) {\n71 |   if (\n72 |     processedRules.has(rule) ||\n73 |     (rule.parent &&\n74 |       rule.parent.type === 'atrule' &&\n75 |       /-?keyframes$/.test((rule.parent as AtRule).name))\n76 |   ) {\n77 |     return\n78 |   }\n79 |   processedRules.add(rule)\n80 |   let deep = false",
+  "ok": true,
+  "reason": "",
   "files": [
    "packages/runtime-dom/src/jsx.ts",
    "packages/runtime-core/src/compat/compatConfig.ts",
@@ -14,179 +14,145 @@
    "packages/compiler-core/src/options.ts",
    "packages/compiler-sfc/src/style/pluginScoped.ts"
   ],
-  "localize_ms": 3046,
+  "localize_ms": 3434,
   "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 1,
+  "applied_file": "packages/compiler-sfc/src/style/pluginScoped.ts",
+  "applied_files": [
+   "packages/compiler-sfc/src/style/pluginScoped.ts"
+  ],
   "red_rel": "packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts",
+  "local_violations": [],
   "debate": {
    "rounds_used": 2,
    "converged": false,
-   "score": 0.5,
-   "duration_ms": 182101
+   "score": 0.4166666666666667,
+   "duration_ms": 745304
   }
  },
  "usage": {
-  "prompt_tokens": 115604,
-  "completion_tokens": 82576,
-  "total_tokens": 198180,
+  "prompt_tokens": 71150,
+  "completion_tokens": 127536,
+  "total_tokens": 198686,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
     "prompt_tokens": 10638,
-    "completion_tokens": 6695,
-    "total_tokens": 17333,
+    "completion_tokens": 6469,
+    "total_tokens": 17107,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
     "prompt_tokens": 4004,
-    "completion_tokens": 1452,
-    "total_tokens": 5456,
+    "completion_tokens": 1039,
+    "total_tokens": 5043,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 16806,
-    "completion_tokens": 651,
-    "total_tokens": 17457,
+    "prompt_tokens": 16751,
+    "completion_tokens": 26417,
+    "total_tokens": 43168,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 379,
-    "completion_tokens": 836,
-    "total_tokens": 1215,
+    "prompt_tokens": 845,
+    "completion_tokens": 7856,
+    "total_tokens": 8701,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 371,
-    "completion_tokens": 811,
-    "total_tokens": 1182,
+    "prompt_tokens": 898,
+    "completion_tokens": 1074,
+    "total_tokens": 1972,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 799,
-    "completion_tokens": 1066,
-    "total_tokens": 1865,
+    "prompt_tokens": 1326,
+    "completion_tokens": 18535,
+    "total_tokens": 19861,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 660,
-    "completion_tokens": 1560,
-    "total_tokens": 2220,
+    "prompt_tokens": 961,
+    "completion_tokens": 2916,
+    "total_tokens": 3877,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 4554,
-    "completion_tokens": 1986,
-    "total_tokens": 6540,
+    "prompt_tokens": 4855,
+    "completion_tokens": 3357,
+    "total_tokens": 8212,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 17356,
-    "completion_tokens": 544,
-    "total_tokens": 17900,
+    "prompt_tokens": 17648,
+    "completion_tokens": 30020,
+    "total_tokens": 47668,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 929,
-    "completion_tokens": 500,
-    "total_tokens": 1429,
+    "prompt_tokens": 2444,
+    "completion_tokens": 3094,
+    "total_tokens": 5538,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 921,
-    "completion_tokens": 392,
-    "total_tokens": 1313,
+    "prompt_tokens": 2947,
+    "completion_tokens": 383,
+    "total_tokens": 3330,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1349,
-    "completion_tokens": 1038,
-    "total_tokens": 2387,
+    "prompt_tokens": 3375,
+    "completion_tokens": 17307,
+    "total_tokens": 20682,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1234,
-    "completion_tokens": 1109,
-    "total_tokens": 2343,
+    "prompt_tokens": 2637,
+    "completion_tokens": 702,
+    "total_tokens": 3339,
     "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 673,
-    "completion_tokens": 19697,
-    "total_tokens": 20370,
+    "prompt_tokens": 1821,
+    "completion_tokens": 8367,
+    "total_tokens": 10188,
     "finish_reason": "stop"
    },
    {
-    "role": "ArchitecturalBuilder-retry",
+    "role": "ArchitecturalBuilder-green-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 16806,
-    "completion_tokens": 651,
-    "total_tokens": 17457,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder-retry",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 799,
-    "completion_tokens": 1066,
-    "total_tokens": 1865,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder-retry",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 17356,
-    "completion_tokens": 544,
-    "total_tokens": 17900,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder-retry",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 1349,
-    "completion_tokens": 1038,
-    "total_tokens": 2387,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder-retry",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 673,
-    "completion_tokens": 19697,
-    "total_tokens": 20370,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder-retry",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 17948,
-    "completion_tokens": 21243,
-    "total_tokens": 39191,
+    "prompt_tokens": 17133,
+    "completion_tokens": 24394,
+    "total_tokens": 41527,
     "finish_reason": "stop"
    }
   ]
@@ -197,19 +163,208 @@
   "freeze": false,
   "debate_prompts": true
  },
- "status": "failed",
- "reason": "patch application failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 69-72, similarity 0.60):\n61 |           }\n62 |         })\n63 |       }\n64 |     },\n65 |   }\n66 | }\n67 | \n68 | const processedRules = new WeakSet<Rule>()\n69 | \n70 | function processRule(id: string, rule: Rule) {\n71 |   if (\n72 |     processedRules.has(rule) ||\n73 |     (rule.parent &&\n74 |       rule.parent.type === 'atrule' &&\n75 |       /-?keyframes$/.test((rule.parent as AtRule).name))\n76 |   ) {\n77 |     return\n78 |   }\n79 |   processedRules.add(rule)\n80 |   let deep = false",
- "done": true,
+ "diff_sha256": "759d122eb6ac3c6eb707995e50e25cc54a18962829195893f0b29179ef77014e",
  "red": {
   "rel": "packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts",
-  "sha256": "5fe73d13eea3ca4af2784c287b3330bed027984b23a4a455f2e86d6bafc9bc3c",
+  "sha256": "0d25ef743e4a30dbcbeeb7ca743aa3da6f11675f49251291e1b907d79df383f3",
   "exit_code": 1,
   "timed_out": false,
   "accepted": true,
   "reason": "red accepted (1 failure(s), 0 errors)",
   "failures": 1,
   "errors": 0,
-  "junit_bytes": 1057,
-  "junit_sha256": "3cc42a0a77610db211dfa1b1576478c4bb48be86bf6fb20bbbade8ca11a31cd9"
- }
+  "junit_bytes": 866,
+  "junit_sha256": "72f2d2e6ceb1931ff21faf64e6d58654b52f6d4bfbad918bb377a0271db5e013"
+ },
+ "guard": {
+  "task": "vuejs__core-11899",
+  "mode": "B",
+  "binding": true,
+  "verdict": "clean",
+  "violations": []
+ },
+ "junit_sha256": "5a92838a142831c14108f81e7682d09e7c41a48bb768947b8f64d440c2017848",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "green_retry": {
+  "attempted": true,
+  "completed": false,
+  "reason": "revision apply failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90); no similar region found",
+  "first": "f2p-not-fixed:1"
+ },
+ "status": "failed",
+ "reason": "f2p-not-fixed:1",
+ "done": true
 }

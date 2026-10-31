@@ -1,5 +1,5 @@
 diff --git a/requests/models.py b/requests/models.py
-index 9c624d3..f3a4f6d 100644
+index 9c624d3..d9db409 100644
 --- a/requests/models.py
 +++ b/requests/models.py
 @@ -81,7 +81,7 @@ class RequestEncodingMixin(object):
@@ -11,3 +11,12 @@ index 9c624d3..f3a4f6d 100644
          elif hasattr(data, 'read'):
              return data
          elif hasattr(data, '__iter__'):
+@@ -386,6 +386,8 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+                 fragment = fragment.encode('utf-8')
+ 
+         enc_params = self._encode_params(params)
++        if isinstance(enc_params, bytes):
++            enc_params = enc_params.decode('utf-8')
+         if enc_params:
+             if query:
+                 query = '%s&%s' % (query, enc_params)

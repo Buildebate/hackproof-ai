@@ -234,14 +234,16 @@ def test_load_ledger_refuses_missing_rate_card(tmp_path: Path) -> None:
 def test_wave_of_buckets() -> None:
     assert wave_of("bench4.2:task:A") == "bench4.2"
     assert wave_of("bench4.3b-wave1:task:B") == "bench4.3-wave1"
+    assert wave_of("bench4.3c-wave2:task:B") == "bench4.3-wave2"
+    assert wave_of("bench4.3c:ablation:task") == "bench4.3-ablation"
     assert wave_of("account-reconciliation: x") == "account-reconciliation"
     assert wave_of(None) == "other"
 
 
 def test_wave_label_roundtrip_between_writer_and_repricer() -> None:
     label = run_benchmark.BENCH_WAVE_LABEL
-    assert label == "bench4.3b-wave1"
-    assert wave_of(f"{label}:psf__requests-1142:B") == "bench4.3-wave1"
+    assert label == "bench4.3c-wave2"
+    assert wave_of(f"{label}:psf__requests-1142:B") == "bench4.3-wave2"
 
 
 class _StubUsage:
@@ -294,7 +296,7 @@ def test_ledger_append_run_writes_wave_label_unpriced(tmp_path: Path) -> None:
     ledger = json.loads(ledger_path.read_text(encoding="utf-8"))
     assert len(ledger["entries"]) == 2
     row = ledger["entries"][1]
-    assert row["issue"] == "bench4.3b-wave1:psf__requests-5414:A"
+    assert row["issue"] == "bench4.3c-wave2:psf__requests-5414:A"
     assert row["priced"] is False
     assert row["est_cost_usd"] == 0.0
     # Unpriced append must not move the priced total (repricer does that).

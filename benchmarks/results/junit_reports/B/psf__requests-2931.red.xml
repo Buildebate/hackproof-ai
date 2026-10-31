@@ -1,9 +1,10 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.248" timestamp="2026-10-31T08:14:40.741788+00:00" hostname="3f5533a13cfe"><testcase classname="test_repro_ca1831d0715b" name="test_put_binary_payload_preserved" time="0.006"><failure message="AssertionError: binary data raised UnicodeDecodeError('ascii', b'\xc3\xb6\xc3\xb6\xc3\xb6', 0, 1, 'ordinal not in range(128)')&#10;assert False">def test_put_binary_payload_preserved():
-        data = u"ööö".encode("utf-8")
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.250" timestamp="2026-10-31T12:46:32.495762+00:00" hostname="5c41fe75ce9b"><testcase classname="test_repro_ca1831d0715b" name="test_put_binary_payload_preserved" time="0.006"><failure message="AssertionError: binary payload raised UnicodeDecodeError via to_native_string: 'ascii' codec can't decode byte 0xc3 in position 0: ordinal not in range(128)&#10;assert False">def test_put_binary_payload_preserved():
+        payload = u"ööö".encode("utf-8")
+        req = requests.Request("PUT", "http://example.com/put", data=payload)
         try:
-&gt;           prep = Request('PUT', 'http://example.com/put', data=data).prepare()
+&gt;           prepped = req.prepare()
 
-test_repro_ca1831d0715b.py:6: 
+test_repro_ca1831d0715b.py:8: 
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 requests/models.py:239: in prepare
     p.prepare(
@@ -39,12 +40,13 @@ requests/utils.py:700: UnicodeDecodeError
 During handling of the above exception, another exception occurred:
 
     def test_put_binary_payload_preserved():
-        data = u"ööö".encode("utf-8")
+        payload = u"ööö".encode("utf-8")
+        req = requests.Request("PUT", "http://example.com/put", data=payload)
         try:
-            prep = Request('PUT', 'http://example.com/put', data=data).prepare()
-        except Exception as exc:
-&gt;           assert False, "binary data raised %r" % (exc,)
-E           AssertionError: binary data raised UnicodeDecodeError('ascii', b'\xc3\xb6\xc3\xb6\xc3\xb6', 0, 1, 'ordinal not in range(128)')
+            prepped = req.prepare()
+        except UnicodeDecodeError as e:
+&gt;           assert False, "binary payload raised UnicodeDecodeError via to_native_string: %s" % e
+E           AssertionError: binary payload raised UnicodeDecodeError via to_native_string: 'ascii' codec can't decode byte 0xc3 in position 0: ordinal not in range(128)
 E           assert False
 
-test_repro_ca1831d0715b.py:8: AssertionError</failure></testcase></testsuite></testsuites>
+test_repro_ca1831d0715b.py:10: AssertionError</failure></testcase></testsuite></testsuites>

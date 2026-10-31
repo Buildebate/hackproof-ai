@@ -42,10 +42,12 @@ class _ScriptedClient:
         model: str = "muse-spark-1.3",
         verdicts: dict[str, str] | None = None,
         usage: dict[str, int] | None = None,
+        syntheses: list[str] | None = None,
     ) -> None:
         self._model = model
         self._verdicts = dict(verdicts or {})
         self._usage = usage
+        self._syntheses = list(syntheses) if syntheses is not None else None
         self.calls: list[tuple[str, str, list[dict[str, Any]]]] = []
 
     @property
@@ -64,6 +66,10 @@ class _ScriptedClient:
 
     def synthesize_patch(self, debate_consensus: str) -> str:
         self.calls.append(("synthesize_patch", debate_consensus, []))
+        if self._syntheses is not None:
+            if not self._syntheses:
+                raise AssertionError("synthesize_patch called more than scripted")
+            return self._syntheses.pop(0)
         return (
             "<<<<<<< SEARCH\n"
             "def authenticate_user(name, password):\n"
@@ -553,22 +559,35 @@ def test_orchestrator_default_context_unchanged_for_all_roles() -> None:
 
 
 # ---------------------------------------------------------------------------
-# Step 4.3b.8 (R11): end-position markers on every role
+# Step 4.3b.8 (R11): end-position markers on verdict roles;
+# Step 4.3c.1 (R13): builder narrowed out of marker scope
 # ---------------------------------------------------------------------------
 
 
-def test_scout_and_builder_prompts_require_end_marker() -> None:
-    for prompt in (
-        edge_scout.ROLE_SYSTEM_PROMPT,
-        architectural_builder.ROLE_SYSTEM_PROMPT,
+def test_verdict_roles_require_end_marker_builder_forbids_it() -> None:
+    # Step 4.3c.1 (R13): markers stay scoped to the five verdict roles;
+    # the builder prompt carries no marker tokens at all (the 4.3c.0
+    # ablation proved they divert it into bare verdict-tokens).
+    for role in (
+        edge_scout,
+        occams_razor_critic,
+        signature_fact_checker,
+        formal_adversary_critic,
+        consensus_judge,
     ):
-        assert "exactly one marker word" in prompt
-        assert "APPROVE" in prompt
-        assert "REVISE" in prompt
-    # The builder's verbatim directive survives the marker sentence.
+        assert "exactly one marker word" in role.ROLE_SYSTEM_PROMPT
+        assert "APPROVE" in role.ROLE_SYSTEM_PROMPT
+        assert "REVISE" in role.ROLE_SYSTEM_PROMPT
     prompt = architectural_builder.ROLE_SYSTEM_PROMPT
+    assert "exactly one marker word" not in prompt
+    assert "APPROVE" not in prompt
+    assert "REVISE" not in prompt
+    # The builder's verbatim directive survives the marker removal.
     assert "byte-for-byte" in prompt
     assert "never reconstruct code from memory" in prompt
+    # Blocks-first + stop directives (truncation + anti-ramble).
+    assert "blocks FIRST" in prompt
+    assert "Stop immediately after the last" in prompt
 
 
 def test_builder_extract_ignores_trailing_marker() -> None:
@@ -583,3 +602,98 @@ def test_builder_extract_ignores_trailing_marker() -> None:
 def test_scout_parse_ignores_trailing_marker() -> None:
     verdict = "1. None input\n2. empty string\nAPPROVE"
     assert edge_scout.parse_cases(verdict) == ["None input", "empty string"]
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3c.1 (R13): single grounded retry on empty synthesis
+# ---------------------------------------------------------------------------
+
+
+def test_synthesis_retry_recovers_blocks_on_empty_first() -> None:
+    spark = _ScriptedClient(model="muse-spark-1.3")
+    wonder = _ScriptedClient(
+        model="muse-wonder-1.0", syntheses=["REVISE", PATCH_SMALL]
+    )
+    orchestrator = DebateOrchestrator(spark, wonder, max_rounds=1)
+    report = orchestrator.run(issue_description=ISSUE, code_context=CODE)
+    assert report.patch_candidate == PATCH_SMALL
+    synth_calls = [c for c in wonder.calls if c[0] == "synthesize_patch"]
+    assert len(synth_calls) == 2
+    assert "FORMAT VIOLATION" in synth_calls[1][1]
+    assert "0 complete SEARCH/REPLACE blocks" in synth_calls[1][1]
+    roles = [u.role for u in report.token_usage]
+    assert "PatchSynthesis" in roles
+    assert "PatchSynthesis-retry" in roles
+
+
+def test_synthesis_retry_quotes_truncation_and_stops_after_one() -> None:
+    spark = _ScriptedClient(model="muse-spark-1.3")
+    wonder = _ScriptedClient(
+        model="muse-wonder-1.0",
+        syntheses=["", ""],
+        usage={
+            "prompt_tokens": 10,
+            "completion_tokens": 32768,
+            "total_tokens": 32778,
+            "finish_reason": "length",
+        },
+    )
+    orchestrator = DebateOrchestrator(spark, wonder, max_rounds=1)
+    report = orchestrator.run(issue_description=ISSUE, code_context=CODE)
+    # Second output wins as-is: no third call is scripted, so a third
+    # attempt would raise instead of passing silently.
+    assert report.patch_candidate == ""
+    synth_calls = [c for c in wonder.calls if c[0] == "synthesize_patch"]
+    assert len(synth_calls) == 2
+    assert "finish_reason=length" in synth_calls[1][1]
+    assert "chars=0" in synth_calls[1][1]
+
+
+def test_synthesis_without_empty_first_runs_no_retry() -> None:
+    spark = _ScriptedClient(model="muse-spark-1.3")
+    wonder = _ScriptedClient(
+        model="muse-wonder-1.0", syntheses=[PATCH_SMALL]
+    )
+    orchestrator = DebateOrchestrator(spark, wonder, max_rounds=1)
+    report = orchestrator.run(issue_description=ISSUE, code_context=CODE)
+    assert report.patch_candidate == PATCH_SMALL
+    synth_calls = [c for c in wonder.calls if c[0] == "synthesize_patch"]
+    assert len(synth_calls) == 1
+    roles = [u.role for u in report.token_usage]
+    assert "PatchSynthesis-retry" not in roles
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3c.1 (R9): green-feedback revision prompt
+# ---------------------------------------------------------------------------
+
+
+def test_revise_patch_from_green_builds_grounded_prompt() -> None:
+    client = _ScriptedClient(
+        model="muse-wonder-1.0",
+        verdicts={"ArchitecturalBuilder": "REVISED-PATCH"},
+    )
+    out = architectural_builder.revise_patch_from_green(
+        client,
+        issue_description="ISSUE-TEXT",
+        code_context="CODE-CONTEXT",
+        previous_patch="PREVIOUS-PATCH",
+        green_report="GREEN-REPORT",
+    )
+    assert out == "REVISED-PATCH"
+    assert len(client.calls) == 1
+    role, prompt, history = client.calls[0]
+    assert role == "ArchitecturalBuilder"
+    assert history == []
+    for needle in (
+        "GREEN-REPORT",
+        "PREVIOUS-PATCH",
+        "ISSUE-TEXT",
+        "CODE-CONTEXT",
+        "WAS APPLIED BUT THE TESTS STILL FAIL",
+        "ONLY corrected SEARCH/REPLACE blocks",
+        "do not touch test files",
+    ):
+        assert needle in prompt
+    assert "APPROVE" not in prompt
+    assert "REVISE" not in prompt

@@ -2,12 +2,13 @@ import requests
 from requests.exceptions import InvalidURL
 
 
-def test_leading_dot_host_raises_invalid_url():
-    req = requests.PreparedRequest()
+def test_dot_leading_host_raises_invalid_url():
     try:
-        req.prepare_url("http://.example.com", None)
+        requests.get("http://.example.com", timeout=5)
     except InvalidURL:
         return
     except UnicodeError as e:
-        assert False, f"expected InvalidURL, got UnicodeError: {e}"
-    assert False, "expected InvalidURL for http://.example.com, got no exception"
+        assert False, f"Expected InvalidURL, got UnicodeError: {e}"
+    except Exception as e:
+        assert False, f"Expected InvalidURL, got {type(e).__name__}: {e}"
+    assert False, "Expected InvalidURL for http://.example.com but no exception was raised"

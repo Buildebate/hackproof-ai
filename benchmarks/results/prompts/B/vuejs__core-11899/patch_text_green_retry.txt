@@ -1,0 +1,163 @@
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
+    OnceExit(root) {
+      const atRules: AtRule[] = []
+      root.walkAtRules(atRule => {
+        atRules.push(atRule)
+      })
+      const groupingAtRules = new Set([
+        'media',
+        'supports',
+        'container',
+        'layer',
+        'starting-style',
+        'scope',
+        'document',
+        '-moz-document',
+      ])
+      atRules.forEach(atRule => {
+        if (
+          !atRule.nodes ||
+          !groupingAtRules.has(atRule.name.toLowerCase())
+        ) {
+          return
+        }
+        let parent = atRule.parent
+        let scopedRule: Rule | undefined
+        while (parent) {
+          if (
+            parent.type === 'atrule' &&
+            /-?keyframes$/.test((parent as AtRule).name)
+          ) {
+            return
+          }
+          if (!scopedRule && parent.type === 'rule') {
+            scopedRule = parent as Rule
+          }
+          parent = parent.parent
+        }
+        if (!scopedRule) {
+          return
+        }
+        let run: typeof atRule.nodes = []
+        const flush = () => {
+          if (!run.length) {
+            return
+          }
+          const wrapper = scopedRule.clone({
+            selector: '&',
+            nodes: [],
+          })
+          atRule.insertBefore(run[0], wrapper)
+          run.forEach(decl => {
+            wrapper.append(decl)
+          })
+          run = []
+        }
+        ;[...atRule.nodes].forEach(node => {
+          if (node.type === 'decl') {
+            run.push(node)
+          } else {
+            flush()
+          }
+        })
+        flush()
+      })
+      if (Object.keys(keyframes).length) {
+=======
+    OnceExit(root) {
+      const rules: Rule[] = []
+      root.walkRules(rule => {
+        rules.push(rule)
+      })
+      rules.forEach(rule => {
+        if (!rule.nodes) {
+          return
+        }
+        const scopedChild = rule.nodes.find(
+          (node): node is Rule =>
+            node.type === 'rule' && node.selector.startsWith('&['),
+        )
+        if (!scopedChild) {
+          return
+        }
+        for (const node of [...rule.nodes]) {
+          if (node === scopedChild) {
+            continue
+          }
+          if (node.type === 'rule' || node.type === 'atrule') {
+            break
+          }
+          if (node.type === 'comment') {
+            scopedChild.append(node)
+          }
+        }
+      })
+      const atRules: AtRule[] = []
+      root.walkAtRules(atRule => {
+        atRules.push(atRule)
+      })
+      const groupingAtRules = new Set([
+        'media',
+        'supports',
+        'container',
+        'layer',
+        'starting-style',
+        'scope',
+        'document',
+        '-moz-document',
+      ])
+      atRules.forEach(atRule => {
+        if (
+          !atRule.nodes ||
+          !groupingAtRules.has(atRule.name.toLowerCase())
+        ) {
+          return
+        }
+        let parent = atRule.parent
+        let scopedRule: Rule | undefined
+        while (parent) {
+          if (
+            parent.type === 'atrule' &&
+            /-?keyframes$/.test((parent as AtRule).name)
+          ) {
+            return
+          }
+          if (!scopedRule && parent.type === 'rule') {
+            scopedRule = parent as Rule
+          }
+          parent = parent.parent
+        }
+        if (!scopedRule) {
+          return
+        }
+        let run: typeof atRule.nodes = []
+        const flush = () => {
+          if (!run.some(node => node.type === 'decl')) {
+            run = []
+            return
+          }
+          const wrapper = scopedRule.clone({
+            selector:
+              id && !scopedRule.selector.includes(`[${id}]`)
+                ? `&[${id}]`
+                : '&',
+            nodes: [],
+          })
+          atRule.insertBefore(run[0], wrapper)
+          run.forEach(decl => {
+            wrapper.append(decl)
+          })
+          run = []
+        }
+        ;[...atRule.nodes].forEach(node => {
+          if (node.type === 'decl' || node.type === 'comment') {
+            run.push(node)
+          } else {
+            flush()
+          }
+        })
+        flush()
+      })
+      if (Object.keys(keyframes).length) {
+>>>>>>> REPLACE

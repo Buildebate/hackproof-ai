@@ -5,30 +5,24 @@ from _pytest.reports import TestReport
 def test_chained_exception_serialization():
     try:
         try:
-            raise ValueError(11)
+            raise ValueError("chained-cause-msg")
         except ValueError as e1:
-            raise ValueError(12) from e1
+            raise ValueError("chained-effect-msg") from e1
     except ValueError:
         excinfo = ExceptionInfo.from_current()
-    longrepr = excinfo.getrepr(style="long")
+    longrepr = excinfo.getrepr()
     report = TestReport(
-        nodeid="test_x",
-        location=("test_x.py", 0, "test_x"),
+        nodeid="test_id",
+        location=("test_file.py", 0, "test_func"),
         keywords={},
         outcome="failed",
         longrepr=longrepr,
         when="call",
     )
-    try:
-        if hasattr(report, "_to_json"):
-            data = report._to_json()
-            loaded = TestReport._from_json(data)
-        else:
-            from _pytest.reports import _report_to_json
-            from _pytest.reports import _report_from_json
-            data = _report_to_json(report)
-            loaded = _report_from_json(data)
-    except (AttributeError, ImportError, TypeError) as e:
-        assert False, "serialization API missing: %r" % (e,)
-    assert "11" in str(data), "chained cause (11) lost in serialized data: %r" % (data,)
-    assert "12" in str(data), "last exception (12) missing: %r" % (data,)
+    if hasattr(report, "_to_json"):
+        data = report._to_json()
+    else:
+        data = report.to_json()
+    text = str(data)
+    assert "chained-cause-msg" in text
+    assert "chained-effect-msg" in text

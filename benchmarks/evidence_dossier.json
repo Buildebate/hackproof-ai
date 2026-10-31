@@ -1,0 +1,416 @@
+{
+ "dossier": "Step 4.4 Metrics & Evidence Dossier — Wave 2 final (plan 43, steps 4.3c.2/4.3c.3)",
+ "scoreboard": {
+  "mode_B_resolved": 7,
+  "mode_A_resolved": 5,
+  "denominator": 12,
+  "history_B": "0/12 raw 4.2 -> 1/12 rescore -> 4/12 wave1 -> 7/12 wave2",
+  "history_A": "0/12 raw 4.2 -> 2/12 rescore -> 2/12 wave1 -> 5/12 wave2",
+  "goal_9_12": "NOT MET (honest 7/12); Wave 3 decision recorded below",
+  "b_superset_of_a": false,
+  "b_superset_note": "1142 resolved in A but failed in B; B leads on count only"
+ },
+ "verdicts": {
+  "A": {
+   "psf__requests-1142": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "psf__requests-2931": {
+    "status": "failed",
+    "reason": "p2p-broken:1",
+    "done": true
+   },
+   "psf__requests-5414": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "psf__requests-6028": {
+    "status": "failed",
+    "reason": "p2p-broken:1",
+    "done": true
+   },
+   "pytest-dev__pytest-10081": {
+    "status": "failed",
+    "reason": "f2p-not-fixed:1; p2p-broken:1",
+    "done": true
+   },
+   "pytest-dev__pytest-5787": {
+    "status": "failed",
+    "reason": "patch application failed: pytest-dev__pytest-5787: routed patch rejected: src/_pytest/reports.py: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\n",
+    "done": true
+   },
+   "pytest-dev__pytest-7432": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "pytest-dev__pytest-8399": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "vuejs__core-11589": {
+    "status": "failed",
+    "reason": "f2p-not-fixed:1",
+    "done": true
+   },
+   "vuejs__core-11739": {
+    "status": "failed",
+    "reason": "no complete SEARCH/REPLACE blocks",
+    "done": true
+   },
+   "vuejs__core-11870": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "vuejs__core-11899": {
+    "status": "failed",
+    "reason": "f2p-not-fixed:1",
+    "done": true
+   }
+  },
+  "B": {
+   "psf__requests-1142": {
+    "status": "failed",
+    "reason": "f2p-not-fixed:1",
+    "done": true
+   },
+   "psf__requests-2931": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "psf__requests-5414": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "psf__requests-6028": {
+    "status": "failed",
+    "reason": "p2p-broken:1",
+    "done": true
+   },
+   "pytest-dev__pytest-10081": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "pytest-dev__pytest-5787": {
+    "status": "failed",
+    "reason": "red-rejected after resynthesis: red JUnit unusable: JUnit XML carries zero testcase entries",
+    "done": true
+   },
+   "pytest-dev__pytest-7432": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "pytest-dev__pytest-8399": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "vuejs__core-11589": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "vuejs__core-11739": {
+    "status": "failed",
+    "reason": "patch application failed: vuejs__core-11739: routed patch rejected: packages/runtime-dom/src/modules/style.ts: block 2: SEARCH not found (0 matches at exact/ws/",
+    "done": true
+   },
+   "vuejs__core-11870": {
+    "status": "resolved",
+    "reason": "",
+    "done": true
+   },
+   "vuejs__core-11899": {
+    "status": "failed",
+    "reason": "f2p-not-fixed:1",
+    "done": true
+   }
+  }
+ },
+ "measurability": {
+  "A": "12/12 done",
+  "B": "12/12 done",
+  "note": "no empty base_index, no unresolved_ids; 6028-A shows 4 ambiguous last-wins resolutions (harness-logged, deterministic)"
+ },
+ "guard_reward_hacking": {
+  "A": {
+   "clean": 10,
+   "none_no_patch": 2,
+   "violations": 0
+  },
+  "B": {
+   "clean": 10,
+   "none_no_patch": 2,
+   "violations": 0
+  },
+  "reward_hacking_rate": "0/20 evaluated patches (0 violations); None verdicts only where no patch existed (5787/11739 both modes)"
+ },
+ "red": {
+  "B_accepted": 11,
+  "B_denominator": 12,
+  "rejected": [
+   "pytest-dev__pytest-5787 (empty JUnit after resynthesis; ~$0.01, R10 gate saved debate spend)"
+  ]
+ },
+ "receipts": {
+  "B_minted": 7,
+  "A_minted": 0,
+  "invariant": "receipt iff resolved (7/7 B resolved carry receipt_version 1.0; 0 elsewhere)"
+ },
+ "debate_telemetry_B": {
+  "debates_run": 11,
+  "rounds_hist": {
+   "1": 2,
+   "2": 9
+  },
+  "converged_early": 3,
+  "converged_tasks": [
+   "psf__requests-2931",
+   "pytest-dev__pytest-7432",
+   "pytest-dev__pytest-8399"
+  ],
+  "duration_ms": {
+   "n": 11,
+   "min": 115797,
+   "p50": 449096,
+   "p95": 734276,
+   "max": 745304
+  },
+  "score_min": 0.417,
+  "score_max": 1.0
+ },
+ "finops": {
+  "ledger_total_spent_usd": 64.96,
+  "founder_truth_spent_usd": 65.49,
+  "budget_usd": 150.0,
+  "stop_rule_usd": 110.0,
+  "stop_rule": "not triggered",
+  "waves": {
+   "account-reconciliation": 5.91,
+   "bench4.2": 14.93,
+   "bench4.3-ablation": 2.75,
+   "bench4.3-wave1": 19.61,
+   "bench4.3-wave2": 21.76
+  },
+  "wave2_split": {
+   "B": 17.78,
+   "A": 3.98
+  },
+  "wave2_envelope": {
+   "cap_usd": 18.0,
+   "incl_ablation_usd": 2.75,
+   "total_usd": 24.51,
+   "verdict": "OVERRUN +$3.76 — cause measured: TS ramble (11739 $4.69 + 11589 $4.66 + 11899 $2.74 = 68% of B spend)"
+  },
+  "wave2_per_task": [
+   {
+    "task": "vuejs__core-11739",
+    "mode": "B",
+    "cost_usd": 4.6937,
+    "tokens": 350617,
+    "calls": 20,
+    "length_truncations": 5
+   },
+   {
+    "task": "vuejs__core-11589",
+    "mode": "B",
+    "cost_usd": 4.6579,
+    "tokens": 336281,
+    "calls": 20,
+    "length_truncations": 2
+   },
+   {
+    "task": "vuejs__core-11899",
+    "mode": "B",
+    "cost_usd": 2.7414,
+    "tokens": 240213,
+    "calls": 15,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-6028",
+    "mode": "B",
+    "cost_usd": 1.9596,
+    "tokens": 196069,
+    "calls": 15,
+    "length_truncations": 1
+   },
+   {
+    "task": "psf__requests-1142",
+    "mode": "B",
+    "cost_usd": 1.9284,
+    "tokens": 192375,
+    "calls": 15,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-5414",
+    "mode": "B",
+    "cost_usd": 1.0154,
+    "tokens": 120141,
+    "calls": 14,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-2931",
+    "mode": "B",
+    "cost_usd": 0.7767,
+    "tokens": 88822,
+    "calls": 14,
+    "length_truncations": 0
+   },
+   {
+    "task": "vuejs__core-11589",
+    "mode": "A",
+    "cost_usd": 0.7379,
+    "tokens": 61023,
+    "calls": 2,
+    "length_truncations": 0
+   },
+   {
+    "task": "vuejs__core-11739",
+    "mode": "A",
+    "cost_usd": 0.7155,
+    "tokens": 47791,
+    "calls": 1,
+    "length_truncations": 1
+   },
+   {
+    "task": "pytest-dev__pytest-5787",
+    "mode": "A",
+    "cost_usd": 0.6935,
+    "tokens": 57628,
+    "calls": 2,
+    "length_truncations": 0
+   },
+   {
+    "task": "vuejs__core-11870",
+    "mode": "A",
+    "cost_usd": 0.6842,
+    "tokens": 56251,
+    "calls": 2,
+    "length_truncations": 0
+   },
+   {
+    "task": "vuejs__core-11899",
+    "mode": "A",
+    "cost_usd": 0.291,
+    "tokens": 27828,
+    "calls": 1,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-5414",
+    "mode": "A",
+    "cost_usd": 0.2751,
+    "tokens": 19990,
+    "calls": 1,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-1142",
+    "mode": "A",
+    "cost_usd": 0.255,
+    "tokens": 34696,
+    "calls": 2,
+    "length_truncations": 0
+   },
+   {
+    "task": "pytest-dev__pytest-10081",
+    "mode": "A",
+    "cost_usd": 0.1822,
+    "tokens": 21082,
+    "calls": 1,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-6028",
+    "mode": "A",
+    "cost_usd": 0.0805,
+    "tokens": 16314,
+    "calls": 1,
+    "length_truncations": 0
+   },
+   {
+    "task": "psf__requests-2931",
+    "mode": "A",
+    "cost_usd": 0.063,
+    "tokens": 8799,
+    "calls": 1,
+    "length_truncations": 0
+   },
+   {
+    "task": "pytest-dev__pytest-5787",
+    "mode": "B",
+    "cost_usd": 0.0056,
+    "tokens": 36578,
+    "calls": 2,
+    "length_truncations": 1
+   }
+  ],
+  "cost_basis": "upper-bound at full input rates; cached-input share unmeasured (client records no cached_tokens); calls with unknown model/split excluded as unpriced",
+  "avg_upper_bound_per_B_run_cumulative": 1.48,
+  "gate4_sub_035_note": "NOT MET on measured upper bounds (cache discounts unmeasured by design); Gate 4 stays open"
+ },
+ "r9_r13_live": {
+  "green_retry_attempts": 3,
+  "green_retry_detail": {
+   "psf__requests-1142": {
+    "attempted": true,
+    "completed": false,
+    "first": "f2p-not-fixed:1",
+    "reason": "retry patch breaks test collection"
+   },
+   "psf__requests-6028": {
+    "attempted": true,
+    "completed": true,
+    "first": "f2p-not-fixed:2; p2p-broken:1",
+    "reason": ""
+   },
+   "vuejs__core-11899": {
+    "attempted": true,
+    "completed": false,
+    "first": "f2p-not-fixed:1",
+    "reason": "revision apply failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: block "
+   }
+  },
+  "green_retry_effect": "6028: F2P 2->0 fixed (P2P still broken); 1142/11899: first verdict stands (collection-break / SEARCH-miss)",
+  "grounded_synthesis_retry_roles": 0,
+  "grounded_synthesis_note": "never fired in W2: zero empty syntheses (marker-strip removed the cause; guardrail held as backstop)",
+  "no_blocks_W1_to_W2": {
+   "B": "4/12 -> 0/12",
+   "A": "8/12 -> 1/12 (11739)"
+  },
+  "r11_early_exit_live": "7432 + 8399 closed in 1 round (unanimous / 5-of-6+judge)"
+ },
+ "wave3_decision": {
+  "criterion": "plan 4.3c.2: 9/12 B -> stop; else honest score + W3 decision",
+  "outcome": "7/12 -> Wave 3 DECISION REQUIRED (founder)",
+  "recommendation": "CONDITIONAL GO: rerun 5 B-misses B-only (~$10-12, inside $18 W3 envelope and $84 remainder); 2-of-5 flips reach 9/12",
+  "iterability": {
+   "psf__requests-1142": "content (f2p-not-fixed:1) — MEDIUM, stochastic flip plausible",
+   "psf__requests-6028": "content (p2p-broken:1, F2P fixed by R9) — MEDIUM",
+   "vuejs__core-11899": "content+match (green-retry SEARCH miss) — MEDIUM",
+   "vuejs__core-11739": "ramble+match (5 length truncations, $4.69 burn) — LOW without anti-ramble mechanism",
+   "pytest-dev__pytest-5787": "red-quality (empty JUnit after resynthesis) — LOW without red-synthesis work"
+  },
+  "scope_note": "B-only (A parity already proved guardrail transfer 2/12->5/12); optional 4.3c.4 anti-ramble guard would raise 11739 odds"
+ },
+ "provenance": {
+  "wave1_commit": "7f597e2 (Wave 1 matrices; W1 miss records superseded by W2 reruns, bytes preserved in git history)",
+  "wave2_code_commit": "3c6a81b (wave label + honest wave buckets)",
+  "plan": "docs/plans/pending/meta-global-ai-hackathon-2026/43-fixrate-70-measurement-and-rerun-plan.md",
+  "ledger": "packages/hackproof-ai/finops_ledger.json",
+  "results": "packages/hackproof-ai/benchmarks/results/",
+  "mode": "DEGRADED_SINGLE_AGENT (self-attested; independent verification: deterministic tool exit codes + SHA-pinned JUnit + public CI)"
+ }
+}

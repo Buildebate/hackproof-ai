@@ -1,0 +1,15 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [F2P] tests/test_utils.py::test_prepend_scheme_if_needed[http://user:pass@example.com/path?query-http://user:pass@example.com/path?query] (base=failed agent=failed):
+  AssertionError: assert 'http://examp...om/path?query' == 'http://user:...om/path?query'
+  
+  - http://user:pass@example.com/path?query
+  ?        ----------
+  + http://example.com/path?query
+- [F2P] tests/test_utils.py::test_prepend_scheme_if_needed[http://user@example.com/path?query-http://user@example.com/path?query] (base=failed agent=failed):
+  AssertionError: assert 'http://examp...om/path?query' == 'http://user@...om/path?query'
+  
+  - http://user@example.com/path?query
+  ?        -----
+  + http://example.com/path?query
+- [P2P] tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py] (base=passed agent=missing):
+  (no failure message captured)

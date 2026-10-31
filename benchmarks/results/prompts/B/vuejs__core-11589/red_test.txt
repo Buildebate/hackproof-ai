@@ -1,36 +1,22 @@
+import { describe, expect, it } from 'vitest'
 import { computed, ref, watch } from 'vue'
 
-describe('sync watcher execution order', () => {
-  it('executes sync watchers in definition order (FIFO) for ref and computed', () => {
+describe('sync watcher order on computed', () => {
+  it('triggers sync watchers in definition order (FIFO)', () => {
     const n = ref(0)
-    const refOrder: number[] = []
+    const compN = computed(() => n.value)
+    const order: number[] = []
     for (let i = 0; i < 5; i++) {
       const idx = i
       watch(
-        n,
+        compN,
         () => {
-          refOrder.push(idx)
+          order.push(idx)
         },
         { flush: 'sync' },
       )
     }
     n.value++
-    expect(refOrder).toEqual([0, 1, 2, 3, 4])
-
-    const s = ref(0)
-    const c = computed(() => s.value)
-    const compOrder: number[] = []
-    for (let i = 0; i < 5; i++) {
-      const idx = i
-      watch(
-        c,
-        () => {
-          compOrder.push(idx)
-        },
-        { flush: 'sync' },
-      )
-    }
-    s.value++
-    expect(compOrder).toEqual([0, 1, 2, 3, 4])
+    expect(order).toEqual([0, 1, 2, 3, 4])
   })
 })

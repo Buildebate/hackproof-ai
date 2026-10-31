@@ -2,11 +2,11 @@
  "task": "vuejs__core-11899",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:53:03.138059+00:00",
+ "ts": "2026-10-31T14:22:28.438910+00:00",
  "base_ref": "706d4ac1d0210b2d9134b3228280187fe02fc971",
  "agent": {
-  "ok": false,
-  "reason": "no complete SEARCH/REPLACE blocks",
+  "ok": true,
+  "reason": "",
   "files": [
    "packages/runtime-dom/src/jsx.ts",
    "packages/runtime-core/src/compat/compatConfig.ts",
@@ -14,20 +14,25 @@
    "packages/compiler-core/src/options.ts",
    "packages/compiler-sfc/src/style/pluginScoped.ts"
   ],
-  "localize_ms": 3624,
-  "backend": "hybrid-rrf-hash-cpu"
+  "localize_ms": 4207,
+  "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 1,
+  "applied_file": "packages/compiler-sfc/src/style/pluginScoped.ts",
+  "applied_files": [
+   "packages/compiler-sfc/src/style/pluginScoped.ts"
+  ]
  },
  "usage": {
-  "prompt_tokens": 16605,
-  "completion_tokens": 3516,
-  "total_tokens": 20121,
+  "prompt_tokens": 16598,
+  "completion_tokens": 11230,
+  "total_tokens": 27828,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 16605,
-    "completion_tokens": 3516,
-    "total_tokens": 20121,
+    "prompt_tokens": 16598,
+    "completion_tokens": 11230,
+    "total_tokens": 27828,
     "finish_reason": "stop"
    }
   ]
@@ -38,7 +43,191 @@
   "freeze": false,
   "debate_prompts": false
  },
+ "diff_sha256": "35382d12f3cb3a263012a44d0fe5e3fbfba78848d8bfc8d2fb61e377162640dd",
+ "guard": {
+  "task": "vuejs__core-11899",
+  "mode": "A",
+  "binding": false,
+  "verdict": "clean",
+  "violations": [],
+  "note": "post-hoc measurement; does not gate Mode A"
+ },
+ "junit_sha256": "d87668e8da514c5b035707fbcbb9ff3d3b21263a61792372e2372fb8925e9f6c",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData",
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
  "status": "failed",
- "reason": "no complete SEARCH/REPLACE blocks",
+ "reason": "f2p-not-fixed:1",
  "done": true
 }

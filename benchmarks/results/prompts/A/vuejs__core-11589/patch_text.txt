@@ -1,1 +1,32 @@
-REVISE
+packages/reactivity/src/effect.ts
+<<<<<<< SEARCH
+function batch(sub: Subscriber, isComputed = false) {
+  sub.flags |= EffectFlags.NOTIFIED
+  if (isComputed) {
+    sub.next = batchedComputed
+    batchedComputed = sub
+    return
+  }
+  sub.next = batchedSub
+  batchedSub = sub
+}
+=======
+function batch(sub: Subscriber, isComputed = false) {
+  sub.flags |= EffectFlags.NOTIFIED
+  if (isComputed) {
+    sub.next = batchedComputed
+    batchedComputed = sub
+    return
+  }
+  sub.next = undefined
+  if (!batchedSub) {
+    batchedSub = sub
+  } else {
+    let tail = batchedSub
+    while (tail.next) {
+      tail = tail.next
+    }
+    tail.next = sub
+  }
+}
+>>>>>>> REPLACE

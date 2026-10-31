@@ -3,7 +3,8 @@ requests/models.py
         if isinstance(data, (str, bytes)):
             return to_native_string(data)
 =======
-        if isinstance(data, (str, bytes)):
+        if isinstance(data, bytes):
             return data
+        elif isinstance(data, str):
+            return to_native_string(data)
 >>>>>>> REPLACE
-APPROVE

@@ -3,5 +3,6 @@
  "mode": "B",
  "binding": true,
  "verdict": "clean",
- "violations": []
+ "violations": [],
+ "note": "green-retry second attempt"
 }

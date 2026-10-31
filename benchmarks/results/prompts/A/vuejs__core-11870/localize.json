@@ -6,7 +6,7 @@
   "packages/reactivity/__tests__/shallowReactive.spec.ts",
   "packages/runtime-core/src/apiSetupHelpers.ts"
  ],
- "elapsed_ms": 4246,
+ "elapsed_ms": 3934,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "9009f1b34b5c1ffc878be15a3a60dac8bbd7f47a6902a6adfb04fa009fc539f6"
 }

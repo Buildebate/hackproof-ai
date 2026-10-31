@@ -1,0 +1,22 @@
+packages/reactivity/src/effect.ts
+<<<<<<< SEARCH
+    if (!(this.flags & EffectFlags.NOTIFIED)) {
+      this.flags |= EffectFlags.NOTIFIED
+      this.nextEffect = batchedEffect
+      batchedEffect = this
+    }
+=======
+    if (!(this.flags & EffectFlags.NOTIFIED)) {
+      this.flags |= EffectFlags.NOTIFIED
+      this.nextEffect = undefined
+      if (batchedEffect) {
+        let tail = batchedEffect
+        while (tail.nextEffect) {
+          tail = tail.nextEffect
+        }
+        tail.nextEffect = this
+      } else {
+        batchedEffect = this
+      }
+    }
+>>>>>>> REPLACE

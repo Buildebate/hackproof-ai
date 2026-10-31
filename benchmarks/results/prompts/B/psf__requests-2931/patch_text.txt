@@ -2,7 +2,17 @@ requests/models.py
 <<<<<<< SEARCH
         if isinstance(data, (str, bytes)):
             return to_native_string(data)
+        elif hasattr(data, 'read'):
 =======
         if isinstance(data, (str, bytes)):
             return data
+        elif hasattr(data, 'read'):
+>>>>>>> REPLACE
+requests/models.py
+<<<<<<< SEARCH
+        enc_params = self._encode_params(params)
+=======
+        enc_params = self._encode_params(params)
+        if isinstance(enc_params, bytes):
+            enc_params = enc_params.decode('utf-8')
 >>>>>>> REPLACE

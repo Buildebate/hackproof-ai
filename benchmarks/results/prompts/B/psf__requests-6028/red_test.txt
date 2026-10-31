@@ -1,6 +1,6 @@
 from requests.utils import prepend_scheme_if_needed
 
 
-def test_prepend_scheme_preserves_proxy_auth():
-    proxy = "http://user:pass@127.0.0.1:3128/"
-    assert prepend_scheme_if_needed(proxy, "http") == proxy
+def test_prepend_scheme_if_needed_preserves_proxy_auth():
+    result = prepend_scheme_if_needed("http://user:pwd@host:8080", "http")
+    assert "user:pwd@" in result

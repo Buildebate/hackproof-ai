@@ -1,0 +1,8 @@
+{
+ "task": "psf__requests-1142",
+ "mode": "A",
+ "binding": false,
+ "verdict": "clean",
+ "violations": [],
+ "note": "post-hoc measurement; does not gate Mode A"
+}

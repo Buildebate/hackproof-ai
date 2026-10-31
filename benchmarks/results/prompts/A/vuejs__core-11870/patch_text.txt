@@ -1,1 +1,17 @@
-REVISE
+packages/runtime-core/src/helpers/renderList.ts
+<<<<<<< SEARCH
+import { isReactive, shallowReadArray, toReactive } from '@vue/reactivity'
+=======
+import {
+  isReactive,
+  isShallow,
+  shallowReadArray,
+  toReactive,
+} from '@vue/reactivity'
+>>>>>>> REPLACE
+packages/runtime-core/src/helpers/renderList.ts
+<<<<<<< SEARCH
+      needsWrap = true
+=======
+      needsWrap = !isShallow(source)
+>>>>>>> REPLACE

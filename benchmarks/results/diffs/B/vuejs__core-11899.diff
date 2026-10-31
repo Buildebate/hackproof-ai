@@ -1,0 +1,73 @@
+diff --git a/packages/compiler-sfc/src/style/pluginScoped.ts b/packages/compiler-sfc/src/style/pluginScoped.ts
+index 6a588b5..02c353e 100644
+--- a/packages/compiler-sfc/src/style/pluginScoped.ts
++++ b/packages/compiler-sfc/src/style/pluginScoped.ts
+@@ -30,6 +30,68 @@ const scopedPlugin: PluginCreator<string> = (id = '') => {
+       }
+     },
+     OnceExit(root) {
++      const atRules: AtRule[] = []
++      root.walkAtRules(atRule => {
++        atRules.push(atRule)
++      })
++      const groupingAtRules = new Set([
++        'media',
++        'supports',
++        'container',
++        'layer',
++        'starting-style',
++        'scope',
++        'document',
++        '-moz-document',
++      ])
++      atRules.forEach(atRule => {
++        if (
++          !atRule.nodes ||
++          !groupingAtRules.has(atRule.name.toLowerCase())
++        ) {
++          return
++        }
++        let parent = atRule.parent
++        let scopedRule: Rule | undefined
++        while (parent) {
++          if (
++            parent.type === 'atrule' &&
++            /-?keyframes$/.test((parent as AtRule).name)
++          ) {
++            return
++          }
++          if (!scopedRule && parent.type === 'rule') {
++            scopedRule = parent as Rule
++          }
++          parent = parent.parent
++        }
++        if (!scopedRule) {
++          return
++        }
++        let run: typeof atRule.nodes = []
++        const flush = () => {
++          if (!run.length) {
++            return
++          }
++          const wrapper = scopedRule.clone({
++            selector: '&',
++            nodes: [],
++          })
++          atRule.insertBefore(run[0], wrapper)
++          run.forEach(decl => {
++            wrapper.append(decl)
++          })
++          run = []
++        }
++        ;[...atRule.nodes].forEach(node => {
++          if (node.type === 'decl') {
++            run.push(node)
++          } else {
++            flush()
++          }
++        })
++        flush()
++      })
+       if (Object.keys(keyframes).length) {
+         // If keyframes are found in this <style>, find and rewrite animation names
+         // in declarations.

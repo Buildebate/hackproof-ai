@@ -2,11 +2,11 @@
  "task": "pytest-dev__pytest-10081",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:45:49.245779+00:00",
+ "ts": "2026-10-31T14:06:23.163922+00:00",
  "base_ref": "da9a2b584eb7a6c7e924b2621ed0ddaeca0a7bea",
  "agent": {
-  "ok": false,
-  "reason": "no complete SEARCH/REPLACE blocks",
+  "ok": true,
+  "reason": "",
   "files": [
    "testing/test_debugging.py",
    "testing/test_unittest.py",
@@ -14,31 +14,449 @@
    "testing/python/raises.py",
    "src/_pytest/_argcomplete.py"
   ],
-  "localize_ms": 2187,
-  "backend": "hybrid-rrf-hash-cpu"
+  "localize_ms": 2091,
+  "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 1,
+  "applied_file": "src/_pytest/unittest.py",
+  "applied_files": [
+   "src/_pytest/unittest.py"
+  ]
  },
  "usage": {
-  "prompt_tokens": 14970,
-  "completion_tokens": 13620,
-  "total_tokens": 28590,
+  "prompt_tokens": 14963,
+  "completion_tokens": 6119,
+  "total_tokens": 21082,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 14970,
-    "completion_tokens": 13620,
-    "total_tokens": 28590,
+    "prompt_tokens": 14963,
+    "completion_tokens": 6119,
+    "total_tokens": 21082,
     "finish_reason": "stop"
    }
   ]
  },
  "evidence": {
   "language": "python",
-  "collect": false,
-  "freeze": false,
+  "collect": true,
+  "freeze": true,
   "debate_prompts": false
  },
+ "diff_sha256": "334d126ede1141ad6dc1e32b373167b5d5d78d9d3435b2bbf112b1ed941614fb",
+ "guard": {
+  "task": "pytest-dev__pytest-10081",
+  "mode": "A",
+  "binding": false,
+  "verdict": "clean",
+  "violations": [],
+  "note": "post-hoc measurement; does not gate Mode A"
+ },
+ "junit_sha256": "33c533fa2e13bdf6d2a9fef7c32753ba2a0f1abc028f795eca4a07876ab1072b",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@unittest.skip]": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "testing/test_unittest.py::test_simple_unittest": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_unittest.py::test_runTest_method": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_unittest.py::test_isclasscheck_issue53": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_unittest.py::test_setup": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setUpModule": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setUpModule_failing_no_teardown": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_new_instances": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_function_item_obj_is_instance": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_teardown": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_teardown_issue1649": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_skip_issue148": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_method_and_teardown_failing_reporting": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_failure_is_shown": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_setUpClass": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_fixtures_setup_setUpClass_issue8394": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Error]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Failure]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Error]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Failure]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_totally_incompatible_exception_info": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_module_level_pytestmark": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_djangolike_testcase": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_not_shown_in_traceback": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unorderable_types": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_typerror_traceback": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[pytest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[unittest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[pytest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[unittest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_setup_interaction[return]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_setup_interaction[yield]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_non_unittest_no_setupclass_support": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_no_teardown_if_setupclass_failed": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_cleanup_functions": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_issue333_result_clearing": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_raise_skip_issue748": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_skip_issue1169": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_class_method_containing_test_issue1558": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[builtins.object]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[unittest.TestCase]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_handles_init_exceptions": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_error_message_with_parametrized_fixtures": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip.py-1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_class.py-1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_module.py-1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_BdbQuit": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_exit_outcome": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_trace": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_called": {
+    "base": "passed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@unittest.skip]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@pytest.mark.skip]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@pytest.mark.skip]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_async_support": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_class_cleanups_on_success": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_class_cleanups_on_setupclass_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_class_cleanups_on_teardownclass_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_cleanups_on_success": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_cleanups_on_setup_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_cleanups_on_teardown_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_traceback_pruning": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_raising_unittest_skiptest_during_collection": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_plain_unittest_does_not_support_async": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@unittest.skip]"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [
+   "testing/test_unittest.py::test_pdb_teardown_called"
+  ],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "testing/test_unittest.py::test_simple_unittest",
+   "testing/test_unittest.py::test_runTest_method",
+   "testing/test_unittest.py::test_isclasscheck_issue53",
+   "testing/test_unittest.py::test_setup",
+   "testing/test_unittest.py::test_setUpModule",
+   "testing/test_unittest.py::test_setUpModule_failing_no_teardown",
+   "testing/test_unittest.py::test_new_instances",
+   "testing/test_unittest.py::test_function_item_obj_is_instance",
+   "testing/test_unittest.py::test_teardown",
+   "testing/test_unittest.py::test_teardown_issue1649",
+   "testing/test_unittest.py::test_unittest_skip_issue148",
+   "testing/test_unittest.py::test_method_and_teardown_failing_reporting",
+   "testing/test_unittest.py::test_setup_failure_is_shown",
+   "testing/test_unittest.py::test_setup_setUpClass",
+   "testing/test_unittest.py::test_fixtures_setup_setUpClass_issue8394",
+   "testing/test_unittest.py::test_setup_class",
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Error]",
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Failure]",
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Error]",
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Failure]",
+   "testing/test_unittest.py::test_testcase_totally_incompatible_exception_info",
+   "testing/test_unittest.py::test_module_level_pytestmark",
+   "testing/test_unittest.py::test_djangolike_testcase",
+   "testing/test_unittest.py::test_unittest_not_shown_in_traceback",
+   "testing/test_unittest.py::test_unorderable_types",
+   "testing/test_unittest.py::test_unittest_typerror_traceback",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[pytest]",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[unittest]",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[pytest]",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[unittest]",
+   "testing/test_unittest.py::test_unittest_setup_interaction[return]",
+   "testing/test_unittest.py::test_unittest_setup_interaction[yield]",
+   "testing/test_unittest.py::test_non_unittest_no_setupclass_support",
+   "testing/test_unittest.py::test_no_teardown_if_setupclass_failed",
+   "testing/test_unittest.py::test_cleanup_functions",
+   "testing/test_unittest.py::test_issue333_result_clearing",
+   "testing/test_unittest.py::test_unittest_raise_skip_issue748",
+   "testing/test_unittest.py::test_unittest_skip_issue1169",
+   "testing/test_unittest.py::test_class_method_containing_test_issue1558",
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[builtins.object]",
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[unittest.TestCase]",
+   "testing/test_unittest.py::test_testcase_handles_init_exceptions",
+   "testing/test_unittest.py::test_error_message_with_parametrized_fixtures",
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip.py-1",
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_class.py-1",
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_module.py-1",
+   "testing/test_unittest.py::test_BdbQuit",
+   "testing/test_unittest.py::test_exit_outcome",
+   "testing/test_unittest.py::test_trace",
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@unittest.skip]",
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@pytest.mark.skip]",
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@pytest.mark.skip]",
+   "testing/test_unittest.py::test_async_support",
+   "testing/test_unittest.py::test_do_class_cleanups_on_success",
+   "testing/test_unittest.py::test_do_class_cleanups_on_setupclass_failure",
+   "testing/test_unittest.py::test_do_class_cleanups_on_teardownclass_failure",
+   "testing/test_unittest.py::test_do_cleanups_on_success",
+   "testing/test_unittest.py::test_do_cleanups_on_setup_failure",
+   "testing/test_unittest.py::test_do_cleanups_on_teardown_failure",
+   "testing/test_unittest.py::test_traceback_pruning",
+   "testing/test_unittest.py::test_raising_unittest_skiptest_during_collection",
+   "testing/test_unittest.py::test_plain_unittest_does_not_support_async"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
  "status": "failed",
- "reason": "no complete SEARCH/REPLACE blocks",
+ "reason": "f2p-not-fixed:1; p2p-broken:1",
  "done": true
 }

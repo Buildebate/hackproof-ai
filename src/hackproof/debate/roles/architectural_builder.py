@@ -14,17 +14,26 @@ from typing import Any, Protocol
 
 ROLE_NAME = "ArchitecturalBuilder"
 CLIENT_KIND = "wonder"
+# Step 4.3c.1 (R13): the Step 4.3b.8 end-marker sentences are REMOVED
+# from the builder prompt. The 4.3c.0 ablation proved they divert the
+# builder into bare verdict-tokens instead of blocks (A=revised-bare
+# on 5414/5787/11739, B=blocks on 5414/5787 once stripped). Markers
+# stay scoped to the five verdict roles; the builder is a non-voting
+# patch emitter (its verdict scores neutral 0.5, and 5/6+judge still
+# closes the debate). The prompt carries no APPROVE/REVISE tokens at
+# all — not even negated — plus blocks-first and stop directives so
+# truncation preserves the patch and the model never rambles past it.
 ROLE_SYSTEM_PROMPT = (
     "You are ArchitecturalBuilder, a System Two patch synthesizer in Active "
     "Focus mode. Output exact SEARCH/REPLACE blocks "
     "(<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no "
-    "line numbers, no prose, no markdown fences. Prefix each block with "
-    "its repo-relative target file path on its own line. Copy every "
-    "SEARCH block byte-for-byte from the shown CODE CONTEXT (exact "
-    "indentation and punctuation); never reconstruct code from memory. "
-    "After the blocks, end your verdict with exactly one marker word on "
-    "its own final line: APPROVE if the patch is complete, or REVISE if "
-    "the context is insufficient to write one."
+    "line numbers, no prose, no markdown fences. Emit the blocks FIRST, "
+    "before any other text, so a truncated output still carries the "
+    "patch. Prefix each block with its repo-relative target file path "
+    "on its own line. Copy every SEARCH block byte-for-byte from the "
+    "shown CODE CONTEXT (exact indentation and punctuation); never "
+    "reconstruct code from memory. Stop immediately after the last "
+    ">>>>>>> REPLACE line; no trailing commentary."
 )
 ROUTED_PATH_SUFFIXES = (".py", ".ts", ".tsx", ".js", ".jsx", ".mts", ".cts")
 SEARCH_MARKER = "<<<<<<< SEARCH"
@@ -42,6 +51,7 @@ __all__ = [
     "extract_blocks",
     "extract_routed_blocks",
     "revise_patch",
+    "revise_patch_from_green",
 ]
 
 
@@ -87,6 +97,38 @@ def revise_patch(
         "ONLY corrected SEARCH/REPLACE blocks (same format, file path "
         "headers, byte-for-byte SEARCH from the context/region below).\n\n"
         f"FAILURE (patcher verdict, ground truth attached):\n{failure_report}\n\n"
+        f"PREVIOUS PATCH:\n{previous_patch}"
+    )
+    return client.debate_round(ROLE_NAME, prompt, [])
+
+
+def revise_patch_from_green(
+    client: _Debater,
+    *,
+    issue_description: str,
+    code_context: str,
+    previous_patch: str,
+    green_report: str,
+) -> str:
+    """Single-retry patch revision after a green-eval failure.
+
+    Step 4.3c.1 (R9): exactly one extra builder turn when the applied
+    patch leaves FAIL_TO_PASS tests red or breaks PASS_TO_PASS tests.
+    ``green_report`` is the condensed harness verdict — failed test
+    names plus assertion-diff excerpts from the observed JUnit, never
+    gold sources — so the model revises against measured behavior.
+    Callers must invoke this at most once per run and drain the extra
+    usage into the ledger as ``ArchitecturalBuilder-green-retry``.
+    """
+    prompt = (
+        f"{ROLE_SYSTEM_PROMPT}\n\nISSUE:\n{issue_description}\n\n"
+        f"CODE CONTEXT:\n{code_context}\n\n"
+        "YOUR PREVIOUS PATCH WAS APPLIED BUT THE TESTS STILL FAIL. Do "
+        "not explain; output ONLY corrected SEARCH/REPLACE blocks "
+        "(same format, file path headers, byte-for-byte SEARCH from "
+        "the context below). Address the failing assertions; do not "
+        "touch test files.\n\n"
+        f"GREEN FAILURE (harness verdict, observed behavior only):\n{green_report}\n\n"
         f"PREVIOUS PATCH:\n{previous_patch}"
     )
     return client.debate_round(ROLE_NAME, prompt, [])

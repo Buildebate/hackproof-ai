@@ -1,0 +1,8 @@
+{
+ "task": "vuejs__core-11870",
+ "mode": "A",
+ "binding": false,
+ "verdict": "clean",
+ "violations": [],
+ "note": "post-hoc measurement; does not gate Mode A"
+}

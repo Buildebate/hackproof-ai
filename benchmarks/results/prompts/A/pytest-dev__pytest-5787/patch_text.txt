@@ -1,1 +1,111 @@
-REVISE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+class ReprExceptionInfo(TerminalRepr):
+    def __init__(self, reprtraceback, reprcrash):
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+        self.sections = []
+=======
+class ReprExceptionInfo(TerminalRepr):
+    def __init__(self, reprtraceback, reprcrash, reprchain=None):
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+        self.reprchain = reprchain or []
+        self.sections = []
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+    def toterminal(self, tw):
+        self.reprtraceback.toterminal(tw)
+        if self.reprcrash is not None:
+            self.reprcrash.toterminal(tw)
+        for name, content, sep in self.sections:
+=======
+    def toterminal(self, tw):
+        if self.reprchain:
+            for reprtraceback, reprcrash, descr in self.reprchain:
+                if descr is not None:
+                    tw.line(descr, yellow=True)
+                reprtraceback.toterminal(tw)
+                if reprcrash is not None:
+                    reprcrash.toterminal(tw)
+        else:
+            self.reprtraceback.toterminal(tw)
+            if self.reprcrash is not None:
+                self.reprcrash.toterminal(tw)
+        for name, content, sep in self.sections:
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+        reprcrash = self._getreprcrash()
+        return ReprExceptionInfo(reprtb, reprcrash)
+=======
+        reprcrash = self._getreprcrash()
+        reprchain = []
+        excinfo = self
+        descr = None
+        seen = set()
+        while True:
+            seen.add(id(excinfo.value))
+            if excinfo is self:
+                chain_tb, chain_crash = reprtb, reprcrash
+            else:
+                sub = excinfo.getrepr(
+                    showlocals=showlocals,
+                    style=style,
+                    abspath=abspath,
+                    tbfilter=tbfilter,
+                    funcargs=funcargs,
+                    truncate_locals=truncate_locals,
+                )
+                chain_tb, chain_crash = sub.reprtraceback, sub.reprcrash
+            reprchain.append((chain_tb, chain_crash, descr))
+            cause = getattr(excinfo.value, "__cause__", None)
+            context = getattr(excinfo.value, "__context__", None)
+            if cause is not None and id(cause) not in seen:
+                descr = "The above exception was the direct cause of the following exception:"
+                excinfo = ExceptionInfo((type(cause), cause, cause.__traceback__))
+            elif (
+                context is not None
+                and not getattr(excinfo.value, "__suppress_context__", False)
+                and id(context) not in seen
+            ):
+                descr = "During handling of the above exception, another exception occurred:"
+                excinfo = ExceptionInfo(
+                    (type(context), context, context.__traceback__)
+                )
+            else:
+                break
+        reprchain.reverse()
+        return ReprExceptionInfo(reprtb, reprcrash, reprchain)
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+            "reprcrash": serialize_repr_crash(exc_info.reprcrash),
+            "sections": exc_info.sections,
+=======
+            "reprcrash": serialize_repr_crash(exc_info.reprcrash),
+            "reprchain": [
+                [
+                    serialize_repr_traceback(traceback),
+                    serialize_repr_crash(crash),
+                    descr,
+                ]
+                for traceback, crash, descr in getattr(exc_info, "reprchain", [])
+            ],
+            "sections": exc_info.sections,
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        exception_info = ReprExceptionInfo(reprtraceback, reprcrash)
+=======
+        exception_info = ReprExceptionInfo(reprtraceback, reprcrash)
+        exception_info.reprchain = [
+            (
+                deserialize_repr_traceback(traceback_data),
+                deserialize_repr_crash(crash_data),
+                descr,
+            )
+            for traceback_data, crash_data, descr in data.get("reprchain", [])
+        ]
+>>>>>>> REPLACE

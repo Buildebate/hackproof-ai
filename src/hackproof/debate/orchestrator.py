@@ -13,6 +13,10 @@ clients (Spark 12288 / Wonder 32768 per ADR-028, enforced by
 ``MetaClient``) and
 records per-call usage snapshots. Mock clients expose no usage, which is
 recorded honestly as zeros.
+
+Step 4.3c.1 (R13): a synthesis emitting zero complete blocks is
+retried exactly once with a grounded format-violation note
+(``PatchSynthesis-retry`` usage); the second output wins as-is.
 """
 
 from __future__ import annotations
@@ -67,6 +71,28 @@ class DebateConsensusReport:
     total_completion_tokens: int = 0
     total_tokens: int = 0
     duration_ms: int = 0
+
+
+def _synthesis_violation(patch_text: str, finish_reason: str | None) -> str:
+    """Grounded format-violation note for the single synthesis retry.
+
+    Step 4.3c.1 (R13): quotes machine counts from the failed output —
+    never a guessed diagnosis — so the retry addresses the observed
+    defect (empty response, missing markers, empty SEARCH/REPLACE).
+    """
+    search_hits = patch_text.count(architectural_builder.SEARCH_MARKER)
+    sep_hits = patch_text.count(architectural_builder.SEPARATOR_MARKER)
+    replace_hits = patch_text.count(architectural_builder.REPLACE_MARKER)
+    finish = finish_reason or "unknown"
+    return (
+        "\n\nFORMAT VIOLATION IN YOUR PREVIOUS SYNTHESIS "
+        "(ground truth, fix it): 0 complete SEARCH/REPLACE blocks "
+        f"(chars={len(patch_text)}, SEARCHx{search_hits}, "
+        f"separatorx{sep_hits}, REPLACEx{replace_hits}, "
+        f"finish_reason={finish}). Output ONLY complete blocks, blocks "
+        "FIRST, one repo-relative file path header per block, non-empty "
+        "SEARCH and REPLACE."
+    )
 
 
 def _snapshot_usage(role: str, client: Any) -> TokenUsage:
@@ -184,7 +210,16 @@ Raises:
             f"[{role}] {verdict}" for role, verdict in rounds[-1].items()
         )
         patch_candidate = self._wonder.synthesize_patch(consensus_text)
-        usage.append(_snapshot_usage("PatchSynthesis", self._wonder))
+        first_usage = _snapshot_usage("PatchSynthesis", self._wonder)
+        usage.append(first_usage)
+        if not architectural_builder.extract_blocks(patch_candidate):
+            retry_input = consensus_text + _synthesis_violation(
+                patch_candidate, first_usage.finish_reason
+            )
+            patch_candidate = self._wonder.synthesize_patch(retry_input)
+            usage.append(
+                _snapshot_usage("PatchSynthesis-retry", self._wonder)
+            )
 
         duration_ms = int((time.perf_counter() - started) * 1000)
         return DebateConsensusReport(

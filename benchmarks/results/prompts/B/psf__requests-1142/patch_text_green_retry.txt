@@ -1,0 +1,7 @@
+requests/models.py
+<<<<<<< SEARCH
+        self.headers['Content-Length'] = str(len(body or ''))
+=======
+        if (body is not None and len(body)) or self.method not in ('GET', 'HEAD'):
+            self.headers['Content-Length'] = str(len(body or ''))
+>>>>>>> REPLACE

@@ -1,0 +1,25 @@
+diff --git a/packages/runtime-core/src/helpers/renderList.ts b/packages/runtime-core/src/helpers/renderList.ts
+index 12b0317..14146c1 100644
+--- a/packages/runtime-core/src/helpers/renderList.ts
++++ b/packages/runtime-core/src/helpers/renderList.ts
+@@ -51,6 +51,7 @@ export function renderList<T>(
+ /**
+  * Actual implementation
+  */
++import { isShallow } from '@vue/reactivity'
+ export function renderList(
+   source: any,
+   renderItem: (...args: any[]) => VNodeChild,
+@@ -62,9 +63,11 @@ export function renderList(
+   const sourceIsArray = isArray(source)
+ 
+   if (sourceIsArray || isString(source)) {
+-    const sourceIsReactiveArray = sourceIsArray && isReactive(source)
++    let sourceIsReactiveArray = sourceIsArray && isReactive(source)
+     if (sourceIsReactiveArray) {
++      const sourceIsShallow = isShallow(source)
+       source = shallowReadArray(source)
++      sourceIsReactiveArray = !sourceIsShallow
+     }
+     ret = new Array(source.length)
+     for (let i = 0, l = source.length; i < l; i++) {

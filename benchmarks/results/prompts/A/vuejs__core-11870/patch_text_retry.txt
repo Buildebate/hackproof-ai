@@ -1,0 +1,37 @@
+packages/runtime-core/src/helpers/renderList.ts
+<<<<<<< SEARCH
+export function renderList(
+  source: any,
+  renderItem: (...args: any[]) => VNodeChild,
+  cache?: any[],
+  index?: number,
+): VNodeChild[] {
+  let ret: VNodeChild[]
+  const cached = (cache && cache[index!]) as VNode[] | undefined
+  const sourceIsArray = isArray(source)
+
+  if (sourceIsArray || isString(source)) {
+    const sourceIsReactiveArray = sourceIsArray && isReactive(source)
+    if (sourceIsReactiveArray) {
+      source = shallowReadArray(source)
+    }
+=======
+import { isShallow } from '@vue/reactivity'
+export function renderList(
+  source: any,
+  renderItem: (...args: any[]) => VNodeChild,
+  cache?: any[],
+  index?: number,
+): VNodeChild[] {
+  let ret: VNodeChild[]
+  const cached = (cache && cache[index!]) as VNode[] | undefined
+  const sourceIsArray = isArray(source)
+
+  if (sourceIsArray || isString(source)) {
+    let sourceIsReactiveArray = sourceIsArray && isReactive(source)
+    if (sourceIsReactiveArray) {
+      const sourceIsShallow = isShallow(source)
+      source = shallowReadArray(source)
+      sourceIsReactiveArray = !sourceIsShallow
+    }
+>>>>>>> REPLACE

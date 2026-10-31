@@ -1,0 +1,37 @@
+diff --git a/packages/compiler-sfc/src/style/pluginScoped.ts b/packages/compiler-sfc/src/style/pluginScoped.ts
+index 6a588b5..74c5977 100644
+--- a/packages/compiler-sfc/src/style/pluginScoped.ts
++++ b/packages/compiler-sfc/src/style/pluginScoped.ts
+@@ -77,6 +77,32 @@ function processRule(id: string, rule: Rule) {
+     return
+   }
+   processedRules.add(rule)
++  // Wrap declarations directly inside nested at-rules (e.g. @media)
++  // in a nesting selector so they receive the scope id, matching
++  // declarations directly under the parent rule.
++  rule.walkAtRules(atRule => {
++    if (
++      /-?keyframes$/.test(atRule.name) ||
++      atRule.name === 'font-face' ||
++      atRule.name === 'page' ||
++      atRule.name === 'property' ||
++      !atRule.nodes
++    ) {
++      return
++    }
++    const decls = atRule.nodes.filter(n => n.type === 'decl')
++    if (!decls.length) {
++      return
++    }
++    const nestedRule = rule.clone({ selector: `&[${id}]` })
++    nestedRule.removeAll()
++    decls.forEach(decl => {
++      decl.remove()
++      nestedRule.append(decl)
++    })
++    processedRules.add(nestedRule)
++    atRule.prepend(nestedRule)
++  })
+   let deep = false
+   let parent: Document | Container | undefined = rule.parent
+   while (parent && parent.type !== 'root') {

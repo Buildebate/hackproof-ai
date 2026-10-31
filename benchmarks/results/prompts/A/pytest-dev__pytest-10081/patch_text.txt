@@ -1,1 +1,10 @@
-REVISE
+src/_pytest/unittest.py
+<<<<<<< SEARCH
+            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
+=======
+            if (
+                self.config.getoption("usepdb")
+                and not _is_skipped(self.obj)
+                and not _is_skipped(testcase)
+            ):
+>>>>>>> REPLACE

@@ -74,7 +74,7 @@ tests/test_utils.py::TestGuessFilename::test_guess_filename_invalid[value1]
 tests/test_utils.py::TestGuessFilename::test_guess_filename_valid[value-bytes]
 tests/test_utils.py::TestGuessFilename::test_guess_filename_valid[value-str]
 tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/]
-tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/home/ubuntu/hackproof-bench/runs/psf__requests-6028/B/tests/test_utils.py]
+tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/home/ubuntu/hackproof-bench/runs/psf__requests-6028/B-green-retry/tests/test_utils.py]
 tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[path2]
 tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/etc/invalid/location]
 tests/test_utils.py::TestExtractZippedPaths::test_zipped_paths_extracted

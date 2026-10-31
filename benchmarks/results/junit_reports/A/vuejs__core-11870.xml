@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="8" failures="0" errors="0" time="1.182">
+    <testsuite name="packages/runtime-core/__tests__/helpers/renderList.spec.ts" timestamp="2026-10-31T14:20:50.148Z" hostname="7dc472252417" tests="8" failures="0" errors="0" skipped="0" time="0.009">
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render items in an array" time="0.002">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render characters of a string" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render integers 1 through N when given a number N" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should warn when given a non-integer N" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render properties in an object" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render an item for entry in an iterable" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should return empty array when source is undefined" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render items in a reactive array correctly" time="0.001">
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -6,7 +6,7 @@
   "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
   "packages/compiler-sfc/src/compileScript.ts"
  ],
- "elapsed_ms": 4444,
+ "elapsed_ms": 3895,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "33a1a9860146d68172aa7d7bb00717d068ae2177d728e24a55beb6d390763091"
 }

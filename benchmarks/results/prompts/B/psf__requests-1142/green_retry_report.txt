@@ -1,0 +1,3 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [F2P] test_requests.py::RequestsTestCase::test_no_content_length (base=failed agent=failed):
+  AssertionError: False is not true

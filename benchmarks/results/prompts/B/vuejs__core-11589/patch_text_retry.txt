@@ -1,7 +1,31 @@
 packages/reactivity/src/dep.ts
 <<<<<<< SEARCH
-      for (let link = this.subsHead; link; link = link.nextSub) {
-=======
       for (let link = this.subs; link; link = link.prevSub) {
+=======
+      const links: Link[] = []
+      for (let link = this.subs; link; link = link.prevSub) {
+        links.push(link)
+      }
+      for (let i = links.length - 1; i >= 0; i--) {
+        const link = links[i]!
 >>>>>>> REPLACE
-APPROVE
+packages/reactivity/src/effect.ts
+<<<<<<< SEARCH
+  let error: unknown
+  while (batchedEffect) {
+    let e: ReactiveEffect | undefined = batchedEffect
+    batchedEffect = undefined
+=======
+  let error: unknown
+  while (batchedEffect) {
+    let e: ReactiveEffect | undefined = batchedEffect
+    batchedEffect = undefined
+    let reversed: ReactiveEffect | undefined = undefined
+    while (e) {
+      const next: ReactiveEffect | undefined = e.nextEffect
+      e.nextEffect = reversed
+      reversed = e
+      e = next
+    }
+    e = reversed
+>>>>>>> REPLACE

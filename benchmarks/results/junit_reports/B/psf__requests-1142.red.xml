@@ -1,8 +1,7 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.188" timestamp="2026-10-31T08:07:54.799093+00:00" hostname="481d166330e2"><testcase classname="test_repro_e401728e8b83" name="test_get_does_not_send_content_length" time="0.006"><failure message="AssertionError: GET requests should not send Content-Length by default, got '0'&#10;assert 'Content-Length' not in {'Content-Length': '0'}&#10; +  where {'Content-Length': '0'} = &lt;PreparedRequest [GET]&gt;.headers">def test_get_does_not_send_content_length():
-        req = requests.Request('GET', 'http://example.com/').prepare()
-&gt;       assert 'Content-Length' not in req.headers, "GET requests should not send Content-Length by default, got %r" % (req.headers.get('Content-Length'),)
-E       AssertionError: GET requests should not send Content-Length by default, got '0'
-E       assert 'Content-Length' not in {'Content-Length': '0'}
-E        +  where {'Content-Length': '0'} = &lt;PreparedRequest [GET]&gt;.headers
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.184" timestamp="2026-10-31T12:33:55.599124+00:00" hostname="a100563f1e9c"><testcase classname="test_repro_e401728e8b83" name="test_get_does_not_send_content_length" time="0.001"><failure message="AttributeError: 'Session' object has no attribute 'prepare_request'">def test_get_does_not_send_content_length():
+        s = requests.Session()
+        req = requests.Request('GET', 'http://example.com')
+&gt;       prepped = s.prepare_request(req)
+E       AttributeError: 'Session' object has no attribute 'prepare_request'
 
-test_repro_e401728e8b83.py:6: AssertionError</failure></testcase></testsuite></testsuites>
+test_repro_e401728e8b83.py:7: AttributeError</failure></testcase></testsuite></testsuites>

@@ -304,11 +304,21 @@ class MetaClient:
         return self._post(self._messages(user_content, history))
 
     def synthesize_patch(self, debate_consensus: str) -> str:
-        """Synthesize a SEARCH/REPLACE patch from debate consensus."""
+        """Synthesize a SEARCH/REPLACE patch from debate consensus.
+
+        Step 4.3c.1 (R13): blocks-first plus an explicit stop line so a
+        ``finish_reason=length`` truncation still carries the patch
+        (Wave 1 lost 1142-B and 11739-B to ramble-to-cap with zero
+        bytes) and the model never trails commentary past the patch.
+        """
         user_content = (
-            "Convert this debate consensus into exact SEARCH/REPLACE blocks. "
-            "Output ONLY the blocks. Prefix each block with its "
-            "repo-relative target file path on its own line.\n\nCONSENSUS:\n"
+            "Convert this debate consensus into exact SEARCH/REPLACE blocks "
+            "(<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE). Emit the "
+            "blocks FIRST, before any other text, so a truncated output "
+            "still carries the patch. Output ONLY the blocks: no prose, "
+            "no markdown fences. Prefix each block with its repo-relative "
+            "target file path on its own line. Stop immediately after "
+            "the last >>>>>>> REPLACE line.\n\nCONSENSUS:\n"
             + debate_consensus
         )
         return self._post(self._messages(user_content))

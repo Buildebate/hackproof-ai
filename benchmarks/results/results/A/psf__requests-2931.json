@@ -2,7 +2,7 @@
  "task": "psf__requests-2931",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:41:48.639111+00:00",
+ "ts": "2026-10-31T14:02:18.543422+00:00",
  "base_ref": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
  "agent": {
   "ok": true,
@@ -14,7 +14,7 @@
    "requests/packages/__init__.py",
    "requests/utils.py"
   ],
-  "localize_ms": 780,
+  "localize_ms": 939,
   "backend": "hybrid-rrf-hash-cpu",
   "blocks": 1,
   "applied_file": "requests/models.py",
@@ -23,16 +23,16 @@
   ]
  },
  "usage": {
-  "prompt_tokens": 7069,
-  "completion_tokens": 1530,
-  "total_tokens": 8599,
+  "prompt_tokens": 7062,
+  "completion_tokens": 1737,
+  "total_tokens": 8799,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 7069,
-    "completion_tokens": 1530,
-    "total_tokens": 8599,
+    "prompt_tokens": 7062,
+    "completion_tokens": 1737,
+    "total_tokens": 8799,
     "finish_reason": "stop"
    }
   ]
@@ -43,7 +43,7 @@
   "freeze": true,
   "debate_prompts": false
  },
- "diff_sha256": "e103a13cef39cb5d6de671ca23d6e7f102bb540c86a88bf8043ece3c14c6182c",
+ "diff_sha256": "0a1e08b31175003f065cb90dda0af8aebb8b122cc35d1fdea6d7f1811d9a4935",
  "guard": {
   "task": "psf__requests-2931",
   "mode": "A",
@@ -52,7 +52,7 @@
   "violations": [],
   "note": "post-hoc measurement; does not gate Mode A"
  },
- "junit_sha256": "c20d616dca8d2f8e522b8a92d807b3f940cb4b365b4267736279fe63f4723110",
+ "junit_sha256": "10d6e12001b8fb717d7380c8df929728256ce6f7e796db960e39a47577a930c9",
  "eval_exit": 1,
  "eval_timed_out": false,
  "scoring": {

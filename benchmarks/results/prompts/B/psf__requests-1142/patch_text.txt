@@ -1,0 +1,109 @@
+requests/packages/urllib3/request.py
+<<<<<<< SEARCH
+    def request_encode_url(self, method, url, fields=None, **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the ``fields`` encoded in
+        the url. This is useful for request methods like GET, HEAD, DELETE, etc.
+        """
+        if fields:
+            url += '?' + urlencode(fields)
+        return self.urlopen(method, url, **urlopen_kw)
+=======
+    def request_encode_url(self, method, url, fields=None, **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the ``fields`` encoded in
+        the url. This is useful for request methods like GET, HEAD, DELETE, etc.
+        """
+        if fields:
+            url += '?' + urlencode(fields)
+        try:
+            _string_types = basestring
+        except NameError:
+            _string_types = (str, bytes)
+        body = urlopen_kw.get('body')
+        if isinstance(body, _string_types):
+            headers = urlopen_kw.get('headers')
+            if headers is None:
+                headers = getattr(self, 'headers', None)
+            if headers is None:
+                headers = {}
+            else:
+                try:
+                    headers = headers.copy()
+                except AttributeError:
+                    headers = dict(headers)
+            _has_content_length = False
+            _chunked = bool(urlopen_kw.get('chunked'))
+            try:
+                _items = headers.items()
+            except AttributeError:
+                _items = headers
+            for _k, _v in _items:
+                if isinstance(_k, bytes):
+                    _key = _k.decode('latin-1').lower()
+                else:
+                    try:
+                        _key = _k.lower()
+                    except AttributeError:
+                        continue
+                if _key == 'content-length':
+                    _has_content_length = True
+                elif _key == 'transfer-encoding':
+                    if isinstance(_v, bytes):
+                        _val = _v.decode('latin-1').lower()
+                    else:
+                        _val = str(_v).lower()
+                    if 'chunked' in _val:
+                        _chunked = True
+            if not _has_content_length and not _chunked:
+                headers['Content-Length'] = str(len(body))
+            urlopen_kw['headers'] = headers
+        return self.urlopen(method, url, **urlopen_kw)
+>>>>>>> REPLACE
+requests/packages/urllib3/request.py
+<<<<<<< SEARCH
+        if headers is None:
+            headers = self.headers
+
+        headers_ = {'Content-Type': content_type}
+        headers_.update(headers)
+
+        return self.urlopen(method, url, body=body, headers=headers_,
+                            **urlopen_kw)
+=======
+        if headers is None:
+            headers = getattr(self, 'headers', None)
+
+        headers_ = {'Content-Type': content_type}
+        if headers:
+            headers_.update(headers)
+        try:
+            _string_types = basestring
+        except NameError:
+            _string_types = (str, bytes)
+        if isinstance(body, _string_types):
+            _has_content_length = False
+            _chunked = bool(urlopen_kw.get('chunked'))
+            for _k, _v in headers_.items():
+                if isinstance(_k, bytes):
+                    _key = _k.decode('latin-1').lower()
+                else:
+                    try:
+                        _key = _k.lower()
+                    except AttributeError:
+                        continue
+                if _key == 'content-length':
+                    _has_content_length = True
+                elif _key == 'transfer-encoding':
+                    if isinstance(_v, bytes):
+                        _val = _v.decode('latin-1').lower()
+                    else:
+                        _val = str(_v).lower()
+                    if 'chunked' in _val:
+                        _chunked = True
+            if not _has_content_length and not _chunked:
+                headers_['Content-Length'] = str(len(body))
+
+        return self.urlopen(method, url, body=body, headers=headers_,
+                            **urlopen_kw)
+>>>>>>> REPLACE

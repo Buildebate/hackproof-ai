@@ -1,1 +1,32 @@
-REVISE
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
+  processedRules.add(rule)
+=======
+  processedRules.add(rule)
+  // Wrap declarations directly inside nested at-rules (e.g. @media)
+  // in a nesting selector so they receive the scope id, matching
+  // declarations directly under the parent rule.
+  rule.walkAtRules(atRule => {
+    if (
+      /-?keyframes$/.test(atRule.name) ||
+      atRule.name === 'font-face' ||
+      atRule.name === 'page' ||
+      atRule.name === 'property' ||
+      !atRule.nodes
+    ) {
+      return
+    }
+    const decls = atRule.nodes.filter(n => n.type === 'decl')
+    if (!decls.length) {
+      return
+    }
+    const nestedRule = rule.clone({ selector: `&[${id}]` })
+    nestedRule.removeAll()
+    decls.forEach(decl => {
+      decl.remove()
+      nestedRule.append(decl)
+    })
+    processedRules.add(nestedRule)
+    atRule.prepend(nestedRule)
+  })
+>>>>>>> REPLACE

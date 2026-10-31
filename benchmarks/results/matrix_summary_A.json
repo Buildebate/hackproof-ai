@@ -1,16 +1,16 @@
 {
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-31T09:53:03.182886+00:00",
+ "ts": "2026-10-31T14:22:43.814681+00:00",
  "runs": [
   {
    "task": "psf__requests-1142",
    "mode": "A",
    "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
-   "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "resolved",
+   "reason": "",
    "done": true
   },
   {
@@ -27,10 +27,10 @@
    "task": "psf__requests-5414",
    "mode": "A",
    "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
-   "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "resolved",
+   "reason": "",
    "done": true
   },
   {
@@ -47,10 +47,10 @@
    "task": "pytest-dev__pytest-10081",
    "mode": "A",
    "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "agent_ok": true,
+   "agent_reason": "",
    "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "reason": "f2p-not-fixed:1; p2p-broken:1",
    "done": true
   },
   {
@@ -58,39 +58,31 @@
    "mode": "A",
    "tier": "oci",
    "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "agent_reason": "patch application failed: pytest-dev__pytest-5787: routed patch rejected: src/_pytest/reports.py: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 184-186, similarity 0.74):\n176 |                         entry_data[\"data\"][key] = value.__dict__.copy()\n177 |                 new_entries.append(entry_data)\n178 | \n179 |             reprtraceback[\"reprentries\"] = new_entries\n180 | \n181 |             return {\n182 |                 \"reprcrash\": reprcrash,\n183 |                 \"reprtraceback\": reprtraceback,\n184 |                 \"sections\": rep.longrepr.sections,\n185 |             }\n186 | \n187 |         d = self.__dict__.copy()\n188 |         if hasattr(self.longrepr, \"toterminal\"):\n189 |             if hasattr(self.longrepr, \"reprtraceback\") and hasattr(\n190 |                 self.longrepr, \"reprcrash\"\n191 |             ):\n192 |                 d[\"longrepr\"] = disassembled_report(self)\n193 |             else:\n194 |                 d[\"longrepr\"] = str(self.longrepr)",
    "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "reason": "patch application failed: pytest-dev__pytest-5787: routed patch rejected: src/_pytest/reports.py: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 184-186, similarity 0.74):\n176 |                         entry_data[\"data\"][key] = value.__dict__.copy()\n177 |                 new_entries.append(entry_data)\n178 | \n179 |             reprtraceback[\"reprentries\"] = new_entries\n180 | \n181 |             return {\n182 |                 \"reprcrash\": reprcrash,\n183 |                 \"reprtraceback\": reprtraceback,\n184 |                 \"sections\": rep.longrepr.sections,\n185 |             }\n186 | \n187 |         d = self.__dict__.copy()\n188 |         if hasattr(self.longrepr, \"toterminal\"):\n189 |             if hasattr(self.longrepr, \"reprtraceback\") and hasattr(\n190 |                 self.longrepr, \"reprcrash\"\n191 |             ):\n192 |                 d[\"longrepr\"] = disassembled_report(self)\n193 |             else:\n194 |                 d[\"longrepr\"] = str(self.longrepr)",
    "done": true
   },
   {
    "task": "pytest-dev__pytest-7432",
    "mode": "A",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
    "status": "resolved",
-   "reason": "",
-   "done": true
+   "resumed": true
   },
   {
    "task": "pytest-dev__pytest-8399",
    "mode": "A",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
    "status": "resolved",
-   "reason": "",
-   "done": true
+   "resumed": true
   },
   {
    "task": "vuejs__core-11589",
    "mode": "A",
    "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "agent_ok": true,
+   "agent_reason": "",
    "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "reason": "f2p-not-fixed:1",
    "done": true
   },
   {
@@ -107,20 +99,20 @@
    "task": "vuejs__core-11870",
    "mode": "A",
    "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
-   "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "resolved",
+   "reason": "",
    "done": true
   },
   {
    "task": "vuejs__core-11899",
    "mode": "A",
    "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "agent_ok": true,
+   "agent_reason": "",
    "status": "failed",
-   "reason": "no complete SEARCH/REPLACE blocks",
+   "reason": "f2p-not-fixed:1",
    "done": true
   }
  ]

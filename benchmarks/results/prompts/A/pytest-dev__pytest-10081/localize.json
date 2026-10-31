@@ -6,7 +6,7 @@
   "testing/python/raises.py",
   "src/_pytest/_argcomplete.py"
  ],
- "elapsed_ms": 2187,
+ "elapsed_ms": 2091,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "382bda7dbd1505b4427c91fd603cdff58328f4acc4a44e010a068ca1000319aa"
 }

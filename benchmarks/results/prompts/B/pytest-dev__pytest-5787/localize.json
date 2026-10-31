@@ -6,7 +6,7 @@
   "src/_pytest/assertion/util.py",
   "src/_pytest/unittest.py"
  ],
- "elapsed_ms": 1645,
+ "elapsed_ms": 1536,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "388fac0a164b2121f6a6053a7ba17291d85ae3f027b83a605f6d6ce715fcb4e0"
 }

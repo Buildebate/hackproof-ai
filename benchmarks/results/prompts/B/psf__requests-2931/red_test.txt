@@ -1,10 +1,11 @@
-from requests import Request
+import requests
+
 
 def test_put_binary_payload_preserved():
-    data = u"ööö".encode("utf-8")
+    payload = u"ööö".encode("utf-8")
+    req = requests.Request("PUT", "http://example.com/put", data=payload)
     try:
-        prep = Request('PUT', 'http://example.com/put', data=data).prepare()
-    except Exception as exc:
-        assert False, "binary data raised %r" % (exc,)
-    assert prep.body == data, "binary body mangled: %r != %r" % (prep.body, data)
-    assert isinstance(prep.body, bytes), "binary body type changed: %r" % (type(prep.body),)
+        prepped = req.prepare()
+    except UnicodeDecodeError as e:
+        assert False, "binary payload raised UnicodeDecodeError via to_native_string: %s" % e
+    assert prepped.body == payload, "expected binary body %r, got %r" % (payload, prepped.body)

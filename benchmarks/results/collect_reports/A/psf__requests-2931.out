@@ -189,8 +189,8 @@ requests/packages/urllib3/poolmanager.py:33
   /home/ubuntu/hackproof-bench/runs/psf__requests-2931/A/requests/packages/urllib3/poolmanager.py:33: DeprecationWarning: invalid escape sequence \*
     """
 
-requests/models.py:783
-  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/A/requests/models.py:783: DeprecationWarning: invalid escape sequence \*
+requests/models.py:785
+  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/A/requests/models.py:785: DeprecationWarning: invalid escape sequence \*
     """Returns the json-encoded content of a response, if any.
 
 requests/api.py:57

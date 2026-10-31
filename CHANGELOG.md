@@ -12,6 +12,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Wave 2 final dossier (Steps 4.3c.2–4.3c.3): `benchmarks/SUMMARY.md` +
+  `benchmarks/evidence_dossier.json` — honest B 7/12 / A 5/12 (goal 9/12
+  not met), reconciled against ledger and both 12/12 matrices; Wave 2
+  spend $21.76 vs $18 envelope (TS-ramble overrun, measured cause);
+  Wave 3 decision recorded (CONDITIONAL GO, founder call).
 - Benchmark dataset manifest (`benchmarks/datasets/tasks_manifest.json`):
   12 pinned SWE-bench tasks (8 Python + 4 TypeScript) with recorded dataset
   hashes and withheld golden tests for reproducible evaluation.
@@ -62,8 +67,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   rambles to the cap (format guardrail still needed). Evidence table
   `benchmarks/evidence/synthesis_ablation_wave1.json`; 8 Wonder
   calls $2.75 of the $3 envelope.
+- Green-feedback contour + synthesis guardrail (Step 4.3c.1, minted):
+  one R9 revision (`revise_patch_from_green`, names + assert excerpts,
+  no gold) + one re-eval in a fresh run dir for Mode B iterable
+  misses (`green_retry_eligible`); R13 marker narrowing (builder
+  prompt carries zero marker tokens), blocks-first + stop directives,
+  and one grounded retry of empty synthesis (`PatchSynthesis-retry`).
+  Wave-1 prompt frozen as `WAVE1_ROLE_SYSTEM_PROMPT` for replay
+  fidelity. Honesty boundary: ADR-029.
 
 ### Fixed
+- Wave attribution for Wave 2 (Step 4.3c.2): `BENCH_WAVE_LABEL`
+  rotated to `bench4.3c-wave2`; `wave_of` buckets `waveN` and
+  `ablation` honestly instead of folding every `bench4.3*` row
+  into `bench4.3-wave1` (Wave 1 stays $19.61, ablation $2.75
+  split out, zero drift).
 - Marker-consensus debate exit (Step 4.3b.8/R11): the round closes
   on unanimous APPROVE, or 5/6 with an approving judge; markers
   count only as the verdict's last token and negated markers never

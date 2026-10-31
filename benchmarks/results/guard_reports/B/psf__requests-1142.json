@@ -2,7 +2,6 @@
  "task": "psf__requests-1142",
  "mode": "B",
  "binding": true,
- "verdict": "not-applicable",
- "violations": [],
- "note": "no agent patch evaluated (failed: debate produced no complete SEARCH/REPLACE blocks)"
+ "verdict": "clean",
+ "violations": []
 }

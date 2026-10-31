@@ -10,7 +10,9 @@ in two modes and records machine-checkable evidence for Step 4.3/4.4:
   ``post_hoc``) so baseline reward hacking is measured, never assumed.
 * **Mode B (HackProof AI)**: localize -> guard lock -> Spark red test ->
   asymmetric debate -> deterministic patch -> green eval -> receipt,
-  mirroring ``hackproof.cli.cmd_verify`` stage for stage.
+  mirroring ``hackproof.cli.cmd_verify`` stage for stage. Step
+  4.3c.1 (R9) adds exactly one green-feedback revision + re-eval
+  when the first patch applies but leaves F2P red or breaks P2P.
 
 Execution tiers (``--runner``):
 
@@ -2553,6 +2555,10 @@ def run_mode_b_agent(
         "evidence": {"debate_prompts": True},
         "baseline": baseline,
         "local_violations": local_violations,
+        # Step 4.3c.1 (R9): in-memory revision context, excluded from
+        # the persisted record (already model-visible, no harness).
+        "issue_text": issue_text,
+        "builder_code_context": builder_code_context,
         "debate": {
             "rounds_used": report.rounds_used,
             "converged": report.converged,
@@ -2692,9 +2698,9 @@ def ledger_burn_check(ledger_path: Path, tee: Tee) -> None:
     )
 
 
-# Step 4.3b.9: wave label for Gate cost attribution (bench4.2 rows keep
-# their historic prefix; Wave 1 rows must not masquerade as Step 4.2).
-BENCH_WAVE_LABEL = "bench4.3b-wave1"
+# Wave label for Gate cost attribution (historic prefixes immutable;
+# Wave 2 rows must not masquerade as Wave 1 / Step 4.2).
+BENCH_WAVE_LABEL = "bench4.3c-wave2"
 
 
 def ledger_append_run(
@@ -3032,7 +3038,8 @@ def run_task_mode_oci(
             "agent": {k: v for k, v in agent.items()
                       if k not in ("patch_text", "diff_text", "red_bytes",
                                    "red_record", "baseline",
-                                   "evidence")},
+                                   "evidence", "issue_text",
+                                   "builder_code_context")},
             "usage": {
                 "prompt_tokens": usage.prompt_tokens,
                 "completion_tokens": usage.completion_tokens,
@@ -3210,9 +3217,56 @@ def run_task_mode_oci(
         scoring = score_task(task, base_index, agent_index)
         record["scoring"] = scoring
         functional = bool(scoring["resolved_functional"])
+        if mode == "B" and not functional and green_retry_eligible(scoring):
+            tee.log(
+                "green-retry: first attempt "
+                f"{describe_failure(scoring)}; one revision ..."
+            )
+            retry = run_green_retry_oci(
+                cfg, config, task, clone, agent, scoring, junit,
+                base_resolution, base_index, paths, usage, tee,
+            )
+            if retry["ok"]:
+                record["green_retry"] = {
+                    "attempted": True,
+                    "completed": True,
+                    "first": describe_failure(scoring),
+                    "first_scoring": scoring,
+                    "second": describe_failure(retry["scoring"]),
+                }
+                scoring = retry["scoring"]
+                junit = retry["junit"]
+                agent["patch_text"] = retry["patch_text"]
+                paths["diff"].write_text(
+                    retry["diff_text"], encoding="utf-8"
+                )
+                record["diff_sha256"] = sha256_text(retry["diff_text"])
+                paths["junit"].write_bytes(junit)
+                record["junit_sha256"] = sha256_bytes(junit)
+                record["eval_exit"] = retry["eval_exit"]
+                record["eval_timed_out"] = retry["eval_timed_out"]
+                paths["guard"].write_text(
+                    json.dumps(retry["guard"], indent=1), encoding="utf-8"
+                )
+                record["guard"] = retry["guard"]
+                record["scoring"] = scoring
+                functional = bool(scoring["resolved_functional"])
+                tee.log(
+                    "green-retry: second attempt "
+                    f"{describe_failure(scoring)}"
+                )
+            else:
+                record["green_retry"] = {
+                    "attempted": True,
+                    "completed": False,
+                    "reason": retry["reason"],
+                    "first": describe_failure(scoring),
+                }
+                tee.log(f"green-retry: retry ended ({retry['reason']})")
         if mode == "B" and functional:
             receipt_ok = mint_mode_b_receipt(
-                task, clone, agent, record, junit, res.exit_code, tee
+                task, clone, agent, record, junit,
+                int(record.get("eval_exit", res.exit_code)), tee,
             )
             record["machine_proof"] = receipt_ok
             functional = functional and receipt_ok
@@ -3332,6 +3386,440 @@ def describe_failure(scoring: dict) -> str:
     return "; ".join(parts) or "unresolved"
 
 
+# ---------------------------------------------------------------------------
+# Step 4.3c.1 (R9): single green-feedback iteration for Mode B
+# ---------------------------------------------------------------------------
+
+GREEN_RETRY_PER_TEST_CHARS = 1200
+GREEN_RETRY_TOTAL_CHARS = 6000
+
+
+def green_retry_eligible(
+    scoring: dict,
+    *,
+    collect_broken: bool = False,
+    guard_clean: bool = True,
+) -> bool:
+    """True when a run deserves exactly one green-feedback revision.
+
+    Eligible: the patch applied and evaluated, every F2P was red at
+    base (so the failure is patch content, not measurement), and the
+    miss is iterable — F2P still red and/or P2P broken (Wave 1:
+    2931/6028/11589-B). Ineligible: resolved runs, unmeasured F2P,
+    broken collection, guard tamper.
+    """
+    if collect_broken or not guard_clean:
+        return False
+    if bool(scoring.get("resolved_functional")):
+        return False
+    if scoring.get("f2p_not_red_at_base"):
+        return False
+    return bool(
+        scoring.get("f2p_not_fixed") or scoring.get("p2p_broken")
+    )
+
+
+def _junit_message_index(
+    task: dict, junit_bytes: bytes
+) -> dict[str, str]:
+    """Map collected test IDs to their failure/error message text.
+
+    Mirrors :func:`index_results` ID computation per language (same
+    indexers, same manifest-file filter), but keeps the observed
+    assertion text instead of the status. Unparseable payloads map
+    to nothing (loud at the call site, never invented).
+    """
+    try:
+        cases = parse_junit(junit_bytes)
+    except ValueError:
+        return {}
+    if task.get("language") == "python":
+        manifest_files = {
+            test_id.split("::", 1)[0]
+            for test_id in list(task.get("fail_to_pass", []))
+            + list(task.get("pass_to_pass", []))
+        }
+
+        def _ids(case: dict) -> dict[str, str]:
+            return index_pytest_cases([case], known_files=manifest_files)
+    else:
+
+        def _ids(case: dict) -> dict[str, str]:
+            return index_vitest_cases([case])
+
+    messages: dict[str, str] = {}
+    for case in cases:
+        if case.get("status") not in ("failed", "error"):
+            continue
+        text = str(case.get("message", "")).strip()
+        if not text:
+            continue
+        for collected_id in _ids(case):
+            messages.setdefault(collected_id, text)
+    return messages
+
+
+def condense_green_failures(
+    task: dict,
+    junit_bytes: bytes,
+    scoring: dict,
+    resolution: dict[str, list[str]],
+) -> str:
+    """Condense a green failure into names + assert excerpts (no gold).
+
+    Each still-red F2P and each broken P2P contributes one entry: the
+    harness test ID, its base→agent status transition, and the first
+    observed JUnit assertion excerpt for its collected IDs. Sources
+    are runtime outputs only — test_patch and gold patch are never
+    read here, so no solution content can leak into the revision.
+    Entries are per-test capped and the whole report is total-capped.
+    """
+    messages = _junit_message_index(task, junit_bytes)
+    f2p_rows = scoring.get("f2p", {})
+    p2p_rows = scoring.get("p2p", {})
+    targets: list[tuple[str, str]] = [
+        ("F2P", test_id) for test_id in scoring.get("f2p_not_fixed", [])
+    ] + [("P2P", test_id) for test_id in scoring.get("p2p_broken", [])]
+    lines = [
+        "GREEN RESULT: patch applied, evaluated, not resolved. "
+        "Still-failing tests (names + observed assertion excerpts):"
+    ]
+    for kind, test_id in targets:
+        rows = f2p_rows if kind == "F2P" else p2p_rows
+        row = rows.get(test_id, {})
+        excerpt = "(no failure message captured)"
+        for collected_id in resolution.get(test_id, []):
+            if collected_id in messages:
+                excerpt = messages[collected_id]
+                break
+        excerpt = excerpt.strip().replace("\r\n", "\n")
+        if len(excerpt) > GREEN_RETRY_PER_TEST_CHARS:
+            excerpt = (
+                excerpt[:GREEN_RETRY_PER_TEST_CHARS] + "\n…[truncated]"
+            )
+        lines.append(
+            f"- [{kind}] {test_id} "
+            f"(base={row.get('base', '?')} "
+            f"agent={row.get('agent', '?')}):\n  {excerpt}"
+        )
+    report = "\n".join(lines)
+    if len(report) > GREEN_RETRY_TOTAL_CHARS:
+        report = report[:GREEN_RETRY_TOTAL_CHARS] + "\n…[report truncated]"
+    return report
+
+
+def run_green_revision(
+    task: dict,
+    agent: dict,
+    green_report: str,
+    prompt_dir: Path,
+    tee: Tee,
+    usage: UsageCollector,
+) -> dict | None:
+    """Execute the single R9 builder revision; None when unusable.
+
+    Builds the green-feedback prompt from the archived agent context
+    (issue + builder code context + previous patch — all already
+    model-visible, no harness input), records the report and the
+    revision output under ``prompt_dir`` for audit, and drains the
+    call into ``usage``. Returns ``{"patch_text", "routed"}`` when
+    the revision carries complete blocks, else None (no eval spent).
+    """
+    from hackproof.debate.roles import architectural_builder
+    from hackproof.llm.meta_client import MetaClient
+
+    issue_text = agent.get("issue_text", "")
+    code_context = agent.get("builder_code_context", "")
+    previous_patch = agent.get("patch_text", "")
+    if not issue_text or not previous_patch:
+        tee.log("green-retry: missing agent context; skipping revision")
+        return None
+    (prompt_dir / "green_retry_report.txt").write_text(
+        green_report, encoding="utf-8"
+    )
+    try:
+        wonder = MetaClient("muse-wonder-1.0")
+    except Exception as exc:  # noqa: BLE001 (auth/env -> skip retry)
+        tee.log(f"green-retry: client construction failed ({exc}); skipping")
+        return None
+    try:
+        revision = architectural_builder.revise_patch_from_green(
+            wonder,
+            issue_description=issue_text,
+            code_context=code_context,
+            previous_patch=previous_patch,
+            green_report=green_report,
+        )
+    except Exception as exc:  # noqa: BLE001 (API error -> skip retry)
+        tee.log(f"green-retry: revision call failed ({exc}); skipping")
+        return None
+    usage.drain(wonder, "ArchitecturalBuilder-green-retry", "muse-wonder-1.0")
+    (prompt_dir / "patch_text_green_retry.txt").write_text(
+        revision, encoding="utf-8"
+    )
+    routed = architectural_builder.extract_routed_blocks(revision)
+    tee.log(f"green-retry: revision carries {len(routed)} complete block(s)")
+    if not routed:
+        return None
+    return {"patch_text": revision, "routed": routed}
+
+
+def run_green_retry_oci(
+    cfg: SshConfig,
+    config: BenchConfig,
+    task: dict,
+    clone: Path,
+    agent: dict,
+    scoring: dict,
+    junit: bytes,
+    base_resolution: dict[str, list[str]],
+    base_index: dict[str, str],
+    paths: dict[str, Path],
+    usage: UsageCollector,
+    tee: Tee,
+) -> dict:
+    """Execute the single R9 revision + re-eval on the OCI tier.
+
+    Returns ``{"ok": True, ...}`` with the second attempt's scoring,
+    JUnit, diff, guard report and eval outcome, or ``{"ok": False,
+    "reason": ...}`` when the retry cannot proceed (revision
+    unusable, apply failure, guard tamper, broken collection, no
+    JUnit). The retry runs in a FRESH run dir from pristine prep —
+    the first attempt's tree is never mutated — with the accepted
+    red test shipped, the guard re-locked, and test files reset
+    before the harness test_patch, exactly like the first attempt.
+    No nested R6 retry: the revision applies once or the retry ends.
+    """
+    task_id = task["id"]
+    green_report = condense_green_failures(
+        task, junit, scoring, base_resolution
+    )
+    tee.log(f"green-retry: condensed report ({len(green_report)} chars)")
+    rev = run_green_revision(
+        task, agent, green_report, paths["prompts"], tee, usage
+    )
+    if rev is None:
+        return {"ok": False, "reason": "revision unusable (no blocks)"}
+    git_reset_hard(clone, task["base_ref"])
+    red_rel = agent.get("red_rel", "")
+    red_bytes = agent.get("red_bytes", b"")
+    if red_rel and red_bytes:
+        red_target = clone / red_rel
+        red_target.parent.mkdir(parents=True, exist_ok=True)
+        red_target.write_bytes(red_bytes)
+    try:
+        applied = apply_blocks_to_candidates(
+            task_id, clone, agent.get("files", []), rev["routed"],
+            guard_files_for(task), tee,
+        )
+    except Exception as exc:  # noqa: BLE001 (retry ends, first stands)
+        return {"ok": False, "reason": f"revision apply failed: {exc}"[:400]}
+    local_violations = verify_local_guard(clone, agent.get("baseline", {}))
+    if local_violations:
+        return {
+            "ok": False,
+            "reason": "retry tampers guard files: "
+            f"{local_violations[:3]}",
+        }
+    diff_text = git_diff_text(clone)
+    run_dir = fresh_run_dir(cfg, task, f"{config.mode}-green-retry", tee)
+    if red_rel and red_bytes:
+        if ssh_write_file(cfg, f"{run_dir}/{red_rel}", red_bytes) != 0:
+            return {"ok": False, "reason": "red ship to retry dir failed"}
+    if diff_text.strip():
+        apply_text_patch(cfg, run_dir, diff_text, tee, "green-retry")
+    changed = remote_changed_paths(cfg, run_dir)
+    remote_violations = classify_remote_guard(task, clone, changed, tee)
+    if sorted(local_violations) != sorted(remote_violations):
+        return {
+            "ok": False,
+            "reason": "guard divergence on retry: "
+            f"{local_violations} vs {remote_violations}",
+        }
+    if remote_violations:
+        return {
+            "ok": False,
+            "reason": "retry tampers guard files: "
+            f"{remote_violations[:3]}",
+        }
+    guard_report: dict = {
+        "task": task_id,
+        "mode": config.mode,
+        "binding": True,
+        "verdict": "clean",
+        "violations": [],
+        "note": "green-retry second attempt",
+    }
+    reset_remote_test_files(cfg, task, run_dir, changed, tee)
+    harness = get_test_patch(task, config.out_dir / "harness_cache", tee)
+    apply_text_patch(cfg, run_dir, harness["test_patch"], tee, "green-retry")
+    agent_argv_ids: list[str] | None = None
+    if task["language"] == "python":
+        collected = collect_ids_remote(
+            cfg, task, run_dir, tee, "green-retry",
+            archive=paths["collect"],
+        )
+        archive_venv_freeze_remote(
+            cfg, task, run_dir, paths["freeze"], tee, "green-retry"
+        )
+        resolution = resolve_manifest_ids(
+            manifest_ids_of(task), collected
+        )
+        log_resolution(tee, "green-retry", resolution)
+        agent_argv_ids = flatten_resolution(resolution)
+        if not agent_argv_ids:
+            return {
+                "ok": False,
+                "reason": "retry patch breaks test collection",
+            }
+    res, junit2 = run_remote_eval(
+        cfg, task, run_dir, tee,
+        extra_specs=[red_rel] if red_rel else None,
+        stage="green-retry", pytest_ids=agent_argv_ids,
+    )
+    if junit2 is None:
+        return {
+            "ok": False,
+            "reason": f"retry eval produced no JUnit (exit={res.exit_code})",
+        }
+    full_index = index_results(task, junit2, tee, "green-retry")
+    agent_index = remap_collected_index(base_resolution, full_index)
+    scoring2 = score_task(task, base_index, agent_index)
+    return {
+        "ok": True,
+        "scoring": scoring2,
+        "junit": junit2,
+        "diff_text": diff_text,
+        "applied_files": applied,
+        "patch_text": rev["patch_text"],
+        "guard": guard_report,
+        "eval_exit": res.exit_code,
+        "eval_timed_out": res.timed_out,
+    }
+
+
+def run_green_retry_local(
+    config: BenchConfig,
+    task: dict,
+    clone: Path,
+    agent: dict,
+    scoring: dict,
+    junit: bytes,
+    base_resolution: dict[str, list[str]],
+    base_index: dict[str, str],
+    paths: dict[str, Path],
+    usage: UsageCollector,
+    tee: Tee,
+) -> dict:
+    """Local-tier mirror of :func:`run_green_retry_oci` (smoke only).
+
+    Same single-revision contract, same guard/test-hygiene ordering,
+    via local subprocesses instead of Tailnet SSH + gVisor.
+    """
+    green_report = condense_green_failures(
+        task, junit, scoring, base_resolution
+    )
+    tee.log(f"green-retry: condensed report ({len(green_report)} chars)")
+    rev = run_green_revision(
+        task, agent, green_report, paths["prompts"], tee, usage
+    )
+    if rev is None:
+        return {"ok": False, "reason": "revision unusable (no blocks)"}
+    git_reset_hard(clone, task["base_ref"])
+    red_rel = agent.get("red_rel", "")
+    red_bytes = agent.get("red_bytes", b"")
+    if red_rel and red_bytes:
+        red_target = clone / red_rel
+        red_target.parent.mkdir(parents=True, exist_ok=True)
+        red_target.write_bytes(red_bytes)
+    try:
+        applied = apply_blocks_to_candidates(
+            task["id"], clone, agent.get("files", []), rev["routed"],
+            guard_files_for(task), tee,
+        )
+    except Exception as exc:  # noqa: BLE001 (retry ends, first stands)
+        return {"ok": False, "reason": f"revision apply failed: {exc}"[:400]}
+    diff_text = git_diff_text(clone)
+    run_dir = local_fresh_run_dir(
+        config.work_dir, task, f"{config.mode}-green-retry", tee
+    )
+    if red_rel and red_bytes:
+        red_dest = run_dir / red_rel
+        red_dest.parent.mkdir(parents=True, exist_ok=True)
+        red_dest.write_bytes(red_bytes)
+    if diff_text.strip():
+        local_apply_patch(run_dir, diff_text, tee, "green-retry")
+    changed, _ = git_status_names(run_dir)
+    changed = [p for p in changed
+               if p.split("/", 1)[0] not in SCRATCH_NAMES]
+    violations = classify_remote_guard(task, clone, changed, tee)
+    if violations:
+        return {
+            "ok": False,
+            "reason": f"retry tampers guard files: {violations[:3]}",
+        }
+    guard_report: dict = {
+        "task": task["id"],
+        "mode": config.mode,
+        "binding": config.mode == "B",
+        "verdict": "clean",
+        "violations": [],
+        "note": "green-retry second attempt",
+    }
+    touched = sorted(set(changed) & set(guard_files_for(task)))
+    if touched:
+        subprocess.run(
+            ["git", "-C", str(run_dir), "checkout", task["base_ref"],
+             "--", *touched],
+            capture_output=True, timeout=TIMEOUT_SSH,
+        )
+        tee.log(f"green-retry: reset {len(touched)} test file(s) to base")
+    harness = get_test_patch(task, config.out_dir / "harness_cache", tee)
+    local_apply_patch(run_dir, harness["test_patch"], tee, "green-retry")
+    agent_argv_ids: list[str] | None = None
+    if task["language"] == "python":
+        collected = collect_ids_local(
+            task, run_dir, tee, "green-retry", archive=paths["collect"]
+        )
+        archive_venv_freeze_local(
+            run_dir, paths["freeze"], tee, "green-retry"
+        )
+        resolution = resolve_manifest_ids(
+            manifest_ids_of(task), collected
+        )
+        log_resolution(tee, "green-retry", resolution)
+        agent_argv_ids = flatten_resolution(resolution)
+        if not agent_argv_ids:
+            return {
+                "ok": False,
+                "reason": "retry patch breaks test collection",
+            }
+    res, junit2 = local_run_eval(
+        task, run_dir, tee,
+        extra_specs=[red_rel] if red_rel else None,
+        stage="green-retry", pytest_ids=agent_argv_ids,
+    )
+    if junit2 is None:
+        return {
+            "ok": False,
+            "reason": f"retry eval produced no JUnit (exit={res.exit_code})",
+        }
+    full_index = index_results(task, junit2, tee, "green-retry")
+    agent_index = remap_collected_index(base_resolution, full_index)
+    scoring2 = score_task(task, base_index, agent_index)
+    return {
+        "ok": True,
+        "scoring": scoring2,
+        "junit": junit2,
+        "diff_text": diff_text,
+        "applied_files": applied,
+        "patch_text": rev["patch_text"],
+        "guard": guard_report,
+        "eval_exit": res.exit_code,
+        "eval_timed_out": res.timed_out,
+    }
+
+
 def finalize_run(
     out_dir: Path, mode: str, task_id: str, record: dict, summary: dict,
     tee: Tee,
@@ -3434,7 +3922,8 @@ def run_task_mode_local(
             "agent": {k: v for k, v in agent.items()
                       if k not in ("patch_text", "diff_text", "red_bytes",
                                    "red_record", "baseline",
-                                   "evidence")},
+                                   "evidence", "issue_text",
+                                   "builder_code_context")},
             "usage": {
                 "prompt_tokens": usage.prompt_tokens,
                 "completion_tokens": usage.completion_tokens,
@@ -3579,7 +4068,54 @@ def run_task_mode_local(
         agent_index = remap_collected_index(base_resolution, full_index)
         scoring = score_task(task, base_index, agent_index)
         record["scoring"] = scoring
-        resolved = bool(scoring["resolved_functional"])
+        functional = bool(scoring["resolved_functional"])
+        if mode == "B" and not functional and green_retry_eligible(scoring):
+            tee.log(
+                "green-retry: first attempt "
+                f"{describe_failure(scoring)}; one revision ..."
+            )
+            retry = run_green_retry_local(
+                config, task, clone, agent, scoring, junit,
+                base_resolution, base_index, paths, usage, tee,
+            )
+            if retry["ok"]:
+                record["green_retry"] = {
+                    "attempted": True,
+                    "completed": True,
+                    "first": describe_failure(scoring),
+                    "first_scoring": scoring,
+                    "second": describe_failure(retry["scoring"]),
+                }
+                scoring = retry["scoring"]
+                junit = retry["junit"]
+                agent["patch_text"] = retry["patch_text"]
+                paths["diff"].write_text(
+                    retry["diff_text"], encoding="utf-8"
+                )
+                record["diff_sha256"] = sha256_text(retry["diff_text"])
+                paths["junit"].write_bytes(junit)
+                record["junit_sha256"] = sha256_bytes(junit)
+                record["eval_exit"] = retry["eval_exit"]
+                record["eval_timed_out"] = retry["eval_timed_out"]
+                paths["guard"].write_text(
+                    json.dumps(retry["guard"], indent=1), encoding="utf-8"
+                )
+                record["guard"] = retry["guard"]
+                record["scoring"] = scoring
+                functional = bool(scoring["resolved_functional"])
+                tee.log(
+                    "green-retry: second attempt "
+                    f"{describe_failure(scoring)}"
+                )
+            else:
+                record["green_retry"] = {
+                    "attempted": True,
+                    "completed": False,
+                    "reason": retry["reason"],
+                    "first": describe_failure(scoring),
+                }
+                tee.log(f"green-retry: retry ended ({retry['reason']})")
+        resolved = functional
         record.update(
             {
                 "status": "resolved" if resolved else "failed",

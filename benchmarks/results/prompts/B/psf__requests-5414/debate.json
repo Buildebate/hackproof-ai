@@ -1,14 +1,14 @@
 {
  "rounds_used": 2,
  "converged": false,
- "convergence_score": 0.5,
- "duration_ms": 272384,
+ "convergence_score": 0.6666666666666666,
+ "duration_ms": 449096,
  "verdicts": {
-  "EdgeScout": "1. \"http://.example.com\"\n2. \"http://example..com\"\n3. \"http://\"\n4. None\n5. \"http://\" + \"a\"*64 + \".com\"\n6. \"http://m\u00fcnchen.de\"\nAPPROVE",
-  "ArchitecturalBuilder": "REVISE",
-  "OccamsRazorCritic": "APPROVE",
+  "EdgeScout": "1. requests.get(\"http://.example.com\")\n2. requests.get(\"http://example..com\")\n3. requests.get(\"http://\")\n4. requests.get(None)\n5. requests.get(b\"http://.example.com\")\n6. requests.get(\"http://\" + \"a\"*64 + \".com\")\n7. requests.get(\"http://m\u00fcnchen.de\")\nAPPROVE",
+  "ArchitecturalBuilder": "requests/models.py\n<<<<<<< SEARCH\n        elif host.startswith(u'*'):\n            raise InvalidURL('URL has an invalid label.')\n=======\n        elif host.startswith(u'*'):\n            raise InvalidURL('URL has an invalid label.')\n        else:\n            try:\n                host.encode('idna')\n            except UnicodeError:\n                raise InvalidURL('URL has an invalid label.')\n>>>>>>> REPLACE",
+  "OccamsRazorCritic": "        else:\nREVISE",
   "SignatureFactChecker": "APPROVE",
-  "FormalAdversaryCritic": "- Patch contains no diff, file changes, or hunks to audit against the listed repository structure.\n- No implementation addresses the enumerated inputs: leading-dot host, empty host label, missing host, `None`, 64-character host label, or non-ASCII IDNA host.\n- No tests are added or modified to demonstrate the required handling or guard against regressions.\n- A no-op submission leaves the reported behavior unchanged.\n\nREVISE",
-  "ConsensusJudge": "DIVERGED Auditor REVISE"
+  "FormalAdversaryCritic": "- Empty and overlong ASCII labels are rejected: `http://.example.com`, `http://example..com`, `b\"http://.example.com\"` (decoded before parsing), and `\"a\"*64 + \".com\"` reach the ASCII `else` branch, where `host.encode(\"idna\")` raises `UnicodeError` for `0 < len(label) < 64` violations and is converted to `InvalidURL`.\n- Precedence is unchanged: `http://` fails the earlier missing-host check, and `None` becomes `\"None\"` and fails the earlier missing-schema check, before the new branch can execute; wildcard hosts still fail the preceding `startswith(\"*\")` check.\n- Valid IDNA is preserved: `http://m\u00fcnchen.de` is non-ASCII, so it takes the unchanged `unicode_is_ascii`/`_get_idna_encoded_host` branch rather than the new ASCII branch.\n- No mutation or regression for valid ASCII hosts: the encoded result is discarded and is identity for valid ASCII, so IPv4, bracketed IPv6 literals, `localhost`, underscore, punycode, uppercase, and trailing-dot FQDN hosts pass unchanged.\n- Residual limitation is non-regressive: the codec check adds only empty/length label validation and does not introduce STD3, hyphen, or other character restrictions beyond baseline behaviour.\nAPPROVE",
+  "ConsensusJudge": "requests/models.py\n<<<<<<< SEARCH\n        elif host.startswith(u'*'):\n            raise InvalidURL('URL has an invalid label.')\n=======\n        elif host.startswith(u'*'):\n            raise InvalidURL('URL has an invalid label.')\n        else:\n            try:\n                host.encode('idna')\n            except UnicodeError:\n                raise InvalidURL('URL has an invalid label.')\n>>>>>>> REPLACE"
  }
 }

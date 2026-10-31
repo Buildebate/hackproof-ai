@@ -6,7 +6,7 @@
   "requests/utils.py",
   "requests/sessions.py"
  ],
- "elapsed_ms": 674,
+ "elapsed_ms": 459,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "680f398ad1f22354289f63887960eff1b324e471429b3978c2442785bd46e689"
 }
