@@ -53,6 +53,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Wave spend $19.61 of $25 cap; ledger $40.45 / $150.
   Prior wave0 (4.2 + rescore) records preserved under
   `benchmarks/results_archive/wave0_4_2/`.
+- Synthesis-discipline ablation (Step 4.3c.0, minted):
+  `benchmarks/ablate_synthesis.py` replays the last builder turns of
+  the 4 wave-1 no-blocks cases with/without the end-marker sentences
+  (single difference proven by diff). Verdict: markers guilty — the
+  A arm reproduces bare `REVISE` 3/4, the stripped B arm emits sane
+  blocks for 5414 (2) and 5787 (1); 1142 is stochastic, 11739-B
+  rambles to the cap (format guardrail still needed). Evidence table
+  `benchmarks/evidence/synthesis_ablation_wave1.json`; 8 Wonder
+  calls $2.75 of the $3 envelope.
 
 ### Fixed
 - Marker-consensus debate exit (Step 4.3b.8/R11): the round closes

@@ -1,0 +1,103 @@
+{
+ "ts": "2026-10-31T11:11:36.127839+00:00",
+ "model": "muse-wonder-1.0",
+ "hypothesis": "4.3b.8 end-marker sentences divert the builder into verdict-tokens instead of SEARCH/REPLACE blocks",
+ "subjects": {
+  "psf__requests-1142": {
+   "variant_A": {
+    "chars": 3777,
+    "complete_blocks": 6,
+    "verdict_marker": "REVISE",
+    "response_text": "requests/utils.py\n<<<<<<< SEARCH\ndef super_len(o):\n    if hasattr(o, '__len__'):\n        return len(o)\n    if hasattr(o, 'len'):\n        return o.len\n    if hasattr(o, 'fileno'):\n        return os.fstat(o.fileno()).st_size\n=======\ndef super_len(o):\n    if o is None:\n        return 0\n    if isinstance(o, bytes):\n        return len(o)\n    if isinstance(o, str):\n        return len(o.encode('utf-8'))\n    if hasattr(o, '__len__'):\n        return len(o)\n    if hasattr(o, 'len'):\n        return o.len\n    if hasattr(o, 'fileno'):\n        try:\n            total_length = os.fstat(o.fileno()).st_size\n        except (AttributeError, IOError, OSError):\n            return None\n        try:\n            return total_length - o.tell()\n        except (AttributeError, IOError, OSError):\n            return total_length\n    return None\n>>>>>>> REPLACE\nrequests/sessions.py\n<<<<<<< SEARCH\n        for original_key in original_keys:\n            if key.lower() == original_key.lower():\n                return original_key\n=======\n        for original_key in original_keys:\n            if new_key.lower() == original_key.lower():\n                return original_key\n>>>>>>> REPLACE\nrequests/sessions.py\n<<<<<<< SEARCH\n    # Remove keys that are set to None.\n    for (k, v) in local_kwarg.items():\n        if v is None:\n            del kwargs[k]\n\n    return kwargs\n=======\n    # Remove keys that are set to None.\n    for (k, v) in local_kwarg.items():\n        if v is None:\n            kwargs.pop(get_original_key(original_keys, k), None)\n            kwargs.pop(k, None)\n\n    return kwargs\n>>>>>>> REPLACE\nrequests/sessions.py\n<<<<<<< SEARCH\n            # Remove the cookie headers that were sent.\n            headers = req.headers\n            try:\n                del headers['Cookie']\n            except KeyError:\n                pass\n=======\n            # Remove the cookie headers that were sent.\n            headers = req.headers.copy()\n            try:\n                del headers['Cookie']\n            except KeyError:\n                pass\n\n            if method != req.method:\n                for _name in list(headers.keys()):\n                    if _name.lower() in ('content-length', 'content-type',\n                                         'transfer-encoding'):\n                        del headers[_name]\n>>>>>>> REPLACE\nrequests/packages/urllib3/request.py\n<<<<<<< SEARCH\n    def request_encode_url(self, method, url, fields=None, **urlopen_kw):\n        \"\"\"\n        Make a request using :meth:`urlopen` with the ``fields`` encoded in\n        the url. This is useful for request methods like GET, HEAD, DELETE, etc.\n        \"\"\"\n        if fields:\n            url += '?' + urlencode(fields)\n        return self.urlopen(method, url, **urlopen_kw)\n=======\n    def request_encode_url(self, method, url, fields=None, **urlopen_kw):\n        \"\"\"\n        Make a request using :meth:`urlopen` with the ``fields`` encoded in\n        the url. This is useful for request methods like GET, HEAD, DELETE, etc.\n        \"\"\"\n        if fields:\n            encoded = urlencode(fields)\n            if encoded:\n                url += ('&' if '?' in url else '?') + encoded\n        headers = urlopen_kw.get('headers')\n        if headers is not None:\n            urlopen_kw['headers'] = dict(\n                (k, v) for k, v in headers.items() if v is not None)\n        return self.urlopen(method, url, **urlopen_kw)\n>>>>>>> REPLACE\nrequests/packages/urllib3/request.py\n<<<<<<< SEARCH\n        headers_ = {'Content-Type': content_type}\n        headers_.update(headers)\n=======\n        headers_ = {'Content-Type': content_type}\n        headers_.update(headers)\n        for _name in list(headers_.keys()):\n            if headers_[_name] is None:\n                del headers_[_name]\n>>>>>>> REPLACE\nREVISE",
+    "prompt_tokens": 14153,
+    "completion_tokens": 12409,
+    "total_tokens": 26562,
+    "finish_reason": "stop",
+    "treatment": "A"
+   },
+   "variant_B": {
+    "chars": 6517,
+    "complete_blocks": 5,
+    "verdict_marker": null,
+    "response_text": "requests/utils.py\n<<<<<<< SEARCH\ndef super_len(o):\n    if hasattr(o, '__len__'):\n        return len(o)\n    if hasattr(o, 'len'):\n        return o.len\n    if hasattr(o, 'fileno'):\n        return os.fstat(o.fileno()).st_size\n=======\ndef super_len(o):\n    if o is None:\n        return None\n    if isinstance(o, bytes):\n        return len(o)\n    try:\n        text_type = unicode\n    except NameError:\n        text_type = str\n    if isinstance(o, text_type):\n        return len(o.encode('utf-8'))\n    if hasattr(o, '__len__'):\n        length = len(o)\n    elif hasattr(o, 'len'):\n        length = o.len\n    elif hasattr(o, 'fileno'):\n        try:\n            length = os.fstat(o.fileno()).st_size\n        except (OSError, IOError, AttributeError):\n            return None\n    else:\n        return None\n    if hasattr(o, 'tell'):\n        try:\n            length = length - o.tell()\n        except (OSError, IOError, AttributeError):\n            return None\n    return max(0, length)\n>>>>>>> REPLACE\nrequests/packages/urllib3/request.py\n<<<<<<< SEARCH\n    def request_encode_url(self, method, url, fields=None, **urlopen_kw):\n        \"\"\"\n        Make a request using :meth:`urlopen` with the ``fields`` encoded in\n        the url. This is useful for request methods like GET, HEAD, DELETE, etc.\n        \"\"\"\n        if fields:\n            url += '?' + urlencode(fields)\n        return self.urlopen(method, url, **urlopen_kw)\n=======\n    def request_encode_url(self, method, url, fields=None, **urlopen_kw):\n        \"\"\"\n        Make a request using :meth:`urlopen` with the ``fields`` encoded in\n        the url. This is useful for request methods like GET, HEAD, DELETE, etc.\n        \"\"\"\n        if fields:\n            if '?' not in url:\n                url += '?'\n            elif not url.endswith(('?', '&')):\n                url += '&'\n            url += urlencode(fields)\n        headers = urlopen_kw.get('headers')\n        if headers is not None:\n            headers = dict(headers)\n            seen_content_length = False\n            for name in list(headers):\n                if headers[name] is None:\n                    del headers[name]\n                elif name.lower() == 'content-length':\n                    if seen_content_length:\n                        del headers[name]\n                    seen_content_length = True\n            body = urlopen_kw.get('body')\n            if body is not None:\n                length = None\n                if isinstance(body, bytes):\n                    length = len(body)\n                else:\n                    try:\n                        text_type = unicode\n                    except NameError:\n                        text_type = str\n                    if isinstance(body, text_type):\n                        length = len(body.encode('utf-8'))\n                    elif hasattr(body, '__len__'):\n                        length = len(body)\n                for name in list(headers):\n                    if name.lower() == 'content-length':\n                        del headers[name]\n                if length is not None:\n                    headers['Content-Length'] = str(length)\n            urlopen_kw['headers'] = headers\n        return self.urlopen(method, url, **urlopen_kw)\n>>>>>>> REPLACE\nrequests/packages/urllib3/request.py\n<<<<<<< SEARCH\n        if headers is None:\n            headers = self.headers\n\n        headers_ = {'Content-Type': content_type}\n        headers_.update(headers)\n=======\n        if headers is None:\n            headers = self.headers\n\n        headers_ = {'Content-Type': content_type}\n        for name, value in headers.items():\n            if value is None:\n                continue\n            for existing in list(headers_):\n                if existing.lower() == name.lower():\n                    del headers_[existing]\n            headers_[name] = value\n        for existing in list(headers_):\n            if existing.lower() == 'content-length':\n                del headers_[existing]\n        if isinstance(body, bytes):\n            length = len(body)\n        else:\n            try:\n                text_type = unicode\n            except NameError:\n                text_type = str\n            if isinstance(body, text_type):\n                length = len(body.encode('utf-8'))\n            else:\n                length = len(body)\n        headers_['Content-Length'] = str(length)\n>>>>>>> REPLACE\nrequests/sessions.py\n<<<<<<< SEARCH\n    def get_original_key(original_keys, new_key):\n        \"\"\"\n        Finds the key from original_keys that case-insensitive matches new_key.\n        \"\"\"\n        for original_key in original_keys:\n            if key.lower() == original_key.lower():\n                return original_key\n        return new_key\n\n    kwargs = default_kwarg.copy()\n    original_keys = kwargs.keys()\n    for key, value in local_kwarg.items():\n        kwargs[get_original_key(original_keys, key)] = value\n\n    # Remove keys that are set to None.\n    for (k, v) in local_kwarg.items():\n        if v is None:\n            del kwargs[k]\n\n    return kwargs\n=======\n    def get_original_key(original_keys, new_key):\n        \"\"\"\n        Finds the key from original_keys that case-insensitive matches new_key.\n        \"\"\"\n        for original_key in original_keys:\n            if new_key.lower() == original_key.lower():\n                return original_key\n        return new_key\n\n    kwargs = default_kwarg.copy()\n    original_keys = kwargs.keys()\n    for key, value in local_kwarg.items():\n        kwargs[get_original_key(original_keys, key)] = value\n\n    # Remove keys that are set to None.\n    for (k, v) in local_kwarg.items():\n        if v is None:\n            for existing in list(kwargs.keys()):\n                if existing.lower() == k.lower():\n                    del kwargs[existing]\n\n    return kwargs\n>>>>>>> REPLACE\nrequests/sessions.py\n<<<<<<< SEARCH\n            # Remove the cookie headers that were sent.\n            headers = req.headers\n            try:\n                del headers['Cookie']\n            except KeyError:\n                pass\n=======\n            # Remove the cookie headers that were sent.\n            headers = dict(req.headers)\n            try:\n                del headers['Cookie']\n            except KeyError:\n                pass\n            for name in list(headers.keys()):\n                if name.lower() == 'content-length':\n                    del headers[name]\n                elif method == 'GET' and name.lower() == 'content-type':\n                    del headers[name]\n>>>>>>> REPLACE",
+    "prompt_tokens": 14114,
+    "completion_tokens": 21250,
+    "total_tokens": 35364,
+    "finish_reason": "stop",
+    "treatment": "B"
+   }
+  },
+  "psf__requests-5414": {
+   "variant_A": {
+    "chars": 6,
+    "complete_blocks": 0,
+    "verdict_marker": "REVISE",
+    "response_text": "REVISE",
+    "prompt_tokens": 8017,
+    "completion_tokens": 4383,
+    "total_tokens": 12400,
+    "finish_reason": "stop",
+    "treatment": "A"
+   },
+   "variant_B": {
+    "chars": 531,
+    "complete_blocks": 2,
+    "verdict_marker": null,
+    "response_text": "requests/models.py\n<<<<<<< SEARCH\n        if isinstance(url, bytes):\n=======\n        if url is None:\n            raise InvalidURL(\"Invalid URL: No URL supplied\")\n        if isinstance(url, bytes):\n>>>>>>> REPLACE\nrequests/models.py\n<<<<<<< SEARCH\n        if not unicode_is_ascii(host):\n=======\n        if unicode_is_ascii(host):\n            try:\n                host.encode(\"idna\")\n            except UnicodeError:\n                raise InvalidURL(\"URL has an invalid label.\")\n        if not unicode_is_ascii(host):\n>>>>>>> REPLACE",
+    "prompt_tokens": 7978,
+    "completion_tokens": 19745,
+    "total_tokens": 27723,
+    "finish_reason": "stop",
+    "treatment": "B"
+   }
+  },
+  "pytest-dev__pytest-5787": {
+   "variant_A": {
+    "chars": 6,
+    "complete_blocks": 0,
+    "verdict_marker": "REVISE",
+    "response_text": "REVISE",
+    "prompt_tokens": 14313,
+    "completion_tokens": 1172,
+    "total_tokens": 15485,
+    "finish_reason": "stop",
+    "treatment": "A"
+   },
+   "variant_B": {
+    "chars": 5157,
+    "complete_blocks": 1,
+    "verdict_marker": null,
+    "response_text": "src/_pytest/_io/saferepr.py\n<<<<<<< SEARCH\ndef saferepr(obj, maxsize=240):\n    \"\"\"return a size-limited safe repr-string for the given object.\n    Failing __repr__ functions of user instances will be represented\n    with a short exception info and 'saferepr' generally takes\n    care to never raise exceptions itself.  This function is a wrapper\n    around the Repr/reprlib functionality of the standard 2.6 lib.\n    \"\"\"\n    return SafeRepr(maxsize).repr(obj)\n=======\ndef saferepr(obj, maxsize=240):\n    \"\"\"return a size-limited safe repr-string for the given object.\n    Failing __repr__ functions of user instances will be represented\n    with a short exception info and 'saferepr' generally takes\n    care to never raise exceptions itself.  This function is a wrapper\n    around the Repr/reprlib functionality of the standard 2.6 lib.\n    \"\"\"\n    if isinstance(obj, BaseException):\n        chain = serialize_chained_exception(obj)\n        if len(chain) > 1:\n            return _ellipsize(format_chained_exception(obj), maxsize)\n    return SafeRepr(maxsize).repr(obj)\n\n\n_CAUSE_MESSAGE = (\n    \"The above exception was the direct cause of the following exception:\"\n)\n_CONTEXT_MESSAGE = (\n    \"During handling of the above exception, another exception occurred:\"\n)\n_MAX_CHAIN_DEPTH = 1000\n\n\ndef _safe_str(value):\n    try:\n        return str(value)\n    except Exception as exc:\n        return _format_repr_exception(exc, value)\n\n\ndef _chain_attr(exc, name):\n    try:\n        return getattr(exc, name, None)\n    except Exception:\n        return None\n\n\ndef serialize_chained_exception(exc, max_depth=_MAX_CHAIN_DEPTH):\n    \"\"\"Serialize ``exc`` and its chained exceptions into plain data.\n\n    The result is a list in traceback display order (innermost first),\n    where each entry is a dict with ``type``, ``message``, ``args_repr``,\n    ``relation``, ``is_exception`` and ``suppress_context`` keys.\n    ``args_repr`` distinguishes ``ValueError()`` (``\"()\"``) from\n    ``ValueError(None)`` (``\"(None,)\"``), messages are obtained with a\n    safe ``str()`` that never raises for faulty ``__str__``/``__repr__``,\n    and non-exception ``__cause__`` values are represented as a final\n    non-exception entry instead of being followed. Traversal is\n    iterative, follows ``__cause__`` first, then ``__context__`` unless\n    ``__suppress_context__`` is true, stops on ``None`` links, detects\n    cycles by identity, and is bounded by ``max_depth`` so deep chains\n    do not hit the recursion limit. ``BaseException`` subclasses such\n    as ``KeyboardInterrupt`` and ``SystemExit`` are traversed like any\n    other exception.\n    \"\"\"\n    raw = []\n    seen = set()\n    current = exc\n    relation = None\n    while current is not None:\n        if id(current) in seen:\n            break\n        if len(raw) >= max_depth:\n            break\n        seen.add(id(current))\n        if not isinstance(current, BaseException):\n            raw.append(\n                {\n                    \"type\": type(current).__name__,\n                    \"message\": _safe_str(current),\n                    \"args_repr\": saferepr(current),\n                    \"relation\": relation,\n                    \"is_exception\": False,\n                    \"suppress_context\": False,\n                }\n            )\n            break\n        try:\n            args = current.args\n        except Exception:\n            args = ()\n        suppress_context = bool(_chain_attr(current, \"__suppress_context__\"))\n        raw.append(\n            {\n                \"type\": type(current).__name__,\n                \"message\": _safe_str(current),\n                \"args_repr\": saferepr(args),\n                \"relation\": relation,\n                \"is_exception\": True,\n                \"suppress_context\": suppress_context,\n            }\n        )\n        cause = _chain_attr(current, \"__cause__\")\n        context = _chain_attr(current, \"__context__\")\n        if cause is not None:\n            relation = _CAUSE_MESSAGE\n            current = cause\n        elif context is not None and not suppress_context:\n            relation = _CONTEXT_MESSAGE\n            current = context\n        else:\n            current = None\n    relations = [entry[\"relation\"] for entry in raw]\n    chain = list(reversed(raw))\n    for index, entry in enumerate(chain):\n        if index == 0:\n            entry[\"relation\"] = None\n        else:\n            entry[\"relation\"] = relations[len(raw) - index]\n    return chain\n\n\ndef format_chained_exception(exc, max_depth=_MAX_CHAIN_DEPTH):\n    \"\"\"Return a traceback-style text for ``exc`` and its chain.\n\n    See ``serialize_chained_exception`` for the traversal rules.\n    \"\"\"\n    lines = []\n    for entry in serialize_chained_exception(exc, max_depth=max_depth):\n        if entry[\"relation\"] is not None:\n            lines.extend([\"\", entry[\"relation\"], \"\"])\n        if entry[\"is_exception\"] and entry[\"message\"]:\n            lines.append(\"{}: {}\".format(entry[\"type\"], entry[\"message\"]))\n        elif entry[\"is_exception\"]:\n            lines.append(entry[\"type\"])\n        else:\n            lines.append(\"{}: {}\".format(entry[\"type\"], entry[\"message\"]))\n    return \"\\n\".join(lines)\n>>>>>>> REPLACE",
+    "prompt_tokens": 14274,
+    "completion_tokens": 18184,
+    "total_tokens": 32458,
+    "finish_reason": "stop",
+    "treatment": "B"
+   }
+  },
+  "vuejs__core-11739": {
+   "variant_A": {
+    "chars": 6,
+    "complete_blocks": 0,
+    "verdict_marker": "REVISE",
+    "response_text": "REVISE",
+    "prompt_tokens": 15699,
+    "completion_tokens": 6965,
+    "total_tokens": 22664,
+    "finish_reason": "stop",
+    "treatment": "A"
+   },
+   "variant_B": {
+    "chars": 0,
+    "complete_blocks": 0,
+    "verdict_marker": null,
+    "response_text": "",
+    "prompt_tokens": 15660,
+    "completion_tokens": 32768,
+    "total_tokens": 48428,
+    "finish_reason": "length",
+    "treatment": "B"
+   }
+  }
+ }
+}

@@ -1,6 +1,6 @@
 {
   "budget_usd": 150.0,
-  "total_spent_usd": 40.45,
+  "total_spent_usd": 43.2,
   "entries": [
     {
       "ts": "2026-10-30T04:11:08.685381+00:00",
@@ -3248,6 +3248,122 @@
           "completion_tokens": 3516,
           "total_tokens": 20121,
           "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T11:15:10.739833+00:00",
+      "issue": "bench4.3c:ablation:psf__requests-1142",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 28267,
+      "completion_tokens": 33659,
+      "total_tokens": 61926,
+      "est_cost_usd": 0.7862480000000001,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "AblationBuilder-A",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14153,
+          "completion_tokens": 12409,
+          "total_tokens": 26562,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "AblationBuilder-B",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14114,
+          "completion_tokens": 21250,
+          "total_tokens": 35364,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T11:18:07.664300+00:00",
+      "issue": "bench4.3c:ablation:psf__requests-5414",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 15995,
+      "completion_tokens": 24128,
+      "total_tokens": 40123,
+      "est_cost_usd": 0.54654,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "AblationBuilder-A",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 8017,
+          "completion_tokens": 4383,
+          "total_tokens": 12400,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "AblationBuilder-B",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 7978,
+          "completion_tokens": 19745,
+          "total_tokens": 27723,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T11:20:27.412668+00:00",
+      "issue": "bench4.3c:ablation:pytest-dev__pytest-5787",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 28587,
+      "completion_tokens": 19356,
+      "total_tokens": 47943,
+      "est_cost_usd": 0.501468,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "AblationBuilder-A",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14313,
+          "completion_tokens": 1172,
+          "total_tokens": 15485,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "AblationBuilder-B",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14274,
+          "completion_tokens": 18184,
+          "total_tokens": 32458,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-10-31T11:24:47.825658+00:00",
+      "issue": "bench4.3c:ablation:vuejs__core-11739",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 31359,
+      "completion_tokens": 39733,
+      "total_tokens": 71092,
+      "est_cost_usd": 0.920096,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "AblationBuilder-A",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15699,
+          "completion_tokens": 6965,
+          "total_tokens": 22664,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "AblationBuilder-B",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 15660,
+          "completion_tokens": 32768,
+          "total_tokens": 48428,
+          "finish_reason": "length"
         }
       ]
     }
