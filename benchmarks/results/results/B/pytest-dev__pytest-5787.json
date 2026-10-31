@@ -2,11 +2,11 @@
  "task": "pytest-dev__pytest-5787",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T13:14:31.890426+00:00",
+ "ts": "2026-10-31T17:24:56.736971+00:00",
  "base_ref": "955e54221008aba577ecbaefa15679f6777d3bf8",
  "agent": {
-  "ok": false,
-  "reason": "red-rejected after resynthesis: red JUnit unusable: JUnit XML carries zero testcase entries",
+  "ok": true,
+  "reason": "",
   "files": [
    "src/_pytest/main.py",
    "src/_pytest/_io/saferepr.py",
@@ -14,58 +14,1704 @@
    "src/_pytest/assertion/util.py",
    "src/_pytest/unittest.py"
   ],
-  "localize_ms": 1536,
+  "localize_ms": 1813,
   "backend": "hybrid-rrf-hash-cpu",
-  "red_rel": "testing/test_repro_8a31c39a9f53.py",
+  "blocks": 2,
+  "applied_file": "src/_pytest/_code/code.py",
+  "applied_files": [
+   "src/_pytest/_code/code.py"
+  ],
+  "red_rel": "testing/test_repro_4587d047da0d.py",
+  "local_violations": [],
   "debate": {
-   "rounds_used": 0,
+   "rounds_used": 1,
    "converged": false,
-   "score": 0.0,
-   "duration_ms": 0
+   "score": 0.75,
+   "duration_ms": 556133,
+   "ramble_stopped": true
   }
  },
  "usage": {
-  "prompt_tokens": 17612,
-  "completion_tokens": 18966,
-  "total_tokens": 36578,
+  "prompt_tokens": 91064,
+  "completion_tokens": 233946,
+  "total_tokens": 325010,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 8766,
-    "completion_tokens": 6678,
-    "total_tokens": 15444,
+    "prompt_tokens": 14064,
+    "completion_tokens": 8777,
+    "total_tokens": 22841,
     "finish_reason": "stop"
    },
    {
-    "role": "SparkRedSynthesis-retry",
+    "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 8846,
-    "completion_tokens": 12288,
-    "total_tokens": 21134,
+    "prompt_tokens": 3749,
+    "completion_tokens": 955,
+    "total_tokens": 4704,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 13865,
+    "completion_tokens": 32768,
+    "total_tokens": 46633,
     "finish_reason": "length"
+   },
+   {
+    "role": "ArchitecturalBuilder-length-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 13916,
+    "completion_tokens": 32768,
+    "total_tokens": 46684,
+    "finish_reason": "length"
+   },
+   {
+    "role": "PatchSynthesis",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 283,
+    "completion_tokens": 13597,
+    "total_tokens": 13880,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "PatchSynthesis-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 356,
+    "completion_tokens": 16590,
+    "total_tokens": 16946,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 13865,
+    "completion_tokens": 32768,
+    "total_tokens": 46633,
+    "finish_reason": "length"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 13916,
+    "completion_tokens": 32768,
+    "total_tokens": 46684,
+    "finish_reason": "length"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 283,
+    "completion_tokens": 13597,
+    "total_tokens": 13880,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 356,
+    "completion_tokens": 16590,
+    "total_tokens": 16946,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 16411,
+    "completion_tokens": 32768,
+    "total_tokens": 49179,
+    "finish_reason": "length"
+   },
+   {
+    "role": "ArchitecturalBuilder-green-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 16994,
+    "completion_tokens": 25654,
+    "total_tokens": 42648,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-green-retry-collect",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15935,
+    "completion_tokens": 8785,
+    "total_tokens": 24720,
+    "finish_reason": "stop"
    }
   ]
  },
  "evidence": {
   "language": "python",
-  "collect": false,
-  "freeze": false,
-  "debate_prompts": false
+  "collect": true,
+  "freeze": true,
+  "debate_prompts": true
+ },
+ "diff_sha256": "38f829f2345a6c70e38d156e68cdf7dee2e5793b2c1688413f583e83c801cf8d",
+ "red": {
+  "rel": "testing/test_repro_4587d047da0d.py",
+  "sha256": "dc0083f87bc5dae152b86b74e35c4e45431356e631ff88b2328b19f80ca3f61d",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 3192,
+  "junit_sha256": "ff2246b7e6bb69cb24089062064eab5314184a316c45c990c04837ae61a0652f"
+ },
+ "guard": {
+  "task": "pytest-dev__pytest-5787",
+  "mode": "B",
+  "binding": true,
+  "verdict": "clean",
+  "violations": [],
+  "note": "green-retry attempt (-green-retry-fix)"
+ },
+ "junit_sha256": "00a3baa298863659abce3ae17aba594698ff415886c1033586de69429b898c6f",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]": {
+    "base": "failed",
+    "agent": "failed"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "testing/code/test_code.py::test_ne": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/code/test_code.py::test_code_with_class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/code/test_code.py::test_code_fullsource": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_code_source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_frame_getsourcelineno_myself": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_getstatement_empty_fullsource": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_code_from_func": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_unicode_handling": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_code_getargs": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::test_frame_getargs": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::TestTracebackEntry::test_getsource": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_simple": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_getstatement": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_exconly": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_repr_str": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_for_later": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_errisinstance": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_excinfo_no_sourcecode": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_entrysource_Queue_example": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_codepath_Queue_example": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_match_succeeds": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr": {
+    "base": "passed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr": {
+    "base": "passed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle": {
+    "base": "passed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_match_raises_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/code/test_excinfo.py::test_cwd_deleted": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_passed": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_fail": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_paths_support": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestReportSerialization::test_deserialization_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestHooks::test_test_report": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestHooks::test_collect_report": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]",
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle"
+  ],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "testing/code/test_code.py::test_ne",
+   "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file",
+   "testing/code/test_code.py::test_code_with_class",
+   "testing/code/test_code.py::test_code_fullsource",
+   "testing/code/test_code.py::test_code_source",
+   "testing/code/test_code.py::test_frame_getsourcelineno_myself",
+   "testing/code/test_code.py::test_getstatement_empty_fullsource",
+   "testing/code/test_code.py::test_code_from_func",
+   "testing/code/test_code.py::test_unicode_handling",
+   "testing/code/test_code.py::test_code_getargs",
+   "testing/code/test_code.py::test_frame_getargs",
+   "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource",
+   "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing",
+   "testing/code/test_code.py::TestTracebackEntry::test_getsource",
+   "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding",
+   "testing/code/test_excinfo.py::test_excinfo_simple",
+   "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple",
+   "testing/code/test_excinfo.py::test_excinfo_getstatement",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty",
+   "testing/code/test_excinfo.py::test_excinfo_exconly",
+   "testing/code/test_excinfo.py::test_excinfo_repr_str",
+   "testing/code/test_excinfo.py::test_excinfo_for_later",
+   "testing/code/test_excinfo.py::test_excinfo_errisinstance",
+   "testing/code/test_excinfo.py::test_excinfo_no_sourcecode",
+   "testing/code/test_excinfo.py::test_entrysource_Queue_example",
+   "testing/code/test_excinfo.py::test_codepath_Queue_example",
+   "testing/code/test_excinfo.py::test_match_succeeds",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]",
+   "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion",
+   "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath",
+   "testing/code/test_excinfo.py::test_match_raises_error",
+   "testing/code/test_excinfo.py::test_cwd_deleted",
+   "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241",
+   "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130",
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170",
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196",
+   "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes",
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_passed",
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_fail",
+   "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization",
+   "testing/test_reports.py::TestReportSerialization::test_paths_support",
+   "testing/test_reports.py::TestReportSerialization::test_deserialization_failure",
+   "testing/test_reports.py::TestHooks::test_test_report",
+   "testing/test_reports.py::TestHooks::test_collect_report",
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]",
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "green_retry": {
+  "attempted": true,
+  "completed": true,
+  "first": "f2p-not-fixed:2; p2p-broken:1",
+  "first_scoring": {
+   "f2p": {
+    "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]": {
+     "base": "failed",
+     "agent": "failed"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]": {
+     "base": "failed",
+     "agent": "failed"
+    }
+   },
+   "p2p": {
+    "testing/code/test_code.py::test_ne": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "yes"
+    },
+    "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "yes"
+    },
+    "testing/code/test_code.py::test_code_with_class": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "yes"
+    },
+    "testing/code/test_code.py::test_code_fullsource": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_code_source": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_frame_getsourcelineno_myself": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_getstatement_empty_fullsource": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_code_from_func": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_unicode_handling": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_code_getargs": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::test_frame_getargs": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::TestTracebackEntry::test_getsource": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_simple": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_getstatement": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_exconly": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_repr_str": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_for_later": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_errisinstance": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_excinfo_no_sourcecode": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_entrysource_Queue_example": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_codepath_Queue_example": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_match_succeeds": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]": {
+     "base": "passed",
+     "agent": "failed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_match_raises_error": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/code/test_excinfo.py::test_cwd_deleted": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_collectreport_passed": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_collectreport_fail": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_paths_support": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestReportSerialization::test_deserialization_failure": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestHooks::test_test_report": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestHooks::test_collect_report": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    }
+   },
+   "f2p_fixed": [],
+   "f2p_not_fixed": [
+    "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]",
+    "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]"
+   ],
+   "f2p_not_red_at_base": [],
+   "p2p_broken": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]"
+   ],
+   "p2p_env_limited": [],
+   "p2p_kept": [
+    "testing/code/test_code.py::test_ne",
+    "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file",
+    "testing/code/test_code.py::test_code_with_class",
+    "testing/code/test_code.py::test_code_fullsource",
+    "testing/code/test_code.py::test_code_source",
+    "testing/code/test_code.py::test_frame_getsourcelineno_myself",
+    "testing/code/test_code.py::test_getstatement_empty_fullsource",
+    "testing/code/test_code.py::test_code_from_func",
+    "testing/code/test_code.py::test_unicode_handling",
+    "testing/code/test_code.py::test_code_getargs",
+    "testing/code/test_code.py::test_frame_getargs",
+    "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource",
+    "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing",
+    "testing/code/test_code.py::TestTracebackEntry::test_getsource",
+    "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding",
+    "testing/code/test_excinfo.py::test_excinfo_simple",
+    "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple",
+    "testing/code/test_excinfo.py::test_excinfo_getstatement",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty",
+    "testing/code/test_excinfo.py::test_excinfo_exconly",
+    "testing/code/test_excinfo.py::test_excinfo_repr_str",
+    "testing/code/test_excinfo.py::test_excinfo_for_later",
+    "testing/code/test_excinfo.py::test_excinfo_errisinstance",
+    "testing/code/test_excinfo.py::test_excinfo_no_sourcecode",
+    "testing/code/test_excinfo.py::test_entrysource_Queue_example",
+    "testing/code/test_excinfo.py::test_codepath_Queue_example",
+    "testing/code/test_excinfo.py::test_match_succeeds",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During",
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle",
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]",
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]",
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]",
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]",
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]",
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]",
+    "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion",
+    "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error",
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath",
+    "testing/code/test_excinfo.py::test_match_raises_error",
+    "testing/code/test_excinfo.py::test_cwd_deleted",
+    "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241",
+    "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130",
+    "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170",
+    "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196",
+    "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes",
+    "testing/test_reports.py::TestReportSerialization::test_collectreport_passed",
+    "testing/test_reports.py::TestReportSerialization::test_collectreport_fail",
+    "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization",
+    "testing/test_reports.py::TestReportSerialization::test_paths_support",
+    "testing/test_reports.py::TestReportSerialization::test_deserialization_failure",
+    "testing/test_reports.py::TestHooks::test_test_report",
+    "testing/test_reports.py::TestHooks::test_collect_report",
+    "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]",
+    "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]"
+   ],
+   "resolved_functional": false,
+   "unmatched_agent_cases": [],
+   "missing_agent_ids": []
+  },
+  "second": "f2p-not-fixed:2; p2p-broken:3",
+  "laps": 2
  },
  "status": "failed",
- "reason": "red-rejected after resynthesis: red JUnit unusable: JUnit XML carries zero testcase entries",
- "done": true,
- "red": {
-  "rel": "testing/test_repro_8a31c39a9f53.py",
-  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-  "exit_code": 5,
-  "timed_out": false,
-  "accepted": false,
-  "reason": "red JUnit unusable: JUnit XML carries zero testcase entries",
-  "failures": 0,
-  "errors": 0,
-  "junit_bytes": 222,
-  "junit_sha256": "f409b145e6457e79259f5642e55cf6c9bc818e81c178172b98f21667e19e3455"
- }
+ "reason": "f2p-not-fixed:2; p2p-broken:3",
+ "done": true
 }

@@ -71,6 +71,7 @@ class DebateConsensusReport:
     total_completion_tokens: int = 0
     total_tokens: int = 0
     duration_ms: int = 0
+    ramble_stopped: bool = False
 
 
 def _synthesis_violation(patch_text: str, finish_reason: str | None) -> str:
@@ -93,6 +94,20 @@ def _synthesis_violation(patch_text: str, finish_reason: str | None) -> str:
         "FIRST, one repo-relative file path header per block, non-empty "
         "SEARCH and REPLACE."
     )
+
+
+def _finish_reason_of(client: Any) -> str | None:
+    """Latest finish_reason from a debate client (None-safe).
+
+    Step 12a.3 anti-ramble: MetaClient exposes ``last_usage`` with
+    ``finish_reason``; scripted/fallback clients without usage report
+    None (never treated as a length cut-off).
+    """
+    last = getattr(client, "last_usage", None)
+    if isinstance(last, dict):
+        reason = last.get("finish_reason")
+        return str(reason) if reason else None
+    return None
 
 
 def _snapshot_usage(role: str, client: Any) -> TokenUsage:
@@ -171,6 +186,11 @@ Raises:
         patch_candidate = ""
         converged = False
         round_score = 0.0
+        # Step 12a.3 anti-ramble: count builder turns cut off by the
+        # output limit. First cut -> exactly one blocks-only retry;
+        # second cut anywhere -> stop the whole debate (ramble).
+        length_events = 0
+        ramble_stopped = False
 
         for round_no in range(1, self._max_rounds + 1):
             round_verdicts: dict[str, str] = {}
@@ -192,22 +212,62 @@ Raises:
                 }
                 verdict = role_module.run(client, ctx)
                 usage.append(_snapshot_usage(role_module.ROLE_NAME, client))
+                if (
+                    role_module is architectural_builder
+                    and _finish_reason_of(client) == "length"
+                ):
+                    length_events += 1
+                    if length_events == 1:
+                        retry_ctx = dict(ctx)
+                        retry_ctx["extra_instruction"] = (
+                            architectural_builder.BLOCKS_ONLY_RETRY_SUFFIX
+                        )
+                        verdict = role_module.run(client, retry_ctx)
+                        usage.append(
+                            _snapshot_usage(
+                                f"{role_module.ROLE_NAME}-length-retry",
+                                client,
+                            )
+                        )
+                        if _finish_reason_of(client) == "length":
+                            length_events += 1
+                    if length_events >= 2:
+                        # Ramble: truncated twice despite the blocks-only
+                        # constraint. Record the last output, stop all
+                        # further turns; synthesis below degrades
+                        # honestly (likely no-blocks -> R13 retry).
+                        round_verdicts[role_module.ROLE_NAME] = verdict
+                        history.append(
+                            {
+                                "role": role_module.ROLE_NAME,
+                                "text": verdict,
+                            }
+                        )
+                        patch_candidate = verdict
+                        ramble_stopped = True
+                        break
                 round_verdicts[role_module.ROLE_NAME] = verdict
                 history.append(
                     {"role": role_module.ROLE_NAME, "text": verdict}
                 )
                 if role_module is architectural_builder:
                     patch_candidate = verdict
-            round_score = consensus_judge.score(
-                list(round_verdicts.values())
-            )
-            rounds.append(round_verdicts)
-            if consensus_judge.consensus_reached(round_verdicts):
+            if round_verdicts:
+                round_score = consensus_judge.score(
+                    list(round_verdicts.values())
+                )
+                rounds.append(round_verdicts)
+            if ramble_stopped:
+                break
+            if round_verdicts and consensus_judge.consensus_reached(
+                round_verdicts
+            ):
                 converged = True
                 break
 
+        last_round = rounds[-1] if rounds else {}
         consensus_text = "\n\n".join(
-            f"[{role}] {verdict}" for role, verdict in rounds[-1].items()
+            f"[{role}] {verdict}" for role, verdict in last_round.items()
         )
         patch_candidate = self._wonder.synthesize_patch(consensus_text)
         first_usage = _snapshot_usage("PatchSynthesis", self._wonder)
@@ -224,7 +284,7 @@ Raises:
         duration_ms = int((time.perf_counter() - started) * 1000)
         return DebateConsensusReport(
             patch_candidate=patch_candidate,
-            verdicts=dict(rounds[-1]),
+            verdicts=dict(last_round),
             rounds=tuple(rounds),
             rounds_used=len(rounds),
             converged=converged,
@@ -234,4 +294,5 @@ Raises:
             total_completion_tokens=sum(u.completion_tokens for u in usage),
             total_tokens=sum(u.total_tokens for u in usage),
             duration_ms=duration_ms,
+            ramble_stopped=ramble_stopped,
         )

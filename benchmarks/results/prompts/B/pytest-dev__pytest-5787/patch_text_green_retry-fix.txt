@@ -1,0 +1,6 @@
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        if "reprtraceback" in reportdict["longrepr"] or "chain" in reportdict["longrepr"]:
+=======
+                and "reprtraceback" in reportdict["longrepr"] or "chain" in reportdict["longrepr"]
+>>>>>>> REPLACE

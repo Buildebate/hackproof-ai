@@ -2,7 +2,7 @@
  "task": "pytest-dev__pytest-5787",
  "mode": "B",
  "binding": true,
- "verdict": "not-applicable",
+ "verdict": "clean",
  "violations": [],
- "note": "no agent patch evaluated (failed: debate produced no complete SEARCH/REPLACE blocks)"
+ "note": "green-retry attempt (-green-retry-fix)"
 }

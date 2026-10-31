@@ -6,7 +6,7 @@
   "packages/compiler-core/src/options.ts",
   "packages/compiler-sfc/src/style/pluginScoped.ts"
  ],
- "elapsed_ms": 3434,
+ "elapsed_ms": 3232,
  "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "cf27baedb01b20fd8ef7caba96a5f661676478d7bd11d25e27c9ae7d5b6be760"
 }

@@ -1,28 +1,55 @@
+import attr
 from _pytest._code import ExceptionInfo
 from _pytest.reports import TestReport
+import _pytest.reports as reports_mod
+
+
+def _make_report(longrepr):
+    names = {f.name for f in attr.fields(TestReport)}
+    kwargs = {
+        "nodeid": "test_x",
+        "location": ("test_x.py", 0, "test_x"),
+        "keywords": {},
+        "outcome": "failed",
+        "longrepr": longrepr,
+        "when": "call",
+    }
+    if "sections" in names:
+        kwargs["sections"] = []
+    if "duration" in names:
+        kwargs["duration"] = 0
+    if "user_properties" in names:
+        kwargs["user_properties"] = []
+    return TestReport(**kwargs)
+
+
+def _roundtrip(report):
+    if hasattr(report, "_to_json"):
+        data = report._to_json()
+        return TestReport._from_json(data)
+    if hasattr(report, "to_json"):
+        data = report.to_json()
+        return TestReport.from_json(data)
+    if hasattr(reports_mod, "_report_to_json"):
+        data = reports_mod._report_to_json(report)
+        return reports_mod._report_from_json(data)
+    assert False, "no report serialization API found"
 
 
 def test_chained_exception_serialization():
     try:
         try:
-            raise ValueError("chained-cause-msg")
+            raise ValueError(11)
         except ValueError as e1:
-            raise ValueError("chained-effect-msg") from e1
+            raise ValueError(12) from e1
     except ValueError:
         excinfo = ExceptionInfo.from_current()
-    longrepr = excinfo.getrepr()
-    report = TestReport(
-        nodeid="test_id",
-        location=("test_file.py", 0, "test_func"),
-        keywords={},
-        outcome="failed",
-        longrepr=longrepr,
-        when="call",
-    )
-    if hasattr(report, "_to_json"):
-        data = report._to_json()
-    else:
-        data = report.to_json()
-    text = str(data)
-    assert "chained-cause-msg" in text
-    assert "chained-effect-msg" in text
+    longrepr = excinfo.getrepr(style="long")
+    assert hasattr(longrepr, "chain")
+    assert len(longrepr.chain) == 2
+    report = _make_report(longrepr)
+    loaded = _roundtrip(report)
+    assert hasattr(loaded.longrepr, "chain"), "deserialized longrepr lost chain: %r" % (loaded.longrepr,)
+    msgs = [c.message for _, c, _ in loaded.longrepr.chain if c is not None]
+    assert any("11" in m for m in msgs), "chained cause '11' missing after serialization: %r" % (msgs,)
+    assert any("12" in m for m in msgs), "chained cause '12' missing after serialization: %r" % (msgs,)

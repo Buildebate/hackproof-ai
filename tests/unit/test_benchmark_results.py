@@ -612,6 +612,136 @@ def test_apply_blocks_without_retry_client_raises(tmp_path: Path) -> None:
 
 
 # ---------------------------------------------------------------------------
+# Step 12a.3: partial landing + one grounded revision of missed blocks only
+# ---------------------------------------------------------------------------
+
+
+def test_apply_blocks_partial_miss_revised_once(tmp_path: Path) -> None:
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    (clone / "a.py").write_text("one = 1\ntwo = 2\n", encoding="utf-8")
+    revised = (
+        "a.py\n"
+        "<<<<<<< SEARCH\ntwo = 2\n=======\ntwo = 20\n>>>>>>> REPLACE\n"
+    )
+    client = _ReviseClient(revised)
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        usage = run_benchmark.UsageCollector()
+        applied = run_benchmark.apply_blocks_to_candidates(
+            "task-1", clone, ["a.py"],
+            [
+                ("a.py", "one = 1\n", "one = 10\n"),
+                ("a.py", "NOPE\n", "two = 20\n"),
+            ],
+            [], tee,
+            retry_client=client, retry_issue="issue", retry_context="ctx",
+            retry_patch_text="old-patch", usage=usage,
+            retry_archive=tmp_path / "patch_text_retry.txt",
+        )
+        assert applied == ["a.py"]
+        assert (clone / "a.py").read_text(encoding="utf-8") == (
+            "one = 10\ntwo = 20\n"
+        )
+        assert len(client.calls) == 1
+        assert client.calls[0][0] == "ArchitecturalBuilder"
+        assert "PARTIAL PATCH APPLICATION" in client.calls[0][1]
+        assert "block 1" in client.calls[0][1]
+        assert "must NOT be re-emitted" in client.calls[0][1]
+        assert usage.per_call[-1]["role"] == "ArchitecturalBuilder-retry"
+        report = json.loads(
+            (tmp_path / "patch_match_report.json").read_text(
+                encoding="utf-8"
+            )
+        )
+        assert [r["round"] for r in report] == [0, 1]
+        assert [m["position"] for m in report[0]["missed"]] == [1]
+        assert report[1]["missed"] == []
+        assert report[1]["applied"] == {"a.py": [0]}
+    finally:
+        tee.close()
+
+
+def test_apply_blocks_partial_stands_when_revision_empty(
+    tmp_path: Path,
+) -> None:
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    (clone / "a.py").write_text("one = 1\ntwo = 2\n", encoding="utf-8")
+    client = _ReviseClient("no markers here")
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        usage = run_benchmark.UsageCollector()
+        applied = run_benchmark.apply_blocks_to_candidates(
+            "task-1", clone, ["a.py"],
+            [
+                ("a.py", "one = 1\n", "one = 10\n"),
+                ("a.py", "NOPE\n", "two = 20\n"),
+            ],
+            [], tee,
+            retry_client=client, retry_issue="issue", retry_context="ctx",
+            retry_patch_text="old-patch", usage=usage,
+            retry_archive=tmp_path / "patch_text_retry.txt",
+        )
+        assert applied == ["a.py"]
+        assert (clone / "a.py").read_text(encoding="utf-8") == (
+            "one = 10\ntwo = 2\n"
+        )
+        assert len(client.calls) == 1
+        assert (tmp_path / "patch_match_report.json").is_file()
+    finally:
+        tee.close()
+
+
+def test_apply_blocks_partial_without_retry_client_stands(
+    tmp_path: Path,
+) -> None:
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    (clone / "a.py").write_text("one = 1\ntwo = 2\n", encoding="utf-8")
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        applied = run_benchmark.apply_blocks_to_candidates(
+            "task-1", clone, ["a.py"],
+            [
+                ("a.py", "one = 1\n", "one = 10\n"),
+                ("a.py", "NOPE\n", "two = 20\n"),
+            ],
+            [], tee,
+        )
+        assert applied == ["a.py"]
+        assert (clone / "a.py").read_text(encoding="utf-8") == (
+            "one = 10\ntwo = 2\n"
+        )
+    finally:
+        tee.close()
+
+
+def test_apply_blocks_guard_rejected_before_any_write(
+    tmp_path: Path,
+) -> None:
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    (clone / "a.py").write_text("one = 1\n", encoding="utf-8")
+    (clone / "guard.py").write_text("g = 0\n", encoding="utf-8")
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        with pytest.raises(PatchApplicationError, match="guard files"):
+            run_benchmark.apply_blocks_to_candidates(
+                "task-1", clone, ["a.py", "guard.py"],
+                [
+                    ("a.py", "one = 1\n", "one = 10\n"),
+                    ("guard.py", "g = 0\n", "g = 1\n"),
+                ],
+                ["guard.py"], tee,
+            )
+        assert (clone / "a.py").read_text(encoding="utf-8") == "one = 1\n"
+        assert (clone / "guard.py").read_text(encoding="utf-8") == "g = 0\n"
+    finally:
+        tee.close()
+
+
+# ---------------------------------------------------------------------------
 # Step 4.3b.4 (R7): era image pin + bounded collect fallback + stderr archive
 # ---------------------------------------------------------------------------
 
@@ -1097,7 +1227,7 @@ class _ScriptedDebate:
         return SimpleNamespace(
             rounds_used=1, converged=True, convergence_score=1.0,
             total_tokens=7, duration_ms=3, verdicts=[],
-            patch_candidate="", token_usage=[],
+            patch_candidate="", token_usage=[], ramble_stopped=False,
         )
 
 

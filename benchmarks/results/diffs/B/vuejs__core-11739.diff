@@ -1,0 +1,97 @@
+diff --git a/packages/runtime-dom/src/helpers/useCssVars.ts b/packages/runtime-dom/src/helpers/useCssVars.ts
+index e577053..603b6bd 100644
+--- a/packages/runtime-dom/src/helpers/useCssVars.ts
++++ b/packages/runtime-dom/src/helpers/useCssVars.ts
+@@ -49,7 +49,11 @@ export function useCssVars(getter: (ctx: any) => Record<string, string>): void {
+   }
+ 
+   onBeforeMount(() => {
+-    watchPostEffect(setVars)
++      // Post-flush only: async v-bind updates run after the hydration
++      // patchStyle merge, never during it or after unmount.
++      watchPostEffect(() => {
++        if (!instance.isUnmounted) setVars()
++      })
+   })
+ 
+   onMounted(() => {
+@@ -74,6 +78,20 @@ function setVarsOnVNode(vnode: VNode, vars: Record<string, string>) {
+   while (vnode.component) {
+     vnode = vnode.component.subTree
+   }
++  // Parent vars fall through a Fragment/slot root to its child root;
++  // an empty default slot has no child and is safely skipped.
++  if (
++    !(vnode.shapeFlag & ShapeFlags.ELEMENT) &&
++    vnode.shapeFlag & ShapeFlags.ARRAY_CHILDREN &&
++    Array.isArray(vnode.children)
++  ) {
++    for (const child of vnode.children) {
++      if (child && typeof child === 'object') {
++        setVarsOnVNode(child as VNode, key, value)
++      }
++    }
++    if (vnode.children.length) return
++  }
+ 
+   if (vnode.shapeFlag & ShapeFlags.ELEMENT && vnode.el) {
+     setVarsOnNode(vnode.el as Node, vars)
+@@ -92,10 +110,16 @@ function setVarsOnVNode(vnode: VNode, vars: Record<string, string>) {
+ function setVarsOnNode(el: Node, vars: Record<string, string>) {
+   if (el.nodeType === 1) {
+     const style = (el as HTMLElement).style
++    if (!style) return
+     let cssText = ''
+     for (const key in vars) {
+-      style.setProperty(`--${key}`, vars[key])
+-      cssText += `--${key}: ${vars[key]};`
++      const value = vars[key]
++      if (value == null || value === '') {
++        style.removeProperty(`--${key}`)
++      } else {
++        style.setProperty(`--${key}`, value)
++        cssText += `--${key}: ${value};`
++      }
+     }
+     ;(style as any)[CSS_VAR_TEXT] = cssText
+   }
+diff --git a/packages/runtime-dom/src/modules/style.ts b/packages/runtime-dom/src/modules/style.ts
+index 383628a..fb27129 100644
+--- a/packages/runtime-dom/src/modules/style.ts
++++ b/packages/runtime-dom/src/modules/style.ts
+@@ -84,8 +84,15 @@ function setStyle(
+       }
+     }
+     if (name.startsWith('--')) {
+-      // custom property definition
+-      style.setProperty(name, val)
++      // custom property: ''/null removes it, matching SSR omission
++      if (val === '') {
++        style.removeProperty(name)
++      } else {
++        style.setProperty(name, val)
++      }
++    } else if (name === 'display' && typeof val !== 'string') {
++      // e.g. display: 0 - drop invalid value, keep default ('flex')
++      style.removeProperty(name)
+     } else {
+       const prefixed = autoPrefix(style, name)
+       if (importantRE.test(val)) {
+diff --git a/packages/shared/src/normalizeProp.ts b/packages/shared/src/normalizeProp.ts
+index f21e664..44cc167 100644
+--- a/packages/shared/src/normalizeProp.ts
++++ b/packages/shared/src/normalizeProp.ts
+@@ -54,7 +54,12 @@ export function stringifyStyle(
+     if (isString(value) || typeof value === 'number') {
+       const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
+       // only render valid values
+-      ret += `${normalizedKey}:${value};`
++      if (
++        value !== '' &&
++        (typeof value !== 'number' || normalizedKey !== 'display')
++      ) {
++        ret += `${normalizedKey}:${value};`
++      }
+     }
+   }
+   return ret

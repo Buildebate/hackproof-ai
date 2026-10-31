@@ -1,0 +1,7 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [F2P] testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport] (base=failed agent=failed):
+  AssertionError: assert False  +  where False = isinstance(<<class '_pytest._code.code.ReprExceptionInfo'> instance at f1d50f40b520>, ExceptionChainRepr)
+- [F2P] testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport] (base=failed agent=failed):
+  AssertionError: assert False  +  where False = isinstance(<<class '_pytest._code.code.ReprExceptionInfo'> instance at f1d50ec22100>, ExceptionChainRepr)
+- [P2P] testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress] (base=passed agent=failed):
+  AssertionError: assert '>           g()' == '            g()'   - >           g()   ? ^   +             g()   ? ^

@@ -1,0 +1,722 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="5" hostname="3b1d31101f30" name="pytest" skipped="0" tests="125" time="3.399" timestamp="2026-10-31T17:32:06.520218"><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="7" name="test_ne" time="0.001"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="14" name="test_code_gives_back_name_for_not_existing_file" time="0.015"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="23" name="test_code_with_class" time="0.001"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="34" name="test_code_fullsource" time="0.001"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="40" name="test_code_source" time="0.001"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="48" name="test_frame_getsourcelineno_myself" time="0.001"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="58" name="test_getstatement_empty_fullsource" time="0.000"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="68" name="test_code_from_func" time="0.000"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="74" name="test_unicode_handling" time="0.000"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="84" name="test_code_getargs" time="0.000"></testcase><testcase classname="testing.code.test_code" file="testing/code/test_code.py" line="110" name="test_frame_getargs" time="0.000"></testcase><testcase classname="testing.code.test_code.TestExceptionInfo" file="testing/code/test_code.py" line="137" name="test_bad_getsource" time="0.004"></testcase><testcase classname="testing.code.test_code.TestExceptionInfo" file="testing/code/test_code.py" line="147" name="test_from_current_with_missing" time="0.001"></testcase><testcase classname="testing.code.test_code.TestTracebackEntry" file="testing/code/test_code.py" line="153" name="test_getsource" time="0.004"></testcase><testcase classname="testing.code.test_code.TestReprFuncArgs" file="testing/code/test_code.py" line="168" name="test_not_raise_exception_with_mixed_encoding" time="0.001"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="33" name="test_excinfo_simple" time="0.000"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="41" name="test_excinfo_from_exc_info_simple" time="0.000"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="49" name="test_excinfo_getstatement" time="0.000"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="102" name="test_traceback_entries" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="115" name="test_traceback_entry_getsource" time="0.024"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="121" name="test_traceback_entry_getsource_in_construct" time="0.003"><system-out>def xyz():
+    try:
+        raise ValueError
+    except somenoname:
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="141" name="test_traceback_cut" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="161" name="test_traceback_filter" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="166" name="test_traceback_filter_selective[&lt;lambda&gt;-True]" time="0.001"><system-out>old: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/python_api.py:710&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:185&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+new: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="166" name="test_traceback_filter_selective[&lt;lambda&gt;-False]" time="0.001"><system-out>old: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/python_api.py:710&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:185&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+new: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:185&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="166" name="test_traceback_filter_selective[tracebackhide2-True]" time="0.001"><system-out>old: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/python_api.py:710&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:185&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+new: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="166" name="test_traceback_filter_selective[tracebackhide3-False]" time="0.001"><system-out>old: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/python_api.py:710&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:185&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+new: [&lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:190&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:185&gt;, &lt;TracebackEntry /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/code/test_excinfo.py:179&gt;]
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="204" name="test_traceback_recursion_index" time="0.002"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="215" name="test_traceback_only_specific_recursion_errors" time="0.339"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="226" name="test_traceback_no_recursion_index" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="265" name="test_traceback_getcrashentry" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="288" name="test_traceback_getcrashentry_empty" time="0.001"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="306" name="test_excinfo_exconly" time="0.001"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="316" name="test_excinfo_repr_str" time="0.000"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="322" name="test_excinfo_for_later" time="0.000"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="328" name="test_excinfo_errisinstance" time="0.001"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="333" name="test_excinfo_no_sourcecode" time="0.001"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="358" name="test_entrysource_Queue_example" time="0.005"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="370" name="test_codepath_Queue_example" time="0.002"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="382" name="test_match_succeeds" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="428" name="test_repr_source" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="442" name="test_repr_source_excinfo" time="0.002"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="457" name="test_repr_source_not_existing" time="0.023"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="468" name="test_repr_many_line_source_not_existing" time="0.023"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="486" name="test_repr_source_failing_fullsource" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="548" name="test_repr_local" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="558" name="test_repr_local_with_error" time="0.000"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="570" name="test_repr_local_with_exception_in_class_property" time="0.000"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="588" name="test_repr_local_truncated" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="600" name="test_repr_tracebackentry_lines" time="0.007"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="633" name="test_repr_tracebackentry_lines2" time="0.005"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="658" name="test_repr_tracebackentry_lines_var_kw_args" time="0.003"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="680" name="test_repr_tracebackentry_short" time="0.003"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="707" name="test_repr_tracebackentry_no" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="726" name="test_repr_traceback_tbfilter" time="0.010"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="743" name="test_traceback_short_no_source" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="769" name="test_repr_traceback_and_excinfo" time="0.005"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="795" name="test_repr_traceback_with_invalid_cwd" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="815" name="test_repr_excinfo_addouterr" time="0.004"><failure message="AssertionError: assert &apos;:3: ValueError&apos; == &apos;content&apos;
+  - :3: ValueError
+  + content">self = &lt;test_excinfo.TestFormattedExcinfo object at 0xf833e96f61c0&gt;
+importasmod = &lt;function TestFormattedExcinfo.importasmod.&lt;locals&gt;.importasmod at 0xf833e96f08b0&gt;
+tw_mock = &lt;conftest.tw_mock.&lt;locals&gt;.TWMock object at 0xf833e96ef2e0&gt;
+
+    def test_repr_excinfo_addouterr(self, importasmod, tw_mock):
+        mod = importasmod(
+            &quot;&quot;&quot;
+            def entry():
+                raise ValueError()
+        &quot;&quot;&quot;
+        )
+        excinfo = pytest.raises(ValueError, mod.entry)
+        repr = excinfo.getrepr()
+        repr.addsection(&quot;title&quot;, &quot;content&quot;)
+        repr.toterminal(tw_mock)
+&gt;       assert tw_mock.lines[-1] == &quot;content&quot;
+E       AssertionError: assert &apos;:3: ValueError&apos; == &apos;content&apos;
+E         - :3: ValueError
+E         + content
+
+testing/code/test_excinfo.py:827: AssertionError</failure></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="829" name="test_repr_excinfo_reprcrash" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="843" name="test_repr_traceback_recursion" time="0.015"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="862" name="test_reprexcinfo_getrepr" time="0.006"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="882" name="test_reprexcinfo_unicode" time="0.001"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="892" name="test_toterminal_long" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="923" name="test_toterminal_long_missing_source" time="0.012"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="953" name="test_toterminal_long_incomplete_source" time="0.005"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="983" name="test_toterminal_long_filenames" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions0]" time="0.005"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions1]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions2]" time="0.015"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions3]" time="0.013"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions4]" time="0.005"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions5]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions6]" time="0.014"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions7]" time="0.013"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions8]" time="0.005"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions9]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions10]" time="0.011"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions11]" time="0.010"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions12]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions13]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions14]" time="0.010"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions15]" time="0.011"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions16]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions17]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions18]" time="0.010"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions19]" time="0.010"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions20]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions21]" time="0.004"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions22]" time="0.035"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1011" name="test_format_excinfo[reproptions23]" time="0.011"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1041" name="test_traceback_repr_style" time="0.005"><system-out>
+    def f():
+&gt;       g()
+
+(&lt;object object at 0xf833e95c5bf0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_traceback_repr_style0/mod.py&apos;)
+:3: 
+(&apos;_ &apos;, None)
+(&lt;object object at 0xf833e95c5bf0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_traceback_repr_style0/mod.py&apos;)
+:5: in g
+    h()
+(&lt;object object at 0xf833e95c5bf0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_traceback_repr_style0/mod.py&apos;)
+:7: in h
+    i()
+(&apos;_ &apos;, None)
+
+    def i():
+&gt;       raise ValueError()
+E       ValueError
+
+(&lt;object object at 0xf833e95c5bf0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_traceback_repr_style0/mod.py&apos;)
+:9: ValueError
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1086" name="test_exc_chain_repr" time="0.006"><failure message="AssertionError: assert &apos;The above ex...ng exception:&apos; == &apos;&apos;
+  - The above exception was the direct cause of the following exception:">self = &lt;test_excinfo.TestFormattedExcinfo object at 0xf833e93a63d0&gt;
+importasmod = &lt;function TestFormattedExcinfo.importasmod.&lt;locals&gt;.importasmod at 0xf833e95f1550&gt;
+tw_mock = &lt;conftest.tw_mock.&lt;locals&gt;.TWMock object at 0xf833e93a6b80&gt;
+
+    def test_exc_chain_repr(self, importasmod, tw_mock):
+        mod = importasmod(
+            &quot;&quot;&quot;
+            class Err(Exception):
+                pass
+            def f():
+                try:
+                    g()
+                except Exception as e:
+                    raise Err() from e
+                finally:
+                    h()
+            def g():
+                raise ValueError()
+    
+            def h():
+                raise AttributeError()
+        &quot;&quot;&quot;
+        )
+        excinfo = pytest.raises(AttributeError, mod.f)
+        r = excinfo.getrepr(style=&quot;long&quot;)
+        r.toterminal(tw_mock)
+        for line in tw_mock.lines:
+            print(line)
+        assert tw_mock.lines[0] == &quot;&quot;
+        assert tw_mock.lines[1] == &quot;    def f():&quot;
+        assert tw_mock.lines[2] == &quot;        try:&quot;
+        assert tw_mock.lines[3] == &quot;&gt;           g()&quot;
+        assert tw_mock.lines[4] == &quot;&quot;
+        line = tw_mock.get_write_msg(5)
+        assert line.endswith(&quot;mod.py&quot;)
+        assert tw_mock.lines[6] == &quot;:6: &quot;
+        assert tw_mock.lines[7] == (&quot;_ &quot;, None)
+        assert tw_mock.lines[8] == &quot;&quot;
+        assert tw_mock.lines[9] == &quot;    def g():&quot;
+        assert tw_mock.lines[10] == &quot;&gt;       raise ValueError()&quot;
+        assert tw_mock.lines[11] == &quot;E       ValueError&quot;
+        assert tw_mock.lines[12] == &quot;&quot;
+        line = tw_mock.get_write_msg(13)
+        assert line.endswith(&quot;mod.py&quot;)
+        assert tw_mock.lines[14] == &quot;:12: ValueError&quot;
+&gt;       assert tw_mock.lines[15] == &quot;&quot;
+E       AssertionError: assert &apos;The above ex...ng exception:&apos; == &apos;&apos;
+E         - The above exception was the direct cause of the following exception:
+
+testing/code/test_excinfo.py:1128: AssertionError</failure><system-out>
+    def f():
+        try:
+&gt;           g()
+
+(&lt;object object at 0xf833e95c50b0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_chain_repr0/mod.py&apos;)
+:6: 
+(&apos;_ &apos;, None)
+
+    def g():
+&gt;       raise ValueError()
+E       ValueError
+
+(&lt;object object at 0xf833e95c50b0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_chain_repr0/mod.py&apos;)
+:12: ValueError
+The above exception was the direct cause of the following exception:
+
+
+    def f():
+        try:
+            g()
+        except Exception as e:
+&gt;           raise Err() from e
+E           test_exc_chain_repr0.mod.Err
+
+(&lt;object object at 0xf833e95c50b0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_chain_repr0/mod.py&apos;)
+:8: Err
+During handling of the above exception, another exception occurred:
+
+
+    def f():
+        try:
+            g()
+        except Exception as e:
+            raise Err() from e
+        finally:
+&gt;           h()
+
+(&lt;object object at 0xf833e95c50b0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_chain_repr0/mod.py&apos;)
+:10: 
+(&apos;_ &apos;, None)
+
+    def h():
+&gt;       raise AttributeError()
+E       AttributeError
+
+(&lt;object object at 0xf833e95c50b0&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_chain_repr0/mod.py&apos;)
+:15: AttributeError
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1170" name="test_exc_repr_chain_suppression[from_none]" time="0.005"><system-out>
+    def f():
+        try:
+            g()
+        except Exception:
+&gt;           raise AttributeError() from None
+E           AttributeError
+
+(&lt;object object at 0xf833e98db880&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_repr_chain_suppressio0/mod.py&apos;)
+:6: AttributeError
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1170" name="test_exc_repr_chain_suppression[explicit_suppress]" time="0.005"><system-out>
+    def f():
+        try:
+            g()
+        except Exception:
+&gt;           raise AttributeError()
+E           AttributeError
+
+(&lt;object object at 0xf833e98db070&gt;, &apos;/tmp/pytest-of-root/pytest-0/test_exc_repr_chain_suppressio1/mod.py&apos;)
+:6: AttributeError
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1210" name="test_exc_chain_repr_without_traceback[cause-The above exception was the direct cause of the following exception:]" time="0.028"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1210" name="test_exc_chain_repr_without_traceback[context-During handling of the above exception, another exception occurred:]" time="0.028"></testcase><testcase classname="testing.code.test_excinfo.TestFormattedExcinfo" file="testing/code/test_excinfo.py" line="1269" name="test_exc_chain_repr_cycle" time="0.006"><failure message="AssertionError: assert &apos;:13: in unre...ision by zero&apos; == &apos;:13: in unre...ision by zero&apos;
+  Skipping 100 identical leading characters in diff, use -v to show
+  Skipping 126 identical trailing characters in diff, use -v to show
+    0.mod.Err
+  + 
+    During handling of the above exception, another exception occurred:
+  - 
+    :15: in">self = &lt;test_excinfo.TestFormattedExcinfo object at 0xf833e96f60a0&gt;
+importasmod = &lt;function TestFormattedExcinfo.importasmod.&lt;locals&gt;.importasmod at 0xf833e95f1430&gt;
+tw_mock = &lt;conftest.tw_mock.&lt;locals&gt;.TWMock object at 0xf833e992fb50&gt;
+
+    def test_exc_chain_repr_cycle(self, importasmod, tw_mock):
+        mod = importasmod(
+            &quot;&quot;&quot;
+            class Err(Exception):
+                pass
+            def fail():
+                return 0 / 0
+            def reraise():
+                try:
+                    fail()
+                except ZeroDivisionError as e:
+                    raise Err() from e
+            def unreraise():
+                try:
+                    reraise()
+                except Err as e:
+                    raise e.__cause__
+        &quot;&quot;&quot;
+        )
+        excinfo = pytest.raises(ZeroDivisionError, mod.unreraise)
+        r = excinfo.getrepr(style=&quot;short&quot;)
+        r.toterminal(tw_mock)
+        out = &quot;\n&quot;.join(line for line in tw_mock.lines if isinstance(line, str))
+        expected_out = textwrap.dedent(
+            &quot;&quot;&quot;\
+            :13: in unreraise
+                reraise()
+            :10: in reraise
+                raise Err() from e
+            E   test_exc_chain_repr_cycle0.mod.Err
+    
+            During handling of the above exception, another exception occurred:
+            :15: in unreraise
+                raise e.__cause__
+            :8: in reraise
+                fail()
+            :5: in fail
+                return 0 / 0
+            E   ZeroDivisionError: division by zero&quot;&quot;&quot;
+        )
+&gt;       assert out == expected_out
+E       AssertionError: assert &apos;:13: in unre...ision by zero&apos; == &apos;:13: in unre...ision by zero&apos;
+E         Skipping 100 identical leading characters in diff, use -v to show
+E         Skipping 126 identical trailing characters in diff, use -v to show
+E           0.mod.Err
+E         + 
+E           During handling of the above exception, another exception occurred:
+E         - 
+E           :15: in
+
+testing/code/test_excinfo.py:1310: AssertionError</failure></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1312" name="test_repr_traceback_with_unicode[None-short]" time="0.021"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1312" name="test_repr_traceback_with_unicode[None-long]" time="0.022"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1312" name="test_repr_traceback_with_unicode[utf8-short]" time="0.047"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1312" name="test_repr_traceback_with_unicode[utf8-long]" time="0.022"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1312" name="test_repr_traceback_with_unicode[utf16-short]" time="0.022"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1312" name="test_repr_traceback_with_unicode[utf16-long]" time="0.023"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1341" name="test_exception_repr_extraction_error_on_recursion" time="0.263"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1376" name="test_no_recursion_index_on_recursion_error" time="0.681"></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="245" name="test_chained_exceptions[TestReport]" time="0.062"><failure message="AssertionError: assert False
+ +  where False = isinstance(&lt;&lt;class &apos;_pytest._code.code.ReprExceptionInfo&apos;&gt; instance at f833e9139df0&gt;, ExceptionChainRepr)">self = &lt;test_reports.TestReportSerialization object at 0xf833e90ef730&gt;
+testdir = &lt;Testdir local(&apos;/tmp/pytest-of-root/pytest-0/test_chained_exceptions0&apos;)&gt;
+tw_mock = &lt;conftest.tw_mock.&lt;locals&gt;.TWMock object at 0xf833e90eff40&gt;
+report_class = &lt;class &apos;_pytest.reports.TestReport&apos;&gt;
+
+    @pytest.mark.parametrize(&quot;report_class&quot;, [TestReport, CollectReport])
+    def test_chained_exceptions(self, testdir, tw_mock, report_class):
+        &quot;&quot;&quot;Check serialization/deserialization of report objects containing chained exceptions (#5786)&quot;&quot;&quot;
+        testdir.makepyfile(
+            &quot;&quot;&quot;
+            def foo():
+                raise ValueError(&apos;value error&apos;)
+            def test_a():
+                try:
+                    foo()
+                except ValueError as e:
+                    raise RuntimeError(&apos;runtime error&apos;) from e
+            if {error_during_import}:
+                test_a()
+        &quot;&quot;&quot;.format(
+                error_during_import=report_class is CollectReport
+            )
+        )
+    
+        reprec = testdir.inline_run()
+        if report_class is TestReport:
+            reports = reprec.getreports(&quot;pytest_runtest_logreport&quot;)
+            # we have 3 reports: setup/call/teardown
+            assert len(reports) == 3
+            # get the call report
+            report = reports[1]
+        else:
+            assert report_class is CollectReport
+            # two collection reports: session and test file
+            reports = reprec.getreports(&quot;pytest_collectreport&quot;)
+            assert len(reports) == 2
+            report = reports[1]
+    
+        def check_longrepr(longrepr):
+            &quot;&quot;&quot;Check the attributes of the given longrepr object according to the test file.
+    
+            We can get away with testing both CollectReport and TestReport with this function because
+            the longrepr objects are very similar.
+            &quot;&quot;&quot;
+            assert isinstance(longrepr, ExceptionChainRepr)
+            assert longrepr.sections == [(&quot;title&quot;, &quot;contents&quot;, &quot;=&quot;)]
+            assert len(longrepr.chain) == 2
+            entry1, entry2 = longrepr.chain
+            tb1, fileloc1, desc1 = entry1
+            tb2, fileloc2, desc2 = entry2
+    
+            assert &quot;ValueError(&apos;value error&apos;)&quot; in str(tb1)
+            assert &quot;RuntimeError(&apos;runtime error&apos;)&quot; in str(tb2)
+    
+            assert (
+                desc1
+                == &quot;The above exception was the direct cause of the following exception:&quot;
+            )
+            assert desc2 is None
+    
+        assert report.failed
+        assert len(report.sections) == 0
+        report.longrepr.addsection(&quot;title&quot;, &quot;contents&quot;, &quot;=&quot;)
+        check_longrepr(report.longrepr)
+    
+        data = report._to_json()
+        loaded_report = report_class._from_json(data)
+&gt;       check_longrepr(loaded_report.longrepr)
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/test_reports.py:308: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+longrepr = &lt;&lt;class &apos;_pytest._code.code.ReprExceptionInfo&apos;&gt; instance at f833e9139df0&gt;
+
+    def check_longrepr(longrepr):
+        &quot;&quot;&quot;Check the attributes of the given longrepr object according to the test file.
+    
+        We can get away with testing both CollectReport and TestReport with this function because
+        the longrepr objects are very similar.
+        &quot;&quot;&quot;
+&gt;       assert isinstance(longrepr, ExceptionChainRepr)
+E       AssertionError: assert False
+E        +  where False = isinstance(&lt;&lt;class &apos;_pytest._code.code.ReprExceptionInfo&apos;&gt; instance at f833e9139df0&gt;, ExceptionChainRepr)
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/test_reports.py:285: AssertionError</failure><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_chained_exceptions0
+collected 1 item
+
+test_chained_exceptions.py F                                             [100%]
+
+=================================== FAILURES ===================================
+____________________________________ test_a ____________________________________
+
+    def test_a():
+        try:
+&gt;           foo()
+
+test_chained_exceptions.py:5: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+    def foo():
+&gt;       raise ValueError(&apos;value error&apos;)
+E       ValueError: value error
+
+test_chained_exceptions.py:2: ValueError
+The above exception was the direct cause of the following exception:
+
+
+    def test_a():
+        try:
+            foo()
+        except ValueError as e:
+&gt;           raise RuntimeError(&apos;runtime error&apos;) from e
+E           RuntimeError: runtime error
+
+test_chained_exceptions.py:7: RuntimeError
+============================== 1 failed in 0.02s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="245" name="test_chained_exceptions[CollectReport]" time="0.089"><failure message="AssertionError: assert False
+ +  where False = isinstance(&lt;&lt;class &apos;_pytest._code.code.ReprExceptionInfo&apos;&gt; instance at f833e92630d0&gt;, ExceptionChainRepr)">self = &lt;test_reports.TestReportSerialization object at 0xf833e9139040&gt;
+testdir = &lt;Testdir local(&apos;/tmp/pytest-of-root/pytest-0/test_chained_exceptions1&apos;)&gt;
+tw_mock = &lt;conftest.tw_mock.&lt;locals&gt;.TWMock object at 0xf833e91c2550&gt;
+report_class = &lt;class &apos;_pytest.reports.CollectReport&apos;&gt;
+
+    @pytest.mark.parametrize(&quot;report_class&quot;, [TestReport, CollectReport])
+    def test_chained_exceptions(self, testdir, tw_mock, report_class):
+        &quot;&quot;&quot;Check serialization/deserialization of report objects containing chained exceptions (#5786)&quot;&quot;&quot;
+        testdir.makepyfile(
+            &quot;&quot;&quot;
+            def foo():
+                raise ValueError(&apos;value error&apos;)
+            def test_a():
+                try:
+                    foo()
+                except ValueError as e:
+                    raise RuntimeError(&apos;runtime error&apos;) from e
+            if {error_during_import}:
+                test_a()
+        &quot;&quot;&quot;.format(
+                error_during_import=report_class is CollectReport
+            )
+        )
+    
+        reprec = testdir.inline_run()
+        if report_class is TestReport:
+            reports = reprec.getreports(&quot;pytest_runtest_logreport&quot;)
+            # we have 3 reports: setup/call/teardown
+            assert len(reports) == 3
+            # get the call report
+            report = reports[1]
+        else:
+            assert report_class is CollectReport
+            # two collection reports: session and test file
+            reports = reprec.getreports(&quot;pytest_collectreport&quot;)
+            assert len(reports) == 2
+            report = reports[1]
+    
+        def check_longrepr(longrepr):
+            &quot;&quot;&quot;Check the attributes of the given longrepr object according to the test file.
+    
+            We can get away with testing both CollectReport and TestReport with this function because
+            the longrepr objects are very similar.
+            &quot;&quot;&quot;
+            assert isinstance(longrepr, ExceptionChainRepr)
+            assert longrepr.sections == [(&quot;title&quot;, &quot;contents&quot;, &quot;=&quot;)]
+            assert len(longrepr.chain) == 2
+            entry1, entry2 = longrepr.chain
+            tb1, fileloc1, desc1 = entry1
+            tb2, fileloc2, desc2 = entry2
+    
+            assert &quot;ValueError(&apos;value error&apos;)&quot; in str(tb1)
+            assert &quot;RuntimeError(&apos;runtime error&apos;)&quot; in str(tb2)
+    
+            assert (
+                desc1
+                == &quot;The above exception was the direct cause of the following exception:&quot;
+            )
+            assert desc2 is None
+    
+        assert report.failed
+        assert len(report.sections) == 0
+        report.longrepr.addsection(&quot;title&quot;, &quot;contents&quot;, &quot;=&quot;)
+        check_longrepr(report.longrepr)
+    
+        data = report._to_json()
+        loaded_report = report_class._from_json(data)
+&gt;       check_longrepr(loaded_report.longrepr)
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/test_reports.py:308: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+longrepr = &lt;&lt;class &apos;_pytest._code.code.ReprExceptionInfo&apos;&gt; instance at f833e92630d0&gt;
+
+    def check_longrepr(longrepr):
+        &quot;&quot;&quot;Check the attributes of the given longrepr object according to the test file.
+    
+        We can get away with testing both CollectReport and TestReport with this function because
+        the longrepr objects are very similar.
+        &quot;&quot;&quot;
+&gt;       assert isinstance(longrepr, ExceptionChainRepr)
+E       AssertionError: assert False
+E        +  where False = isinstance(&lt;&lt;class &apos;_pytest._code.code.ReprExceptionInfo&apos;&gt; instance at f833e92630d0&gt;, ExceptionChainRepr)
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/testing/test_reports.py:285: AssertionError</failure><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_chained_exceptions1
+collected 0 items / 1 errors
+
+==================================== ERRORS ====================================
+_________________ ERROR collecting test_chained_exceptions.py __________________
+test_chained_exceptions.py:5: in test_a
+    foo()
+test_chained_exceptions.py:2: in foo
+    raise ValueError(&apos;value error&apos;)
+E   ValueError: value error
+The above exception was the direct cause of the following exception:
+
+test_chained_exceptions.py:9: in &lt;module&gt;
+    test_a()
+test_chained_exceptions.py:7: in test_a
+    raise RuntimeError(&apos;runtime error&apos;) from e
+E   RuntimeError: runtime error
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 errors during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.06s ===============================
+</system-out></testcase><testcase classname="testing.code.test_excinfo.TestTraceback_f_g_h" file="testing/code/test_excinfo.py" line="150" name="test_traceback_cut_excludepath" time="0.007"></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="388" name="test_match_raises_error" time="0.042"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_match_raises_error0
+collected 1 item
+
+test_match_raises_error.py F                                             [100%]
+
+=================================== FAILURES ===================================
+______________________________ test_division_zero ______________________________
+
+    def test_division_zero():
+        with pytest.raises(ZeroDivisionError) as excinfo:
+            0 / 0
+&gt;       excinfo.match(r&apos;[123]+&apos;)
+E       AssertionError: Pattern &apos;[123]+&apos; not found in &apos;division by zero&apos;
+
+test_match_raises_error.py:5: AssertionError
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.code.test_excinfo" file="testing/code/test_excinfo.py" line="1327" name="test_cwd_deleted" time="0.044"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_cwd_deleted0
+collected 1 item
+
+test_cwd_deleted.py F                                                    [100%]
+
+=================================== FAILURES ===================================
+_____________________________________ test _____________________________________
+
+tmpdir = local(&apos;/tmp/pytest-of-root/pytest-0/basetemp/test0&apos;)
+
+    def test(tmpdir):
+        tmpdir.chdir()
+        tmpdir.remove()
+&gt;       assert False
+E       assert False
+
+/tmp/pytest-of-root/pytest-0/test_cwd_deleted0/test_cwd_deleted.py:4: AssertionError
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="8" name="test_xdist_longrepr_to_str_issue_241" time="0.044"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_xdist_longrepr_to_str_issue_2410
+collected 2 items
+
+test_xdist_longrepr_to_str_issue_241.py F.                               [100%]
+
+=================================== FAILURES ===================================
+____________________________________ test_a ____________________________________
+
+&gt;   def test_a(): assert False
+E   assert False
+
+test_xdist_longrepr_to_str_issue_241.py:1: AssertionError
+========================= 1 failed, 1 passed in 0.01s ==========================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="32" name="test_xdist_report_longrepr_reprcrash_130" time="0.043"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_xdist_report_longrepr_reprcrash_1300
+collected 1 item
+
+test_xdist_report_longrepr_reprcrash_130.py F                            [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_fail ___________________________________
+
+    def test_fail():
+&gt;       assert False, &apos;Expected Message&apos;
+E       AssertionError: Expected Message
+E       assert False
+
+test_xdist_report_longrepr_reprcrash_130.py:2: AssertionError
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="67" name="test_reprentries_serialization_170" time="0.043"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_reprentries_serialization_1700
+collected 1 item
+
+test_reprentries_serialization_170.py F                                  [100%]
+
+=================================== FAILURES ===================================
+_______________________________ test_repr_entry ________________________________
+
+    def test_repr_entry():
+        x = 0
+&gt;       assert x
+E       assert 0
+
+x          = 0
+
+test_reprentries_serialization_170.py:3: AssertionError
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="102" name="test_reprentries_serialization_196" time="0.040"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_reprentries_serialization_1960
+collected 1 item
+
+test_reprentries_serialization_196.py F                                  [100%]
+
+=================================== FAILURES ===================================
+____________________________ test_repr_entry_native ____________________________
+Traceback (most recent call last):
+  File &quot;/tmp/pytest-of-root/pytest-0/test_reprentries_serialization_1960/test_reprentries_serialization_196.py&quot;, line 3, in test_repr_entry_native
+    assert x
+AssertionError: assert 0
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="129" name="test_itemreport_outcomes" time="0.052"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_itemreport_outcomes0
+collected 6 items
+
+test_itemreport_outcomes.py .Fssxx                                       [100%]
+
+=================================== FAILURES ===================================
+__________________________________ test_fail ___________________________________
+
+&gt;   def test_fail(): 0/0
+E   ZeroDivisionError: division by zero
+
+test_itemreport_outcomes.py:3: ZeroDivisionError
+============== 1 failed, 1 passed, 2 skipped, 2 xfailed in 0.02s ===============
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="164" name="test_collectreport_passed" time="0.039"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_collectreport_passed0
+collected 1 item
+
+test_collectreport_passed.py .                                           [100%]
+
+============================== 1 passed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="175" name="test_collectreport_fail" time="0.160"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_collectreport_fail0
+collected 0 items / 1 errors
+
+==================================== ERRORS ====================================
+_________________ ERROR collecting test_collectreport_fail.py __________________
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/python.py:501: in _importtestmodule
+    mod = self.fspath.pyimport(ensuresyspath=importmode)
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/.bench-venv/lib/python3.8/site-packages/py/_path/local.py:704: in pyimport
+    __import__(modname)
+&lt;frozen importlib._bootstrap&gt;:991: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:975: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:671: in _load_unlocked
+    ???
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/assertion/rewrite.py:131: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/assertion/rewrite.py:280: in _rewrite_test
+    tree = ast.parse(source, filename=fn)
+/usr/local/lib/python3.8/ast.py:47: in parse
+    return compile(source, filename, mode, flags,
+E     File &quot;/tmp/pytest-of-root/pytest-0/test_collectreport_fail0/test_collectreport_fail.py&quot;, line 1
+E       qwe abc
+E           ^
+E   SyntaxError: invalid syntax
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 errors during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.13s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="189" name="test_extended_report_deserialization" time="0.176"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_extended_report_deserialization0
+collected 0 items / 1 errors
+
+==================================== ERRORS ====================================
+___________ ERROR collecting test_extended_report_deserialization.py ___________
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/python.py:501: in _importtestmodule
+    mod = self.fspath.pyimport(ensuresyspath=importmode)
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/.bench-venv/lib/python3.8/site-packages/py/_path/local.py:704: in pyimport
+    __import__(modname)
+&lt;frozen importlib._bootstrap&gt;:991: in _find_and_load
+    ???
+&lt;frozen importlib._bootstrap&gt;:975: in _find_and_load_unlocked
+    ???
+&lt;frozen importlib._bootstrap&gt;:671: in _load_unlocked
+    ???
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/assertion/rewrite.py:131: in exec_module
+    source_stat, co = _rewrite_test(fn, self.config)
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-5787/B-green-retry/src/_pytest/assertion/rewrite.py:280: in _rewrite_test
+    tree = ast.parse(source, filename=fn)
+/usr/local/lib/python3.8/ast.py:47: in parse
+    return compile(source, filename, mode, flags,
+E     File &quot;/tmp/pytest-of-root/pytest-0/test_extended_report_deserialization0/test_extended_report_deserialization.py&quot;, line 1
+E       qwe abc
+E           ^
+E   SyntaxError: invalid syntax
+!!!!!!!!!!!!!!!!!!! Interrupted: 1 errors during collection !!!!!!!!!!!!!!!!!!!!
+=============================== 1 error in 0.12s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="205" name="test_paths_support" time="0.043"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_paths_support0
+collected 1 item
+
+test_paths_support.py F                                                  [100%]
+
+=================================== FAILURES ===================================
+____________________________________ test_a ____________________________________
+
+    def test_a():
+&gt;       assert False
+E       assert False
+
+test_paths_support.py:2: AssertionError
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestReportSerialization" file="testing/test_reports.py" line="223" name="test_deserialization_failure" time="0.042"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_deserialization_failure0
+collected 1 item
+
+test_deserialization_failure.py F                                        [100%]
+
+=================================== FAILURES ===================================
+____________________________________ test_a ____________________________________
+
+    def test_a():
+&gt;       assert False
+E       assert False
+
+test_deserialization_failure.py:2: AssertionError
+============================== 1 failed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestHooks" file="testing/test_reports.py" line="318" name="test_test_report" time="0.044"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_test_report0
+collected 2 items
+
+test_test_report.py F.                                                   [100%]
+
+=================================== FAILURES ===================================
+____________________________________ test_a ____________________________________
+
+&gt;   def test_a(): assert False
+E   assert False
+
+test_test_report.py:1: AssertionError
+========================= 1 failed, 1 passed in 0.01s ==========================
+</system-out></testcase><testcase classname="testing.test_reports.TestHooks" file="testing/test_reports.py" line="340" name="test_collect_report" time="0.043"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_collect_report0
+collected 2 items
+
+test_collect_report.py F.                                                [100%]
+
+=================================== FAILURES ===================================
+____________________________________ test_a ____________________________________
+
+&gt;   def test_a(): assert False
+E   assert False
+
+test_collect_report.py:1: AssertionError
+========================= 1 failed, 1 passed in 0.01s ==========================
+</system-out></testcase><testcase classname="testing.test_reports.TestHooks" file="testing/test_reports.py" line="362" name="test_invalid_report_types[pytest_runtest_logreport]" time="0.041"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_invalid_report_types0
+collected 1 item
+
+test_invalid_report_types.py .                                           [100%]
+
+============================== 1 passed in 0.01s ===============================
+</system-out></testcase><testcase classname="testing.test_reports.TestHooks" file="testing/test_reports.py" line="362" name="test_invalid_report_types[pytest_collectreport]" time="0.041"><system-out>============================= test session starts ==============================
+platform linux -- Python 3.8.20, pytest-5.1.2.dev12+g955e54221, py-1.11.0, pluggy-0.13.1
+rootdir: /tmp/pytest-of-root/pytest-0/test_invalid_report_types1
+collected 1 item
+
+test_invalid_report_types.py .                                           [100%]
+
+============================== 1 passed in 0.01s ===============================
+</system-out></testcase></testsuite></testsuites>

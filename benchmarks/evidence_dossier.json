@@ -1,14 +1,14 @@
 {
- "dossier": "Step 4.4 Metrics & Evidence Dossier — Wave 2 final (plan 43, steps 4.3c.2/4.3c.3)",
+ "dossier": "Step 4.4 Metrics & Evidence Dossier — Wave 3 final (plan 44, steps 12b.4/12b.5)",
  "scoreboard": {
-  "mode_B_resolved": 7,
+  "mode_B_resolved": 9,
   "mode_A_resolved": 5,
   "denominator": 12,
-  "history_B": "0/12 raw 4.2 -> 1/12 rescore -> 4/12 wave1 -> 7/12 wave2",
-  "history_A": "0/12 raw 4.2 -> 2/12 rescore -> 2/12 wave1 -> 5/12 wave2",
-  "goal_9_12": "NOT MET (honest 7/12); Wave 3 decision recorded below",
+  "history_B": "0/12 raw 4.2 -> 1/12 rescore -> 4/12 wave1 -> 7/12 wave2 -> 8/12 (12a.0 rescore 6028) -> 9/12 wave3",
+  "history_A": "0/12 raw 4.2 -> 2/12 rescore -> 2/12 wave1 -> 5/12 wave2 (held, not rerun in W3)",
+  "goal_9_12": "MET (honest 9/12); 12/12 ideal not reached (stochastic/content ceiling)",
   "b_superset_of_a": false,
-  "b_superset_note": "1142 resolved in A but failed in B; B leads on count only"
+  "b_superset_note": "1142 now resolved in BOTH modes (A held since W2); B leads 9/12 vs 5/12"
  },
  "verdicts": {
   "A": {
@@ -75,9 +75,10 @@
   },
   "B": {
    "psf__requests-1142": {
-    "status": "failed",
-    "reason": "f2p-not-fixed:1",
-    "done": true
+    "status": "resolved",
+    "reason": "",
+    "done": true,
+    "wave3": "flipped by green-v2: collect-repair lap + grounded revision; receipt minted live"
    },
    "psf__requests-2931": {
     "status": "resolved",
@@ -90,9 +91,10 @@
     "done": true
    },
    "psf__requests-6028": {
-    "status": "failed",
-    "reason": "p2p-broken:1",
-    "done": true
+    "status": "resolved",
+    "reason": "",
+    "done": true,
+    "wave3": "12a.0 offline rescore (R9 remap fix): F2P 2/2 + P2P 185/185 resolved; no offline receipt (4.3a precedent); held through W3"
    },
    "pytest-dev__pytest-10081": {
     "status": "resolved",
@@ -101,8 +103,9 @@
    },
    "pytest-dev__pytest-5787": {
     "status": "failed",
-    "reason": "red-rejected after resynthesis: red JUnit unusable: JUnit XML carries zero testcase entries",
-    "done": true
+    "reason": "f2p-not-fixed:2; p2p-broken:3",
+    "done": true,
+    "wave3": "red accepted first try (12a.1 path validated); content genuine-hard; completed retry lap regressed P2P 1->3"
    },
    "pytest-dev__pytest-7432": {
     "status": "resolved",
@@ -121,8 +124,9 @@
    },
    "vuejs__core-11739": {
     "status": "failed",
-    "reason": "patch application failed: vuejs__core-11739: routed patch rejected: packages/runtime-dom/src/modules/style.ts: block 2: SEARCH not found (0 matches at exact/ws/",
-    "done": true
+    "reason": "f2p-not-fixed:1",
+    "done": true,
+    "wave3": "ramble_stopped after 2 builder cutoffs ($4.86 bounded); 5 blocks landed across 3 files via partial apply; eval reached, 1 F2P miss"
    },
    "vuejs__core-11870": {
     "status": "resolved",
@@ -132,13 +136,14 @@
    "vuejs__core-11899": {
     "status": "failed",
     "reason": "f2p-not-fixed:1",
-    "done": true
+    "done": true,
+    "wave3": "grounded revision returned no blocks -> first verdict honestly stands (no eval spent on empty revision)"
    }
   }
  },
  "measurability": {
-  "A": "12/12 done",
-  "B": "12/12 done",
+  "A": "12/12 done (held from W2, not rerun)",
+  "B": "12/12 done (8 held + 4 fresh W3)",
   "note": "no empty base_index, no unresolved_ids; 6028-A shows 4 ambiguous last-wins resolutions (harness-logged, deterministic)"
  },
  "guard_reward_hacking": {
@@ -148,25 +153,49 @@
    "violations": 0
   },
   "B": {
-   "clean": 10,
-   "none_no_patch": 2,
+   "clean": 12,
+   "none_no_patch": 0,
    "violations": 0
   },
-  "reward_hacking_rate": "0/20 evaluated patches (0 violations); None verdicts only where no patch existed (5787/11739 both modes)"
+  "reward_hacking_rate": "0/22 evaluated patches (12 B + 10 A, 0 violations); B has no None verdicts; A holds 2 Nones from W2 (5787/11739)"
  },
  "red": {
-  "B_accepted": 11,
+  "B_accepted": 12,
   "B_denominator": 12,
-  "rejected": [
-   "pytest-dev__pytest-5787 (empty JUnit after resynthesis; ~$0.01, R10 gate saved debate spend)"
-  ]
+  "rejected": [],
+  "wave3_note": "5787 fixed by the 12a.1 red path (Wonder resynthesis + full top-1 context + format guard): accepted first try, 1916 bytes, exit 1"
  },
  "receipts": {
-  "B_minted": 7,
+  "B_minted": 8,
   "A_minted": 0,
-  "invariant": "receipt iff resolved (7/7 B resolved carry receipt_version 1.0; 0 elsewhere)"
+  "invariant": "8 receipts / 9 B resolves: 1142 minted live in W3; 6028 rescore carries no offline receipt (4.3a precedent); 0 elsewhere"
  },
- "debate_telemetry_B": {
+ "debate_telemetry_B_wave3": {
+  "debates_run": 4,
+  "rounds_hist": {
+   "1": 2,
+   "2": 2
+  },
+  "converged_early": 0,
+  "ramble_stopped": [
+   "pytest-dev__pytest-5787",
+   "vuejs__core-11739"
+  ],
+  "duration_ms": {
+   "n": 4,
+   "min": 535172,
+   "max": 1108961
+  },
+  "score_min": 0.417,
+  "score_max": 0.75,
+  "detail": {
+   "psf__requests-1142": "2 rounds, score 0.417, 572903 ms -> resolved via green-v2",
+   "pytest-dev__pytest-5787": "1 round, score 0.75, 556133 ms, ramble_stopped",
+   "vuejs__core-11739": "1 round, score 0.75, 535172 ms, ramble_stopped",
+   "vuejs__core-11899": "2 rounds, score 0.417, 1108961 ms"
+  }
+ },
+ "debate_telemetry_B_wave2": {
   "debates_run": 11,
   "rounds_hist": {
    "1": 2,
@@ -189,8 +218,9 @@
   "score_max": 1.0
  },
  "finops": {
-  "ledger_total_spent_usd": 59.89,
+  "ledger_total_spent_usd": 78.48,
   "founder_truth_spent_usd": 60.42,
+  "founder_truth_note": "pre-W3 dashboard truth; post-W3 reconciliation pending founder (books run above dashboard by design: unmeasured cache discounts)",
   "budget_usd": 150.0,
   "stop_rule_usd": 110.0,
   "stop_rule": "not triggered",
@@ -199,7 +229,8 @@
    "bench4.2": 14.93,
    "bench4.3-ablation": 2.75,
    "bench4.3-wave1": 19.61,
-   "bench4.3-wave2": 21.76
+   "bench4.3-wave2": 21.76,
+   "bench4.3-wave3": 18.59
   },
   "wave2_split": {
    "B": 17.78,
@@ -357,10 +388,54 @@
     "length_truncations": 1
    }
   ],
+  "wave3_split": {
+   "B": 18.59
+  },
+  "wave3_envelope": {
+   "cap_usd": 14.0,
+   "total_usd": 18.59,
+   "verdict": "OVERRUN +$4.59 — cause measured: green-v2 extra laps (1142 flip on 22 calls; 5787 Wonder resynthesis + full debate + repair lap) + bounded ramble spend (13 length truncations, stop-rule capped)"
+  },
+  "wave3_per_task": [
+   {
+    "task": "pytest-dev__pytest-5787",
+    "mode": "B",
+    "cost_usd": 5.6015,
+    "tokens": 392378,
+    "calls": 13,
+    "length_truncations": 5
+   },
+   {
+    "task": "vuejs__core-11739",
+    "mode": "B",
+    "cost_usd": 4.8601,
+    "tokens": 351219,
+    "calls": 10,
+    "length_truncations": 6
+   },
+   {
+    "task": "psf__requests-1142",
+    "mode": "B",
+    "cost_usd": 4.3868,
+    "tokens": 374170,
+    "calls": 22,
+    "length_truncations": 0
+   },
+   {
+    "task": "vuejs__core-11899",
+    "mode": "B",
+    "cost_usd": 3.7443,
+    "tokens": 312106,
+    "calls": 16,
+    "length_truncations": 2
+   }
+  ],
   "cost_basis": "upper-bound at full input rates; cached-input share unmeasured (client records no cached_tokens); calls with unknown model/split excluded as unpriced",
-  "avg_upper_bound_per_B_run_cumulative": 1.48,
+  "avg_upper_bound_per_B_run_cumulative": 1.83,
+  "avg_upper_bound_per_B_resolved_cumulative": 7.33,
   "gate4_sub_035_note": "NOT MET on measured upper bounds (cache discounts unmeasured by design); Gate 4 stays open",
   "dashboard_balance_usd": 89.58,
+  "dashboard_balance_note": "pre-W3 truth; post-W3 dashboard reconciliation pending founder",
   "reconciliation_2026_10_31": "Founder dashboard truth $89.58 balance (-> $60.42 spent) vs upper-bound books $65.49; delta -$5.07 booked as priced reconciliation entry (no per-call splits); cause mix: unmeasured cache discounts + pre-ledger $5.91/$0.53 estimates; direction consistent with upper-bound basis"
  },
  "r9_r13_live": {
@@ -394,6 +469,24 @@
   },
   "r11_early_exit_live": "7432 + 8399 closed in 1 round (unanimous / 5-of-6+judge)"
  },
+ "wave3_mechanisms": {
+  "validated": "4/4",
+  "m12a_0_r9_remap_rescore": "held: 6028 resolve intact, no W3 rerun needed ($0); retry JUnit remapped with the retry run's own resolution",
+  "m12a_1_red_path": "5787 red accepted FIRST try (1916 bytes, exit 1): Wonder resynthesis + full top-1 context + format guard; zero empty-resynthesis rejections in W3",
+  "m12a_2_green_v2": "1142: collect-repair lap fired, grounded revision flipped to resolved (receipt minted live). 11899: revision no-blocks -> first stands, no eval spent. Caveat: 5787 completed retry regressed P2P 1->3 (verdict = last completed lap)",
+  "m12a_3_antiramble_partial": "11739: ramble_stopped after 2 builder cutoffs ($4.86 bounded vs $4.69 unbounded W2 burn with zero eval); 5 blocks landed across 3 files (W2: whole file rejected on 1 miss); eval reached, 1 F2P miss. 5787 also ramble-stopped",
+  "green_retry_W3": {
+   "attempts": 4,
+   "completed": 2,
+   "flips": 1,
+   "detail": {
+    "psf__requests-1142": "completed -> RESOLVED (collect-repair + content revision)",
+    "pytest-dev__pytest-5787": "completed, no F2P progress, P2P 1->3 (honest regression inside the contour)",
+    "vuejs__core-11739": "revision unusable (no blocks) -> first stands",
+    "vuejs__core-11899": "revision unusable (no blocks) -> first stands"
+   }
+  }
+ },
  "wave3_decision": {
   "criterion": "plan 4.3c.2: 9/12 B -> stop; else honest score + W3 decision",
   "outcome": "7/12 -> Wave 3 DECISION REQUIRED (founder)",
@@ -407,10 +500,19 @@
   },
   "scope_note": "B-only (A parity already proved guardrail transfer 2/12->5/12); optional 4.3c.4 anti-ramble guard would raise 11739 odds"
  },
+ "wave4_decision": {
+  "criterion": "plan 44 §12b.5: 12/12 -> close phase; 10-11/12 -> W4 only from remainder (~$6); <=9/12 -> new root-cause, no blind W4",
+  "outcome": "9/12 -> GOAL MET, phase target reached; NO blind W4",
+  "rationale": "all remaining misses are pure content-class (clean guard, accepted red, applied patches): 5787 genuine-hard (deep pytest internals), 11739/11899 one F2P each (scoped CSS); every addressable W2-autopsy mechanism is built and live-validated 4/4, so a further wave without a new root-cause theory would re-roll stochastic content at ~$4-5/task with no addressable lever",
+  "requirement": "W4 needs a fresh mechanism proposal + founder authorization"
+ },
  "provenance": {
   "wave1_commit": "7f597e2 (Wave 1 matrices; W1 miss records superseded by W2 reruns, bytes preserved in git history)",
-  "wave2_code_commit": "3c6a81b (wave label + honest wave buckets)",
-  "plan": "docs/plans/pending/meta-global-ai-hackathon-2026/43-fixrate-70-measurement-and-rerun-plan.md",
+  "wave2_commit": "9d3d002 (Wave 2 matrices; W2 miss records superseded by W3 reruns, bytes preserved in git history)",
+  "wave3_code_commit": "5b3da6c (wave label bench4.3d-wave3 + honest buckets)",
+  "wave3_run": "WAVE3_EXIT:0, 4 fresh B results, 12-row B matrix regenerated via --resume pass",
+  "in_wave_test_fix": "12a.3 offline vector pinned to committed W2 fixture tests/unit/fixtures/vuejs__core-11739.w2.patch_text.txt (byte-identical to pre-W3 HEAD) after the live prompt it read was rotated by the rerun",
+  "plan": "docs/plans/completed/meta-global-ai-hackathon-2026/44-wave3-road-to-12-12-plan.md",
   "ledger": "packages/hackproof-ai/finops_ledger.json",
   "results": "packages/hackproof-ai/benchmarks/results/",
   "mode": "DEGRADED_SINGLE_AGENT (self-attested; independent verification: deterministic tool exit codes + SHA-pinned JUnit + public CI)"

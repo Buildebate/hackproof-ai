@@ -13,6 +13,7 @@ import pytest
 
 from hackproof.debate.roles.architectural_builder import (
     extract_blocks,
+    extract_routed_blocks,
     revise_patch,
 )
 from hackproof.patcher import (
@@ -158,6 +159,143 @@ def test_apply_routed_blocks_atomic_across_files(tmp_path: Path) -> None:
 
     assert (tmp_path / "a.py").read_text(encoding="utf-8") == "x = 1\n"
     assert (tmp_path / "b.py").read_text(encoding="utf-8") == "y = 2\n"
+
+
+# ---------------------------------------------------------------------------
+# Step 12a.3: opt-in per-block partial application (atomic default intact)
+# ---------------------------------------------------------------------------
+
+
+def test_partial_applies_hits_skips_misses(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text(
+        "one = 1\ntwo = 2\nthree = 3\n", encoding="utf-8"
+    )
+    (tmp_path / "b.py").write_text("y = 2\n", encoding="utf-8")
+    patcher = WorkspacePatcher()
+    reports: list[dict] = []
+
+    applied = patcher.apply_routed_blocks(
+        tmp_path,
+        [
+            ("a.py", "one = 1\n", "one = 10\n"),
+            ("a.py", "NOPE\n", "two = 20\n"),
+            ("a.py", "three = 3\n", "three = 30\n"),
+            ("b.py", "NOPE-B\n", "y = 20\n"),
+        ],
+        partial=True,
+        report=reports,
+    )
+
+    assert sorted(applied) == ["a.py"]
+    assert (tmp_path / "a.py").read_text(encoding="utf-8") == (
+        "one = 10\ntwo = 2\nthree = 30\n"
+    )
+    assert (tmp_path / "b.py").read_text(encoding="utf-8") == "y = 2\n"
+    assert len(reports) == 1
+    assert reports[0]["applied"] == {"a.py": [0, 2]}
+    missed = reports[0]["missed"]
+    assert [m["position"] for m in missed] == [1, 3]
+    assert missed[0]["file"] == "a.py"
+    assert "SEARCH not found" in missed[0]["error"]
+    assert missed[1]["file"] == "b.py"
+
+
+def test_partial_total_miss_raises_and_writes_nothing(
+    tmp_path: Path,
+) -> None:
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    patcher = WorkspacePatcher()
+    reports: list[dict] = []
+
+    with pytest.raises(PatchApplicationError, match="no block matches"):
+        patcher.apply_routed_blocks(
+            tmp_path,
+            [("a.py", "NOPE\n", "x = 2\n")],
+            partial=True,
+            report=reports,
+        )
+
+    assert (tmp_path / "a.py").read_text(encoding="utf-8") == "x = 1\n"
+    assert len(reports) == 1
+    assert reports[0]["applied"] == {}
+    assert [m["position"] for m in reports[0]["missed"]] == [0]
+
+
+def test_partial_unsafe_block_never_writes(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    patcher = WorkspacePatcher()
+    reports: list[dict] = []
+
+    applied = patcher.apply_routed_blocks(
+        tmp_path,
+        [
+            ("../evil.py", "x", "y"),
+            ("a.py", "x = 1\n", "x = 10\n"),
+        ],
+        partial=True,
+        report=reports,
+    )
+
+    assert sorted(applied) == ["a.py"]
+    assert (tmp_path / "a.py").read_text(encoding="utf-8") == "x = 10\n"
+    assert not (tmp_path.parent / "evil.py").exists()
+    missed = reports[0]["missed"]
+    assert [m["position"] for m in missed] == [0]
+    assert missed[0]["file"] == "../evil.py"
+
+
+def test_partial_offline_vector_real_11739_patch(tmp_path: Path) -> None:
+    """Step 12a.3: the real B-11739 W2 patch through the partial path.
+
+    Offline and deterministic: the archived 7-block patch is parsed
+    for real, a fixture worktree embeds every SEARCH region except
+    block 5 (stale), and partial application must land 6 blocks while
+    reporting block 5 as addressable with closest-region ground truth.
+
+    Wave-rotation safety (12b.4): the input is the immutable committed
+    fixture extracted byte-identical from the pre-Wave-3 HEAD
+    (``5b3da6c:.../prompts/B/vuejs__core-11739/patch_text.txt``) — the
+    live ``results/prompts`` tree is overwritten by every wave rerun,
+    so reading it here broke determinism (Wave 3: 5-block
+    ramble-stopped patch). Absence fails loud (committed file).
+    """
+    patch_path = (
+        Path(__file__).resolve().parent
+        / "fixtures"
+        / "vuejs__core-11739.w2.patch_text.txt"
+    )
+    assert patch_path.is_file(), f"committed W2 fixture missing: {patch_path}"
+    blocks = extract_routed_blocks(patch_path.read_text(encoding="utf-8"))
+    assert len(blocks) == 7
+    files = sorted({rel for rel, _, _ in blocks})
+    assert files == [
+        "packages/runtime-dom/src/helpers/useCssVars.ts",
+        "packages/runtime-dom/src/modules/style.ts",
+    ]
+    stale = 5
+    for rel in files:
+        target = tmp_path / rel
+        target.parent.mkdir(parents=True, exist_ok=True)
+        parts = [
+            f"// --- anchor {pos} ---\n{search}"
+            for pos, (f, search, _) in enumerate(blocks)
+            if f == rel and pos != stale
+        ]
+        target.write_text("\n".join(parts) + "\n", encoding="utf-8")
+    reports: list[dict] = []
+    applied = WorkspacePatcher().apply_routed_blocks(
+        tmp_path, blocks, partial=True, report=reports
+    )
+    assert sorted(applied) == files
+    missed = reports[0]["missed"]
+    assert [m["position"] for m in missed] == [stale]
+    assert missed[0]["file"] == (
+        "packages/runtime-dom/src/helpers/useCssVars.ts"
+    )
+    assert "SEARCH not found" in missed[0]["error"]
+    assert "closest region" in missed[0]["error"]
+    landed = sum(len(v) for v in reports[0]["applied"].values())
+    assert landed == 6
 
 
 def test_apply_routed_blocks_refuses_unsafe_targets(tmp_path: Path) -> None:

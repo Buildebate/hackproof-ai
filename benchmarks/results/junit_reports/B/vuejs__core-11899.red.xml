@@ -1,17 +1,20 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.85">
-    <testsuite name="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" timestamp="2026-10-31T13:44:16.328Z" hostname="2c4485efcacf" tests="1" failures="1" errors="0" skipped="0" time="0.02">
-        <testcase classname="packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts" name="scoped nested at-rule regression &gt; wraps declarations inside nested @media with scoped nesting selector" time="0.019">
-            <failure message="expected 1 to be 2 // Object.is equality" type="AssertionError">
-AssertionError: expected 1 to be 2 // Object.is equality
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.829">
+    <testsuite name="packages/compiler-sfc/__tests__/repro-8855fadf6a65.test.ts" timestamp="2026-10-31T17:49:46.733Z" hostname="ba2a26511618" tests="1" failures="1" errors="0" skipped="0" time="0.021">
+        <testcase classname="packages/compiler-sfc/__tests__/repro-8855fadf6a65.test.ts" name="scoped nested @media regression &gt; adds nesting selector inside @media" time="0.019">
+            <failure message="expected &apos;@media only screen and (max-width: 80…&apos; to contain &apos;data-v-test&apos;" type="AssertionError">
+AssertionError: expected &apos;@media only screen and (max-width: 80…&apos; to contain &apos;data-v-test&apos;
 
 - Expected
 + Received
 
-- 2
-+ 1
+- data-v-test
++ @media only screen and (max-width: 800px) {
++     background-color: green;
++ }
++ }
 
- ❯ packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts:13:28
+ ❯ packages/compiler-sfc/__tests__/repro-8855fadf6a65.test.ts:13:23
             </failure>
         </testcase>
     </testsuite>

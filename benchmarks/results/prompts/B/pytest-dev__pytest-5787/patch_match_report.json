@@ -1,0 +1,49 @@
+[
+ {
+  "applied": {
+   "src/_pytest/reports.py": [
+    3
+   ]
+  },
+  "missed": [
+   {
+    "position": 0,
+    "file": "src/_pytest/_code/code.py",
+    "search_head": "_pytest_chain_orig_getrepr = ExceptionInfo.getrepr def _pytest_chain_getrepr(self, *args, **kwargs): chain = kwargs.pop(",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90); no similar region found"
+   },
+   {
+    "position": 1,
+    "file": "src/_pytest/reports.py",
+    "search_head": "assert isinstance(rep, ReprExceptionInfo)",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 352-352, similarity 0.72):\n344 |         duration = call.stop - call.start\n345 |         keywords = {x: 1 for x in item.keywords}\n346 |         excinfo = call.excinfo\n347 |         sections = []\n348 |         if not call.excinfo:\n349 |             outcome = \"passed\"\n350 |             longrepr = None\n351 |         else:\n352 |             if not isinstance(excinfo, ExceptionInfo):\n353 |                 outcome = \"failed\"\n354 |                 longrepr = excinfo\n355 |             elif excinfo.errisinstance(skip.Exception):\n356 |                 outcome = \"skipped\"\n357 |                 r = excinfo._getreprcrash()\n358 |                 longrepr = (str(r.path), r.lineno, r.message)\n359 |             else:\n360 |                 outcome = \"failed\""
+   },
+   {
+    "position": 2,
+    "file": "src/_pytest/reports.py",
+    "search_head": "return ReprExceptionInfo(",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 253-253, similarity 0.73):\n245 |                         )\n246 |                     elif entry_type == \"ReprEntryNative\":\n247 |                         reprentry = ReprEntryNative(data[\"lines\"])\n248 |                     else:\n249 |                         _report_unserialization_failure(entry_type, cls, reportdict)\n250 |                     unserialized_entries.append(reprentry)\n251 |                 reprtraceback[\"reprentries\"] = unserialized_entries\n252 | \n253 |                 exception_info = ReprExceptionInfo(\n254 |                     reprtraceback=ReprTraceback(**reprtraceback),\n255 |                     reprcrash=ReprFileLocation(**reprcrash),\n256 |                 )\n257 | \n258 |                 for section in reportdict[\"longrepr\"][\"sections\"]:\n259 |                     exception_info.addsection(*section)\n260 |                 reportdict[\"longrepr\"] = exception_info\n261 | "
+   }
+  ],
+  "round": 0
+ },
+ {
+  "applied": {
+   "src/_pytest/_code/code.py": [
+    0
+   ],
+   "src/_pytest/reports.py": [
+    2
+   ]
+  },
+  "missed": [
+   {
+    "position": 1,
+    "file": "src/_pytest/reports.py",
+    "search_head": "data = { \"reprcrash\": serialize_repr_crash(rep.reprcrash), \"reprtraceback\": serialize_repr_traceback(rep.reprtraceback),",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 181-186, similarity 0.67):\n173 |                 }\n174 |                 for key, value in entry_data[\"data\"].items():\n175 |                     if hasattr(value, \"__dict__\"):\n176 |                         entry_data[\"data\"][key] = value.__dict__.copy()\n177 |                 new_entries.append(entry_data)\n178 | \n179 |             reprtraceback[\"reprentries\"] = new_entries\n180 | \n181 |             return {\n182 |                 \"reprcrash\": reprcrash,\n183 |                 \"reprtraceback\": reprtraceback,\n184 |                 \"sections\": rep.longrepr.sections,\n185 |             }\n186 | \n187 |         d = self.__dict__.copy()\n188 |         if hasattr(self.longrepr, \"toterminal\"):\n189 |             if hasattr(self.longrepr, \"reprtraceback\") and hasattr(\n190 |                 self.longrepr, \"reprcrash\"\n191 |             ):\n192 |                 d[\"longrepr\"] = disassembled_report(self)\n193 |             else:\n194 |                 d[\"longrepr\"] = str(self.longrepr)"
+   }
+  ],
+  "round": 1
+ }
+]

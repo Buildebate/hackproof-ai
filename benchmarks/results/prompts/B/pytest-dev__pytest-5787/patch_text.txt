@@ -1,253 +1,316 @@
 exception_chain.py
 <<<<<<< SEARCH
+# exception_chain: placeholder
 =======
-"""Safe, iterative handling of chained exceptions."""
+from __future__ import annotations
 
-MAX_CHAIN_DEPTH = 100
+import traceback as _traceback
 
 
-def _safe_str(exc):
+def _safe_str(value):
     try:
-        return str(exc)
+        return str(value)
     except Exception:
-        return f"<{type(exc).__name__}: __str__ raised>"
+        try:
+            return repr(value)
+        except Exception:
+            return "<unrepresentable %s>" % type(value).__name__
 
 
-def _safe_repr(exc):
+def _safe_repr(value):
     try:
-        return repr(exc)
+        return repr(value)
     except Exception:
-        return f"<{type(exc).__name__}: __repr__ raised>"
+        return "<unrepresentable %s>" % type(value).__name__
 
 
-def _safe_args_repr(args):
-    try:
-        return repr(args)
-    except Exception:
-        return "<unrepresentable args>"
-
-
-def _next_in_chain(exc):
-    cause = getattr(exc, "__cause__", None)
-    if cause is not None:
-        return cause if isinstance(cause, BaseException) else None
-    if getattr(exc, "__suppress_context__", False):
-        return None
-    context = getattr(exc, "__context__", None)
-    if context is not None:
-        return context if isinstance(context, BaseException) else None
-    return None
-
-
-def iter_exception_chain(exc, max_depth=MAX_CHAIN_DEPTH):
-    """Yield chain iteratively: cycle-safe, depth-capped, BaseException-aware."""
-    seen = set()
-    current = exc if isinstance(exc, BaseException) else None
-    depth = 0
-    while current is not None and depth < max_depth:
-        if id(current) in seen:
-            break
-        seen.add(id(current))
-        yield current
-        depth += 1
-        current = _next_in_chain(current)
-
-
-def describe_exception(exc):
-    cause = getattr(exc, "__cause__", None)
-    context = getattr(exc, "__context__", None)
-    try:
-        args = exc.args
-    except Exception:
-        args = ()
+def _sentinel(type_name="Unknown", *, cycle=False, invalid=False, truncated=False):
     return {
-        "type": type(exc).__name__,
-        "message": _safe_str(exc),
-        "repr": _safe_repr(exc),
-        "args": args,
-        "has_cause": cause is not None,
-        "has_context": context is not None,
-        "suppress_context": bool(getattr(exc, "__suppress_context__", False)),
-        "is_base_exception": isinstance(exc, BaseException)
-        and not isinstance(exc, Exception),
-        "has_invalid_cause": cause is not None
-        and not isinstance(cause, BaseException),
+        "type": type_name,
+        "message": "",
+        "args": [],
+        "suppress_context": False,
+        "has_traceback": False,
+        "traceback": None,
+        "cycle": cycle,
+        "invalid": invalid,
+        "truncated": truncated,
     }
 
 
-def exception_chain(exc, max_depth=MAX_CHAIN_DEPTH):
-    return [
-        describe_exception(item)
-        for item in iter_exception_chain(exc, max_depth=max_depth)
-    ]
+def _format_traceback(exc):
+    try:
+        tb = getattr(exc, "__traceback__", None)
+    except Exception:
+        return None
+    if tb is None:
+        return None
+    try:
+        return "".join(_traceback.format_tb(tb))
+    except Exception:
+        return None
 
 
-def format_exception_chain(exc, max_depth=MAX_CHAIN_DEPTH):
-    chain = exception_chain(exc, max_depth=max_depth)
-    if not chain:
-        return "<no exception>"
-    return "\n".join(
-        f"{depth}: {item['type']}: args={_safe_args_repr(item['args'])} "
-        f"message={item['message']!r} "
-        f"cause={'present' if item['has_cause'] else 'none'} "
-        f"context={'present' if item['has_context'] else 'none'} "
-        f"suppress_context={item['suppress_context']} "
-        f"invalid_cause={item['has_invalid_cause']}"
-        for depth, item in enumerate(chain)
-    )
+def _entry(exc, *, cycle=False, invalid=False, truncated=False):
+    is_exception = isinstance(exc, BaseException)
+    raw_args = getattr(exc, "args", ()) if is_exception else ()
+    try:
+        args = [_safe_repr(arg) for arg in raw_args]
+    except Exception:
+        args = [_safe_repr(raw_args)]
+    tb_text = _format_traceback(exc) if is_exception else None
+    try:
+        suppress = bool(getattr(exc, "__suppress_context__", False)) if is_exception else False
+    except Exception:
+        suppress = False
+    return {
+        "type": type(exc).__name__,
+        "message": _safe_str(exc),
+        "args": args,
+        "suppress_context": suppress,
+        "has_traceback": tb_text is not None,
+        "traceback": tb_text,
+        "cycle": cycle,
+        "invalid": invalid,
+        "truncated": truncated,
+    }
+
+
+def serialize_exception_chain(exc, max_depth=10):
+    """Pickle-safe chain following __cause__, else __context__ unless suppressed.
+
+    Uses only call-local state, so concurrent/xdist serialization is safe
+    and the original exceptions are never mutated.
+    """
+    if max_depth < 1:
+        raise ValueError("max_depth must be >= 1")
+    if exc is None:
+        return []
+    result = []
+    seen = set()
+    current = exc
+    depth = 0
+    while current is not None:
+        if not isinstance(current, BaseException):
+            result.append(_entry(current, invalid=True))
+            break
+        if id(current) in seen:
+            result.append(_entry(current, cycle=True))
+            break
+        if depth >= max_depth:
+            result.append(_entry(current, truncated=True))
+            break
+        seen.add(id(current))
+        result.append(_entry(current))
+        depth += 1
+        try:
+            cause = getattr(current, "__cause__", None)
+        except Exception:
+            result.append(_sentinel(invalid=True))
+            break
+        if cause is not None:
+            current = cause
+            continue
+        try:
+            if bool(getattr(current, "__suppress_context__", False)):
+                break
+            current = getattr(current, "__context__", None)
+        except Exception:
+            result.append(_sentinel(invalid=True))
+            break
+    return result
 >>>>>>> REPLACE
-tests/test_exception_chain.py
+test_exception_chain.py
 <<<<<<< SEARCH
+# test_exception_chain: placeholder
 =======
+import pickle
+import threading
+from concurrent.futures import ThreadPoolExecutor
+
 import pytest
 
-from exception_chain import (
-    MAX_CHAIN_DEPTH,
-    exception_chain,
-    format_exception_chain,
-    iter_exception_chain,
-)
+from exception_chain import serialize_exception_chain
 
 
-# 1: __cause__/__context__ is None, __suppress_context__ True vs False
-def test_no_cause_no_context_and_suppress_variants():
-    plain = ValueError("x")
-    assert plain.__cause__ is None and plain.__context__ is None
-    assert exception_chain(plain) == [
-        {
-            "type": "ValueError",
-            "message": "x",
-            "repr": "ValueError('x')",
-            "args": ("x",),
-            "has_cause": False,
-            "has_context": False,
-            "suppress_context": False,
-            "is_base_exception": False,
-            "has_invalid_cause": False,
-        }
-    ]
+class _BadCause(ValueError):
+    @property
+    def __cause__(self):  # type: ignore[override]
+        return "not-a-base-exception"  # type: ignore[return-value]
+
+    @__cause__.setter
+    def __cause__(self, value):
+        self.__dict__["_stored_cause"] = value
+
+
+class _BadContext(ValueError):
+    @property
+    def __context__(self):  # type: ignore[override]
+        return 123  # type: ignore[return-value]
+
+    @__context__.setter
+    def __context__(self, value):
+        self.__dict__["_stored_context"] = value
+
+
+def _make_mixed_chain(length):
+    excs = [ValueError("e%d" % i) for i in range(length)]
+    for i in range(length - 1):
+        if i % 2 == 0:
+            excs[i].__cause__ = excs[i + 1]
+        else:
+            excs[i].__context__ = excs[i + 1]
+            excs[i].__suppress_context__ = False
+    return excs[0]
+
+
+def test_no_cause_no_context_empty_args():
+    exc = ValueError()
+    assert exc.__cause__ is None
+    assert exc.__context__ is None
+    assert exc.args == ()
+    chain = serialize_exception_chain(exc)
+    assert len(chain) == 1
+    assert chain[0]["type"] == "ValueError"
+    assert chain[0]["message"] == ""
+    assert chain[0]["args"] == []
+    assert chain[0]["suppress_context"] is False
+    assert chain[0]["has_traceback"] is False
+    assert chain[0]["traceback"] is None
+    assert chain[0]["cycle"] is False
+    assert chain[0]["invalid"] is False
+    assert chain[0]["truncated"] is False
+
+
+def test_explicit_from_vs_implicit_context():
+    explicit = None
     try:
         try:
-            raise ValueError("inner")
-        except ValueError:
-            raise ValueError("suppressed") from None
-    except ValueError as exc:
-        suppressed = exc
-    assert suppressed.__cause__ is None
-    assert suppressed.__context__ is not None
-    assert suppressed.__suppress_context__ is True
-    assert [d["message"] for d in exception_chain(suppressed)] == ["suppressed"]
-
-    try:
-        try:
-            raise ValueError("inner")
-        except ValueError:
-            raise ValueError("implicit")
-    except ValueError as exc:
-        implicit = exc
-    assert implicit.__cause__ is None
-    assert implicit.__context__ is not None
-    assert implicit.__suppress_context__ is False
-    assert [d["message"] for d in exception_chain(implicit)] == ["implicit", "inner"]
-
-    try:
-        raise ValueError("outer") from ValueError("cause")
-    except ValueError as exc:
-        explicit = exc
+            raise KeyError("inner")
+        except KeyError as inner:
+            raise ValueError("outer") from inner
+    except ValueError as caught:
+        explicit = caught
+    assert isinstance(explicit.__cause__, KeyError)
     assert explicit.__suppress_context__ is True
-    assert [d["message"] for d in exception_chain(explicit)] == ["outer", "cause"]
+    explicit_chain = serialize_exception_chain(explicit)
+    assert [e["type"] for e in explicit_chain] == ["ValueError", "KeyError"]
+    assert explicit_chain[0]["suppress_context"] is True
+    assert explicit_chain[0]["has_traceback"] is True
+    assert explicit_chain[0]["traceback"]
+
+    implicit = None
+    try:
+        try:
+            raise KeyError("inner")
+        except KeyError:
+            raise ValueError("outer")
+    except ValueError as caught:
+        implicit = caught
+    assert implicit.__cause__ is None
+    assert isinstance(implicit.__context__, KeyError)
+    assert implicit.__suppress_context__ is False
+    implicit_chain = serialize_exception_chain(implicit)
+    assert [e["type"] for e in implicit_chain] == ["ValueError", "KeyError"]
+    assert implicit_chain[0]["suppress_context"] is False
 
 
-# 2: ValueError() empty args vs ValueError(None) None arg
-def test_empty_args_vs_none_arg_in_chain():
-    assert ValueError().args == () and ValueError(None).args == (None,)
-    for cause, args in ((ValueError(), ()), (ValueError(None), (None,))):
-        outer = ValueError("outer")
-        outer.__cause__ = cause
-        chain = exception_chain(outer)
-        assert chain[1]["args"] == args
-        assert chain[1]["message"] == ("" if args == () else "None")
-    assert "args=()" in format_exception_chain(ValueError())
-    assert "args=(None,)" in format_exception_chain(ValueError(None))
+def test_raise_from_none_suppresses_nonempty_context():
+    caught_exc = None
+    try:
+        try:
+            raise KeyError("inner")
+        except KeyError:
+            raise ValueError("outer") from None
+    except ValueError as caught:
+        caught_exc = caught
+    assert caught_exc.__cause__ is None
+    assert isinstance(caught_exc.__context__, KeyError)
+    assert caught_exc.__suppress_context__ is True
+    chain = serialize_exception_chain(caught_exc)
+    assert len(chain) == 1
+    assert chain[0]["type"] == "ValueError"
+    assert chain[0]["suppress_context"] is True
 
 
-# 3: __cause__ non-exception/string/None via raise-from and manual override
-def test_invalid_cause():
-    with pytest.raises(TypeError):
-        raise ValueError("x") from "bad"  # noqa: B904
-
-    class BadCause(ValueError):
-        @property
-        def __cause__(self):  # type: ignore[override]
-            return "not-an-exception"
-
-    chain = exception_chain(BadCause("x"))
-    assert len(chain) == 1 and chain[0]["has_invalid_cause"] is True
-    assert format_exception_chain(BadCause("x"))  # must not raise
-    assert exception_chain(None) == [] and exception_chain("bad") == []
-    assert format_exception_chain(None) == "<no exception>"
+def test_cause_context_type_mismatch():
+    assert serialize_exception_chain("not-an-exception")[0]["invalid"] is True
+    assert serialize_exception_chain(123)[0]["type"] == "int"
+    assert serialize_exception_chain(123)[0]["invalid"] is True
+    bad_cause = serialize_exception_chain(_BadCause("x"))
+    assert [e["type"] for e in bad_cause] == ["_BadCause", "str"]
+    assert bad_cause[-1]["invalid"] is True
+    assert bad_cause[-1]["message"] == "not-a-base-exception"
+    bad_context = serialize_exception_chain(_BadContext("y"))
+    assert [e["type"] for e in bad_context] == ["_BadContext", "int"]
+    assert bad_context[-1]["invalid"] is True
 
 
-# 4: 3-level vs 2-level, 100+ deep without recursion
-def test_chain_depths_and_recursion_limit():
-    def build(messages):
-        head = None
-        for message in reversed(messages):
-            exc = ValueError(message)
-            exc.__cause__ = head
-            head = exc
-        return head
-
-    assert [d["message"] for d in exception_chain(build(["11", "12"]))] == ["11", "12"]
-    assert [d["message"] for d in exception_chain(build(["11", "12", "13"]))] == [
-        "11",
-        "12",
-        "13",
-    ]
-    deep = build([str(i) for i in range(150)])
-    assert len(exception_chain(deep)) == MAX_CHAIN_DEPTH == 100
-    assert len(exception_chain(deep, max_depth=200)) == 150
-    assert len(list(iter_exception_chain(deep))) == 100  # no RecursionError
+def test_unpicklable_arg_and_missing_traceback():
+    exc = ValueError(threading.Lock())
+    exc.__cause__ = TypeError("cause")
+    with pytest.raises(Exception):
+        pickle.dumps(exc)
+    chain = serialize_exception_chain(exc)
+    assert pickle.loads(pickle.dumps(chain)) == chain
+    assert "lock" in chain[0]["args"][0]
+    assert chain[0]["has_traceback"] is False
+    assert chain[0]["traceback"] is None
+    assert chain[1]["type"] == "TypeError"
 
 
-# 5: Unicode/empty messages, __str__/__repr__ raising
-def test_unicode_empty_and_bad_str_repr():
-    assert exception_chain(ValueError("héllo 🌍"))[0]["message"] == "héllo 🌍"
-    assert "héllo 🌍" in format_exception_chain(ValueError("héllo 🌍"))
-    assert exception_chain(ValueError(""))[0]["args"] == ("",)
-    assert exception_chain(ValueError(""))[0]["message"] == ""
-
-    class BadStr(ValueError):
-        def __str__(self):
-            raise RuntimeError("str boom")
-
-        def __repr__(self):
-            raise RuntimeError("repr boom")
-
-    outer = ValueError("outer")
-    outer.__cause__ = BadStr("x")
-    chain = exception_chain(outer)
-    assert chain[1]["message"] == "<BadStr: __str__ raised>"
-    assert chain[1]["repr"] == "<BadStr: __repr__ raised>"
-    assert format_exception_chain(outer)  # must not raise
+@pytest.mark.parametrize(
+    "length,max_depth,expected_real,expect_truncated",
+    [(1, 1, 1, False), (2, 1, 1, True), (2, 2, 2, False), (3, 3, 3, False), (4, 3, 3, True), (5, 3, 3, True)],
+)
+def test_chain_depth_off_by_one_mixed(length, max_depth, expected_real, expect_truncated):
+    chain = serialize_exception_chain(_make_mixed_chain(length), max_depth=max_depth)
+    real = [e for e in chain if not e["truncated"]]
+    assert len(real) == expected_real
+    assert [e["message"] for e in real] == ["e%d" % i for i in range(expected_real)]
+    assert any(e["truncated"] for e in chain) is expect_truncated
+    if expect_truncated:
+        assert chain[-1]["truncated"] is True
+        assert len(chain) == expected_real + 1
 
 
-# 6: Self-cycle and BaseException (KeyboardInterrupt/SystemExit) chains
-def test_cycle_and_base_exceptions():
-    self_ref = ValueError("self")
-    self_ref.__cause__ = self_ref
-    assert len(exception_chain(self_ref)) == 1
+def test_max_depth_must_be_positive():
+    with pytest.raises(ValueError):
+        serialize_exception_chain(ValueError("x"), max_depth=0)
 
-    first, second = ValueError("a"), ValueError("b")
-    first.__cause__ = second
-    second.__cause__ = first
-    assert [d["message"] for d in exception_chain(first)] == ["a", "b"]
 
-    for base in (KeyboardInterrupt("k"), SystemExit(3)):
-        outer = ValueError("outer")
-        outer.__cause__ = base
-        chain = exception_chain(outer)
-        assert chain[1]["type"] == type(base).__name__
-        assert chain[1]["is_base_exception"] is True
-    assert exception_chain(KeyboardInterrupt())[0]["is_base_exception"] is True
+def test_unicode_empty_and_non_str_args_in_chain():
+    outer = ValueError("")
+    inner = ValueError("héllo 🌍")
+    inner.__cause__ = ValueError(123, None, "üñï")
+    outer.__cause__ = inner
+    chain = serialize_exception_chain(outer)
+    assert [e["message"] for e in chain] == ["", "héllo 🌍", "(123, None, 'üñï')"]
+    assert chain[1]["args"] == ["'héllo 🌍'"]
+    assert chain[2]["args"] == ["123", "None", "'üñï'"]
+    assert pickle.loads(pickle.dumps(chain)) == chain
+
+
+def test_cyclic_cause_and_concurrent_serialization():
+    a = ValueError("a")
+    b = TypeError("b")
+    a.__cause__ = b
+    b.__cause__ = a
+    chain = serialize_exception_chain(a)
+    assert [e["message"] for e in chain[:2]] == ["a", "b"]
+    assert chain[-1]["cycle"] is True
+    assert chain[-1]["type"] == "ValueError"
+    assert a.__cause__ is b
+    assert b.__cause__ is a
+    self_cycle = ValueError("self")
+    self_cycle.__cause__ = self_cycle
+    self_chain = serialize_exception_chain(self_cycle)
+    assert len(self_chain) == 2
+    assert self_chain[-1]["cycle"] is True
+    # Call-local seen-set: stateless under threads and pytest-xdist workers.
+    with ThreadPoolExecutor(max_workers=8) as pool:
+        results = list(pool.map(lambda _: serialize_exception_chain(a), range(32)))
+    assert all(result == chain for result in results)
+    assert all(pickle.loads(pickle.dumps(result)) == result for result in results)
+    assert serialize_exception_chain(b)[0]["message"] == "b"
 >>>>>>> REPLACE

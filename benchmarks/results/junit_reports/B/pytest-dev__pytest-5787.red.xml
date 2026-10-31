@@ -1,1 +1,66 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="0" hostname="5cee470ef3aa" name="pytest" skipped="0" tests="0" time="0.013" timestamp="2026-10-31T13:14:29.015417"></testsuite></testsuites>
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="1" hostname="c872a633842f" name="pytest" skipped="0" tests="1" time="0.082" timestamp="2026-10-31T17:12:31.054489"><testcase classname="testing.test_repro_4587d047da0d" file="testing/test_repro_4587d047da0d.py" line="38" name="test_chained_exception_serialization" time="0.020"><failure message="attr.exceptions.NotAnAttrsClassError: &lt;class &apos;_pytest.reports.TestReport&apos;&gt; is not an attrs-decorated class.">def test_chained_exception_serialization():
+        try:
+            try:
+                raise ValueError(11)
+            except ValueError as e1:
+                raise ValueError(12) from e1
+        except ValueError:
+            excinfo = ExceptionInfo.from_current()
+        longrepr = excinfo.getrepr(style=&quot;long&quot;)
+        assert hasattr(longrepr, &quot;chain&quot;)
+        assert len(longrepr.chain) == 2
+&gt;       report = _make_report(longrepr)
+
+testing/test_repro_4587d047da0d.py:50: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+testing/test_repro_4587d047da0d.py:8: in _make_report
+    names = {f.name for f in attr.fields(TestReport)}
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+cls = &lt;class &apos;_pytest.reports.TestReport&apos;&gt;
+
+    def fields(cls):
+        &quot;&quot;&quot;
+        Return the tuple of *attrs* attributes for a class.
+    
+        The tuple also allows accessing the fields by their names (see below for
+        examples).
+    
+        Args:
+            cls (type): Class to introspect.
+    
+        Raises:
+            TypeError: If *cls* is not a class.
+    
+            attrs.exceptions.NotAnAttrsClassError:
+                If *cls* is not an *attrs* class.
+    
+        Returns:
+            tuple (with name accessors) of `attrs.Attribute`
+    
+        .. versionchanged:: 16.2.0 Returned tuple allows accessing the fields
+           by name.
+        .. versionchanged:: 23.1.0 Add support for generic classes.
+        &quot;&quot;&quot;
+        generic_base = get_generic_base(cls)
+    
+        if generic_base is None and not isinstance(cls, type):
+            msg = &quot;Passed object must be a class.&quot;
+            raise TypeError(msg)
+    
+        attrs = getattr(cls, &quot;__attrs_attrs__&quot;, None)
+    
+        if attrs is None:
+            if generic_base is not None:
+                attrs = getattr(generic_base, &quot;__attrs_attrs__&quot;, None)
+                if attrs is not None:
+                    # Even though this is global state, stick it on here to speed
+                    # it up. We rely on `cls` being cached for this to be
+                    # efficient.
+                    cls.__attrs_attrs__ = attrs
+                    return attrs
+            msg = f&quot;{cls!r} is not an attrs-decorated class.&quot;
+&gt;           raise NotAnAttrsClassError(msg)
+E           attr.exceptions.NotAnAttrsClassError: &lt;class &apos;_pytest.reports.TestReport&apos;&gt; is not an attrs-decorated class.
+
+.bench-venv/lib/python3.8/site-packages/attr/_make.py:1877: NotAnAttrsClassError</failure></testcase></testsuite></testsuites>

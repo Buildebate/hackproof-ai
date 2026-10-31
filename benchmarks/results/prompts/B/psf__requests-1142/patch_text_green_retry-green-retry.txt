@@ -1,0 +1,22 @@
+requests/models.py
+<<<<<<< SEARCH
+                if data is not None:
+                    body = self._encode_params(data)
+                    if isinstance(data, str) or isinstance(data, builtin_str) or hasattr(data, 'read'):
+                        content_type = None
+                    else:
+                        content_type = 'application/x-www-form-urlencoded'
+
+            if body is not None or self.method not in ('GET', 'HEAD'):
+                self.prepare_content_length(body)
+=======
+                if data:
+                    body = self._encode_params(data)
+                    if isinstance(data, str) or isinstance(data, builtin_str) or hasattr(data, 'read'):
+                        content_type = None
+                    else:
+                        content_type = 'application/x-www-form-urlencoded'
+
+            if body or self.method not in ('GET', 'HEAD'):
+                self.prepare_content_length(body)
+>>>>>>> REPLACE

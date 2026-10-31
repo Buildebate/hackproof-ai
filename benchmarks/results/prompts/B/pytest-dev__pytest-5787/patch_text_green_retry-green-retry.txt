@@ -1,0 +1,94 @@
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+_pytest_chain_orig_getrepr = ExceptionInfo.getrepr
+
+
+def _pytest_chain_getrepr(self, *args, **kwargs):
+    chain = kwargs.pop("chain", True)
+    if len(args) > 6:
+        chain = args[6]
+        args = args[:6]
+    result = _pytest_chain_orig_getrepr(self, *args, **kwargs)
+    if not chain and isinstance(result, ReprExceptionInfo):
+        result.chain = None
+    return result
+
+
+ExceptionInfo.getrepr = _pytest_chain_getrepr  # type: ignore
+_pytest_chain_orig_fmt_init = FormattedExcinfo.__init__
+
+
+def _pytest_chain_fmt_init(self, *args, **kwargs):
+    chain = kwargs.pop("chain", True)
+    if len(args) > 6:
+        chain = args[6]
+        args = args[:6]
+    _pytest_chain_orig_fmt_init(self, *args, **kwargs)
+    self.chain = chain
+
+
+FormattedExcinfo.__init__ = _pytest_chain_fmt_init  # type: ignore
+
+
+class ReprExceptionInfo(ExceptionRepr):
+    def __init__(self, reprtraceback, reprcrash):
+        super().__init__()
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+        self.chain = None
+=======
+class ReprExceptionInfo(ExceptionRepr):
+    def __init__(self, reprtraceback, reprcrash):
+        super().__init__()
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        assert isinstance(rep, ReprExceptionInfo)
+=======
+        from _pytest._code.code import ExceptionChainRepr
+
+        assert isinstance(rep, (ReprExceptionInfo, ExceptionChainRepr))
+        if isinstance(rep, ExceptionChainRepr):
+            return {
+                "type": "ExceptionChainRepr",
+                "chain": [
+                    (
+                        serialize_repr_traceback(reprtraceback),
+                        serialize_repr_crash(reprcrash)
+                        if reprcrash is not None
+                        else None,
+                        descr,
+                    )
+                    for reprtraceback, reprcrash, descr in rep.chain
+                ],
+            }
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        return ReprExceptionInfo(
+=======
+        if data.get("type") == "ExceptionChainRepr":
+            from _pytest._code.code import ExceptionChainRepr
+
+            return ExceptionChainRepr(
+                [
+                    (
+                        unserialize_repr_traceback(reprtraceback),
+                        unserialize_repr_crash(reprcrash)
+                        if reprcrash is not None
+                        else None,
+                        descr,
+                    )
+                    for reprtraceback, reprcrash, descr in data["chain"]
+                ]
+            )
+        return ReprExceptionInfo(
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        if "reprtraceback" in reportdict["longrepr"]:
+=======
+        if "reprtraceback" in reportdict["longrepr"] or "chain" in reportdict["longrepr"]:
+>>>>>>> REPLACE

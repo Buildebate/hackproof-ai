@@ -1,66 +1,84 @@
 packages/compiler-sfc/src/style/pluginScoped.ts
 <<<<<<< SEARCH
+  const shortId = id.replace(/^data-v-/, '')
+=======
+  if (!id) {
+    return { postcssPlugin: 'vue-sfc-scoped' }
+  }
+  const shortId = id.replace(/^data-v-/, '')
+>>>>>>> REPLACE
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
     OnceExit(root) {
       if (Object.keys(keyframes).length) {
 =======
     OnceExit(root) {
-      const atRules: AtRule[] = []
-      root.walkAtRules(atRule => {
-        atRules.push(atRule)
-      })
-      const groupingAtRules = new Set([
+      const conditionalAtRules = new Set([
         'media',
         'supports',
         'container',
         'layer',
-        'starting-style',
-        'scope',
-        'document',
-        '-moz-document',
       ])
-      atRules.forEach(atRule => {
+      const targets: { atRule: any; enclosing: any }[] = []
+      root.walkAtRules(atRule => {
         if (
+          !conditionalAtRules.has(atRule.name.toLowerCase()) ||
           !atRule.nodes ||
-          !groupingAtRules.has(atRule.name.toLowerCase())
+          !atRule.nodes.some(node => node.type === 'decl')
         ) {
           return
         }
-        let parent = atRule.parent
-        let scopedRule: Rule | undefined
+        let enclosing: any = null
+        let blocked = false
+        let parent: any = atRule.parent
         while (parent) {
           if (
             parent.type === 'atrule' &&
-            /-?keyframes$/.test((parent as AtRule).name)
+            (/-?keyframes$/.test(parent.name) ||
+              (!enclosing &&
+                (parent.name.toLowerCase() === 'scope' ||
+                  parent.name.toLowerCase() === 'starting-style')))
           ) {
-            return
+            blocked = true
           }
-          if (!scopedRule && parent.type === 'rule') {
-            scopedRule = parent as Rule
+          if (!enclosing && parent.type === 'rule') {
+            enclosing = parent
           }
           parent = parent.parent
         }
-        if (!scopedRule) {
-          return
+        if (enclosing && !blocked) {
+          targets.push({ atRule, enclosing })
         }
-        let run: typeof atRule.nodes = []
-        const flush = () => {
-          if (!run.length) {
+      })
+      targets.forEach(({ atRule, enclosing }) => {
+        let run: any[] = []
+        const flush = (): void => {
+          if (!run.some(node => node.type === 'decl')) {
+            run = []
             return
           }
-          const wrapper = scopedRule.clone({
+          const first = run[0]
+          const wrapper: any = new enclosing.constructor({
             selector: '&',
-            nodes: [],
+            raws: {
+              before: first.raws.before || ' ',
+              between: ' ',
+              after: ' ',
+              semicolon: true,
+            },
           })
-          atRule.insertBefore(run[0], wrapper)
-          run.forEach(decl => {
-            wrapper.append(decl)
-          })
+          atRule.insertBefore(first, wrapper)
+          run.forEach(node => wrapper.append(node))
           run = []
         }
-        ;[...atRule.nodes].forEach(node => {
-          if (node.type === 'decl') {
-            run.push(node)
-          } else {
+        const children = [...atRule.nodes]
+        children.forEach((child: any) => {
+          if (
+            child.type === 'decl' ||
+            (child.type === 'comment' && run.length)
+          ) {
+            run.push(child)
+          } else if (child.type !== 'comment') {
             flush()
           }
         })

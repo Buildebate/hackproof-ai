@@ -2,11 +2,11 @@
  "task": "vuejs__core-11739",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T13:43:19.605345+00:00",
+ "ts": "2026-10-31T17:44:55.837824+00:00",
  "base_ref": "cb843e0be31f9e563ccfc30eca0c06f2a224b505",
  "agent": {
-  "ok": false,
-  "reason": "patch application failed: vuejs__core-11739: routed patch rejected: packages/runtime-dom/src/modules/style.ts: block 2: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 67-68, similarity 0.79):\n59 |     el[vShowOriginalDisplay] = hasControlledDisplay ? style.display : ''\n60 |     // if v-show is in hidden state, v-show has higher priority\n61 |     if ((el as VShowElement)[vShowHidden]) {\n62 |       style.display = 'none'\n63 |     }\n64 |   }\n65 | }\n66 | \n67 | const semicolonRE = /[^\\\\];\\s*$/\n68 | const importantRE = /\\s*!important$/\n69 | \n70 | function setStyle(\n71 |   style: CSSStyleDeclaration,\n72 |   name: string,\n73 |   val: string | string[],\n74 | ) {\n75 |   if (isArray(val)) {\n76 |     val.forEach(v => setStyle(style, name, v))",
+  "ok": true,
+  "reason": "",
   "files": [
    "packages/runtime-core/src/apiSetupHelpers.ts",
    "packages/runtime-dom/src/jsx.ts",
@@ -14,180 +14,109 @@
    "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
    "packages/compiler-sfc/src/compileScript.ts"
   ],
-  "localize_ms": 4057,
+  "localize_ms": 2924,
   "backend": "hybrid-rrf-hash-cpu",
-  "red_rel": "packages/runtime-core/__tests__/repro-0742563332a6.test.ts",
+  "blocks": 5,
+  "applied_file": "packages/runtime-dom/src/helpers/useCssVars.ts",
+  "applied_files": [
+   "packages/runtime-dom/src/helpers/useCssVars.ts",
+   "packages/runtime-dom/src/modules/style.ts",
+   "packages/shared/src/normalizeProp.ts"
+  ],
+  "red_rel": "packages/runtime-core/__tests__/repro-3527af02496a.test.ts",
+  "local_violations": [],
   "debate": {
-   "rounds_used": 2,
+   "rounds_used": 1,
    "converged": false,
-   "score": 0.5833333333333334,
-   "duration_ms": 688322
+   "score": 0.75,
+   "duration_ms": 535172,
+   "ramble_stopped": true
   }
  },
  "usage": {
-  "prompt_tokens": 112422,
-  "completion_tokens": 238195,
-  "total_tokens": 350617,
+  "prompt_tokens": 97356,
+  "completion_tokens": 204134,
+  "total_tokens": 301490,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 11858,
+    "prompt_tokens": 15383,
     "completion_tokens": 12288,
-    "total_tokens": 24146,
+    "total_tokens": 27671,
     "finish_reason": "length"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
     "prompt_tokens": 4528,
-    "completion_tokens": 1118,
-    "total_tokens": 5646,
+    "completion_tokens": 722,
+    "total_tokens": 5250,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 15153,
+    "prompt_tokens": 15101,
     "completion_tokens": 32768,
-    "total_tokens": 47921,
+    "total_tokens": 47869,
     "finish_reason": "length"
    },
    {
-    "role": "OccamsRazorCritic",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 305,
-    "completion_tokens": 428,
-    "total_tokens": 733,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "SignatureFactChecker",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 297,
-    "completion_tokens": 625,
-    "total_tokens": 922,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "FormalAdversaryCritic",
+    "role": "ArchitecturalBuilder-length-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 725,
-    "completion_tokens": 5009,
-    "total_tokens": 5734,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ConsensusJudge",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 838,
-    "completion_tokens": 2664,
-    "total_tokens": 3502,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "EdgeScout",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 5256,
-    "completion_tokens": 1810,
-    "total_tokens": 7066,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 15889,
+    "prompt_tokens": 15152,
     "completion_tokens": 32768,
-    "total_tokens": 48657,
+    "total_tokens": 47920,
     "finish_reason": "length"
-   },
-   {
-    "role": "OccamsRazorCritic",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 1041,
-    "completion_tokens": 416,
-    "total_tokens": 1457,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "SignatureFactChecker",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 1033,
-    "completion_tokens": 353,
-    "total_tokens": 1386,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "FormalAdversaryCritic",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 1461,
-    "completion_tokens": 2962,
-    "total_tokens": 4423,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ConsensusJudge",
-    "model": "muse-spark-1.3",
-    "prompt_tokens": 1568,
-    "completion_tokens": 1289,
-    "total_tokens": 2857,
-    "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 874,
-    "completion_tokens": 31510,
-    "total_tokens": 32384,
+    "prompt_tokens": 243,
+    "completion_tokens": 20211,
+    "total_tokens": 20454,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 15153,
+    "prompt_tokens": 15101,
     "completion_tokens": 32768,
-    "total_tokens": 47921,
+    "total_tokens": 47869,
     "finish_reason": "length"
    },
    {
     "role": "ArchitecturalBuilder-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 725,
-    "completion_tokens": 5009,
-    "total_tokens": 5734,
-    "finish_reason": "stop"
-   },
-   {
-    "role": "ArchitecturalBuilder-retry",
-    "model": "muse-wonder-1.0",
-    "prompt_tokens": 15889,
+    "prompt_tokens": 15152,
     "completion_tokens": 32768,
-    "total_tokens": 48657,
+    "total_tokens": 47920,
     "finish_reason": "length"
    },
    {
     "role": "ArchitecturalBuilder-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1461,
-    "completion_tokens": 2962,
-    "total_tokens": 4423,
+    "prompt_tokens": 243,
+    "completion_tokens": 20211,
+    "total_tokens": 20454,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 874,
-    "completion_tokens": 31510,
-    "total_tokens": 32384,
+    "prompt_tokens": 16453,
+    "completion_tokens": 19630,
+    "total_tokens": 36083,
     "finish_reason": "stop"
    },
    {
-    "role": "ArchitecturalBuilder-retry",
+    "role": "ArchitecturalBuilder-green-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 17494,
-    "completion_tokens": 7170,
-    "total_tokens": 24664,
-    "finish_reason": "stop"
+    "prompt_tokens": 16961,
+    "completion_tokens": 32768,
+    "total_tokens": 49729,
+    "finish_reason": "length"
    }
   ]
  },
@@ -197,11 +126,9 @@
   "freeze": false,
   "debate_prompts": true
  },
- "status": "failed",
- "reason": "patch application failed: vuejs__core-11739: routed patch rejected: packages/runtime-dom/src/modules/style.ts: block 2: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 67-68, similarity 0.79):\n59 |     el[vShowOriginalDisplay] = hasControlledDisplay ? style.display : ''\n60 |     // if v-show is in hidden state, v-show has higher priority\n61 |     if ((el as VShowElement)[vShowHidden]) {\n62 |       style.display = 'none'\n63 |     }\n64 |   }\n65 | }\n66 | \n67 | const semicolonRE = /[^\\\\];\\s*$/\n68 | const importantRE = /\\s*!important$/\n69 | \n70 | function setStyle(\n71 |   style: CSSStyleDeclaration,\n72 |   name: string,\n73 |   val: string | string[],\n74 | ) {\n75 |   if (isArray(val)) {\n76 |     val.forEach(v => setStyle(style, name, v))",
- "done": true,
+ "diff_sha256": "32e1eb0f5c22549b63f7210d4c5d2e5e9e187a9c3a511e660bd1c0a0a4aff7b5",
  "red": {
-  "rel": "packages/runtime-core/__tests__/repro-0742563332a6.test.ts",
+  "rel": "packages/runtime-core/__tests__/repro-3527af02496a.test.ts",
   "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
   "exit_code": 1,
   "timed_out": false,
@@ -210,6 +137,204 @@
   "failures": 1,
   "errors": 0,
   "junit_bytes": 891,
-  "junit_sha256": "7a63f96638c1c298e9bfe440231e8847a8fe4ed9fa48e103327221381c3a54b7"
- }
+  "junit_sha256": "a90789c0958a592716625e3c1ca451e22f850afc65a7a1672f23fa0c6fefefd5"
+ },
+ "guard": {
+  "task": "vuejs__core-11739",
+  "mode": "B",
+  "binding": true,
+  "verdict": "clean",
+  "violations": []
+ },
+ "junit_sha256": "e3698d4f551070d8c3f38f8ca2e89f09a5fe3713ae307f779e8f1a0e901f3c47",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > escape css var name": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > text node": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > element text content": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > not enough children": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > too many children": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > complete mismatch": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment mismatch removal": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment not enough children": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment too many children": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > Teleport target has empty children": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (element)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (text)": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > class mismatch": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch when no style attribute is present": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch w/ v-show": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr mismatch": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr special case: textarea value": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > boolean attr handling": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > client value is null or undefined": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn against object values": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on falsy bindings of non-property keys": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on non-renderable option values": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn css v-bind": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars should only be added to expected on component root dom": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars support fallthrough": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn for directives that mutate DOM in created": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > escape css var name"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > text node",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > element text content",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > not enough children",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > too many children",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > complete mismatch",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment mismatch removal",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment not enough children",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment too many children",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > Teleport target has empty children",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (element)",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (text)",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > class mismatch",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch when no style attribute is present",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch w/ v-show",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr mismatch",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr special case: textarea value",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > boolean attr handling",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > client value is null or undefined",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn against object values",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on falsy bindings of non-property keys",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on non-renderable option values",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn css v-bind",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars should only be added to expected on component root dom",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars support fallthrough",
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn for directives that mutate DOM in created"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "green_retry": {
+  "attempted": true,
+  "completed": false,
+  "reason": "revision unusable (no blocks)",
+  "first": "f2p-not-fixed:1",
+  "laps": 1
+ },
+ "status": "failed",
+ "reason": "f2p-not-fixed:1",
+ "done": true
 }

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="0.406">
-    <testsuite name="packages/runtime-core/__tests__/repro-0742563332a6.test.ts" timestamp="2026-10-31T13:31:18.983Z" hostname="64c19e336a18" tests="1" failures="1" errors="0" skipped="0" time="0">
-        <testcase classname="packages/runtime-core/__tests__/repro-0742563332a6.test.ts" name="packages/runtime-core/__tests__/repro-0742563332a6.test.ts" time="0">
-            <failure message="No test suite found in file /home/ubuntu/hackproof-bench/runs/vuejs__core-11739/B/packages/runtime-core/__tests__/repro-0742563332a6.test.ts" type="Error">
-Error: No test suite found in file /home/ubuntu/hackproof-bench/runs/vuejs__core-11739/B/packages/runtime-core/__tests__/repro-0742563332a6.test.ts
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="0.417">
+    <testsuite name="packages/runtime-core/__tests__/repro-3527af02496a.test.ts" timestamp="2026-10-31T17:33:34.233Z" hostname="282525c29f96" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="packages/runtime-core/__tests__/repro-3527af02496a.test.ts" name="packages/runtime-core/__tests__/repro-3527af02496a.test.ts" time="0">
+            <failure message="No test suite found in file /home/ubuntu/hackproof-bench/runs/vuejs__core-11739/B/packages/runtime-core/__tests__/repro-3527af02496a.test.ts" type="Error">
+Error: No test suite found in file /home/ubuntu/hackproof-bench/runs/vuejs__core-11739/B/packages/runtime-core/__tests__/repro-3527af02496a.test.ts
             </failure>
         </testcase>
     </testsuite>

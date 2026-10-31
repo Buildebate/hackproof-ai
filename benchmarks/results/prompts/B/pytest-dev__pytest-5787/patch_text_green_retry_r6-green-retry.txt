@@ -1,0 +1,136 @@
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+class ReprExceptionInfo(ExceptionRepr):
+    def __init__(self, reprtraceback, reprcrash):
+=======
+class ExceptionChainRepr(ExceptionRepr):
+    def __init__(self, chain):
+        super().__init__()
+        self.chain = chain
+        self.reprtraceback = chain[-1][0] if chain else None
+        self.reprcrash = chain[-1][1] if chain else None
+
+    def toterminal(self, tw):
+        for element in self.chain:
+            element[0].toterminal(tw)
+            if element[2] is not None:
+                tw.line(element[2])
+                tw.line("")
+
+
+class ReprExceptionInfo(ExceptionRepr):
+    def __init__(self, reprtraceback, reprcrash):
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        data = {
+            "reprcrash": serialize_repr_crash(rep.reprcrash),
+            "reprtraceback": serialize_repr_traceback(rep.reprtraceback),
+            "sections": rep.sections,
+        }
+        return data
+=======
+        from _pytest._code.code import ExceptionChainRepr
+
+        if isinstance(rep, ExceptionChainRepr):
+            return {
+                "type": "ExceptionChainRepr",
+                "chain": [
+                    (
+                        serialize_repr_traceback(reprtraceback),
+                        serialize_repr_crash(reprcrash)
+                        if reprcrash is not None
+                        else None,
+                        descr,
+                    )
+                    for reprtraceback, reprcrash, descr in rep.chain
+                ],
+                "reprtraceback": serialize_repr_traceback(rep.chain[-1][0])
+                if rep.chain
+                else None,
+                "reprcrash": serialize_repr_crash(rep.chain[-1][1])
+                if rep.chain
+                else None,
+                "sections": rep.sections,
+            }
+        data = {
+            "reprcrash": serialize_repr_crash(rep.reprcrash),
+            "reprtraceback": serialize_repr_traceback(rep.reprtraceback),
+            "sections": rep.sections,
+        }
+        return data
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+                exception_info = ReprExceptionInfo(
+                    reprtraceback=ReprTraceback(**reprtraceback),
+                    reprcrash=ReprFileLocation(**reprcrash),
+                )
+=======
+                if "chain" in reportdict["longrepr"]:
+                    from _pytest._code.code import ExceptionChainRepr
+
+                    _chain = []
+                    for _tb_data, _crash_data, _descr in reportdict["longrepr"][
+                        "chain"
+                    ]:
+                        _tb = _tb_data
+                        if isinstance(_tb, dict) and "data" in _tb:
+                            _tb_type = _tb.get("type")
+                            _tb = _tb["data"]
+                        else:
+                            _tb_type = (
+                                _tb.get("type") if isinstance(_tb, dict) else None
+                            )
+                        _tb = dict(_tb)
+                        _tb.pop("type", None)
+                        if _tb_type == "ReprTracebackNative" or "reprentries" not in _tb:
+                            _reprtb = ReprTracebackNative(_tb.get("lines", []))
+                        else:
+                            _entries = []
+                            for _entry_data in _tb.get("reprentries", []):
+                                _data = _entry_data["data"]
+                                _entry_type = _entry_data["type"]
+                                if _entry_type == "ReprEntry":
+                                    _reprfuncargs = _data.pop("reprfuncargs")
+                                    _reprlocals = _data.pop("reprlocals")
+                                    _reprfileloc = _data.pop("reprfileloc")
+                                    _reprentry = ReprEntry(
+                                        lines=_data.pop("lines"),
+                                        reprfuncargs=ReprFuncArgs(**_reprfuncargs)
+                                        if _reprfuncargs
+                                        else None,
+                                        reprlocals=ReprLocals(_reprlocals)
+                                        if _reprlocals
+                                        else None,
+                                        filelocrepr=ReprFileLocation(**_reprfileloc)
+                                        if _reprfileloc
+                                        else None,
+                                        style=_data.pop("style"),
+                                    )
+                                    _data.update(_reprentry.__dict__)
+                                elif _entry_type == "ReprEntryNative":
+                                    _reprentry = ReprEntryNative(_data["lines"])
+                                elif _entry_type == "ReprFileLocation":
+                                    _reprentry = ReprFileLocation(**_data)
+                                else:
+                                    _report_unserialization_failure(
+                                        _entry_type, cls, reportdict
+                                    )
+                                    continue
+                                _entries.append(_reprentry)
+                            _tb["reprentries"] = _entries
+                            _reprtb = ReprTraceback(**_tb)
+                        _reprcrash = (
+                            ReprFileLocation(**_crash_data)
+                            if _crash_data is not None
+                            else None
+                        )
+                        _chain.append((_reprtb, _reprcrash, _descr))
+                    exception_info = ExceptionChainRepr(_chain)
+                else:
+                    exception_info = ReprExceptionInfo(
+                        reprtraceback=ReprTraceback(**reprtraceback),
+                        reprcrash=ReprFileLocation(**reprcrash),
+                    )
+>>>>>>> REPLACE

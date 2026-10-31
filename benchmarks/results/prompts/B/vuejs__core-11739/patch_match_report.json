@@ -1,0 +1,40 @@
+[
+ {
+  "applied": {
+   "packages/runtime-dom/src/helpers/useCssVars.ts": [
+    1,
+    2
+   ],
+   "packages/runtime-dom/src/modules/style.ts": [
+    4
+   ]
+  },
+  "missed": [
+   {
+    "position": 0,
+    "file": "packages/runtime-dom/src/helpers/useCssVars.ts",
+    "search_head": "function setStyleVar( el: HTMLElement, key: string, value: string | number | null | undefined, ) { el.style.setProperty(",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 93-99, similarity 0.47):\n 85 |       setVarsOnNode(el as Node, vars)\n 86 |       if (el === anchor) break\n 87 |       el = el.nextSibling\n 88 |     }\n 89 |   }\n 90 | }\n 91 | \n 92 | function setVarsOnNode(el: Node, vars: Record<string, string>) {\n 93 |   if (el.nodeType === 1) {\n 94 |     const style = (el as HTMLElement).style\n 95 |     let cssText = ''\n 96 |     for (const key in vars) {\n 97 |       style.setProperty(`--${key}`, vars[key])\n 98 |       cssText += `--${key}: ${vars[key]};`\n 99 |     }\n100 |     ;(style as any)[CSS_VAR_TEXT] = cssText\n101 |   }\n102 | }"
+   },
+   {
+    "position": 3,
+    "file": "packages/shared/src/normalizeProp.ts",
+    "search_head": "for (const key in styles) { const value = styles[key] const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key) ",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 52-58, similarity 0.71):\n44 | \n45 | export function stringifyStyle(\n46 |   styles: NormalizedStyle | string | undefined,\n47 | ): string {\n48 |   let ret = ''\n49 |   if (!styles || isString(styles)) {\n50 |     return ret\n51 |   }\n52 |   for (const key in styles) {\n53 |     const value = styles[key]\n54 |     if (isString(value) || typeof value === 'number') {\n55 |       const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)\n56 |       // only render valid values\n57 |       ret += `${normalizedKey}:${value};`\n58 |     }\n59 |   }\n60 |   return ret\n61 | }\n62 | \n63 | export function normalizeClass(value: unknown): string {\n64 |   let res = ''\n65 |   if (isString(value)) {\n66 |     res = value"
+   }
+  ],
+  "round": 0
+ },
+ {
+  "applied": {
+   "packages/runtime-dom/src/helpers/useCssVars.ts": [
+    0
+   ],
+   "packages/shared/src/normalizeProp.ts": [
+    1
+   ]
+  },
+  "missed": [],
+  "round": 1
+ }
+]

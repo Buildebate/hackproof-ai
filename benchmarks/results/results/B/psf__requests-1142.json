@@ -2,7 +2,7 @@
  "task": "psf__requests-1142",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T12:43:46.180889+00:00",
+ "ts": "2026-10-31T17:07:55.335326+00:00",
  "base_ref": "22623bd8c265b78b161542663ee980738441c307",
  "agent": {
   "ok": true,
@@ -14,145 +14,204 @@
    "requests/utils.py",
    "requests/cookies.py"
   ],
-  "localize_ms": 939,
+  "localize_ms": 908,
   "backend": "hybrid-rrf-hash-cpu",
-  "blocks": 2,
-  "applied_file": "requests/packages/urllib3/request.py",
+  "blocks": 4,
+  "applied_file": "requests/utils.py",
   "applied_files": [
-   "requests/packages/urllib3/request.py"
+   "requests/utils.py",
+   "requests/sessions.py",
+   "requests/models.py"
   ],
-  "red_rel": "test_repro_e401728e8b83.py",
+  "red_rel": "test_repro_325f616b8b42.py",
   "local_violations": [],
   "debate": {
    "rounds_used": 2,
    "converged": false,
-   "score": 0.5833333333333334,
-   "duration_ms": 587410
+   "score": 0.4166666666666667,
+   "duration_ms": 572903,
+   "ramble_stopped": false
   }
  },
  "usage": {
-  "prompt_tokens": 70674,
-  "completion_tokens": 93205,
-  "total_tokens": 163879,
+  "prompt_tokens": 131019,
+  "completion_tokens": 188109,
+  "total_tokens": 319128,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 10536,
-    "completion_tokens": 2235,
-    "total_tokens": 12771,
+    "prompt_tokens": 13784,
+    "completion_tokens": 2790,
+    "total_tokens": 16574,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
     "prompt_tokens": 4396,
-    "completion_tokens": 1089,
-    "total_tokens": 5485,
+    "completion_tokens": 1275,
+    "total_tokens": 5671,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 13597,
-    "completion_tokens": 13537,
-    "total_tokens": 27134,
+    "prompt_tokens": 13592,
+    "completion_tokens": 32445,
+    "total_tokens": 46037,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1256,
-    "completion_tokens": 4033,
-    "total_tokens": 5289,
+    "prompt_tokens": 3003,
+    "completion_tokens": 3159,
+    "total_tokens": 6162,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1379,
-    "completion_tokens": 788,
-    "total_tokens": 2167,
+    "prompt_tokens": 3104,
+    "completion_tokens": 4760,
+    "total_tokens": 7864,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1716,
-    "completion_tokens": 27040,
-    "total_tokens": 28756,
+    "prompt_tokens": 3425,
+    "completion_tokens": 7303,
+    "total_tokens": 10728,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1443,
-    "completion_tokens": 4554,
-    "total_tokens": 5997,
+    "prompt_tokens": 2244,
+    "completion_tokens": 1151,
+    "total_tokens": 3395,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 5729,
-    "completion_tokens": 1977,
-    "total_tokens": 7706,
+    "prompt_tokens": 6531,
+    "completion_tokens": 1302,
+    "total_tokens": 7833,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 14957,
-    "completion_tokens": 8663,
-    "total_tokens": 23620,
+    "prompt_tokens": 15727,
+    "completion_tokens": 15747,
+    "total_tokens": 31474,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 3324,
-    "completion_tokens": 3742,
-    "total_tokens": 7066,
+    "prompt_tokens": 2966,
+    "completion_tokens": 3011,
+    "total_tokens": 5977,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 3528,
-    "completion_tokens": 325,
-    "total_tokens": 3853,
+    "prompt_tokens": 2979,
+    "completion_tokens": 854,
+    "total_tokens": 3833,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 3865,
-    "completion_tokens": 19072,
-    "total_tokens": 22937,
+    "prompt_tokens": 3313,
+    "completion_tokens": 4845,
+    "total_tokens": 8158,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 3123,
-    "completion_tokens": 2541,
-    "total_tokens": 5664,
+    "prompt_tokens": 3080,
+    "completion_tokens": 574,
+    "total_tokens": 3654,
     "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1825,
-    "completion_tokens": 3609,
-    "total_tokens": 5434,
+    "prompt_tokens": 981,
+    "completion_tokens": 19246,
+    "total_tokens": 20227,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 13592,
+    "completion_tokens": 32445,
+    "total_tokens": 46037,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3425,
+    "completion_tokens": 7303,
+    "total_tokens": 10728,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15727,
+    "completion_tokens": 15747,
+    "total_tokens": 31474,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3313,
+    "completion_tokens": 4845,
+    "total_tokens": 8158,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 981,
+    "completion_tokens": 19246,
+    "total_tokens": 20227,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 14856,
+    "completion_tokens": 10061,
+    "total_tokens": 24917,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder-green-retry",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 14468,
-    "completion_tokens": 14028,
-    "total_tokens": 28496,
+    "prompt_tokens": 14898,
+    "completion_tokens": 22751,
+    "total_tokens": 37649,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 14002,
+    "completion_tokens": 3391,
+    "total_tokens": 17393,
     "finish_reason": "stop"
    }
   ]
@@ -163,34 +222,35 @@
   "freeze": true,
   "debate_prompts": true
  },
- "diff_sha256": "a81b36a06bf142573e5bd2003cac61643dad276e08b37bc116bcce75f0f41515",
+ "diff_sha256": "3c60b726261de4ef57b8ac73535c647899cd9b28f9289087aa0b2e4351308041",
  "red": {
-  "rel": "test_repro_e401728e8b83.py",
-  "sha256": "5d6d2799c8431c7b918c40f103b117c9778a4622dca58a9cb1629958d87cc1d0",
+  "rel": "test_repro_325f616b8b42.py",
+  "sha256": "f84f81d749af98a4d00d20b8bfbf8da7b632d1df55e0944e96dc8675a171bfa0",
   "exit_code": 1,
   "timed_out": false,
   "accepted": true,
   "reason": "red accepted (1 failure(s), 0 errors)",
   "failures": 1,
   "errors": 0,
-  "junit_bytes": 741,
-  "junit_sha256": "51afd1d3f1e66fe88d4ae34b500eebd6bb1989605e4186b2d2bf2fcfac2f8cc0"
+  "junit_bytes": 1232,
+  "junit_sha256": "f1f59b45816ace5de157e04c7b907473c58e02bd8524284563db9d0218519600"
  },
  "guard": {
   "task": "psf__requests-1142",
   "mode": "B",
   "binding": true,
   "verdict": "clean",
-  "violations": []
+  "violations": [],
+  "note": "green-retry attempt (-green-retry)"
  },
- "junit_sha256": "e0a255d7b2056b2e4d67d26185d8a46c8ce723003a78afc48f86e98544ac6f83",
- "eval_exit": 1,
+ "junit_sha256": "849a1d80d315ded7437851e1050b4ba48989d524e11eb16fd96d3c6b6ba0c492",
+ "eval_exit": 0,
  "eval_timed_out": false,
  "scoring": {
   "f2p": {
    "test_requests.py::RequestsTestCase::test_no_content_length": {
     "base": "failed",
-    "agent": "failed"
+    "agent": "passed"
    }
   },
   "p2p": {
@@ -220,10 +280,10 @@
     "golden": "no"
    }
   },
-  "f2p_fixed": [],
-  "f2p_not_fixed": [
+  "f2p_fixed": [
    "test_requests.py::RequestsTestCase::test_no_content_length"
   ],
+  "f2p_not_fixed": [],
   "f2p_not_red_at_base": [],
   "p2p_broken": [],
   "p2p_env_limited": [],
@@ -234,17 +294,81 @@
    "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment",
    "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
   ],
-  "resolved_functional": false,
+  "resolved_functional": true,
   "unmatched_agent_cases": [],
   "missing_agent_ids": []
  },
  "green_retry": {
   "attempted": true,
-  "completed": false,
-  "reason": "retry patch breaks test collection",
-  "first": "f2p-not-fixed:1"
+  "completed": true,
+  "first": "f2p-not-fixed:1",
+  "first_scoring": {
+   "f2p": {
+    "test_requests.py::RequestsTestCase::test_no_content_length": {
+     "base": "failed",
+     "agent": "failed"
+    }
+   },
+   "p2p": {
+    "test_requests.py::RequestsTestCase::test_basic_building": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "yes"
+    },
+    "test_requests.py::RequestsTestCase::test_entry_points": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "yes"
+    },
+    "test_requests.py::RequestsTestCase::test_invalid_url": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "yes"
+    },
+    "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    },
+    "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": {
+     "base": "passed",
+     "agent": "passed",
+     "golden": "no"
+    }
+   },
+   "f2p_fixed": [],
+   "f2p_not_fixed": [
+    "test_requests.py::RequestsTestCase::test_no_content_length"
+   ],
+   "f2p_not_red_at_base": [],
+   "p2p_broken": [],
+   "p2p_env_limited": [],
+   "p2p_kept": [
+    "test_requests.py::RequestsTestCase::test_basic_building",
+    "test_requests.py::RequestsTestCase::test_entry_points",
+    "test_requests.py::RequestsTestCase::test_invalid_url",
+    "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment",
+    "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
+   ],
+   "resolved_functional": false,
+   "unmatched_agent_cases": [],
+   "missing_agent_ids": []
+  },
+  "second": "unresolved",
+  "laps": 1
  },
- "status": "failed",
- "reason": "f2p-not-fixed:1",
+ "receipt": {
+  "receipt_version": "1.0",
+  "base_commit": "22623bd8c265b78b161542663ee980738441c307",
+  "test_hash": "f84f81d749af98a4d00d20b8bfbf8da7b632d1df55e0944e96dc8675a171bfa0",
+  "patch_hash": "92379f7ae222b91e41c7717335d560ab7c963b9da9729630d765869e637238ae",
+  "red_junit_hash": "f1f59b45816ace5de157e04c7b907473c58e02bd8524284563db9d0218519600",
+  "green_junit_hash": "849a1d80d315ded7437851e1050b4ba48989d524e11eb16fd96d3c6b6ba0c492",
+  "minted_at_utc": "2026-10-31T17:11:27.888237+00:00",
+  "receipt_sha256": "ec0e34cf9147eb8a028d9c4ae63037f518dadd6d7baed91d05e92fe9b4b94715"
+ },
+ "machine_proof": true,
+ "status": "resolved",
+ "reason": "",
  "done": true
 }

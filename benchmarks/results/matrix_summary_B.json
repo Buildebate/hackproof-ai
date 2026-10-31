@@ -1,47 +1,31 @@
 {
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-31T13:59:30.630223+00:00",
+ "ts": "2026-10-31T18:12:36.830303+00:00",
  "runs": [
   {
    "task": "psf__requests-1142",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
-   "status": "failed",
-   "reason": "f2p-not-fixed:1",
-   "done": true
+   "status": "resolved",
+   "resumed": true
   },
   {
    "task": "psf__requests-2931",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
    "status": "resolved",
-   "reason": "",
-   "done": true
+   "resumed": true
   },
   {
    "task": "psf__requests-5414",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
    "status": "resolved",
-   "reason": "",
-   "done": true
+   "resumed": true
   },
   {
    "task": "psf__requests-6028",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
-   "status": "failed",
-   "reason": "p2p-broken:1",
-   "done": true
+   "status": "resolved",
+   "resumed": true
   },
   {
    "task": "pytest-dev__pytest-10081",
@@ -52,12 +36,8 @@
   {
    "task": "pytest-dev__pytest-5787",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "red-rejected after resynthesis: red JUnit unusable: JUnit XML carries zero testcase entries",
    "status": "failed",
-   "reason": "red-rejected after resynthesis: red JUnit unusable: JUnit XML carries zero testcase entries",
-   "done": true
+   "resumed": true
   },
   {
    "task": "pytest-dev__pytest-7432",
@@ -74,22 +54,14 @@
   {
    "task": "vuejs__core-11589",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
    "status": "resolved",
-   "reason": "",
-   "done": true
+   "resumed": true
   },
   {
    "task": "vuejs__core-11739",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": false,
-   "agent_reason": "patch application failed: vuejs__core-11739: routed patch rejected: packages/runtime-dom/src/modules/style.ts: block 2: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 67-68, similarity 0.79):\n59 |     el[vShowOriginalDisplay] = hasControlledDisplay ? style.display : ''\n60 |     // if v-show is in hidden state, v-show has higher priority\n61 |     if ((el as VShowElement)[vShowHidden]) {\n62 |       style.display = 'none'\n63 |     }\n64 |   }\n65 | }\n66 | \n67 | const semicolonRE = /[^\\\\];\\s*$/\n68 | const importantRE = /\\s*!important$/\n69 | \n70 | function setStyle(\n71 |   style: CSSStyleDeclaration,\n72 |   name: string,\n73 |   val: string | string[],\n74 | ) {\n75 |   if (isArray(val)) {\n76 |     val.forEach(v => setStyle(style, name, v))",
    "status": "failed",
-   "reason": "patch application failed: vuejs__core-11739: routed patch rejected: packages/runtime-dom/src/modules/style.ts: block 2: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 67-68, similarity 0.79):\n59 |     el[vShowOriginalDisplay] = hasControlledDisplay ? style.display : ''\n60 |     // if v-show is in hidden state, v-show has higher priority\n61 |     if ((el as VShowElement)[vShowHidden]) {\n62 |       style.display = 'none'\n63 |     }\n64 |   }\n65 | }\n66 | \n67 | const semicolonRE = /[^\\\\];\\s*$/\n68 | const importantRE = /\\s*!important$/\n69 | \n70 | function setStyle(\n71 |   style: CSSStyleDeclaration,\n72 |   name: string,\n73 |   val: string | string[],\n74 | ) {\n75 |   if (isArray(val)) {\n76 |     val.forEach(v => setStyle(style, name, v))",
-   "done": true
+   "resumed": true
   },
   {
    "task": "vuejs__core-11870",
@@ -100,12 +72,8 @@
   {
    "task": "vuejs__core-11899",
    "mode": "B",
-   "tier": "oci",
-   "agent_ok": true,
-   "agent_reason": "",
    "status": "failed",
-   "reason": "f2p-not-fixed:1",
-   "done": true
+   "resumed": true
   }
  ]
 }

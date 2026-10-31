@@ -1,0 +1,103 @@
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+class ReprExceptionInfo(ExceptionRepr):
+=======
+_pytest_chain_orig_getrepr = ExceptionInfo.getrepr
+
+
+def _pytest_chain_getrepr(self, *args, **kwargs):
+    chain = kwargs.pop("chain", True)
+    if len(args) > 6:
+        chain = args[6]
+        args = args[:6]
+    result = _pytest_chain_orig_getrepr(self, *args, **kwargs)
+    if not chain and isinstance(result, ReprExceptionInfo):
+        result.chain = None
+    return result
+
+
+ExceptionInfo.getrepr = _pytest_chain_getrepr  # type: ignore
+_pytest_chain_orig_fmt_init = FormattedExcinfo.__init__
+
+
+def _pytest_chain_fmt_init(self, *args, **kwargs):
+    chain = kwargs.pop("chain", True)
+    if len(args) > 6:
+        chain = args[6]
+        args = args[:6]
+    _pytest_chain_orig_fmt_init(self, *args, **kwargs)
+    self.chain = chain
+
+
+FormattedExcinfo.__init__ = _pytest_chain_fmt_init  # type: ignore
+
+
+class ReprExceptionInfo(ExceptionRepr):
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+=======
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+        self.chain = None
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+        self.reprtraceback.toterminal(tw)
+        if self.reprcrash is not None:
+            self.reprcrash.toterminal(tw)
+        for title, content, _ in self.sections:
+=======
+        if getattr(self, "chain", None):
+            for reprtraceback, reprcrash, description in self.chain:
+                reprtraceback.toterminal(tw)
+                if reprcrash is not None:
+                    reprcrash.toterminal(tw)
+                if description is not None:
+                    tw.line("")
+                    tw.line(description)
+                    tw.line("")
+        else:
+            self.reprtraceback.toterminal(tw)
+            if self.reprcrash is not None:
+                self.reprcrash.toterminal(tw)
+        for title, content, _ in self.sections:
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+            reprtraceback = self.repr_traceback(excinfo)
+            reprcrash = excinfo._getreprcrash()
+            return ReprExceptionInfo(reprtraceback, reprcrash)
+=======
+            reprtraceback = self.repr_traceback(excinfo)
+            reprcrash = excinfo._getreprcrash()
+            if not getattr(self, "chain", True):
+                return ReprExceptionInfo(reprtraceback, reprcrash)
+            chain = []
+            descr = None
+            excinfo_ = excinfo
+            seen_ids = set()
+            while True:
+                if id(excinfo_.value) in seen_ids:
+                    break
+                seen_ids.add(id(excinfo_.value))
+                try:
+                    reprcrash_ = excinfo_._getreprcrash()
+                except Exception:
+                    reprcrash_ = None
+                chain.append((self.repr_traceback(excinfo_), reprcrash_, descr))
+                value = excinfo_.value
+                cause = getattr(value, "__cause__", None)
+                context = getattr(value, "__context__", None)
+                if cause is not None and isinstance(cause, BaseException):
+                    descr = "The above exception was the direct cause of the following exception:"
+                    excinfo_ = ExceptionInfo((type(cause), cause, cause.__traceback__))
+                elif context is not None and isinstance(context, BaseException) and not getattr(value, "__suppress_context__", False):
+                    descr = "During handling of the above exception, another exception occurred:"
+                    excinfo_ = ExceptionInfo((type(context), context, context.__traceback__))
+                else:
+                    break
+            chain.reverse()
+            result = ReprException

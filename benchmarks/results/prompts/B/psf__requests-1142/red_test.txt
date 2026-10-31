@@ -1,8 +1,10 @@
 import requests
 
 
-def test_get_does_not_send_content_length():
-    s = requests.Session()
+def test_get_does_not_send_content_length_by_default():
     req = requests.Request('GET', 'http://example.com')
-    prepped = s.prepare_request(req)
-    assert 'Content-Length' not in prepped.headers, "GET with no body must not send Content-Length, got %r" % (prepped.headers.get('Content-Length'),)
+    prepared = req.prepare()
+    assert 'Content-Length' not in prepared.headers, (
+        "GET requests should not send Content-Length by default, got %r"
+        % (prepared.headers.get('Content-Length'),)
+    )

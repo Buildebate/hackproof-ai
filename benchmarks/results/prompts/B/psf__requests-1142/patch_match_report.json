@@ -1,0 +1,37 @@
+[
+ {
+  "applied": {
+   "requests/utils.py": [
+    0
+   ],
+   "requests/sessions.py": [
+    3
+   ]
+  },
+  "missed": [
+   {
+    "position": 1,
+    "file": "requests/models.py",
+    "search_head": "elif data: body = self._encode_params(data) if isinstance(data, basestring) or hasattr(data, 'read'): content_type = Non",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 373-378, similarity 0.88):\n365 |         # Check if file, fo, generator, iterator.\n366 |         # If not, run through normal process.\n367 | \n368 |         else:\n369 |             # Multi-part file uploads.\n370 |             if files:\n371 |                 (body, content_type) = self._encode_files(files, data)\n372 |             else:\n373 |                 if data:\n374 |                     body = self._encode_params(data)\n375 |                     if isinstance(data, str) or isinstance(data, builtin_str) or hasattr(data, 'read'):\n376 |                         content_type = None\n377 |                     else:\n378 |                         content_type = 'application/x-www-form-urlencoded'\n379 | \n380 |             self.prepare_content_length(body)\n381 | \n382 |             # Add content-type if it wasn't explicitly provided.\n383 |             if (content_type) and (not 'content-type' in self.headers):\n384 |                 self.headers['Content-Type'] = content_type\n385 | \n386 |         self.body = body"
+   },
+   {
+    "position": 2,
+    "file": "requests/models.py",
+    "search_head": "elif body is not None: l = super_len(body) if l: self.headers['Content-Length'] = builtin_str(l) # Add content-length if",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 357-364, similarity 0.42):\n349 | \n350 |         try:\n351 |             length = str(super_len(data))\n352 |         except (TypeError, AttributeError):\n353 |             length = False\n354 | \n355 |         if is_stream:\n356 |             body = data\n357 | \n358 |             if files:\n359 |                 raise NotImplementedError('Streamed bodies and files are mutually exclusive.')\n360 | \n361 |             if length:\n362 |                 self.headers['Content-Length'] = length\n363 |             else:\n364 |                 self.headers['Transfer-Encoding'] = 'chunked'\n365 |         # Check if file, fo, generator, iterator.\n366 |         # If not, run through normal process.\n367 | \n368 |         else:\n369 |             # Multi-part file uploads.\n370 |             if files:\n371 |                 (body, content_type) = self._encode_files(files, data)\n372 |             else:"
+   }
+  ],
+  "round": 0
+ },
+ {
+  "applied": {
+   "requests/models.py": [
+    0,
+    1
+   ]
+  },
+  "missed": [],
+  "round": 1
+ }
+]

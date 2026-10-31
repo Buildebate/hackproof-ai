@@ -5,8 +5,9 @@ worktree`` with zero line-number drift. Matching follows a
 conservative ladder — exact, then whitespace-insensitive, then unique
 fuzzy (threshold plus runner-up guard): a level with 0 matches falls
 through to the next one, while 2+ matches at any level reject the
-whole application and the file is left untouched (no partial
-application, atomic revert on write failure). Total misses carry the
+whole application and the file is left untouched (atomic default;
+opt-in per-block partial mode since Step 12a.3, atomic revert on
+write failure). Total misses carry the
 closest real region (bounded excerpt with line numbers) so the
 single-retry loop can show the model ground truth instead of a bare
 ``0 matches``. Post-patch verification runs the full suite
@@ -25,7 +26,7 @@ from collections.abc import Iterator, Sequence
 from contextlib import contextmanager
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Protocol
+from typing import Any, Protocol
 
 from hackproof.debate.roles.architectural_builder import extract_blocks
 from hackproof.sandbox.runner import LocalSubprocessRunner, SandboxExecutionResult
@@ -428,6 +429,8 @@ Raises:
         worktree: Path | str,
         routed: Sequence[tuple[str | None, str, str]],
         universe: Sequence[str] | None = None,
+        partial: bool = False,
+        report: list[dict[str, Any]] | None = None,
     ) -> dict[str, Path]:
         """Apply file-routed SEARCH/REPLACE blocks across files, atomically.
 
@@ -439,14 +442,25 @@ Raises:
         after every block validates — a failing hunk leaves the whole
         tree pristine.
 
+        ``partial=True`` (Step 12a.3) switches to per-block semantics:
+        matchable blocks apply, misses are skipped and described in
+        ``report`` (positions stay addressable for a grounded retry);
+        files with zero matches are left untouched. Guard/unsafe
+        blocks never write — they land in ``missed`` instead.
+
         Raises:
             FileNotFoundError: A routed target file is missing (carries
                 a did-you-mean suggestion when one scores above cutoff).
             PatchApplicationError: Empty input, unsafe/test-infra path,
                 unroutable straggler, or a missing/ambiguous match.
+                In ``partial`` mode raised only when NO block applies
+                at all (callers may stand on a partial application when
+                at least one block lands).
         """
         if not routed:
             raise PatchApplicationError("no SEARCH/REPLACE blocks to apply")
+        if partial:
+            return self._apply_routed_partial(worktree, routed, universe, report)
         root = Path(worktree)
         search_space = list(
             dict.fromkeys([f for f, _, _ in routed if f] + list(universe or []))
@@ -498,6 +512,163 @@ Raises:
                 target, original, _ = staged[file_rel]
                 target.write_text(original, encoding="utf-8")
             raise
+        return applied
+
+    def _apply_routed_partial(
+        self,
+        worktree: Path | str,
+        routed: Sequence[tuple[str | None, str, str]],
+        universe: Sequence[str] | None,
+        report: list[dict[str, Any]] | None,
+    ) -> dict[str, Path]:
+        """Per-block routed application (Step 12a.3, ``partial=True``).
+
+        Each block is routed and matched independently against the
+        evolving file content: hits splice in, misses are skipped with
+        a verbatim ladder error (closest region included, addressable
+        by input ``position`` for one grounded retry). Files with zero
+        hits are never written. Guard/unsafe routing and missing
+        targets can never write — they land in ``missed``.
+
+        Raises:
+            PatchApplicationError: No block applies at all (message
+                lists every miss, so the existing total-failure retry
+                loop can consume it unchanged).
+        """
+        root = Path(worktree)
+        search_space = list(
+            dict.fromkeys([f for f, _, _ in routed if f] + list(universe or []))
+        )
+        missed: list[dict[str, Any]] = []
+        by_file: dict[str, list[tuple[int, str, str]]] = {}
+        for position, (file_rel, search, replace) in enumerate(routed):
+            head = " ".join(search.split())[:120]
+            if file_rel is not None:
+                try:
+                    checked = _check_routed_target(file_rel)
+                except PatchApplicationError as exc:
+                    missed.append(
+                        {
+                            "position": position,
+                            "file": file_rel,
+                            "search_head": head,
+                            "error": str(exc),
+                        }
+                    )
+                    continue
+                if not search.strip():
+                    missed.append(
+                        {
+                            "position": position,
+                            "file": checked,
+                            "search_head": head,
+                            "error": "empty SEARCH text",
+                        }
+                    )
+                    continue
+                by_file.setdefault(checked, []).append(
+                    (position, search, replace)
+                )
+                continue
+            if not search.strip():
+                missed.append(
+                    {
+                        "position": position,
+                        "file": None,
+                        "search_head": head,
+                        "error": "empty SEARCH text",
+                    }
+                )
+                continue
+            hits = [
+                candidate
+                for candidate in search_space
+                if (root / candidate).is_file()
+                and _matches(
+                    (root / candidate).read_text(encoding="utf-8"), search
+                )
+            ]
+            if len(hits) != 1:
+                missed.append(
+                    {
+                        "position": position,
+                        "file": None,
+                        "search_head": head,
+                        "error": (
+                            f"headerless SEARCH matches {len(hits)} files "
+                            f"(need exactly 1 of {len(search_space)} "
+                            "searched)"
+                        ),
+                    }
+                )
+                continue
+            by_file.setdefault(hits[0], []).append((position, search, replace))
+        staged: dict[str, tuple[Path, str, str, list[int]]] = {}
+        for file_rel, items in by_file.items():
+            target = root / file_rel
+            if not target.is_file():
+                for position, search, _ in items:
+                    missed.append(
+                        {
+                            "position": position,
+                            "file": file_rel,
+                            "search_head": " ".join(search.split())[:120],
+                            "error": str(
+                                _missing_target_error(worktree, file_rel)
+                            ),
+                        }
+                    )
+                continue
+            content = target.read_text(encoding="utf-8")
+            original = content
+            applied_here: list[int] = []
+            for position, search, replace in items:
+                try:
+                    match = locate_search(content, search)
+                except PatchApplicationError as exc:
+                    missed.append(
+                        {
+                            "position": position,
+                            "file": file_rel,
+                            "search_head": " ".join(search.split())[:120],
+                            "error": str(exc),
+                        }
+                    )
+                    continue
+                content = (
+                    content[: match.start] + replace + content[match.end :]
+                )
+                applied_here.append(position)
+            if applied_here:
+                staged[file_rel] = (target, original, content, applied_here)
+        applied: dict[str, Path] = {}
+        try:
+            for file_rel, (target, _, content, _) in staged.items():
+                target.write_text(content, encoding="utf-8")
+                applied[file_rel] = target
+        except Exception:
+            for file_rel in applied:
+                target, original, _, _ = staged[file_rel]
+                target.write_text(original, encoding="utf-8")
+            raise
+        round_report: dict[str, Any] = {
+            "applied": {
+                file_rel: positions
+                for file_rel, (_, _, _, positions) in staged.items()
+            },
+            "missed": missed,
+        }
+        if report is not None:
+            report.append(round_report)
+        if not applied:
+            detail = "; ".join(
+                f"block {m['position']} ({m['file'] or 'unrouted'}): "
+                f"{m['error']}"
+                for m in missed[:5]
+            )
+            raise PatchApplicationError(
+                f"partial apply: no block matches ({detail})"
+            )
         return applied
 
     def apply_patch_text(

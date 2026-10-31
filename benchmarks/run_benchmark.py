@@ -2042,14 +2042,22 @@ def apply_blocks_to_candidates(
 
     Headerless patches keep the exact legacy rule: all blocks must match
     in ONE of the non-guard localized files. Header-carrying patches
-    route per file; guard files are rejected before any write. Returns
-    the applied files in first-touch order.
+    apply per block (Step 12a.3): matchable blocks land, misses are
+    skipped with an addressable report; guard files are rejected before
+    any write. Returns the applied files in first-touch order.
 
     Step 4.3b.3 (R6): when ``retry_client`` is provided, a total
     failure triggers exactly ONE builder revision against the patcher
     ground truth (closest region / did-you-mean), re-extracted and
     re-attempted once; the extra call is drained into ``usage`` as
     ``ArchitecturalBuilder-retry`` and archived to ``retry_archive``.
+
+    Step 12a.3: a PARTIAL landing with misses triggers exactly ONE
+    revision of the missed blocks only (never re-emitting landed
+    blocks); the per-round ``patch_match_report.json`` lands next to
+    ``retry_archive`` whenever any round misses. At most one
+    ``revise_patch`` call fires per invocation (total-failure path and
+    partial path are mutually exclusive).
     """
     from hackproof.debate.roles import architectural_builder
     from hackproof.patcher.workspace_patcher import (
@@ -2059,8 +2067,11 @@ def apply_blocks_to_candidates(
 
     patcher = WorkspacePatcher()
     guard = set(guard_files)
+    match_reports: list[dict] = []
 
-    def _attempt(current: list[tuple[str | None, str, str]]) -> list[str]:
+    def _attempt(
+        current: list[tuple[str | None, str, str]], round_idx: int,
+    ) -> list[str]:
         tagged = [entry for entry in current if entry[0] is not None]
         if not tagged:
             blocks = [(search, replace) for _, search, replace in current]
@@ -2097,47 +2108,95 @@ def apply_blocks_to_candidates(
                 "(rejected before apply): " + ", ".join(violations)
             )
         universe = [c for c in files if c not in guard]
+        round_reports: list[dict] = []
         try:
             applied = patcher.apply_routed_blocks(
-                clone, current, universe=universe
+                clone, current, universe=universe,
+                partial=True, report=round_reports,
             )
         except (FileNotFoundError, PatchApplicationError) as exc:
             raise PatchApplicationError(
                 f"{task_id}: routed patch rejected: {exc}"
             ) from exc
         applied_files = list(applied)
-        tee.log(
+        round_report = (
+            round_reports[0]
+            if round_reports
+            else {"applied": {}, "missed": []}
+        )
+        round_report["round"] = round_idx
+        match_reports.append(round_report)
+        missed = round_report.get("missed", [])
+        message = (
             f"agent: patch applied ({len(current)} block(s) "
             f"-> {applied_files})"
         )
+        if missed:
+            message += f" [{len(missed)} block(s) missed, see match report]"
+        tee.log(message)
         return applied_files
+
+    def _missed_failure_report() -> str:
+        missed = match_reports[-1].get("missed", []) if match_reports else []
+        lines = [
+            f"block {m.get('position')} "
+            f"(file {m.get('file') or 'unrouted'}): "
+            f"SEARCH head {str(m.get('search_head', ''))!r}: "
+            f"{m.get('error')}"
+            for m in missed
+        ]
+        return (
+            "PARTIAL PATCH APPLICATION (ground truth): "
+            f"{len(lines)} block(s) missed; the applied blocks already "
+            "landed and must NOT be re-emitted. Emit ONLY corrected "
+            "SEARCH/REPLACE blocks for the missed positions below, with "
+            "the same file headers:\n" + "\n".join(lines)
+        )[:4000]
+
+    def _write_match_report() -> None:
+        if retry_archive is None:
+            return
+        if not any(r.get("missed") for r in match_reports):
+            return
+        retry_archive.parent.mkdir(parents=True, exist_ok=True)
+        (retry_archive.parent / "patch_match_report.json").write_text(
+            json.dumps(match_reports, indent=1), encoding="utf-8"
+        )
+
+    def _revise_once(
+        failure_report: str, previous: str
+    ) -> tuple[str, list[tuple[str | None, str, str]]]:
+        assert retry_client is not None
+        revised = architectural_builder.revise_patch(
+            retry_client,  # type: ignore[arg-type]
+            issue_description=retry_issue,
+            code_context=retry_context,
+            previous_patch=previous,
+            failure_report=failure_report,
+        )
+        if usage is not None:
+            usage.drain(
+                retry_client, "ArchitecturalBuilder-retry",
+                "muse-wonder-1.0",
+            )
+        if retry_archive is not None:
+            retry_archive.write_text(revised, encoding="utf-8")
+        return revised, architectural_builder.extract_routed_blocks(revised)
 
     current = routed
     previous_text = retry_patch_text
     for attempt in (0, 1):
         try:
-            return _attempt(current)
+            applied_files = _attempt(current, attempt)
         except (FileNotFoundError, PatchApplicationError) as exc:
             if attempt == 1 or retry_client is None:
+                _write_match_report()
                 raise
             tee.log(f"agent: patch missed ({exc}); single revision ...")
-            revised = architectural_builder.revise_patch(
-                retry_client,  # type: ignore[arg-type]
-                issue_description=retry_issue,
-                code_context=retry_context,
-                previous_patch=previous_text,
-                failure_report=str(exc)[:4000],
-            )
-            if usage is not None:
-                usage.drain(
-                    retry_client, "ArchitecturalBuilder-retry",
-                    "muse-wonder-1.0",
-                )
-            if retry_archive is not None:
-                retry_archive.write_text(revised, encoding="utf-8")
-            current = architectural_builder.extract_routed_blocks(revised)
+            revised, current = _revise_once(str(exc)[:4000], previous_text)
             previous_text = revised
             if not current:
+                _write_match_report()
                 raise PatchApplicationError(
                     f"{task_id}: revision produced no complete "
                     "SEARCH/REPLACE blocks"
@@ -2146,6 +2205,45 @@ def apply_blocks_to_candidates(
                 f"agent: retrying with revised patch "
                 f"({len(current)} block(s)) ..."
             )
+            continue
+        pending_misses = (
+            match_reports[-1].get("missed", []) if match_reports else []
+        )
+        if attempt == 1 or retry_client is None or not pending_misses:
+            _write_match_report()
+            return applied_files
+        # Step 12a.3: partial landing with misses -> ONE grounded
+        # revision of the MISSED blocks only (no recursion: the
+        # revision round stands as-is; remaining misses are reported,
+        # never re-retried).
+        tee.log(
+            f"agent: patch partial ({len(pending_misses)} missed); "
+            "single revision ..."
+        )
+        revised, patched = _revise_once(
+            _missed_failure_report(), previous_text
+        )
+        if not patched:
+            tee.log("agent: revision empty; standing on partial patch")
+            _write_match_report()
+            return applied_files
+        tee.log(
+            f"agent: retrying with revised patch "
+            f"({len(patched)} block(s)) ..."
+        )
+        try:
+            extra_files = _attempt(patched, 1)
+        except (FileNotFoundError, PatchApplicationError) as exc:
+            tee.log(
+                f"agent: revised patch failed ({exc}); standing on partial"
+            )
+            _write_match_report()
+            return applied_files
+        merged = applied_files + [
+            f for f in extra_files if f not in applied_files
+        ]
+        _write_match_report()
+        return merged
     raise AssertionError("unreachable: retry loop always returns/raises")
 
 
@@ -2479,6 +2577,7 @@ def run_mode_b_agent(
                     "converged": False,
                     "score": 0.0,
                     "duration_ms": 0,
+                    "ramble_stopped": False,
                 },
             }
     prompt_recorder = DebatePromptRecorder()
@@ -2548,6 +2647,7 @@ def run_mode_b_agent(
                 "converged": report.converged,
                 "score": report.convergence_score,
                 "duration_ms": report.duration_ms,
+                "ramble_stopped": report.ramble_stopped,
             },
         }
     try:
@@ -2574,6 +2674,7 @@ def run_mode_b_agent(
                 "converged": report.converged,
                 "score": report.convergence_score,
                 "duration_ms": report.duration_ms,
+                "ramble_stopped": report.ramble_stopped,
             },
         }
     local_violations = verify_local_guard(clone, baseline)
@@ -2603,6 +2704,7 @@ def run_mode_b_agent(
             "converged": report.converged,
             "score": report.convergence_score,
             "duration_ms": report.duration_ms,
+            "ramble_stopped": report.ramble_stopped,
         },
     }
 
@@ -2738,8 +2840,8 @@ def ledger_burn_check(ledger_path: Path, tee: Tee) -> None:
 
 
 # Wave label for Gate cost attribution (historic prefixes immutable;
-# Wave 2 rows must not masquerade as Wave 1 / Step 4.2).
-BENCH_WAVE_LABEL = "bench4.3c-wave2"
+# Wave 3 rows must not masquerade as Wave 2 / Wave 1 / Step 4.2).
+BENCH_WAVE_LABEL = "bench4.3d-wave3"
 
 
 def ledger_append_run(

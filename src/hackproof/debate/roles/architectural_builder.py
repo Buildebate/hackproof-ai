@@ -63,14 +63,29 @@ class _Debater(Protocol):
     ) -> str: ...
 
 
+BLOCKS_ONLY_RETRY_SUFFIX = (
+    "\n\nHARD CONSTRAINT (previous turn was cut off by the output limit): "
+    "output ONLY complete SEARCH/REPLACE blocks, blocks FIRST, no prose "
+    "before the first block, no trailing explanation. If several hunks are "
+    "needed, output the most critical first."
+)
+
+
 def run(client: _Debater, ctx: dict[str, Any]) -> str:
-    """Synthesize SEARCH/REPLACE blocks for the issue via one debate turn."""
+    """Synthesize SEARCH/REPLACE blocks for the issue via one debate turn.
+
+    ``ctx["extra_instruction"]`` (Step 12a.3 anti-ramble) appends a
+    verbatim suffix to the prompt; empty by default (legacy unchanged).
+    """
     issue = str(ctx.get("issue_description", ""))
     code = str(ctx.get("code_context", ""))
     prompt = (
         f"{ROLE_SYSTEM_PROMPT}\n\nISSUE:\n{issue}\n\nCODE CONTEXT:\n{code}\n\n"
         f"ROUND: {int(ctx.get('round', 1))}"
     )
+    extra = str(ctx.get("extra_instruction", ""))
+    if extra:
+        prompt += extra
     return client.debate_round(ROLE_NAME, prompt, list(ctx.get("history", [])))
 
 

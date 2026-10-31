@@ -1,313 +1,57 @@
-packages/runtime-dom/src/modules/style.ts
-<<<<<<< SEARCH
-    for (const key in next) {
-      if (key === 'display') {
-        hasControlledDisplay = true
-      }
-      setStyle(style, key, next[key as keyof StyleValue])
-    }
-  } else {
-    if (isCssString) {
-=======
-    for (const key in next) {
-      if (key === 'display') {
-        hasControlledDisplay = true
-      }
-      setStyle(style, key, next[key as keyof StyleValue])
-    }
-    applyCssVars(style)
-  } else {
-    if (isCssString) {
->>>>>>> REPLACE
-packages/runtime-dom/src/modules/style.ts
-<<<<<<< SEARCH
-    if (isCssString) {
-      if (prev !== next) {
-        // #9821
-        const cssVarText = (style as any)[CSS_VAR_TEXT]
-        if (cssVarText) {
-          ;(next as string) += ';' + cssVarText
-        }
-        style.cssText = next as string
-        hasControlledDisplay = displayRE.test(next)
-      }
-    } else if (prev) {
-      el.removeAttribute('style')
-    }
-=======
-    if (isCssString) {
-      if (prev !== next) {
-        const cssVars = snapshotCssVars(style)
-        style.cssText = next as string
-        hasControlledDisplay = displayRE.test(next)
-        applyCssVars(style, cssVars)
-      }
-    } else if (prev) {
-      const cssVars = snapshotCssVars(style)
-      el.removeAttribute('style')
-      applyCssVars(style, cssVars)
-    }
->>>>>>> REPLACE
-packages/runtime-dom/src/modules/style.ts
-<<<<<<< SEARCH
-const displayRE = /(^|;)\s*display\s*:/
-const importantRE = /\s*!important$/
-=======
-const displayRE = /(^|;)\s*display\s*:/
-const importantRE = /\s*!important$/
-
-type CssVarsSnapshot = Record<string, string>
-
-function snapshotCssVars(style: CSSStyleDeclaration): CssVarsSnapshot {
-  const cache = (style as any)[CSS_VAR_TEXT] as
-    | CssVarsSnapshot
-    | string
-    | undefined
-  const vars: CssVarsSnapshot = {}
-  if (!cache) {
-    return vars
-  }
-  if (isString(cache)) {
-    // Legacy string cache: trust only custom-property names, never its
-    // interpolated text (values may contain `;`, quotes or `/*`).
-    for (const decl of cache.split(';')) {
-      const key = decl.slice(0, decl.indexOf(':')).trim()
-      if (key.startsWith('--')) {
-        const value = style.getPropertyValue(key)
-        if (value) {
-          vars[key] = value
-        }
-      }
-    }
-  } else {
-    for (const key in cache) {
-      const value = cache[key]
-      if (value != null && value !== '') {
-        vars[key] = String(value)
-      }
-    }
-  }
-  return vars
-}
-
-function applyCssVars(
-  style: CSSStyleDeclaration,
-  vars: CssVarsSnapshot = snapshotCssVars(style),
-): void {
-  for (const key in vars) {
-    // setProperty passes the value literally: no cssText interpolation,
-    // no implicit units, and `;`/quotes/unicode cannot create new
-    // declarations.
-    style.setProperty(key, vars[key])
-  }
-}
->>>>>>> REPLACE
-packages/runtime-dom/src/modules/style.ts
-<<<<<<< SEARCH
-  } else {
-    if (val == null) {
-      val = ''
-    }
-    // ie prefix
-    if (name.startsWith('--')) {
-=======
-  } else {
-    if (val == null) {
-      val = ''
-    } else if (typeof val !== 'string') {
-      // Numbers are stringified verbatim: custom properties must not
-      // gain implicit units, and normal properties keep existing
-      // CSSStyleDeclaration semantics (e.g. 20 stays invalid, not 20px).
-      val = String(val)
-    }
-    // ie prefix
-    if (name.startsWith('--')) {
->>>>>>> REPLACE
 packages/runtime-dom/src/helpers/useCssVars.ts
 <<<<<<< SEARCH
-    const style = (el as Element).style
+function setVarsOnNode(el: Node, vars: Record<string, string>) {
+  if (el.nodeType === 1) {
+    const style = (el as HTMLElement).style
+    let cssText = ''
+    for (const key in vars) {
+      style.setProperty(`--${key}`, vars[key])
+      cssText += `--${key}: ${vars[key]};`
+    }
+    ;(style as any)[CSS_VAR_TEXT] = cssText
+  }
+}
+=======
+function setVarsOnNode(el: Node, vars: Record<string, string>) {
+  if (el.nodeType === 1) {
+    const style = (el as HTMLElement).style
+    if (!style) return
     let cssText = ''
     for (const key in vars) {
       const value = vars[key]
-      if (value != null) {
-        style.setProperty(`--${key}`, String(value))
+      if (value == null || value === '') {
+        style.removeProperty(`--${key}`)
+      } else {
+        style.setProperty(`--${key}`, value)
         cssText += `--${key}: ${value};`
       }
     }
     ;(style as any)[CSS_VAR_TEXT] = cssText
-=======
-    const style = (el as Element).style
-    // Store literal values in a map, never interpolated cssText, so
-    // `;`, quotes, `/* */` and unicode cannot escape the declaration.
-    // Merge into any existing map: parent and child components may
-    // both contribute vars to the same root element.
-    const cache = ((style as any)[CSS_VAR_TEXT] =
-      (style as any)[CSS_VAR_TEXT] &&
-      typeof (style as any)[CSS_VAR_TEXT] === 'object'
-        ? (style as any)[CSS_VAR_TEXT]
-        : {}) as Record<string, string>
-    for (const key in vars) {
-      const value = vars[key]
-      const normalizedKey = key.startsWith('--') ? key : `--${key}`
-      if (value == null || value === '') {
-        // null/undefined/'' all mean removed: never `--x: null`,
-        // `--x: undefined` or a stale previous value.
-        delete cache[normalizedKey]
-        style.removeProperty(normalizedKey)
-      } else {
-        const normalizedValue = String(value)
-        cache[normalizedKey] = normalizedValue
-        style.setProperty(normalizedKey, normalizedValue)
-      }
-    }
+  }
+}
 >>>>>>> REPLACE
-packages/runtime-dom/src/helpers/useCssVars.ts
+packages/shared/src/normalizeProp.ts
 <<<<<<< SEARCH
-      if (instance.ssrContext) {
-        ;(instance.ssrContext.__cssVars ||
-          (instance.ssrContext.__cssVars = {}))[instance.uid] = vars
-      }
-=======
-      if (instance.ssrContext) {
-        const normalizedVars: Record<string, string> = {}
-        for (const key in vars) {
-          const value = vars[key]
-          if (value == null || value === '') {
-            continue
-          }
-          const text = String(value)
-          // Serialized SSR style text cannot safely contain these:
-          // they would terminate/escape the custom-property
-          // declaration. Omit here; hydration re-applies the literal
-          // value via setProperty().
-          if (/[;{}'"\r\n]/.test(text) || text.includes('/*')) {
-            continue
-          }
-          normalizedVars[key] = text
-        }
-        ;(instance.ssrContext.__cssVars ||
-          (instance.ssrContext.__cssVars = {}))[instance.uid] =
-          normalizedVars
-      }
->>>>>>> REPLACE
-packages/runtime-dom/src/helpers/useCssVars.ts
-<<<<<<< SEARCH
-      for (const key in getter(instance.proxy!, instance.exposeProxy!)) {
-        style.removeProperty(`--${key}`)
-      }
-=======
-      const cache = (style as any)[CSS_VAR_TEXT]
-      for (const key in getter(instance.proxy!, instance.exposeProxy!)) {
-        const normalizedKey = key.startsWith('--') ? key : `--${key}`
-        style.removeProperty(normalizedKey)
-        if (cache && typeof cache === 'object') {
-          delete cache[normalizedKey]
-        }
-      }
->>>>>>> REPLACE
-packages/runtime-dom/__tests__/helpers/useCssVarsStyle.spec.ts
-<<<<<<< SEARCH
-=======
-import {
-  createSSRApp,
-  defineComponent,
-  h,
-  nextTick,
-  ref,
-  render,
-  useCssVars,
-} from '../../src'
-import { renderToString } from '@vue/server-renderer'
-
-describe('useCssVars with :style patching', () => {
-  test('null/undefined/empty vars, style variants and injection values', async () => {
-    const color = ref<any>('red')
-    const size = ref<any>(20)
-    const childStyle = ref<any>({ display: 'flex' })
-    const App = defineComponent({
-      setup() {
-        useCssVars(() => ({
-          color: color.value,
-          size: size.value,
-        }))
-        return () => h('div', { style: childStyle.value })
-      },
-    })
-    const root = document.createElement('div')
-    render(h(App), root)
-    await nextTick()
-    const el = root.firstChild as HTMLElement
-    expect(el.style.getPropertyValue('--color')).toBe('red')
-    expect(el.style.getPropertyValue('--size')).toBe('20')
-    expect(el.style.display).toBe('flex')
-
-    for (const style of [
-      'display:flex',
-      [{ display: 'flex' }],
-      { display: 'flex' },
-      [],
-      [{ display: 'flex' }, { padding: '20px' }],
-    ] as any[]) {
-      childStyle.value = style
-      await nextTick()
-      expect(el.style.getPropertyValue('--color')).toBe('red')
-      expect(el.style.getPropertyValue('--size')).toBe('20')
+  for (const key in styles) {
+    const value = styles[key]
+    if (isString(value) || typeof value === 'number') {
+      const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
+      // only render valid values
+      ret += `${normalizedKey}:${value};`
     }
-    expect(el.style.padding).toBe('20px')
-
-    for (const style of [{ display: null }, {}, null, undefined] as any[]) {
-      childStyle.value = style
-      await nextTick()
-      expect(el.style.getPropertyValue('--color')).toBe('red')
-      expect(el.style.getPropertyValue('--size')).toBe('20')
-      expect(el.style.display).toBe('')
+  }
+=======
+  for (const key in styles) {
+    const value = styles[key]
+    if (isString(value) || typeof value === 'number') {
+      const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
+      // only render valid values
+      if (
+        value !== '' &&
+        (typeof value !== 'number' || normalizedKey !== 'display')
+      ) {
+        ret += `${normalizedKey}:${value};`
+      }
     }
-
-    childStyle.value = { '--pad': 20, padding: 20 } as any
-    await nextTick()
-    expect(el.style.getPropertyValue('--pad')).toBe('20')
-    expect(el.style.padding).not.toBe('20px')
-
-    for (const value of [null, undefined, '']) {
-      color.value = value
-      await nextTick()
-      expect(el.style.getPropertyValue('--color')).toBe('')
-      expect(el.style.cssText).not.toContain('--color: null')
-      expect(el.style.cssText).not.toContain('--color: undefined')
-    }
-
-    color.value = 'red; color: blue'
-    size.value = '20px /* */'
-    await nextTick()
-    expect(el.style.color).toBe('')
-    expect(el.style.getPropertyValue('--size')).toContain('20px')
-    color.value = `"'--x:1`
-    await nextTick()
-    expect(el.style.getPropertyValue('--x')).toBe('')
-    color.value = '👋'
-    await nextTick()
-    expect(el.style.getPropertyValue('--color')).toBe('👋')
-  })
-
-  test('SSR to hydration reconciles client vars', async () => {
-    const make = (color: string, style: any) =>
-      defineComponent({
-        setup() {
-          useCssVars(() => ({ color }))
-          return () => h('div', { style })
-        },
-      })
-    const html = await renderToString(
-      createSSRApp(make('red', { display: null })),
-    )
-    expect(html).not.toContain('--color:null')
-    const container = document.createElement('div')
-    container.innerHTML = html
-    createSSRApp(make('blue', { display: undefined })).mount(container, true)
-    await nextTick()
-    const el = container.firstChild as HTMLElement
-    expect(el.style.getPropertyValue('--color')).toBe('blue')
-    expect(el.style.display).toBe('')
-  })
-})
+  }
 >>>>>>> REPLACE

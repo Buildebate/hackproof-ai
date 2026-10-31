@@ -12,6 +12,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Wave 3 final dossier (Steps 12b.4-12b.5): `benchmarks/SUMMARY.md` +
+  `benchmarks/evidence_dossier.json` — honest B 9/12 / A 5/12 (goal 9/12
+  MET), reconciled against ledger and the 12-row B matrix; 1142 flipped
+  to resolved by green-v2 (receipt minted live); mechanisms validated
+  4/4 (red-path first-try accept, ramble stop + partial apply landing
+  5 blocks/3 files on 11739); Wave 3 spend $18.59 vs $14 envelope
+  (measured overrun: extra laps + bounded ramble); ledger $78.48/$150,
+  zero reprice drift; W4 decision recorded (NO blind W4 — content-only
+  remainder, new root-cause + founder authorization required).
+- Wave-rotation test safety (Step 12b.4 fallout): the 12a.3 offline
+  vector now reads the immutable committed W2 fixture
+  (`tests/unit/fixtures/vuejs__core-11739.w2.patch_text.txt`,
+  byte-identical to the pre-W3 HEAD) instead of the live prompt tree
+  that every wave rerun overwrites. Suite 381 passed + 5 skipped.
+- Anti-ramble + partial patch application (Step 12a.3, ADR-030):
+  builder `finish_reason=length` triggers exactly one blocks-only
+  retry (`ArchitecturalBuilder-length-retry` role), then stops the
+  whole debate after 2 cut-offs (`ramble_stopped` in the report and
+  the run-record `debate` dict); `apply_routed_blocks(partial=True)`
+  lands matching blocks and reports misses addressably (position,
+  file, SEARCH head, closest region); the benchmark tagged path runs
+  one grounded revision of missed positions only
+  (`patch_match_report.json` next to the retry archive); guard files
+  rejected before any write; untagged path and CLI stay atomic.
+  12 new tests incl. an offline vector over the real 7-block B-11739
+  W2 `patch_text.txt` (6 land, block 5 addressable). Verified: 381
+  passed + 5 skipped, ruff clean, minted (`sig=26693b50`).
 - Green-v2 bounded laps (Step 12a.2): collection-repair lap on
   collect exit=2 with traceback brief; second content iteration
   gated on strict F2P progress; revision prompt carries the applied
@@ -100,6 +127,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   fidelity. Honesty boundary: ADR-029.
 
 ### Fixed
+- Wave attribution for Wave 3 (Step 12b.4): `BENCH_WAVE_LABEL`
+  rotated to `bench4.3d-wave3` (historic prefixes immutable;
+  Wave 3 rows never masquerade as Wave 2); `wave_of` already
+  generalizes (`waveN` → `bench4.3-waveN`, W2 precedent) — no
+  repricer change, one new bucket assertion.
 - Wave attribution for Wave 2 (Step 4.3c.2): `BENCH_WAVE_LABEL`
   rotated to `bench4.3c-wave2`; `wave_of` buckets `waveN` and
   `ablation` honestly instead of folding every `bench4.3*` row

@@ -43,11 +43,28 @@ class _ScriptedClient:
         verdicts: dict[str, str] | None = None,
         usage: dict[str, int] | None = None,
         syntheses: list[str] | None = None,
+        usage_script: list[dict[str, Any]] | None = None,
+        verdict_script: dict[str, list[str]] | None = None,
     ) -> None:
         self._model = model
         self._verdicts = dict(verdicts or {})
         self._usage = usage
         self._syntheses = list(syntheses) if syntheses is not None else None
+        # Step 12a.3: per-call usage/verdict scripts (anti-ramble
+        # vectors); None preserves the legacy static behavior.
+        self._usage_script = (
+            [dict(entry) for entry in usage_script]
+            if usage_script is not None
+            else None
+        )
+        self._current_usage = (
+            dict(usage) if usage is not None else None
+        )
+        self._verdict_script = (
+            {role: list(outs) for role, outs in verdict_script.items()}
+            if verdict_script is not None
+            else None
+        )
         self.calls: list[tuple[str, str, list[dict[str, Any]]]] = []
 
     @property
@@ -55,13 +72,20 @@ class _ScriptedClient:
         return self._model
 
     @property
-    def last_usage(self) -> dict[str, int] | None:
+    def last_usage(self) -> dict[str, Any] | None:
+        if self._current_usage is not None:
+            return dict(self._current_usage)
         return dict(self._usage) if self._usage is not None else None
 
     def debate_round(
         self, role: str, prompt: str, history: list[dict[str, Any]]
     ) -> str:
         self.calls.append((role, prompt, list(history)))
+        if self._usage_script:
+            self._current_usage = self._usage_script.pop(0)
+        outs = (self._verdict_script or {}).get(role)
+        if outs:
+            return outs.pop(0) if len(outs) > 1 else outs[0]
         return self._verdicts.get(role, f"{role}: neutral observation noted")
 
     def synthesize_patch(self, debate_consensus: str) -> str:
@@ -697,3 +721,106 @@ def test_revise_patch_from_green_builds_grounded_prompt() -> None:
         assert needle in prompt
     assert "APPROVE" not in prompt
     assert "REVISE" not in prompt
+
+
+# ---------------------------------------------------------------------------
+# Step 12a.3: anti-ramble (length cut-off -> 1 blocks-only retry, stop at 2)
+# ---------------------------------------------------------------------------
+
+
+def _length_usage() -> dict[str, Any]:
+    return {
+        "prompt_tokens": 10,
+        "completion_tokens": 20,
+        "total_tokens": 30,
+        "finish_reason": "length",
+    }
+
+
+def _clean_usage() -> dict[str, Any]:
+    return {
+        "prompt_tokens": 10,
+        "completion_tokens": 20,
+        "total_tokens": 30,
+        "finish_reason": "stop",
+    }
+
+
+def test_builder_extra_instruction_appends_suffix() -> None:
+    client = _ScriptedClient()
+    out = architectural_builder.run(
+        client,
+        {
+            "issue_description": ISSUE,
+            "code_context": CODE,
+            "round": 1,
+            "history": [],
+            "extra_instruction": "SUFFIX-MARKER",
+        },
+    )
+    assert out.startswith("ArchitecturalBuilder:")
+    assert client.calls[0][1].endswith("SUFFIX-MARKER")
+
+
+def test_builder_length_once_retries_blocks_only() -> None:
+    verdicts = _approve_verdicts()
+    wonder = _ScriptedClient(
+        model="muse-wonder-1.0",
+        verdicts=verdicts,
+        usage_script=[_length_usage(), _clean_usage()],
+        verdict_script={
+            "ArchitecturalBuilder": [
+                "TRUNCATED-GARBAGE",
+                verdicts["ArchitecturalBuilder"],
+            ],
+        },
+    )
+    spark = _ScriptedClient(verdicts=verdicts)
+    report = DebateOrchestrator(spark, wonder).run(ISSUE, CODE)
+    builder_calls = [c for c in wonder.calls if c[0] == "ArchitecturalBuilder"]
+    assert len(builder_calls) == 2
+    assert "HARD CONSTRAINT" not in builder_calls[0][1]
+    assert "HARD CONSTRAINT" in builder_calls[1][1]
+    assert report.verdicts["ArchitecturalBuilder"] == (
+        verdicts["ArchitecturalBuilder"]
+    )
+    assert "TRUNCATED-GARBAGE" not in report.patch_candidate
+    roles = [u.role for u in report.token_usage]
+    assert "ArchitecturalBuilder-length-retry" in roles
+    assert report.ramble_stopped is False
+    assert report.converged is True
+
+
+def test_builder_length_twice_stops_debate() -> None:
+    verdicts = _approve_verdicts()
+    wonder = _ScriptedClient(
+        model="muse-wonder-1.0",
+        verdicts=verdicts,
+        usage_script=[_length_usage(), _length_usage()],
+        verdict_script={
+            "ArchitecturalBuilder": ["CUT-1", "CUT-2"],
+        },
+    )
+    spark = _ScriptedClient(verdicts=verdicts)
+    report = DebateOrchestrator(spark, wonder).run(ISSUE, CODE)
+    builder_calls = [c for c in wonder.calls if c[0] == "ArchitecturalBuilder"]
+    assert len(builder_calls) == 2
+    called_roles = [c[0] for c in spark.calls + wonder.calls]
+    assert "OccamsRazorCritic" not in called_roles
+    assert "FormalAdversaryCritic" not in called_roles
+    assert report.ramble_stopped is True
+    assert report.rounds_used == 1
+    assert report.converged is False
+    assert report.verdicts["EdgeScout"] == verdicts["EdgeScout"]
+    assert report.verdicts["ArchitecturalBuilder"] == "CUT-2"
+
+
+def test_clean_debate_never_ramble_stopped() -> None:
+    verdicts = _approve_verdicts()
+    spark = _ScriptedClient(verdicts=verdicts)
+    wonder = _ScriptedClient(model="muse-wonder-1.0", verdicts=verdicts)
+    report = DebateOrchestrator(spark, wonder).run(ISSUE, CODE)
+    assert report.ramble_stopped is False
+    assert "ArchitecturalBuilder-length-retry" not in [
+        u.role for u in report.token_usage
+    ]

@@ -1,0 +1,33 @@
+requests/models.py
+<<<<<<< SEARCH
+            else:
+                if data:
+                    body = self._encode_params(data)
+                    if isinstance(data, str) or isinstance(data, builtin_str) or hasattr(data, 'read'):
+                        content_type = None
+                    else:
+                        content_type = 'application/x-www-form-urlencoded'
+=======
+            else:
+                if data is not None:
+                    body = self._encode_params(data)
+                    if isinstance(data, str) or isinstance(data, builtin_str) or hasattr(data, 'read'):
+                        content_type = None
+                    else:
+                        content_type = 'application/x-www-form-urlencoded'
+>>>>>>> REPLACE
+requests/models.py
+<<<<<<< SEARCH
+            self.prepare_content_length(body)
+
+            # Add content-type if it wasn't explicitly provided.
+            if (content_type) and (not 'content-type' in self.headers):
+                self.headers['Content-Type'] = content_type
+=======
+            if body is not None or self.method not in ('GET', 'HEAD'):
+                self.prepare_content_length(body)
+
+            # Add content-type if it wasn't explicitly provided.
+            if (content_type) and (not 'content-type' in self.headers):
+                self.headers['Content-Type'] = content_type
+>>>>>>> REPLACE
