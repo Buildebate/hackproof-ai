@@ -100,6 +100,7 @@ class RegressionTestSynthesizer:
         repo_structure: str,
         language: str,
         output_dir: Path | str,
+        feedback: str | None = None,
     ) -> Path:
         """Generate the repro file and return its path.
 
@@ -109,6 +110,9 @@ class RegressionTestSynthesizer:
             repo_structure: Compact repo layout sketch for grounding.
             language: ``"python"`` or ``"typescript"``.
             output_dir: Directory receiving the repro file (created).
+            feedback: Judge feedback from a rejected attempt, appended
+                to the issue text (Step 4.3b.6/R10 resynthesis). The
+                filename tag covers it, so retries never overwrite.
 
         Raises:
             ValueError: Unsupported language.
@@ -124,8 +128,16 @@ class RegressionTestSynthesizer:
             else "\n\n".join(code_snippets)
         )
         context = f"REPO STRUCTURE:\n{repo_structure}\n\nSNIPPETS:\n{snippets}"
-        content = self._client.generate_regression_test(issue_description, context)
-        tag = _digest(issue_description, context, language)
+        effective_issue = issue_description
+        if feedback:
+            effective_issue = (
+                f"{issue_description}\n\nPREVIOUS ATTEMPT REJECTED BY "
+                f"THE JUDGE — FIX IT:\n{feedback}"
+            )
+        content = self._client.generate_regression_test(
+            effective_issue, context
+        )
+        tag = _digest(effective_issue, context, language)
         out_dir = Path(output_dir)
         out_dir.mkdir(parents=True, exist_ok=True)
         filename = (

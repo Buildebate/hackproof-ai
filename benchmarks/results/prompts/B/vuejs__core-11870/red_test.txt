@@ -1,0 +1,16 @@
+import { isReactive, ref, renderList, shallowReactive } from 'vue'
+
+describe('shallowReactive array v-for', () => {
+  it('should not convert items to reactive', () => {
+    const arr = shallowReactive([{ aaa: ref('aaa1') }])
+    expect(typeof (arr[0] as any).aaa).toBe('object')
+    let vForType: string | undefined
+    let vForReactive: boolean | undefined
+    renderList(arr, (item: any) => {
+      vForType = typeof item.aaa
+      vForReactive = isReactive(item)
+    })
+    expect(vForType).toBe('object')
+    expect(vForReactive).toBe(false)
+  })
+})

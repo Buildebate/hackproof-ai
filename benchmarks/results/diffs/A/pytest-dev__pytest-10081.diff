@@ -1,0 +1,23 @@
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 851e494..996643c 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -200,11 +200,17 @@ class TestCaseFunction(Function):
+         assert self.parent is not None
+         self._testcase = self.parent.obj(self.name)  # type: ignore[attr-defined]
+         self._obj = getattr(self._testcase, self.name)
++        self._skipped_by_unittest = bool(
++            getattr(self._testcase, "__unittest_skip__", False)
++            or getattr(self._obj, "__unittest_skip__", False)
++        )
+         if hasattr(self, "_request"):
+             self._request._fillfixtures()
+ 
+     def teardown(self) -> None:
+-        if self._explicit_tearDown is not None:
++        if self._explicit_tearDown is not None and not getattr(
++            self, "_skipped_by_unittest", False
++        ):
+             self._explicit_tearDown()
+             self._explicit_tearDown = None
+         self._testcase = None

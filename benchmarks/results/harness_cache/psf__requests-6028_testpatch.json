@@ -1,0 +1,8 @@
+{
+ "instance_id": "psf__requests-6028",
+ "source": "SWE-bench/SWE-bench_Verified@test (datasets-server, harness-only)",
+ "test_patch": "diff --git a/tests/test_utils.py b/tests/test_utils.py\n--- a/tests/test_utils.py\n+++ b/tests/test_utils.py\n@@ -602,6 +602,14 @@ def test_parse_header_links(value, expected):\n         ('example.com/path', 'http://example.com/path'),\n         ('//example.com/path', 'http://example.com/path'),\n         ('example.com:80', 'http://example.com:80'),\n+        (\n+            'http://user:pass@example.com/path?query',\n+            'http://user:pass@example.com/path?query'\n+        ),\n+        (\n+            'http://user@example.com/path?query',\n+            'http://user@example.com/path?query'\n+        )\n     ))\n def test_prepend_scheme_if_needed(value, expected):\n     assert prepend_scheme_if_needed(value, 'http') == expected\n",
+ "environment_setup_commit": "0192aac24123735b3eaf9b08df46429bb770c283",
+ "version": "2.27",
+ "test_patch_sha256": "cc4b0007afd140c1737b08e14d0cbb9dbccfbee483146d5112971dd7b9bcb142"
+}

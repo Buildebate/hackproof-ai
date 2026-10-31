@@ -1,0 +1,8 @@
+{
+ "instance_id": "psf__requests-2931",
+ "source": "SWE-bench/SWE-bench_Verified@test (datasets-server, harness-only)",
+ "test_patch": "diff --git a/test_requests.py b/test_requests.py\n--- a/test_requests.py\n+++ b/test_requests.py\n@@ -157,6 +157,11 @@ def test_params_bytes_are_encoded(self):\n                                    params=b'test=foo').prepare()\n         assert request.url == 'http://example.com/?test=foo'\n \n+    def test_binary_put(self):\n+        request = requests.Request('PUT', 'http://example.com',\n+                                   data=u\"\u00f6\u00f6\u00f6\".encode(\"utf-8\")).prepare()\n+        assert isinstance(request.body, bytes)\n+\n     def test_mixed_case_scheme_acceptable(self, httpbin):\n         s = requests.Session()\n         s.proxies = getproxies()\n",
+ "environment_setup_commit": "bbeb0001cdc657ac8c7fef98e154229bc392db0e",
+ "version": "2.9",
+ "test_patch_sha256": "65b4e814631a631933cbeffa4bc9316c55a90bceeaabf6d08de988c9e9e4ffc7"
+}

@@ -1,0 +1,531 @@
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
+
+ISSUE:
+requests.get is ALWAYS sending content length
+Hi,
+
+It seems like that request.get always adds 'content-length' header to the request.
+I think that the right behavior is not to add this header automatically in GET requests or add the possibility to not send it.
+
+For example http://amazon.com returns 503 for every get request that contains 'content-length' header.
+
+Thanks,
+
+Oren
+
+
+
+This was done in issue #957 - Attach Content-Length to everything.
+
+OK, I don't think it's the right solution.
+imho GET requests shouldn't contain by default 'content-length' header.
+
+Related: geemus/excon/pull/113
+
+There's nothing stopping you from sending data in a GET request.
+
+At the moment the following code:
+requests.get('http://amazon.com') returns 503, because the package automatically adds the header content length to the request.
+
+If I remove that header it works fine. The thing is that currently since issue #957 this header is added automaticlly to every request and that's the cause of the problem.
+
+Hmm, let's find some more URLs that do this.
+
+It isn't against the HTTP/1.1 spec last I saw so I don't see why Amazon is returning a 503
+
+GET requests don't normally include data payload in the body, and I presume their server assumes that it does because there is a content-length, but it doesn't handle the empty edge case.
+
+It's semantically ambiguous - does a request with a Content-Length header mean "zero length body" or does it mean "no body was included in this message"?
+
+I believe that Requests should follow the conventional wisdom, which is that most UAs do not send the Content-Length header for GET requests.
+
+I tried to reproduce this and got weird behavior, sometimes it does work:
+
+```
+>>> r = requests.get('https://amazon.com', allow_redirects=False)
+>>> print r.text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.amazon.com/">here</a>.</p>
+</body></html>
+
+>>> print r.status_code
+301
+```
+
+but sometimes it doesn't:
+
+```
+>>> print requests.get('https://amazon.com', allow_redirects=False).status_code
+503
+
+>>> print requests.get('https://amazon.com', allow_redirects=False).text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.amazon.com/">here</a>.</p>
+</body></html>
+```
+
+In fact, sometimes it seems like it might be an Amazon bug:
+
+```
+>>> print requests.get('https://amazon.com', allow_redirects=False).status_code
+503
+>>> print requests.get('http://amazon.com', allow_redirects=False).status_code
+301
+>>> print requests.get('http://amazon.com', allow_redirects=False).status_code
+503
+>>> print requests.get('http://amazon.com', allow_redirects=False).status_code
+503
+```
+
+I'm not sure if it's relevant that I switched from ssl to plain http when I got that 301.
+
+```
+>>> print requests.__version__
+1.0.3
+```
+
+Try allowing for redirects. The 301 would be followed otherwise. Printing the text for a 503 would be helpful too.
+
+sigmavirus24: yeah, I explicitly added the allow_redirects to see what would happen: in the rare-ish cases where I get a 301 it actually does work.
+
+And, sorry about the double-301 text, I copied the wrong thing. This is what the 503 page looks like:
+
+```
+>>> r = requests.get('http://amazon.com') ; print r.text
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<title>500 Service Unavailable Error</title>
+</head>
+<body style="padding:1% 10%;font-family:Verdana,Arial,Helvetica,sans-serif">
+  <a href="http://www.amazon.com/"><img src="https://images-na.ssl-images-amazon.com/images/G/01/img09/x-site/other/a_com_logo_200x56.gif" alt="Amazon.com" width="200" height="56" border="0"/></a>
+  <table>
+    <tr>
+      <td valign="top" style="width:52%;font-size:10pt"><br/><h2 style="color:#E47911">Oops!</h2><p>We're very sorry, but we're having trouble doing what you just asked us to do. Please give us another chance--click the Back button on your browser and try your request again. Or start from the beginning on our <a href="http://www.amazon.com/">homepage</a>.</p></td>
+      <th><img src="https://images-na.ssl-images-amazon.com/images/G/01/x-locale/common/errors-alerts/product-fan-500.jpg" alt="product collage"/></th>
+    </tr>
+  </table>
+</body>
+</html>
+>>> r.status_code
+503
+```
+
+But, also, isn't 503 the wrong error code for a malformed request? [503 means](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.4) "unable to process request due to high load". I feel like if Amazon was doing this intentionally they would return a 400 or at least something in the 4xx range.
+
+Not that I'm saying you should ignore a problem with one of the top-10 websites on earth just because they might be being crazy.
+
+I'm not saying we ignore it, I'm just saying it isn't against spec. And yeah, I agree that the 503 looks like it's a malformed request error. I'll mock up conditional addition for GETs tonight and see if @kennethreitz wouldn't mind the minor extra complexity.
+
+Is there a decision or any progress with this issue?
+
+I have encountered other sensitive servers that barf because of headers. While it would be best to get something merged into requests upstream, another option is to look at [careful-requests](https://github.com/kanzure/careful-requests) which aims to handle requests that need sensitive headers (it just monkeypatches requests). At the moment this doesn't include Content-Length on GET but that is trivial to add, I think. I hope this helps.
+
+I frankly forgot about this, but I'll get to it tonight or tomorrow I hope. 
+
+I'm going to go ahead and give this a shot; sigmavirus24 is going to take #1133 in the meantime.
+
+CODE CONTEXT:
+requests/models.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.models
+~~~~~~~~~~~~~~~
+
+This module contains the primary objects that power Requests.
+"""
+
+import collections
+import logging
+
+from io import BytesIO
+from .hooks import default_hooks
+from .structures import CaseInsensitiveDict
+from .status_codes import codes
+
+from .auth import HTTPBasicAuth
+from .cookies import cookiejar_from_dict, get_cookie_header
+from .packages.urllib3.filepost import encode_multipart_formdata
+from .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL
+from .utils import (
+    stream_untransfer, guess_filename, requote_uri,
+    stream_decode_response_unicode, to_key_val_list, parse_header_links,
+    iter_slices, guess_json_utf, super_len)
+from .compat import (
+    cookielib, urlparse, urlunparse, urlsplit, urlencode, str, bytes, StringIO,
+    is_py2, chardet, json, builtin_str, basestring)
+
+REDIRECT_STATI = (codes.moved, codes.found, codes.other, codes.temporary_moved)
+CONTENT_CHUNK_SIZE = 10 * 1024
+ITER_CHUNK_SIZE = 512
+
+log = logging.getLogger(__name__)
+
+
+class RequestEncodingMixin(object):
+    @property
+    def path_url(self):
+        """Build the path URL to use."""
+
+        url = []
+
+        p = urlsplit(self.url)
+
+        path = p.path
+        if not path:
+            path = '/'
+
+        url.append(path)
+
+        query = p.query
+        if query:
+            url.append('?')
+            url.append(query)
+
+        return ''.join(url)
+
+    @staticmethod
+    def _encode_params(data):
+        """Encode parameters in a piece of data.
+
+        Will successfully encode parameters when passed as a dict or a list of
+        2-tuples. Order is retained if data is a list of 2-tuples but abritrary
+        if parameters are supplied as a dict.
+        """
+
+        if isinstance(data, (str, bytes)):
+            return data
+        elif hasattr(data, 'read'):
+            return data
+        elif hasattr(data, '__iter__'):
+            result = []
+            for k, vs in to_key_val_list(data):
+                if isinstance(vs, basestring) or not hasattr(vs, '__iter__'):
+                    vs = [vs]
+                for v in vs:
+                    if v is not None:
+                        result.append(
+                            (k.encode('utf-8') if isinstance(k, str) else k,
+                             v.encode('utf-8') if isinstance(v, str) else v))
+            return urlencode(result, doseq=True)
+        else:
+            return data
+
+    @staticmethod
+    def _encode_files(files, data):
+        """Build the body for a multipart/form-data request.
+
+        Will successfully encode files when passed as a dict or a list of
+        2-tuples. Order is retained if data is a list of 2-tuples but abritrary
+        if parameters are supplied as a dict.
+
+        """
+        if (not files) or isinstance(data, str):
+            return None
+
+        new_fields = []
+        fields = to_key_val_list(data or {})
+        files = to_key_val_list(files or {})
+
+        for field, val in fields:
+            if isinstance(val, list):
+                for v in val:
+                    new_fields.append((field, builtin_str(v)))
+            else:
+                new_fields.append((field, builtin_str(val)))
+
+        for (k, v) in files:
+            # support for explicit filename
+            ft = None
+            if isinstance(v, (tuple, list)):
+                if len(v) == 2:
+                    fn, fp = v
+                else:
+                    fn, fp, ft = v
+            else:
+                fn = guess_filename(v) or k
+                fp = v
+            if isinstance(fp, str):
+                fp = StringIO(fp)
+            if isinstance(fp, bytes):
+                fp = BytesIO(fp)
+
+            if ft:
+                new_v = (fn, fp.read(), ft)
+            else:
+                new_v = (fn, fp.read())
+            new_fields.append((k, new_v))
+
+        body, content_type = encode_multipart_formdata(new_fields)
+
+        return body, content_type
+
+
+class RequestHooksMixin(object):
+    def register_hook(self, event, hook):
+        """Properly register a hook."""
+
+        if isinstance(hook, collections.Callable):
+            self.hooks[event].append(hook)
+        elif hasattr(hook, '__iter__'):
+            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
+
+    def deregister_hook(self, event, hook):
+        """Deregister a previously registered hook.
+        Returns True if the hook existed, False if not.
+        """
+
+        try:
+            self.hooks[event].remove(hook)
+            return True
+        except ValueError:
+            return False
+
+
+class Request(RequestHooksMixin):
+    """A user-created :class:`Request <Request>` object.
+
+    Used to prepare a :class:`PreparedRequest <PreparedRequest>`, which is sent to the server.
+
+    :param method: HTTP method to use.
+    :param url: URL to send.
+    :param headers: dictionary of headers to send.
+    :param files: dictionary of {filename: fileobject} files to multipart upload.
+    :param data: the body to attach the request. If a dictionary is provided, form-encoding will take place.
+    :param params: dictionary of URL parameters to append to the URL.
+    :param auth: Auth handler or (user, pass) tuple.
+    :param cookies: dictionary or CookieJar of cookies to attach to this request.
+    :param hooks: dictionary of callback hooks, for internal usage.
+
+    Usage::
+
+      >>> import requests
+      >>> req = requests.Request('GET', 'http://httpbin.org/get')
+      >>> req.prepare()
+      <PreparedRequest [GET]>
+
+    """
+    def __init__(self,
+        method=None,
+        url=None,
+        headers=None,
+        files=None,
+        data=dict(),
+        params=dict(),
+        auth=None,
+        cookies=None,
+        hooks=None):
+
+
+        # Default empty dicts for dict params.
+        data = [] if data is None else data
+        files = [] if files is None else files
+        headers = {} if headers is None else headers
+        params = {} if params is None else params
+        hooks = {} if hooks is None else hooks
+
+        self.hooks = default_hooks()
+        for (k, v) in list(hooks.items()):
+            self.register_hook(event=k, hook=v)
+
+        self.method = method
+        self.url = url
+        self.headers = headers
+        self.files = files
+        self.data = data
+        self.params = params
+        self.auth = auth
+        self.cookies = cookies
+        self.hooks = hooks
+
+    def __repr__(self):
+        return '<Request [%s]>' % (self.method)
+
+    def prepare(self):
+        """Constructs a :class:`PreparedRequest <PreparedRequest>` for transmission and returns it."""
+        p = PreparedRequest()
+
+        p.prepare_method(self.method)
+        p.prepare_url(self.url, self.params)
+        p.prepare_headers(self.headers)
+        p.prepare_cookies(self.cookies)
+        p.prepare_body(self.data, self.files)
+        # Note that prepare_auth must be last to enable authentication schemes
+        # such as OAuth to work on a fully prepared request.
+        p.prepare_auth(self.auth)
+        # This MUST go after prepare_auth. Authenticators could add a hook
+        p.prepare_hooks(self.hooks)
+
+        return p
+
+
+class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+    """The fully mutable :class:`PreparedRequest <PreparedRequest>` object,
+    containing the exact bytes that will be sent to the server.
+
+    Generated from either a :class:`Request <Request>` object or manually.
+
+    Usage::
+
+      >>> import requests
+      >>> req = requests.Request('GET', 'http://httpbin.org/get')
+      >>> r = req.prepare()
+      <PreparedRequest [GET]>
+
+      >>> s = requests.Session()
+      >>> s.send(r)
+      <Response [200]>
+
+    """
+
+    def __init__(self):
+        #: HTTP verb to send to the server.
+        self.method = None
+        #: HTTP URL to send the request to.
+        self.url = None
+        #: dictionary of HTTP headers.
+        self.headers = None
+        #: request body to send to the server.
+        self.body = 
+
+requests/cookies.py:
+# -*- coding: utf-8 -*-
+
+"""
+Compatibility code to be able to use `cookielib.CookieJar` with requests.
+
+requests.utils imports from here, so be careful with imports.
+"""
+
+import collections
+from .compat import cookielib, urlparse, Morsel
+
+try:
+    import threading
+    # grr, pyflakes: this fixes "redefinition of unused 'threading'"
+    threading
+except ImportError:
+    import dummy_threading as threading
+
+
+class MockRequest(object):
+    """Wraps a `requests.Request` to mimic a `urllib2.Request`.
+
+    The code in `cookielib.CookieJar` expects this interface in order to correctly
+    manage cookie policies, i.e., determine whether a cookie can be set, given the
+    domains of the request and the cookie.
+
+    The original request object is read-only. The client is responsible for collecting
+    the new headers via `get_new_headers()` and interpreting them appropriately. You
+    probably want `get_cookie_header`, defined below.
+    """
+
+    def __init__(self, request):
+        self._r = request
+        self._new_headers = {}
+        self.type = urlparse(self._r.url).scheme
+
+    def get_type(self):
+        return self.type
+
+    def get_host(self):
+        return urlparse(self._r.url).netloc
+
+    def get_origin_req_host(self):
+        return self.get_host()
+
+    def get_full_url(self):
+        return self._r.url
+
+    def is_unverifiable(self):
+        return True
+
+    def has_header(self, name):
+        return name in self._r.headers or name in self._new_headers
+
+    def get_header(self, name, default=None):
+        return self._r.headers.get(name, self._new_headers.get(name, default))
+
+    def add_header(self, key, val):
+        """cookielib has no legitimate use for this method; add it back if you find one."""
+        raise NotImplementedError("Cookie headers should be added with add_unredirected_header()")
+
+    def add_unredirected_header(self, name, value):
+        self._new_headers[name] = value
+
+    def get_new_headers(self):
+        return self._new_headers
+
+    @property
+    def unverifiable(self):
+        return self.is_unverifiable()
+
+
+class MockResponse(object):
+    """Wraps a `httplib.HTTPMessage` to mimic a `urllib.addinfourl`.
+
+    ...what? Basically, expose the parsed HTTP headers from the server response
+    the way `cookielib` expects to see them.
+    """
+
+    def __init__(self, headers):
+        """Make a MockResponse for `cookielib` to read.
+
+        :param headers: a httplib.HTTPMessage or analogous carrying the headers
+        """
+        self._headers = headers
+
+    def info(self):
+        return self._headers
+
+    def getheaders(self, name):
+        self._headers.getheaders(name)
+
+
+def extract_cookies_to_jar(jar, request, response):
+    """Extract the cookies from the response into a CookieJar.
+
+    :param jar: cookielib.CookieJar (not necessarily a RequestsCookieJar)
+    :param request: our own requests.Request object
+    :param response: urllib3.HTTPResponse object
+    """
+    # the _original_response field is the wrapped httplib.HTTPResponse object,
+    req = MockRequest(request)
+    # pull out the HTTPMessage with the headers and put it in the mock:
+    res = MockResponse(response._original_response.msg)
+    jar.extract_cookies(res, req)
+
+
+def get_cookie_header(jar, request):
+    """Produce an appropriate Cookie header string to be sent with `request`, or None."""
+    r = MockRequest(request)
+    jar.add_cookie_header(r)
+    return r.get_new_headers().get('Cookie')
+
+
+def remove_cookie_by_name(cookiejar, name, domain=None, path=None):
+    """Unsets a cookie by name, by default over all domains and paths.
+
+    Wraps CookieJar.clear(), is O(n).
+    """
+    clearables = []
+    for cookie in cookiejar:
+        if cookie.name == name:
+            if domain is None or domain == cookie.domain:
+                if path is None or path == cookie.path:
+                    clearables.append((cookie.domain, cookie.path, cookie.name))
+
+    for domain, path, name in clearables:
+ 
+
+ROUND: 1

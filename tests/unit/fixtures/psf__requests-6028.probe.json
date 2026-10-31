@@ -1,0 +1,18 @@
+{
+ "task": "psf__requests-6028",
+ "ts": "2026-10-30T22:20:41.843030+00:00",
+ "collect_exit": 0,
+ "collect_image": "python:3.11-slim",
+ "n_collected": 214,
+ "n_manifest": 187,
+ "n_resolved": 183,
+ "unresolved_ids": [
+  "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py]",
+  "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/__init__.py]",
+  "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/location]",
+  "tests/test_utils.py::test_get_auth_from_url[http://%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20:%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20@request.com/url.html#test-auth0]"
+ ],
+ "ids_file": "psf__requests-6028.probe.ids.txt",
+ "ids_sha256": "322b1d008cec9a2902d60720c35ba97b39e22bba2fce0a238300c071f3199233",
+ "ok": false
+}

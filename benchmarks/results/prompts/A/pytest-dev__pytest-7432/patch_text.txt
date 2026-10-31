@@ -1,0 +1,7 @@
+<<<<<<< SEARCH
+    if item.config.option.runxfail:
+        pass  # don't interfere
+    elif call.when == "call":
+=======
+    if call.when == "call" and not item.config.option.runxfail:
+>>>>>>> REPLACE

@@ -1,0 +1,9 @@
+import { compile } from '../src'
+
+describe('ssr: v-bind css vars + child dynamic style', () => {
+  test('child root with :style should merge fallthrough attrs', () => {
+    const { code } = compile(`<div :style="{ display }"><slot /></div>`)
+    expect(code).toMatch(`mergeProps`)
+    expect(code).toMatch(`_attrs`)
+  })
+})

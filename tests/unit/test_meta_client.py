@@ -47,18 +47,18 @@ def _client(transport, **kwargs) -> MetaClient:
 def test_default_caps_per_model() -> None:
     spark_t = _ScriptedTransport([(200, _ok_response())])
     _client(spark_t).generate_regression_test("i", "c")
-    assert spark_t.requests[0]["body"]["max_tokens"] == 600
+    assert spark_t.requests[0]["body"]["max_tokens"] == 12288
     assert spark_t.requests[0]["body"]["model"] == "muse-spark-1.3"
     wonder_t = _ScriptedTransport([(200, _ok_response())])
     _client(wonder_t, model="muse-wonder-1.0").synthesize_patch("c")
-    assert wonder_t.requests[0]["body"]["max_tokens"] == 1500
+    assert wonder_t.requests[0]["body"]["max_tokens"] == 32768
 
 
 def test_cap_overrides_rejected() -> None:
     with pytest.raises(ValueError, match="exceeds.*cap"):
-        MetaClient(api_key="k", model="muse-spark-1.3", max_tokens=601)
+        MetaClient(api_key="k", model="muse-spark-1.3", max_tokens=12289)
     with pytest.raises(ValueError, match="exceeds.*cap"):
-        MetaClient(api_key="k", model="muse-wonder-1.0", max_tokens=1501)
+        MetaClient(api_key="k", model="muse-wonder-1.0", max_tokens=32769)
     with pytest.raises(ValueError, match="unknown model"):
         MetaClient(api_key="k", model="gpt-x")
     ok = MetaClient(api_key="k", model="muse-spark-1.3", max_tokens=100)
@@ -153,6 +153,7 @@ def test_usage_recorded_per_call() -> None:
         "prompt_tokens": 10,
         "completion_tokens": 5,
         "total_tokens": 15,
+        "finish_reason": None,
     }
     assert transport.requests[1]["body"]["messages"][-2]["content"] == "t"
 
@@ -162,6 +163,50 @@ def test_malformed_200_payload_raises() -> None:
     with pytest.raises(MetaAPIError, match="malformed"):
         _client(transport).synthesize_patch("c")
     assert transport.requests[0]["url"].endswith("/chat/completions")
+
+
+def test_null_content_on_length_returns_empty_with_reason() -> None:
+    body = {
+        "choices": [{"message": {"content": None}, "finish_reason": "length"}],
+        "usage": {
+            "prompt_tokens": 13,
+            "completion_tokens": 10,
+            "total_tokens": 23,
+        },
+    }
+    transport = _ScriptedTransport([(200, body)])
+    client = _client(transport, model="muse-wonder-1.0")
+    out = client.synthesize_patch("c")
+    assert out == ""
+    assert transport.requests[0]["body"]["max_tokens"] == 32768
+    assert client.last_usage is not None
+    assert client.last_usage["finish_reason"] == "length"
+    assert client.last_usage["total_tokens"] == 23
+
+
+def test_stop_finish_reason_recorded() -> None:
+    body = dict(_ok_response("artifact"))
+    body["choices"] = [
+        {"message": {"content": "artifact"}, "finish_reason": "stop"}
+    ]
+    client = _client(_ScriptedTransport([(200, body)]))
+    assert client.synthesize_patch("c") == "artifact"
+    assert client.last_usage is not None
+    assert client.last_usage["finish_reason"] == "stop"
+
+
+def test_red_prompt_requires_failing_assert_and_bans_skip() -> None:
+    """Step 4.3b.6 (R10): vacuous reds are refused at the prompt."""
+    transport = _ScriptedTransport([(200, _ok_response())])
+    _client(transport).generate_regression_test("issue", "ctx")
+    user_text = transport.requests[0]["body"]["messages"][-1]["content"]
+    assert "MUST FAIL" in user_text
+    assert "assertion failure" in user_text
+    assert "FORBIDDEN" in user_text
+    assert "skip" in user_text
+    assert "ISSUE:\nissue" in user_text
+    system_text = transport.requests[0]["body"]["messages"][0]["content"]
+    assert system_text == SPARK_SYSTEM_PROMPT
 
 
 def test_live_smoke(pytestconfig: pytest.Config) -> None:

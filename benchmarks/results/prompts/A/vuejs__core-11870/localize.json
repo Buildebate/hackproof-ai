@@ -1,0 +1,12 @@
+{
+ "files": [
+  "packages/reactivity/src/arrayInstrumentations.ts",
+  "packages/reactivity/src/baseHandlers.ts",
+  "packages/reactivity/src/ref.ts",
+  "packages/reactivity/__tests__/computed.spec.ts",
+  "packages/compiler-dom/src/transforms/vOn.ts"
+ ],
+ "elapsed_ms": 189904,
+ "backend": "contriever-transformer-cpu",
+ "issue_sha256": "9009f1b34b5c1ffc878be15a3a60dac8bbd7f47a6902a6adfb04fa009fc539f6"
+}

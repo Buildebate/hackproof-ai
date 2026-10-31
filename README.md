@@ -142,7 +142,8 @@ truncated, modified, or had assertions removed.
 ## Asymmetric debate
 
 `hackproof.debate` runs the fixed 6-role loop between Muse Spark 1.3 and
-Muse Wonder 1.0 (at most 2 rounds, early stop at consensus ≥ 0.85):
+Muse Wonder 1.0 (at most 2 rounds, early stop on marker consensus:
+unanimous APPROVE, or 5/6 with an approving judge):
 
 ```python
 from hackproof.debate import DebateOrchestrator
@@ -162,8 +163,12 @@ Unit tests inject the offline `MockMetaClient` ($0 cost).
 ## Deterministic patching & provenance
 
 `hackproof.patcher` applies debate output inside an isolated git
-worktree — every `SEARCH` block must match exactly once, otherwise the
-whole patch is rejected and the file stays untouched:
+worktree — every `SEARCH` block is located through a conservative
+ladder (exact, then whitespace-insensitive, then unique fuzzy ≥0.90):
+a total miss or 2+ matches at any level reject the whole patch and
+the file stays untouched. Misses carry the closest real region, and
+unknown paths get a did-you-mean suggestion, fuelling exactly one
+grounded builder revision:
 
 ```python
 from hackproof.patcher import WorkspacePatcher

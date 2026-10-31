@@ -1,0 +1,14 @@
+{
+ "rounds_used": 2,
+ "converged": false,
+ "convergence_score": 0.6666666666666666,
+ "duration_ms": 526692,
+ "verdicts": {
+  "EdgeScout": "1. `@pytest.mark.skip` with no args (`reason=None` -> \"unconditional skip\") run with `-rs --runxfail`\n2. `@pytest.mark.skip(reason=\"\")` empty-string reason run with `-rs --runxfail`\n3. `@pytest.mark.skipif(False, reason=\"x\")` and `@pytest.mark.skipif()` empty-conditions run with `--runxfail`\n4. `@pytest.mark.skip(reason=123)` / `reason=b\"bytes\"` / `reason=None` type-mismatch run with `--runxfail`\n5. `@pytest.mark.skip(reason=\"caf\u00e9 \u2603 \\n\")` unicode/newline reason and `@pytest.mark.skipif(True, reason=\"caf\u00e9\")` run with `-rs --runxfail`\n6. Same test with both `@pytest.mark.skip` + `@pytest.mark.xfail(strict=True)` and bare `pytest.skip(\"imperative\")` in setup/call run with `--runxfail`\n",
+  "ArchitecturalBuilder": "<<<<<<< SEARCH\n    outcome = yield\n    rep = outcome.get_result()\n=======\n    outcome = yield\n    rep = outcome.get_result()\n    if (\n        item._store.get(skipped_by_mark_key, False)\n        and rep.skipped\n        and isinstance(rep.longrepr, tuple)\n        and item.location\n    ):\n        rep.longrepr = item.location[:2] + rep.longrepr[2:]\n>>>>>>> REPLACE",
+  "OccamsRazorCritic": "        and rep.skipped\n        and item.location\nREVISE",
+  "SignatureFactChecker": "APPROVE",
+  "FormalAdversaryCritic": "- Gated by `skipped_by_mark_key`: only mark-triggered skips are rewritten; imperative `pytest.skip` and xfail-only reports retain their original crash location.\n- `rep.skipped` and `isinstance(rep.longrepr, tuple)` guards: passed/failed/teardown reports and non-tuple longreprs such as XPASS(strict) strings or `None` are untouched.\n- `item.location` guard and `item.location[:2] + rep.longrepr[2:]`: no crash on missing location, and the reason element is preserved verbatim for empty, non-string, unicode, and newline reasons without reformatting.\n- No mutation of `outcome` or `wasxfail`: non-triggered `skipif` tests cannot become skipped, and skip-plus-strict-xfail handling remains controlled by the existing downstream `--runxfail` logic.\n- Location source matches the existing `_use_item_location` semantics, correcting the `src/_pytest/skipping.py` location to the test item location under `-rs --runxfail` with no other report fields changed.\n\nAPPROVE",
+  "ConsensusJudge": "CONVERGED APPROVE"
+ }
+}

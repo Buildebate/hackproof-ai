@@ -9,7 +9,8 @@ Security & FinOps rules (hard):
   (constructor args override for tests). The key is never logged, never
   stored in objects, never embedded in exceptions (Zero-Leak).
 * Per-model ``max_tokens`` caps are enforced at construction AND at request
-  build time: Spark 600 / Wonder 1500. Any attempt to exceed raises.
+  build time: Spark 12288 / Wonder 32768 (ADR-028). Any attempt to
+  exceed raises.
 * System prompts are byte-identical module constants (prompt caching).
   Debate roles (Step 2.2) may only substitute other module constants.
 """
@@ -23,12 +24,12 @@ import urllib.request
 from typing import Any, Callable
 
 DEFAULT_BASE_URL = "https://api.meta.ai/v1"
-DEFAULT_TIMEOUT_SEC = 60.0
+DEFAULT_TIMEOUT_SEC = 600.0
 DEFAULT_TEMPERATURE = 0.0
 
 MODEL_MAX_TOKENS = {
-    "muse-spark-1.3": 600,
-    "muse-wonder-1.0": 1500,
+    "muse-spark-1.3": 12288,
+    "muse-wonder-1.0": 32768,
 }
 
 SPARK_SYSTEM_PROMPT = (
@@ -251,7 +252,9 @@ class MetaClient:
         """Pull completion text + usage out of a 200 response."""
         try:
             choices = body["choices"]
-            content = choices[0]["message"]["content"]
+            message = choices[0]["message"]
+            content = message.get("content")
+            finish_reason = choices[0].get("finish_reason")
         except (KeyError, IndexError, TypeError) as exc:
             raise MetaAPIError(
                 f"Meta API returned malformed 200 payload: {sorted(body)}"
@@ -261,17 +264,34 @@ class MetaClient:
             "prompt_tokens": int(usage.get("prompt_tokens", 0)),
             "completion_tokens": int(usage.get("completion_tokens", 0)),
             "total_tokens": int(usage.get("total_tokens", 0)),
+            "finish_reason": finish_reason,
         }
         self._usage_log.append(record)
+        # dev.meta.ai returns content=null on finish_reason=length
+        # (reasoning cut off, no partial text). Never str(None).
+        if content is None:
+            return ""
         return str(content)
 
     def generate_regression_test(
         self, issue_description: str, code_context: str
     ) -> str:
-        """Synthesize an isolated reproduction test file via the API."""
+        """Synthesize an isolated reproduction test file via the API.
+
+        Step 4.3b.6 (R10): the prompt hard-requires a failing
+        assertion and bans vacuous skips — the 10081-B red was a
+        ``@unittest.skip`` stub (exit 0) that burned full debates
+        before its rejection.
+        """
         user_content = (
             "Write ONE minimal isolated regression test file that reproduces "
             "this issue. Output ONLY the file content.\n\n"
+            "HARD RULES (machine-judged, no exceptions):\n"
+            "- The test MUST FAIL on the current unpatched code with an "
+            "explicit assertion failure (assert / AssertionError / expect). "
+            "A passing test is REJECTED.\n"
+            "- FORBIDDEN: skip/skipif markers, empty test bodies, tests "
+            "without assertions, mocking the bug away.\n\n"
             f"ISSUE:\n{issue_description}\n\nCODE CONTEXT:\n{code_context}"
         )
         return self._post(self._messages(user_content))
@@ -287,6 +307,8 @@ class MetaClient:
         """Synthesize a SEARCH/REPLACE patch from debate consensus."""
         user_content = (
             "Convert this debate consensus into exact SEARCH/REPLACE blocks. "
-            "Output ONLY the blocks.\n\nCONSENSUS:\n" + debate_consensus
+            "Output ONLY the blocks. Prefix each block with its "
+            "repo-relative target file path on its own line.\n\nCONSENSUS:\n"
+            + debate_consensus
         )
         return self._post(self._messages(user_content))

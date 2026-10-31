@@ -1,0 +1,15 @@
+{
+ "task": "vuejs__core-11899",
+ "mode": "B",
+ "tier": "oci",
+ "ts": "2026-10-30T14:44:58.901658+00:00",
+ "status": "failed",
+ "done": true,
+ "reason": "unmeasurable: unresolved test IDs: packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)",
+ "usage": {
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "total_tokens": 0,
+  "per_call": []
+ }
+}

@@ -1,0 +1,8 @@
+{
+ "instance_id": "vuejs__core-11589",
+ "source": "SWE-bench/SWE-bench_Multilingual@test (datasets-server, harness-only)",
+ "test_patch": "diff --git a/packages/runtime-core/__tests__/apiWatch.spec.ts b/packages/runtime-core/__tests__/apiWatch.spec.ts\nindex 85afec24ceb..67f0bc160e3 100644\n--- a/packages/runtime-core/__tests__/apiWatch.spec.ts\n+++ b/packages/runtime-core/__tests__/apiWatch.spec.ts\n@@ -1856,4 +1856,32 @@ describe('api: watch', () => {\n \n     warn.mockRestore()\n   })\n+\n+  it('should be executed correctly', () => {\n+    const v = ref(1)\n+    let foo = ''\n+\n+    watch(\n+      v,\n+      () => {\n+        foo += '1'\n+      },\n+      {\n+        flush: 'sync',\n+      },\n+    )\n+    watch(\n+      v,\n+      () => {\n+        foo += '2'\n+      },\n+      {\n+        flush: 'sync',\n+      },\n+    )\n+\n+    expect(foo).toBe('')\n+    v.value++\n+    expect(foo).toBe('12')\n+  })\n })\n",
+ "environment_setup_commit": "",
+ "version": "11589",
+ "test_patch_sha256": "f9919ea790661d579fe600d5f47b99b00509371ea874d7c6960877d2b4025acb"
+}

@@ -1,0 +1,38 @@
+{
+ "task": "pytest-dev__pytest-8399",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T05:30:48.650218+00:00",
+ "base_ref": "6e7dc8bac831cd8cf7a53b08efa366bd84f0c0fe",
+ "agent": {
+  "ok": false,
+  "reason": "patch application failed: pytest-dev__pytest-8399: patch matches no localized file exactly once: src/_pytest/unittest.py: block 1: SEARCH not found (0 matches); testing/example_scripts/unittest/test_parametrized_fixture_error_message.py: block 0: SEARCH not found (0 matches); testing/python/show_fixtures_per_test.py: block 0: SEARCH not found (0 matches)",
+  "files": [
+   "src/_pytest/unittest.py",
+   "testing/example_scripts/unittest/test_parametrized_fixture_error_message.py",
+   "testing/python/show_fixtures_per_test.py",
+   "src/pytest/__init__.py",
+   "doc/en/example/fixtures/test_fixtures_order_scope.py"
+  ],
+  "localize_ms": 230459,
+  "backend": "contriever-transformer-cpu"
+ },
+ "usage": {
+  "prompt_tokens": 3481,
+  "completion_tokens": 3625,
+  "total_tokens": 7106,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3481,
+    "completion_tokens": 3625,
+    "total_tokens": 7106,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "status": "failed",
+ "reason": "patch application failed: pytest-dev__pytest-8399: patch matches no localized file exactly once: src/_pytest/unittest.py: block 1: SEARCH not found (0 matches); testing/example_scripts/unittest/test_parametrized_fixture_error_message.py: block 0: SEARCH not found (0 matches); testing/python/show_fixtures_per_test.py: block 0: SEARCH not found (0 matches)",
+ "done": true
+}

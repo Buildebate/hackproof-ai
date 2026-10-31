@@ -1,0 +1,15 @@
+{
+ "task": "psf__requests-2931",
+ "mode": "B",
+ "tier": "oci",
+ "ts": "2026-10-30T13:01:43.452473+00:00",
+ "status": "failed",
+ "done": true,
+ "reason": "unmeasurable: unresolved test IDs: test_requests.py::TestRequests::test_binary_put, test_requests.py::TestRequests::test_entry_points, test_requests.py::TestRequests::test_invalid_url, test_requests.py::TestRequests::test_basic_building, test_requests.py::TestRequests::test_path_is_not_double_encoded",
+ "usage": {
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "total_tokens": 0,
+  "per_call": []
+ }
+}

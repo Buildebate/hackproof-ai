@@ -1,0 +1,8 @@
+{
+ "task": "psf__requests-6028",
+ "mode": "B",
+ "binding": true,
+ "verdict": "not-applicable",
+ "violations": [],
+ "note": "no agent patch evaluated (failed: unmeasurable: unresolved test IDs: tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_util)"
+}

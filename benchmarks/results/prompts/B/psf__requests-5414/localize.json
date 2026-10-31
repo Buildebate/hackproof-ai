@@ -1,0 +1,12 @@
+{
+ "files": [
+  "requests/__init__.py",
+  "requests/compat.py",
+  "requests/help.py",
+  "requests/models.py",
+  "requests/_internal_utils.py"
+ ],
+ "elapsed_ms": 32837,
+ "backend": "contriever-transformer-cpu",
+ "issue_sha256": "680f398ad1f22354289f63887960eff1b324e471429b3978c2442785bd46e689"
+}

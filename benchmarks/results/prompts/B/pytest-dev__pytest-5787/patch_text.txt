@@ -1,0 +1,66 @@
+<<<<<<< SEARCH
+            if exc.__cause__ is not None:
+                chain_exc = exc.__cause__
+=======
+            if isinstance(getattr(exc, "__cause__", None), BaseException):
+                chain_exc = exc.__cause__
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+            elif exc.__context__ is not None and not exc.__suppress_context__:
+                chain_exc = exc.__context__
+=======
+            elif isinstance(
+                getattr(exc, "__context__", None), BaseException
+            ) and not getattr(exc, "__suppress_context__", False):
+                chain_exc = exc.__context__
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+    return {
+        "reprcrash": serialize_repr_crash(repr_exception.reprcrash),
+        "reprtraceback": serialize_repr_traceback(repr_exception.reprtraceback),
+        "sections": repr_exception.sections,
+    }
+=======
+    return {
+        "reprcrash": serialize_repr_crash(repr_exception.reprcrash),
+        "reprtraceback": serialize_repr_traceback(repr_exception.reprtraceback),
+        "sections": repr_exception.sections,
+        "chain": [
+            [
+                serialize_repr_traceback(repr_traceback)
+                if repr_traceback is not None
+                else None,
+                serialize_repr_crash(repr_crash),
+                description,
+            ]
+            for repr_traceback, repr_crash, description in repr_exception.chain
+        ]
+        if getattr(repr_exception, "chain", None) is not None
+        else None,
+    }
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+    return ReprExceptionInfo(
+        reprtraceback=deserialize_repr_traceback(data["reprtraceback"]),
+        reprcrash=deserialize_repr_crash(data["reprcrash"]),
+        sections=data["sections"],
+    )
+=======
+    return ReprExceptionInfo(
+        reprtraceback=deserialize_repr_traceback(data["reprtraceback"]),
+        reprcrash=deserialize_repr_crash(data["reprcrash"]),
+        sections=data["sections"],
+        chain=[
+            (
+                deserialize_repr_traceback(item[0])
+                if item[0] is not None
+                else ReprTraceback([], None, "long"),
+                deserialize_repr_crash(item[1]),
+                item[2],
+            )
+            for item in data["chain"]
+        ]
+        if data.get("chain") is not None
+        else None,
+    )
+>>>>>>> REPLACE

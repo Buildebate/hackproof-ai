@@ -1,0 +1,264 @@
+packages/shared/src/normalizeProp.ts
+<<<<<<< SEARCH
+export function stringifyStyle(
+  styles: NormalizedStyle | string | undefined,
+): string {
+  let ret = ''
+  if (!styles || isString(styles)) {
+    return ret
+  }
+  for (const key in styles) {
+    const value = styles[key]
+    const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
+    if (
+      isString(value) ||
+      (typeof value === 'number' && isNoUnitNumericStyleProp(normalizedKey))
+    ) {
+      // only render valid values
+      ret += `${normalizedKey}:${value};`
+    }
+  }
+  return ret
+}
+=======
+export function stringifyStyle(
+  styles: NormalizedStyle | string | undefined,
+): string {
+  let ret = ''
+  if (!styles || isString(styles)) {
+    return ret
+  }
+  for (const key in styles) {
+    const value = styles[key]
+    const normalizedKey = key.startsWith(`--`) ? key : hyphenate(key)
+    // Match client CSSOM removal for unset values: null/undefined/'' and
+    // whitespace-only custom props are omitted, never `--x:;`/`display:;`.
+    // Non-empty values, including unicode, are emitted untrimmed.
+    if (
+      value == null ||
+      value === '' ||
+      (normalizedKey.startsWith('--') && isString(value) && !value.trim())
+    ) {
+      continue
+    }
+    if (
+      isString(value) ||
+      (typeof value === 'number' && isNoUnitNumericStyleProp(normalizedKey))
+    ) {
+      // only render valid values
+      ret += `${normalizedKey}:${value};`
+    }
+  }
+  return ret
+}
+>>>>>>> REPLACE
+
+packages/runtime-core/src/helpers/useCssVars.ts
+<<<<<<< SEARCH
+  if (__SSR__) {
+    onServerPrefetch(() => {
+      instance.ssrContext!._cssVars = Object.assign(
+        instance.ssrContext!._cssVars || {},
+        getter(instance.proxy!, instance.proxy!),
+      )
+    })
+=======
+  if (__SSR__) {
+    onServerPrefetch(() => {
+      instance.ssrContext!._cssVars = Object.assign(
+        instance.ssrContext!._cssVars || {},
+        normalizeCssVars(getter(instance.proxy!, instance.proxy!)),
+      )
+    })
+>>>>>>> REPLACE
+
+packages/runtime-core/src/helpers/useCssVars.ts
+<<<<<<< SEARCH
+    const setVars = () => {
+      const vars = getter(instance.proxy!, instance.proxy!)
+=======
+    const setVars = () => {
+      const vars = normalizeCssVars(getter(instance.proxy!, instance.proxy!))
+>>>>>>> REPLACE
+
+packages/runtime-core/src/helpers/useCssVars.ts
+<<<<<<< SEARCH
+function varsToString(vars: Record<string, string>): string {
+  let ret = ''
+  for (const key in vars) {
+    ret += `--${key}:${vars[key]};`
+  }
+  return ret
+}
+=======
+function normalizeCssVars(
+  vars: Record<string, string | number | null | undefined>,
+): Record<string, string | number> {
+  const ret: Record<string, string | number> = {}
+  for (const key in vars) {
+    const value = vars[key]
+    if (
+      value == null ||
+      value === '' ||
+      (typeof value === 'string' && !value.trim())
+    ) {
+      continue
+    }
+    ret[key] = value
+  }
+  return ret
+}
+
+function varsToString(vars: Record<string, string>): string {
+  let ret = ''
+  for (const key in vars) {
+    const value = (vars as Record<string, unknown>)[key]
+    if (
+      value == null ||
+      value === '' ||
+      (typeof value === 'string' && !value.trim())
+    ) {
+      continue
+    }
+    ret += `--${key}:${value};`
+  }
+  return ret
+}
+>>>>>>> REPLACE
+
+packages/server-renderer/src/render.ts
+<<<<<<< SEARCH
+function renderComponentSubTree(
+=======
+function applySsrCssVars(
+  vnode: VNode,
+  vars: Record<string, string | number | null | undefined>,
+): void {
+  const filteredVars: Record<string, string | number> = {}
+  for (const key in vars) {
+    const value = vars[key]
+    if (
+      value == null ||
+      value === '' ||
+      (typeof value === 'string' && !value.trim())
+    ) {
+      continue
+    }
+    filteredVars[key.startsWith('--') ? key : `--${key}`] = value
+  }
+  if (!Object.keys(filteredVars).length) {
+    return
+  }
+  if (vnode.shapeFlag & (ShapeFlags.ELEMENT | ShapeFlags.COMPONENT)) {
+    vnode.props = {
+      ...vnode.props,
+      style: {
+        // normalizeStyle([x]) parses string, merges array and object forms
+        ...normalizeStyle([vnode.props?.style]),
+        ...filteredVars,
+      },
+    }
+  } else if (
+    vnode.shapeFlag & ShapeFlags.SUSPENSE &&
+    vnode.suspense?.activeBranch
+  ) {
+    applySsrCssVars(vnode.suspense.activeBranch!, vars)
+  } else if (vnode.shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+    // Fragment/multiple roots/slot outlets have no own style: fall through
+    // to element/component children instead of dropping vars or creating
+    // props (and overwriting fallthrough `class`) on the fragment.
+    for (const child of vnode.children as VNode[]) {
+      if (child && typeof child === 'object') {
+        applySsrCssVars(child, vars)
+      }
+    }
+  }
+}
+
+function renderComponentSubTree(
+>>>>>>> REPLACE
+
+packages/server-renderer/src/render.ts
+<<<<<<< SEARCH
+    if (instance.ssrContext!._cssVars) {
+      tree.props = {
+        ...tree.props,
+        style: {
+          ...normalizeStyle(tree.props?.style),
+          ...instance.ssrContext!._cssVars,
+        },
+      }
+    }
+=======
+    if (instance.ssrContext!._cssVars) {
+      applySsrCssVars(tree, instance.ssrContext!._cssVars)
+    }
+>>>>>>> REPLACE
+
+packages/server-renderer/src/helpers/ssrRenderAttrs.ts
+<<<<<<< SEARCH
+  if (isString(raw)) {
+    return escapeHtml(raw)
+  }
+=======
+  if (isString(raw)) {
+    // Drop unset custom props (`--x:;`, whitespace-only) to match CSSOM;
+    // leave all other declarations, including unicode values, untouched.
+    return escapeHtml(
+      raw.replace(/--[^:;]+:\s*(?=;|$)/g, '').replace(/\s*;\s*;/g, ';'),
+    )
+  }
+>>>>>>> REPLACE
+
+packages/runtime-dom/src/modules/style.ts
+<<<<<<< SEARCH
+  let hasControlledDisplay = false
+=======
+  let hasControlledDisplay = false
+  let hasCssVar = false
+>>>>>>> REPLACE
+
+packages/runtime-dom/src/modules/style.ts
+<<<<<<< SEARCH
+    for (const key in next) {
+      if (key === 'display') {
+        hasControlledDisplay = true
+      }
+      setStyle(style, key, next[key])
+    }
+=======
+    for (const key in next) {
+      if (key === 'display') {
+        hasControlledDisplay = true
+      }
+      if (key.startsWith('--')) {
+        hasCssVar = true
+      }
+      setStyle(style, key, next[key])
+    }
+>>>>>>> REPLACE
+
+packages/runtime-dom/src/modules/style.ts
+<<<<<<< SEARCH
+  if (hasControlledDisplay) {
+    ;(style as any)[CSS_VAR_TEXT] = style.cssText
+  }
+=======
+  if (hasControlledDisplay || hasCssVar) {
+    ;(style as any)[CSS_VAR_TEXT] = style.cssText
+  }
+>>>>>>> REPLACE
+
+packages/runtime-dom/src/modules/style.ts
+<<<<<<< SEARCH
+    if (name.startsWith('--')) {
+      style.setProperty(name, val)
+    } else {
+=======
+    if (name.startsWith('--')) {
+      style.setProperty(
+        name,
+        typeof val === 'string' && !val.trim() ? '' : val,
+      )
+    } else {
+>>>>>>> REPLACE

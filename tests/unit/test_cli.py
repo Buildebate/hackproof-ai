@@ -727,6 +727,32 @@ def test_append_finops_entry_preserves_budget_and_appends(
     assert len(payload["entries"]) == 2
 
 
+def test_append_finops_entry_preserves_metadata_keys(
+    tmp_path: Path,
+) -> None:
+    # Step 4.3a.3: Wave-1 appends must not drop the rate card or basis.
+    ledger = tmp_path / "finops.json"
+    ledger.write_text(
+        json.dumps(
+            {
+                "budget_usd": 150.0,
+                "total_spent_usd": 20.84,
+                "entries": [{"issue": "old", "est_cost_usd": 20.84, "priced": True}],
+                "pricing": {"unit": "USD per 1M tokens"},
+                "cost_basis": "upper-bound",
+            }
+        ),
+        encoding="utf-8",
+    )
+    cli.append_finops_entry(
+        ledger, ISSUE_URL, 2, True, 10, 5, 15, per_call=[]
+    )
+    payload = json.loads(ledger.read_text(encoding="utf-8"))
+    assert payload["pricing"] == {"unit": "USD per 1M tokens"}
+    assert payload["cost_basis"] == "upper-bound"
+    assert payload["total_spent_usd"] == 20.84
+
+
 def test_append_finops_entry_recovers_from_corrupt_file(
     tmp_path: Path,
 ) -> None:
@@ -883,3 +909,111 @@ def test_typer_verify_usage_error() -> None:
     assert cli.app is not None
     result = runner.invoke(cli.app, ["verify", "--issue", "not-a-url"])
     assert result.exit_code == 2
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3b.3 (R6): builder-only full top-1 file + single grounded retry
+# ---------------------------------------------------------------------------
+
+
+def test_build_code_context_top1_full(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("line1\nline2\n", encoding="utf-8")
+    short, builder = cli.build_code_context(
+        tmp_path, ["a.py:\nline1", "b.py:\nzzz"], ["a.py", "b.py"]
+    )
+    assert short == "a.py:\nline1\n\nb.py:\nzzz"
+    assert builder.startswith("TOP-1 FULL FILE a.py:\nline1\nline2\n\n")
+    assert "b.py:\nzzz" in builder
+    # Budgets hold on huge files; fallbacks collapse to the short head.
+    (tmp_path / "big.py").write_text("x\n" * 50000, encoding="utf-8")
+    short_big, builder_big = cli.build_code_context(
+        tmp_path, ["snippet"], ["big.py"]
+    )
+    assert short_big == "snippet"
+    assert len(builder_big) <= 60000
+    assert builder_big.startswith("TOP-1 FULL FILE big.py:\n")
+    long_snippet = "y" * 20000
+    short_long, _builder_long = cli.build_code_context(
+        tmp_path, [long_snippet], ["big.py"]
+    )
+    assert len(short_long) == 12000
+    assert cli.build_code_context(tmp_path, ["s"], ["missing.py"]) == ("s", "s")
+    assert cli.build_code_context(tmp_path, ["s"], []) == ("s", "s")
+
+
+_MISS_PATCH_TEXT = (
+    "<<<<<<< SEARCH\n"
+    "    return total + surcharge\n"
+    "=======\n"
+    "    return total\n"
+    ">>>>>>> REPLACE\n"
+)
+
+
+class _MissThenFixClient(_StubClient):
+    """Debate output misses everywhere; the single revision fixes it."""
+
+    def __init__(self) -> None:
+        super().__init__(patch_text=PATCH_TEXT)
+        self.synth_calls = 0
+        self._revised = False
+
+    def synthesize_patch(self, debate_consensus: str) -> str:
+        self.synth_calls += 1
+        return _MISS_PATCH_TEXT
+
+    def debate_round(self, role: str, prompt: str, history: list) -> str:
+        if "FAILED TO APPLY" in prompt:
+            self._revised = True
+        return super().debate_round(role, prompt, history)
+
+    @property
+    def last_usage(self):  # type: ignore[no-redef]
+        if not self._revised:
+            return {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+            }
+        return {
+            "prompt_tokens": 11,
+            "completion_tokens": 7,
+            "total_tokens": 18,
+            "finish_reason": "stop",
+        }
+
+
+def test_verify_single_retry_applies_after_miss(
+    fixture_repo: Path, tmp_path: Path, capsys
+) -> None:
+    pytest.importorskip("numpy")
+    ledger = tmp_path / "finops.json"
+    stub = _MissThenFixClient()
+    runner = _StubRunner([(1, RED_XML), (0, GREEN_XML)])
+    code = cli.cmd_verify(
+        issue=ISSUE_URL,
+        repo=str(fixture_repo),
+        ledger=str(ledger),
+        issue_fetcher=_issue_fetcher(),
+        client_factory=_factory_for(stub),
+        runner_override=runner,
+    )
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "single builder revision" in out
+    assert "patch applied" in out
+    assert stub.synth_calls == 1
+    payload = json.loads(ledger.read_text(encoding="utf-8"))
+    entry = payload["entries"][0]
+    retries = [
+        call
+        for call in entry["per_call"]
+        if call["role"] == "ArchitecturalBuilder-retry"
+    ]
+    assert len(retries) == 1
+    assert retries[0]["model"] == "muse-wonder-1.0"
+    assert retries[0]["prompt_tokens"] == 11
+    assert retries[0]["completion_tokens"] == 7
+    assert retries[0]["total_tokens"] == 18
+    assert entry["prompt_tokens"] == 11
+    assert entry["total_tokens"] == 18

@@ -1,0 +1,1026 @@
+{
+ "task": "pytest-dev__pytest-5787",
+ "mode": "base",
+ "done": true,
+ "ts": "2026-10-30T05:40:41.080896+00:00",
+ "base_ref": "955e54221008aba577ecbaefa15679f6777d3bf8",
+ "tier": "oci",
+ "base_index": {
+  "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]": "failed",
+  "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]": "failed",
+  "testing/code/test_code.py::test_ne": "passed",
+  "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file": "passed",
+  "testing/code/test_code.py::test_code_with_class": "passed",
+  "testing/code/test_code.py::test_code_fullsource": "passed",
+  "testing/code/test_code.py::test_code_source": "passed",
+  "testing/code/test_code.py::test_frame_getsourcelineno_myself": "passed",
+  "testing/code/test_code.py::test_getstatement_empty_fullsource": "passed",
+  "testing/code/test_code.py::test_code_from_func": "passed",
+  "testing/code/test_code.py::test_unicode_handling": "passed",
+  "testing/code/test_code.py::test_code_getargs": "passed",
+  "testing/code/test_code.py::test_frame_getargs": "passed",
+  "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource": "passed",
+  "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing": "passed",
+  "testing/code/test_code.py::TestTracebackEntry::test_getsource": "passed",
+  "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_simple": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_getstatement": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_exconly": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_repr_str": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_for_later": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_errisinstance": "passed",
+  "testing/code/test_excinfo.py::test_excinfo_no_sourcecode": "passed",
+  "testing/code/test_excinfo.py::test_entrysource_Queue_example": "passed",
+  "testing/code/test_excinfo.py::test_codepath_Queue_example": "passed",
+  "testing/code/test_excinfo.py::test_match_succeeds": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During": "passed",
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle": "passed",
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]": "passed",
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]": "passed",
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]": "passed",
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]": "passed",
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]": "passed",
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]": "passed",
+  "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion": "passed",
+  "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error": "passed",
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath": "passed",
+  "testing/code/test_excinfo.py::test_match_raises_error": "passed",
+  "testing/code/test_excinfo.py::test_cwd_deleted": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_collectreport_passed": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_collectreport_fail": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_paths_support": "passed",
+  "testing/test_reports.py::TestReportSerialization::test_deserialization_failure": "passed",
+  "testing/test_reports.py::TestHooks::test_test_report": "passed",
+  "testing/test_reports.py::TestHooks::test_collect_report": "passed",
+  "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]": "passed",
+  "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]": "passed"
+ },
+ "id_resolution": {
+  "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]": [
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]": [
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]"
+  ],
+  "testing/code/test_code.py::test_ne": [
+   "testing/code/test_code.py::test_ne"
+  ],
+  "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file": [
+   "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file"
+  ],
+  "testing/code/test_code.py::test_code_with_class": [
+   "testing/code/test_code.py::test_code_with_class"
+  ],
+  "testing/code/test_code.py::test_code_fullsource": [
+   "testing/code/test_code.py::test_code_fullsource"
+  ],
+  "testing/code/test_code.py::test_code_source": [
+   "testing/code/test_code.py::test_code_source"
+  ],
+  "testing/code/test_code.py::test_frame_getsourcelineno_myself": [
+   "testing/code/test_code.py::test_frame_getsourcelineno_myself"
+  ],
+  "testing/code/test_code.py::test_getstatement_empty_fullsource": [
+   "testing/code/test_code.py::test_getstatement_empty_fullsource"
+  ],
+  "testing/code/test_code.py::test_code_from_func": [
+   "testing/code/test_code.py::test_code_from_func"
+  ],
+  "testing/code/test_code.py::test_unicode_handling": [
+   "testing/code/test_code.py::test_unicode_handling"
+  ],
+  "testing/code/test_code.py::test_code_getargs": [
+   "testing/code/test_code.py::test_code_getargs"
+  ],
+  "testing/code/test_code.py::test_frame_getargs": [
+   "testing/code/test_code.py::test_frame_getargs"
+  ],
+  "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource": [
+   "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource"
+  ],
+  "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing": [
+   "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing"
+  ],
+  "testing/code/test_code.py::TestTracebackEntry::test_getsource": [
+   "testing/code/test_code.py::TestTracebackEntry::test_getsource"
+  ],
+  "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding": [
+   "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_simple": [
+   "testing/code/test_excinfo.py::test_excinfo_simple"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple": [
+   "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_getstatement": [
+   "testing/code/test_excinfo.py::test_excinfo_getstatement"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_exconly": [
+   "testing/code/test_excinfo.py::test_excinfo_exconly"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_repr_str": [
+   "testing/code/test_excinfo.py::test_excinfo_repr_str"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_for_later": [
+   "testing/code/test_excinfo.py::test_excinfo_for_later"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_errisinstance": [
+   "testing/code/test_excinfo.py::test_excinfo_errisinstance"
+  ],
+  "testing/code/test_excinfo.py::test_excinfo_no_sourcecode": [
+   "testing/code/test_excinfo.py::test_excinfo_no_sourcecode"
+  ],
+  "testing/code/test_excinfo.py::test_entrysource_Queue_example": [
+   "testing/code/test_excinfo.py::test_entrysource_Queue_example"
+  ],
+  "testing/code/test_excinfo.py::test_codepath_Queue_example": [
+   "testing/code/test_excinfo.py::test_codepath_Queue_example"
+  ],
+  "testing/code/test_excinfo.py::test_match_succeeds": [
+   "testing/code/test_excinfo.py::test_match_succeeds"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The above exception was the direct cause of the following exception:]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During handling of the above exception, another exception occurred:]"
+  ],
+  "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle": [
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle"
+  ],
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]": [
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]"
+  ],
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]": [
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]"
+  ],
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]": [
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]"
+  ],
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]": [
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]"
+  ],
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]": [
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]"
+  ],
+  "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]": [
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]"
+  ],
+  "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion": [
+   "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion"
+  ],
+  "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error": [
+   "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error"
+  ],
+  "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath": [
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath"
+  ],
+  "testing/code/test_excinfo.py::test_match_raises_error": [
+   "testing/code/test_excinfo.py::test_match_raises_error"
+  ],
+  "testing/code/test_excinfo.py::test_cwd_deleted": [
+   "testing/code/test_excinfo.py::test_cwd_deleted"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241": [
+   "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130": [
+   "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170": [
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196": [
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes": [
+   "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_collectreport_passed": [
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_passed"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_collectreport_fail": [
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_fail"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization": [
+   "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_paths_support": [
+   "testing/test_reports.py::TestReportSerialization::test_paths_support"
+  ],
+  "testing/test_reports.py::TestReportSerialization::test_deserialization_failure": [
+   "testing/test_reports.py::TestReportSerialization::test_deserialization_failure"
+  ],
+  "testing/test_reports.py::TestHooks::test_test_report": [
+   "testing/test_reports.py::TestHooks::test_test_report"
+  ],
+  "testing/test_reports.py::TestHooks::test_collect_report": [
+   "testing/test_reports.py::TestHooks::test_collect_report"
+  ],
+  "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]": [
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]"
+  ],
+  "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]": [
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]"
+  ]
+ },
+ "unresolved_ids": [],
+ "junit_sha256": "bfb3dcb6abbe4cceea6384af33d2a4778ae4ab50d1a63e28326f9983b37143b4",
+ "superseded_4_2": {
+  "base_index": {
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]": "failed",
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]": "failed",
+   "testing/code/test_code.py::test_ne": "missing",
+   "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file": "missing",
+   "testing/code/test_code.py::test_code_with_class": "missing",
+   "testing/code/test_code.py::test_code_fullsource": "missing",
+   "testing/code/test_code.py::test_code_source": "missing",
+   "testing/code/test_code.py::test_frame_getsourcelineno_myself": "missing",
+   "testing/code/test_code.py::test_getstatement_empty_fullsource": "missing",
+   "testing/code/test_code.py::test_code_from_func": "missing",
+   "testing/code/test_code.py::test_unicode_handling": "missing",
+   "testing/code/test_code.py::test_code_getargs": "missing",
+   "testing/code/test_code.py::test_frame_getargs": "missing",
+   "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource": "passed",
+   "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing": "passed",
+   "testing/code/test_code.py::TestTracebackEntry::test_getsource": "passed",
+   "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding": "passed",
+   "testing/code/test_excinfo.py::test_excinfo_simple": "missing",
+   "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple": "missing",
+   "testing/code/test_excinfo.py::test_excinfo_getstatement": "missing",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry": "passed",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty": "passed",
+   "testing/code/test_excinfo.py::test_excinfo_exconly": "missing",
+   "testing/code/test_excinfo.py::test_excinfo_repr_str": "missing",
+   "testing/code/test_excinfo.py::test_excinfo_for_later": "missing",
+   "testing/code/test_excinfo.py::test_excinfo_errisinstance": "missing",
+   "testing/code/test_excinfo.py::test_excinfo_no_sourcecode": "missing",
+   "testing/code/test_excinfo.py::test_entrysource_Queue_example": "missing",
+   "testing/code/test_excinfo.py::test_codepath_Queue_example": "missing",
+   "testing/code/test_excinfo.py::test_match_succeeds": "missing",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During": "passed",
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle": "passed",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]": "missing",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]": "missing",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]": "missing",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]": "missing",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]": "missing",
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]": "missing",
+   "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion": "missing",
+   "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error": "missing",
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath": "passed",
+   "testing/code/test_excinfo.py::test_match_raises_error": "missing",
+   "testing/code/test_excinfo.py::test_cwd_deleted": "missing",
+   "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_passed": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_fail": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_paths_support": "passed",
+   "testing/test_reports.py::TestReportSerialization::test_deserialization_failure": "passed",
+   "testing/test_reports.py::TestHooks::test_test_report": "passed",
+   "testing/test_reports.py::TestHooks::test_collect_report": "passed",
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]": "passed",
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]": "passed"
+  },
+  "id_resolution": {
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]": [
+    "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport]"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]": [
+    "testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport]"
+   ],
+   "testing/code/test_code.py::test_ne": [
+    "testing/code/test_code.py::test_ne"
+   ],
+   "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file": [
+    "testing/code/test_code.py::test_code_gives_back_name_for_not_existing_file"
+   ],
+   "testing/code/test_code.py::test_code_with_class": [
+    "testing/code/test_code.py::test_code_with_class"
+   ],
+   "testing/code/test_code.py::test_code_fullsource": [
+    "testing/code/test_code.py::test_code_fullsource"
+   ],
+   "testing/code/test_code.py::test_code_source": [
+    "testing/code/test_code.py::test_code_source"
+   ],
+   "testing/code/test_code.py::test_frame_getsourcelineno_myself": [
+    "testing/code/test_code.py::test_frame_getsourcelineno_myself"
+   ],
+   "testing/code/test_code.py::test_getstatement_empty_fullsource": [
+    "testing/code/test_code.py::test_getstatement_empty_fullsource"
+   ],
+   "testing/code/test_code.py::test_code_from_func": [
+    "testing/code/test_code.py::test_code_from_func"
+   ],
+   "testing/code/test_code.py::test_unicode_handling": [
+    "testing/code/test_code.py::test_unicode_handling"
+   ],
+   "testing/code/test_code.py::test_code_getargs": [
+    "testing/code/test_code.py::test_code_getargs"
+   ],
+   "testing/code/test_code.py::test_frame_getargs": [
+    "testing/code/test_code.py::test_frame_getargs"
+   ],
+   "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource": [
+    "testing/code/test_code.py::TestExceptionInfo::test_bad_getsource"
+   ],
+   "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing": [
+    "testing/code/test_code.py::TestExceptionInfo::test_from_current_with_missing"
+   ],
+   "testing/code/test_code.py::TestTracebackEntry::test_getsource": [
+    "testing/code/test_code.py::TestTracebackEntry::test_getsource"
+   ],
+   "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding": [
+    "testing/code/test_code.py::TestReprFuncArgs::test_not_raise_exception_with_mixed_encoding"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_simple": [
+    "testing/code/test_excinfo.py::test_excinfo_simple"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple": [
+    "testing/code/test_excinfo.py::test_excinfo_from_exc_info_simple"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_getstatement": [
+    "testing/code/test_excinfo.py::test_excinfo_getstatement"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entries"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_entry_getsource_in_construct"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-True]"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[<lambda>-False]"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide2-True]"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_filter_selective[tracebackhide3-False]"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_recursion_index"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_only_specific_recursion_errors"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_no_recursion_index"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_getcrashentry_empty"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_exconly": [
+    "testing/code/test_excinfo.py::test_excinfo_exconly"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_repr_str": [
+    "testing/code/test_excinfo.py::test_excinfo_repr_str"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_for_later": [
+    "testing/code/test_excinfo.py::test_excinfo_for_later"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_errisinstance": [
+    "testing/code/test_excinfo.py::test_excinfo_errisinstance"
+   ],
+   "testing/code/test_excinfo.py::test_excinfo_no_sourcecode": [
+    "testing/code/test_excinfo.py::test_excinfo_no_sourcecode"
+   ],
+   "testing/code/test_excinfo.py::test_entrysource_Queue_example": [
+    "testing/code/test_excinfo.py::test_entrysource_Queue_example"
+   ],
+   "testing/code/test_excinfo.py::test_codepath_Queue_example": [
+    "testing/code/test_excinfo.py::test_codepath_Queue_example"
+   ],
+   "testing/code/test_excinfo.py::test_match_succeeds": [
+    "testing/code/test_excinfo.py::test_match_succeeds"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_excinfo"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_not_existing"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_many_line_source_not_existing"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_source_failing_fullsource"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_error"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_with_exception_in_class_property"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_local_truncated"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines2"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_lines_var_kw_args"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_short"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_tracebackentry_no"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_tbfilter"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_short_no_source"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_and_excinfo"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_with_invalid_cwd"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_addouterr"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_excinfo_reprcrash"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_repr_traceback_recursion"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_getrepr"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_reprexcinfo_unicode"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_missing_source"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_incomplete_source"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_toterminal_long_filenames"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions0]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions1]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions2]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions3]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions4]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions5]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions6]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions7]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions8]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions9]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions10]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions11]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions12]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions13]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions14]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions15]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions16]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions17]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions18]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions19]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions20]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions21]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions22]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_format_excinfo[reproptions23]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_traceback_repr_style"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[from_none]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_repr_chain_suppression[explicit_suppress]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The above exception was the direct cause of the following exception:]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During handling of the above exception, another exception occurred:]"
+   ],
+   "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle": [
+    "testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle"
+   ],
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]": [
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-short]"
+   ],
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]": [
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[None-long]"
+   ],
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]": [
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-short]"
+   ],
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]": [
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf8-long]"
+   ],
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]": [
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-short]"
+   ],
+   "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]": [
+    "testing/code/test_excinfo.py::test_repr_traceback_with_unicode[utf16-long]"
+   ],
+   "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion": [
+    "testing/code/test_excinfo.py::test_exception_repr_extraction_error_on_recursion"
+   ],
+   "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error": [
+    "testing/code/test_excinfo.py::test_no_recursion_index_on_recursion_error"
+   ],
+   "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath": [
+    "testing/code/test_excinfo.py::TestTraceback_f_g_h::test_traceback_cut_excludepath"
+   ],
+   "testing/code/test_excinfo.py::test_match_raises_error": [
+    "testing/code/test_excinfo.py::test_match_raises_error"
+   ],
+   "testing/code/test_excinfo.py::test_cwd_deleted": [
+    "testing/code/test_excinfo.py::test_cwd_deleted"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241": [
+    "testing/test_reports.py::TestReportSerialization::test_xdist_longrepr_to_str_issue_241"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130": [
+    "testing/test_reports.py::TestReportSerialization::test_xdist_report_longrepr_reprcrash_130"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170": [
+    "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_170"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196": [
+    "testing/test_reports.py::TestReportSerialization::test_reprentries_serialization_196"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes": [
+    "testing/test_reports.py::TestReportSerialization::test_itemreport_outcomes"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_passed": [
+    "testing/test_reports.py::TestReportSerialization::test_collectreport_passed"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_collectreport_fail": [
+    "testing/test_reports.py::TestReportSerialization::test_collectreport_fail"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization": [
+    "testing/test_reports.py::TestReportSerialization::test_extended_report_deserialization"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_paths_support": [
+    "testing/test_reports.py::TestReportSerialization::test_paths_support"
+   ],
+   "testing/test_reports.py::TestReportSerialization::test_deserialization_failure": [
+    "testing/test_reports.py::TestReportSerialization::test_deserialization_failure"
+   ],
+   "testing/test_reports.py::TestHooks::test_test_report": [
+    "testing/test_reports.py::TestHooks::test_test_report"
+   ],
+   "testing/test_reports.py::TestHooks::test_collect_report": [
+    "testing/test_reports.py::TestHooks::test_collect_report"
+   ],
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]": [
+    "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_runtest_logreport]"
+   ],
+   "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]": [
+    "testing/test_reports.py::TestHooks::test_invalid_report_types[pytest_collectreport]"
+   ]
+  },
+  "unresolved_ids": [],
+  "ts": "2026-10-30T05:40:41.080896+00:00"
+ },
+ "rescore": {
+  "tool": "benchmarks/rescore_4_2.py",
+  "ts": "2026-10-30T16:30:15.476771+00:00"
+ }
+}

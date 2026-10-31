@@ -1,0 +1,16 @@
+<<<<<<< SEARCH
+    def teardown(self) -> None:
+        if self._explicit_tearDown is not None:
+            self._explicit_tearDown()
+            self._explicit_tearDown = None
+        self._testcase = None
+        self._obj = None
+=======
+    def teardown(self) -> None:
+        if self._explicit_tearDown is not None:
+            if not _is_skipped(getattr(self.parent, "obj", None)):
+                self._explicit_tearDown()
+            self._explicit_tearDown = None
+        self._testcase = None
+        self._obj = None
+>>>>>>> REPLACE

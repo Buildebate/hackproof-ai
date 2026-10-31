@@ -1,0 +1,496 @@
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
+
+ISSUE:
+Starting v6.2.0, unittest setUpClass fixtures are no longer "private"
+<!--
+Thanks for submitting an issue!
+
+Quick check-list while reporting bugs:
+-->
+Minimal example:
+```
+import unittest
+
+class Tests(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        pass
+
+    def test_1(self):
+        pass
+```
+```
+~$  pytest --fixtures
+...
+unittest_setUpClass_fixture_Tests [class scope] -- ../Platform/.venv/lib/python3.6/site-packages/_pytest/unittest.py:145
+    /home/ubuntu/src/Platform/.venv/lib/python3.6/site-packages/_pytest/unittest.py:145: no docstring available
+```
+The expected (and previously implemented behavior) is that this fixture's name would start with an underscore, and would therefore only get printed if the additional `-v` flag was used. As it stands, I don't see a way to hide such generated fixtures which will not have a docstring.
+
+This breaks a code-quality CI script that makes sure we don't have undocumented pytest fixtures (and the code-base has many legacy tests that use unittest, and that will not get upgraded).
+
+
+
+This issue also seems to affect xunit style test-classes:
+```
+import unittest
+
+class Tests(unittest.TestCase):
+    @classmethod
+    def setup_class(cls):
+        pass
+
+    def test_1(self):
+        pass
+```
+```
+~$  pytest --fixtures
+...
+xunit_setup_class_fixture_Tests [class scope]
+    /home/ubuntu/src/Platform/.venv/lib/python3.6/site-packages/_pytest/python.py:803: no docstring available
+```
+
+Thanks @atzannes!
+
+This was probably introduced in https://github.com/pytest-dev/pytest/pull/7990, https://github.com/pytest-dev/pytest/pull/7931, and https://github.com/pytest-dev/pytest/pull/7929.
+
+The fix should be simple: add a `_` in each of the generated fixtures names. 
+
+I did a quick change locally, and it fixes that first case reported:
+
+```diff
+diff --git a/src/_pytest/unittest.py b/src/_pytest/unittest.py
+index 719eb4e88..3f88d7a9e 100644
+--- a/src/_pytest/unittest.py
++++ b/src/_pytest/unittest.py
+@@ -144,7 +144,7 @@ def _make_xunit_fixture(
+         scope=scope,
+         autouse=True,
+         # Use a unique name to speed up lookup.
+-        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
++        name=f"_unittest_{setup_name}_fixture_{obj.__qualname__}",
+     )
+     def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+         if _is_skipped(self):
+``` 
+
+Of course a similar change needs to be applied to the other generated fixtures. 
+
+I'm out of time right now to write a proper PR, but I'm leaving this in case someone wants to step up. 👍 
+I can take a cut at this
+
+CODE CONTEXT:
+src/_pytest/unittest.py:
+"""Discover and run std-library "unittest" style tests."""
+import sys
+import traceback
+import types
+from typing import Any
+from typing import Callable
+from typing import Generator
+from typing import Iterable
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
+from typing import Union
+
+import _pytest._code
+import pytest
+from _pytest.compat import getimfunc
+from _pytest.compat import is_async_function
+from _pytest.config import hookimpl
+from _pytest.fixtures import FixtureRequest
+from _pytest.nodes import Collector
+from _pytest.nodes import Item
+from _pytest.outcomes import exit
+from _pytest.outcomes import fail
+from _pytest.outcomes import skip
+from _pytest.outcomes import xfail
+from _pytest.python import Class
+from _pytest.python import Function
+from _pytest.python import PyCollector
+from _pytest.runner import CallInfo
+
+if TYPE_CHECKING:
+    import unittest
+    import twisted.trial.unittest
+
+    from _pytest.fixtures import _Scope
+
+    _SysExcInfoType = Union[
+        Tuple[Type[BaseException], BaseException, types.TracebackType],
+        Tuple[None, None, None],
+    ]
+
+
+def pytest_pycollect_makeitem(
+    collector: PyCollector, name: str, obj: object
+) -> Optional["UnitTestCase"]:
+    # Has unittest been imported and is obj a subclass of its TestCase?
+    try:
+        ut = sys.modules["unittest"]
+        # Type ignored because `ut` is an opaque module.
+        if not issubclass(obj, ut.TestCase):  # type: ignore
+            return None
+    except Exception:
+        return None
+    # Yes, so let's collect it.
+    item: UnitTestCase = UnitTestCase.from_parent(collector, name=name, obj=obj)
+    return item
+
+
+class UnitTestCase(Class):
+    # Marker for fixturemanger.getfixtureinfo()
+    # to declare that our children do not support funcargs.
+    nofuncargs = True
+
+    def collect(self) -> Iterable[Union[Item, Collector]]:
+        from unittest import TestLoader
+
+        cls = self.obj
+        if not getattr(cls, "__test__", True):
+            return
+
+        skipped = _is_skipped(cls)
+        if not skipped:
+            self._inject_setup_teardown_fixtures(cls)
+            self._inject_setup_class_fixture()
+
+        self.session._fixturemanager.parsefactories(self, unittest=True)
+        loader = TestLoader()
+        foundsomething = False
+        for name in loader.getTestCaseNames(self.obj):
+            x = getattr(self.obj, name)
+            if not getattr(x, "__test__", True):
+                continue
+            funcobj = getimfunc(x)
+            yield TestCaseFunction.from_parent(self, name=name, callobj=funcobj)
+            foundsomething = True
+
+        if not foundsomething:
+            runtest = getattr(self.obj, "runTest", None)
+            if runtest is not None:
+                ut = sys.modules.get("twisted.trial.unittest", None)
+                # Type ignored because `ut` is an opaque module.
+                if ut is None or runtest != ut.TestCase.runTest:  # type: ignore
+                    yield TestCaseFunction.from_parent(self, name="runTest")
+
+    def _inject_setup_teardown_fixtures(self, cls: type) -> None:
+        """Injects a hidden auto-use fixture to invoke setUpClass/setup_method and corresponding
+        teardown functions (#517)."""
+        class_fixture = _make_xunit_fixture(
+            cls,
+            "setUpClass",
+            "tearDownClass",
+            "doClassCleanups",
+            scope="class",
+            pass_self=False,
+        )
+        if class_fixture:
+            cls.__pytest_class_setup = class_fixture  # type: ignore[attr-defined]
+
+        method_fixture = _make_xunit_fixture(
+            cls,
+            "setup_method",
+            "teardown_method",
+            None,
+            scope="function",
+            pass_self=True,
+        )
+        if method_fixture:
+            cls.__pytest_method_setup = method_fixture  # type: ignore[attr-defined]
+
+
+def _make_xunit_fixture(
+    obj: type,
+    setup_name: str,
+    teardown_name: str,
+    cleanup_name: Optional[str],
+    scope: "_Scope",
+    pass_self: bool,
+):
+    setup = getattr(obj, setup_name, None)
+    teardown = getattr(obj, teardown_name, None)
+    if setup is None and teardown is None:
+        return None
+
+    if cleanup_name:
+        cleanup = getattr(obj, cleanup_name, lambda *args: None)
+    else:
+
+        def cleanup(*args):
+            pass
+
+    @pytest.fixture(
+        scope=scope,
+        autouse=True,
+        # Use a unique name to speed up lookup.
+        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
+    )
+    def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+        if _is_skipped(self):
+            reason = self.__unittest_skip_why__
+            raise pytest.skip.Exception(reason, _use_item_location=True)
+        if setup is not None:
+            try:
+                if pass_self:
+                    setup(self, request.function)
+                else:
+                    setup()
+            # unittest does not call the cleanup function for every BaseException, so we
+            # follow this here.
+            except Exception:
+                if pass_self:
+                    cleanup(self)
+                else:
+                    cleanup()
+
+                raise
+        yield
+        try:
+            if teardown is not None:
+                if pass_self:
+                    teardown(self, request.function)
+                else:
+                    teardown()
+        finally:
+            if pass_self:
+                cleanup(self)
+            else:
+                cleanup()
+
+    return fixture
+
+
+class TestCaseFunction(Function):
+    nofuncargs = True
+    _excinfo: Optional[List[_pytest._code.ExceptionInfo[BaseException]]] = None
+    _testcase: Optional["unittest.TestCase"] = None
+
+    def setup(self) -> None:
+        # A bound method to be called during teardown() if set (see 'runtest()').
+        self._explicit_tearDown: Optional[Callable[[], None]] = None
+        assert self.parent is not None
+        self._testcase = self.parent.obj(self.name)  # type: ignore[attr-defined]
+        self._obj = getattr(self._testcase, self.name)
+        if hasattr(self, "_request"):
+            self._request._fillfixtures()
+
+    def teardown(self) -> None:
+        if self._explicit_tearDown is not None:
+            self._explicit_tearDown()
+            self._explicit_tearDown = None
+        self._testcase = None
+        self._obj = None
+
+    def startTest(self, testcase: "unittest.TestCase") -> None:
+        pass
+
+    def _addexcinfo(self, rawexcinfo: "_SysExcInfoType") -> None:
+        # Unwrap potential exception info (see twisted trial support below).
+        rawexcinfo = getattr(rawexcinfo, "_rawexcinfo", rawexcinfo)
+        try:
+            excinfo = _pytest._code.ExceptionInfo(rawexcinfo)  # type: ignore[arg-type]
+            # Invoke the attributes to trigger storing the traceback
+            # trial causes some issue there.
+            excinfo.value
+            excinfo.traceback
+        except TypeError:
+            try:
+                try:
+                    values = traceback.format_exception(*rawexcinfo)
+                    values.insert(
+                        0,
+                        "NOTE: Incompatible Exception Representation, "
+                        "displaying natively:\n\n",
+                    )
+                    fail("".join(values), pytrace=False)
+                except (fail.Exception, KeyboardInterrupt):
+                    raise
+                except BaseException:
+                    fail(
+                        "ERROR: Unknown Incompatible Exception "
+                        "representation:\n%r" % (rawexcinfo,),
+                        pytrace=False,
+                    )
+            except KeyboardInterrupt:
+                raise
+            except fail.Exception:
+                excinfo = _pytest._code.ExceptionInfo.from_current()
+        self.__dict__.setdefault("_excinfo", []).append(excinfo)
+
+    d
+
+testing/example_scripts/unittest/test_parametrized_fixture_error_message.py:
+import unittest
+
+import pytest
+
+
+@pytest.fixture(params=[1, 2])
+def two(request):
+    return request.param
+
+
+@pytest.mark.usefixtures("two")
+class TestSomethingElse(unittest.TestCase):
+    def test_two(self):
+        pass
+
+
+testing/python/show_fixtures_per_test.py:
+from _pytest.pytester import Pytester
+
+
+def test_no_items_should_not_show_output(pytester: Pytester) -> None:
+    result = pytester.runpytest("--fixtures-per-test")
+    result.stdout.no_fnmatch_line("*fixtures used by*")
+    assert result.ret == 0
+
+
+def test_fixtures_in_module(pytester: Pytester) -> None:
+    p = pytester.makepyfile(
+        '''
+        import pytest
+        @pytest.fixture
+        def _arg0():
+            """hidden arg0 fixture"""
+        @pytest.fixture
+        def arg1():
+            """arg1 docstring"""
+        def test_arg1(arg1):
+            pass
+    '''
+    )
+
+    result = pytester.runpytest("--fixtures-per-test", p)
+    assert result.ret == 0
+
+    result.stdout.fnmatch_lines(
+        [
+            "*fixtures used by test_arg1*",
+            "*(test_fixtures_in_module.py:9)*",
+            "arg1",
+            "    arg1 docstring",
+        ]
+    )
+    result.stdout.no_fnmatch_line("*_arg0*")
+
+
+def test_fixtures_in_conftest(pytester: Pytester) -> None:
+    pytester.makeconftest(
+        '''
+        import pytest
+        @pytest.fixture
+        def arg1():
+            """arg1 docstring"""
+        @pytest.fixture
+        def arg2():
+            """arg2 docstring"""
+        @pytest.fixture
+        def arg3(arg1, arg2):
+            """arg3
+            docstring
+            """
+    '''
+    )
+    p = pytester.makepyfile(
+        """
+        def test_arg2(arg2):
+            pass
+        def test_arg3(arg3):
+            pass
+    """
+    )
+    result = pytester.runpytest("--fixtures-per-test", p)
+    assert result.ret == 0
+
+    result.stdout.fnmatch_lines(
+        [
+            "*fixtures used by test_arg2*",
+            "*(test_fixtures_in_conftest.py:2)*",
+            "arg2",
+            "    arg2 docstring",
+            "*fixtures used by test_arg3*",
+            "*(test_fixtures_in_conftest.py:4)*",
+            "arg1",
+            "    arg1 docstring",
+            "arg2",
+            "    arg2 docstring",
+            "arg3",
+            "    arg3",
+            "    docstring",
+        ]
+    )
+
+
+def test_should_show_fixtures_used_by_test(pytester: Pytester) -> None:
+    pytester.makeconftest(
+        '''
+        import pytest
+        @pytest.fixture
+        def arg1():
+            """arg1 from conftest"""
+        @pytest.fixture
+        def arg2():
+            """arg2 from conftest"""
+    '''
+    )
+    p = pytester.makepyfile(
+        '''
+        import pytest
+        @pytest.fixture
+        def arg1():
+            """arg1 from testmodule"""
+        def test_args(arg1, arg2):
+            pass
+    '''
+    )
+    result = pytester.runpytest("--fixtures-per-test", p)
+    assert result.ret == 0
+
+    result.stdout.fnmatch_lines(
+        [
+            "*fixtures used by test_args*",
+            "*(test_should_show_fixtures_used_by_test.py:6)*",
+            "arg1",
+            "    arg1 from testmodule",
+            "arg2",
+            "    arg2 from conftest",
+        ]
+    )
+
+
+def test_verbose_include_private_fixtures_and_loc(pytester: Pytester) -> None:
+    pytester.makeconftest(
+        '''
+        import pytest
+        @pytest.fixture
+        def _arg1():
+            """_arg1 from conftest"""
+        @pytest.fixture
+        def arg2(_arg1):
+            """arg2 from conftest"""
+    '''
+    )
+    p = pytester.makepyfile(
+        '''
+        import pytest
+        @pytest.fixture
+        def arg3():
+            """arg3 from testmodule"""
+        def test_args(arg2, arg3):
+            pass
+    '''
+    )
+    result = pytester.runpytest("--fixtures-per-test", "-v", p)
+    assert result.ret == 0
+
+    result.stdout.fnmatch_lines(
+        [
+            "*fixture
+
+ROUND: 1

@@ -1,0 +1,8 @@
+{
+ "task": "vuejs__core-11899",
+ "mode": "B",
+ "binding": true,
+ "verdict": "not-applicable",
+ "violations": [],
+ "note": "no agent patch evaluated (failed: unmeasurable: unresolved test IDs: packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated sy)"
+}

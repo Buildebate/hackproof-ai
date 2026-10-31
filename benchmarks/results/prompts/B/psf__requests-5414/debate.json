@@ -1,0 +1,14 @@
+{
+ "rounds_used": 2,
+ "converged": false,
+ "convergence_score": 0.4166666666666667,
+ "duration_ms": 547883,
+ "verdicts": {
+  "EdgeScout": "1. requests.get(None)\n2. requests.get(\"\")\n3. requests.get(\"http://.example.com\")\n4. requests.get(\"http://example..com\")\n5. requests.get(b\"http://.example.com\")\n6. requests.get(\"http://\" + \"a\"*64 + \".com\")\n7. requests.get(\"http://m\u00fcnchen.de\")",
+  "ArchitecturalBuilder": "<<<<<<< SEARCH\n        try:\n            scheme, auth, host, port, path, query, fragment = parse_url(url)\n        except LocationParseError as e:\n            raise InvalidURL(*e.args)\n=======\n        try:\n            scheme, auth, host, port, path, query, fragment = parse_url(url)\n        except (LocationParseError, UnicodeError) as e:\n            raise InvalidURL(*e.args)\n>>>>>>> REPLACE\n<<<<<<< SEARCH\n        if not host:\n            raise InvalidURL(\"Invalid URL %r: No host supplied\" % url)\n=======\n        if not host:\n            raise InvalidURL(\"Invalid URL %r: No host supplied\" % url)\n\n        try:\n            host = host.encode('idna').decode('utf-8')\n        except UnicodeError:\n            raise InvalidURL('URL has an invalid label.')\n>>>>>>> REPLACE",
+  "OccamsRazorCritic": "Delete except (LocationParseError, UnicodeError) as e:\nREVISE",
+  "SignatureFactChecker": "APPROVE",
+  "FormalAdversaryCritic": "<<<<<<< SEARCH\n        if not host:\n            raise InvalidURL(\"Invalid URL %r: No host supplied\" % url)\n=======\n        if not host:\n            raise InvalidURL(\"Invalid URL %r: No host supplied\" % url)\n\n        try:\n            host = host.encode('idna').decode('utf-8')\n        except UnicodeError:\n            raise InvalidURL('URL has an invalid label.')\n>>>>>>> REPLACE",
+  "ConsensusJudge": "DIVERGED Role1 REVISE"
+ }
+}

@@ -1,14 +1,16 @@
 """Asymmetric debate orchestrator (Step 2.2, Spark 1.3 + Wonder 1.0).
 
 Runs the fixed 6-role loop for at most ``max_rounds`` rounds (hard cap 2
-per the roadmap), early-terminating when the deterministic consensus
-score reaches ``convergence_threshold``. Returns a
+per the roadmap), early-terminating on explicit marker consensus
+(unanimous APPROVE, or all-but-one with judge approval — Step 4.3b.8,
+which retired the unreachable 0.85 score threshold). Returns a
 :class:`DebateConsensusReport` carrying the patch candidate, per-role
 verdicts, rounds used, per-call token usage for the FinOps ledger, and
 wall-clock evidence for the Gate 2 duration target (<= 8 s).
 
 FinOps wiring: the orchestrator passes through already max_tokens-capped
-clients (Spark 600 / Wonder 1500, enforced by ``MetaClient``) and
+clients (Spark 12288 / Wonder 32768 per ADR-028, enforced by
+``MetaClient``) and
 records per-call usage snapshots. Mock clients expose no usage, which is
 recorded honestly as zeros.
 """
@@ -47,6 +49,7 @@ class TokenUsage:
     prompt_tokens: int
     completion_tokens: int
     total_tokens: int
+    finish_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -74,14 +77,18 @@ def _snapshot_usage(role: str, client: Any) -> TokenUsage:
         prompt_tokens = int(last.get("prompt_tokens", 0))
         completion_tokens = int(last.get("completion_tokens", 0))
         total_tokens = int(last.get("total_tokens", 0))
+        finish_reason = last.get("finish_reason")
+        finish_reason = str(finish_reason) if finish_reason else None
     else:
         prompt_tokens = completion_tokens = total_tokens = 0
+        finish_reason = None
     return TokenUsage(
         role=role,
         model=model,
         prompt_tokens=prompt_tokens,
         completion_tokens=completion_tokens,
         total_tokens=total_tokens,
+        finish_reason=finish_reason,
     )
 
 
@@ -93,35 +100,22 @@ class DebateOrchestrator:
         spark_client: _DebateClient,
         wonder_client: _DebateClient,
         max_rounds: int = 2,
-        convergence_threshold: float = consensus_judge.CONVERGENCE_THRESHOLD,
     ) -> None:
-        """Bind capped clients and convergence bounds.
+        """Bind capped clients and the round cap.
 
 Raises:
-    ValueError: ``max_rounds < 1`` or threshold outside (0.0, 1.0].
+    ValueError: ``max_rounds < 1``.
         """
         if int(max_rounds) < 1:
             raise ValueError(f"max_rounds must be >= 1, got {max_rounds!r}")
-        threshold = float(convergence_threshold)
-        if not 0.0 < threshold <= 1.0:
-            raise ValueError(
-                f"convergence_threshold must be in (0.0, 1.0], "
-                f"got {convergence_threshold!r}"
-            )
         self._spark = spark_client
         self._wonder = wonder_client
         self._max_rounds = int(max_rounds)
-        self._threshold = threshold
 
     @property
     def max_rounds(self) -> int:
         """Hard cap on debate rounds."""
         return self._max_rounds
-
-    @property
-    def convergence_threshold(self) -> float:
-        """Consensus score closing the debate early."""
-        return self._threshold
 
     def _client_for(self, role_module: Any) -> _DebateClient:
         """Route a role to its bound Spark/Wonder client."""
@@ -134,8 +128,16 @@ Raises:
         issue_description: str,
         code_context: str,
         repo_structure: str = "",
+        builder_code_context: str | None = None,
     ) -> DebateConsensusReport:
-        """Execute the debate and return the consensus report."""
+        """Execute the debate and return the consensus report.
+
+        ``builder_code_context`` (Step 4.3b.3/R6) enriches ONLY the
+        ArchitecturalBuilder turns (the role that writes SEARCH text)
+        with the full top-1 file; every other role keeps the short
+        head so wave token spend stays bounded. None preserves the
+        legacy behavior (one context for all roles).
+        """
         started = time.perf_counter()
         history: list[dict[str, Any]] = []
         usage: list[TokenUsage] = []
@@ -148,9 +150,15 @@ Raises:
             round_verdicts: dict[str, str] = {}
             for role_module in ROLES:
                 client = self._client_for(role_module)
+                role_context = code_context
+                if (
+                    role_module is architectural_builder
+                    and builder_code_context is not None
+                ):
+                    role_context = builder_code_context
                 ctx = {
                     "issue_description": issue_description,
-                    "code_context": code_context,
+                    "code_context": role_context,
                     "repo_structure": repo_structure,
                     "history": history,
                     "round": round_no,
@@ -168,7 +176,7 @@ Raises:
                 list(round_verdicts.values())
             )
             rounds.append(round_verdicts)
-            if round_score >= self._threshold:
+            if consensus_judge.consensus_reached(round_verdicts):
                 converged = True
                 break
 

@@ -20,7 +20,10 @@ ROLE_SYSTEM_PROMPT = (
     "You are EdgeScout, a hostile System One boundary-condition fuzzer. "
     "Output ONLY a numbered list of 5-7 concrete edge cases for the given "
     "issue (None/null, empty collections, type mismatches, off-by-one, "
-    "unicode/empty-string, race conditions). No explanations, no prose."
+    "unicode/empty-string, race conditions). No explanations, no prose. "
+    "After the list, end your verdict with exactly one marker word on "
+    "its own final line: APPROVE if the enumeration is complete, or "
+    "REVISE if the issue statement itself is too vague to fuzz."
 )
 
 __all__ = ["ROLE_NAME", "CLIENT_KIND", "ROLE_SYSTEM_PROMPT", "run", "parse_cases"]

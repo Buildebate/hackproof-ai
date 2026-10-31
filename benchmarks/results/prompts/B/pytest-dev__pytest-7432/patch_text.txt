@@ -1,0 +1,14 @@
+<<<<<<< SEARCH
+    outcome = yield
+    rep = outcome.get_result()
+=======
+    outcome = yield
+    rep = outcome.get_result()
+    if (
+        item._store.get(skipped_by_mark_key, False)
+        and rep.skipped
+        and isinstance(rep.longrepr, tuple)
+        and item.location
+    ):
+        rep.longrepr = item.location[:2] + rep.longrepr[2:]
+>>>>>>> REPLACE

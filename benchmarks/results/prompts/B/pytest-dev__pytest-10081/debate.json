@@ -1,0 +1,14 @@
+{
+ "rounds_used": 2,
+ "converged": false,
+ "convergence_score": 0.5,
+ "duration_ms": 573084,
+ "verdicts": {
+  "EdgeScout": "1. @unittest.skip(None) on TestCase with failing tearDown run with --pdb\n2. @unittest.skip(\"\") with empty-string reason on TestCase with failing tearDown/setUp run with --pdb\n3. @unittest.skip(\"h\u00e9llo \u2603 \\x00\") with unicode/null-byte reason on TestCase with failing tearDown run with --pdb\n4. @unittest.skip on TestCase with zero test methods / only runTest and failing tearDownClass run with --pdb\n5. @unittest.skip on TestCase where setUp=None/missing but tearDown raises plus addCleanup callback run with --pdb\n6. @unittest.skip on TestCase with 2 test methods where setUpClass/tearDownClass raise, run with --pdb --maxfail=1\n7. @unittest.skipIf(True, reason) + @unittest.skip on outer class with failing tearDown run with --pdb -x",
+  "ArchitecturalBuilder": "<<<<<<< SEARCH\n    def teardown(self) -> None:\n        if self._explicit_tearDown is not None:\n            self._explicit_tearDown()\n            self._explicit_tearDown = None\n        self._testcase = None\n        self._obj = None\n=======\n    def teardown(self) -> None:\n        if self._explicit_tearDown is not None:\n            if not (\n                _is_skipped(getattr(self.parent, \"obj\", None))\n                or (self._testcase is not None and _is_skipped(self._testcase))\n                or _is_skipped(self._obj)\n            ):\n                self._explicit_tearDown()\n            self._explicit_tearDown = None\n        self._testcase = None\n        self._obj = None\n>>>>>>> REPLACE",
+  "OccamsRazorCritic": "- or (self._testcase is not None and _is_skipped(self._testcase))\n- or _is_skipped(self._obj)\nREVISE",
+  "SignatureFactChecker": "APPROVE",
+  "FormalAdversaryCritic": "- Class/method skip check is sound: `_is_skipped` only reads `__unittest_skip__`, so `None`, `\"\"`, and unicode/NUL reasons in cases 1\u20133 cannot fail or alter suppression, and stacked `skipIf`/`skip` in case 7 is caught via `parent.obj`, `_testcase`, and `_obj`.\n- Suppression matches `unittest` semantics: a skipped test never ran `setUp`/test, so its deferred `tearDown` must not run; non-skipped tests still call `_explicit_tearDown` with original exception propagation for `--pdb`/`--maxfail`/`-x`.\n- No unbound or unsafe access: `getattr(self.parent, \"obj\", None)`, the `_testcase is not None` guard, and `_is_skipped(None)==False` are all safe, and `_explicit_tearDown` is still cleared when suppressed.\n- No class-fixture or cleanup regression: `tearDownClass`/`setUpClass` registration, `doClassCleanups`, and `addCleanup` handling are untouched, so zero-method/`runTest` (case 4), missing `setUp` (case 5), and two-method class fixtures (case 6) gain no leak, double-call, or spurious failure.\nAPPROVE",
+  "ConsensusJudge": "DIVERGED Reviewer REVISE"
+ }
+}

@@ -1,0 +1,1801 @@
+{
+ "task": "psf__requests-5414",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T05:24:28.199142+00:00",
+ "base_ref": "39d0fdd9096f7dceccbc8f82e1eda7dd64717a8e",
+ "agent": {
+  "ok": true,
+  "reason": "",
+  "files": [
+   "requests/__init__.py",
+   "requests/compat.py",
+   "requests/help.py",
+   "requests/models.py",
+   "requests/_internal_utils.py"
+  ],
+  "localize_ms": 40266,
+  "backend": "contriever-transformer-cpu",
+  "blocks": 1,
+  "applied_file": "requests/models.py"
+ },
+ "usage": {
+  "prompt_tokens": 3457,
+  "completion_tokens": 8423,
+  "total_tokens": 11880,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3457,
+    "completion_tokens": 8423,
+    "total_tokens": 11880,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "diff_sha256": "80273ba30010305b4b3d21677430e8bada1eb54e4ede51a6a2709439336f5d32",
+ "guard": {
+  "task": "psf__requests-5414",
+  "mode": "A",
+  "binding": false,
+  "verdict": "clean",
+  "violations": [],
+  "note": "post-hoc measurement; does not gate Mode A"
+ },
+ "junit_sha256": "40b8dc0793e1de7acb2f797393988bedcb337bd71a5a93936ffcf48d1f285e9e",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]": {
+    "base": "failed",
+    "agent": "passed"
+   }
+  },
+  "p2p": {
+   "tests/test_requests.py::TestRequests::test_entry_points": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "tests/test_requests.py::TestRequests::test_invalid_url[MissingSchema-hiwpefhipowhefopw]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost:3128]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost.localdomain:3128/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-10.122.1.1:3128/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://*example.com]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_basic_building": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_path_is_not_double_encoded": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&a=b#fragment]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_params_bytes_are_encoded": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_binary_put": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_whitespaces_are_removed_from_url": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_basicauth_encodes_byte_strings": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_errors[http://doesnotexist.google.com-ConnectionError]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_errors[http://localhost:1-ConnectionError]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_proxy_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_non_prepared_request_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_prepare_request_with_bytestring_url": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_links": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_parameters": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_len": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_items": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_keys": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_values": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_items": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_different_domains": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_raises_cookie_conflict_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_cookie_policy_copy": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_empty_response_has_content_none": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_response_is_iterable": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_response_decode_unicode": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_response_reason_unicode": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_response_reason_unicode_fallback": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_response_chunk_size_type": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_http_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_transport_adapter_ordering": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_mixed_case": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_is_case_insensitive": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_long_authinfo_in_url": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_host_change": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_http_downgrade": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_https_upgrade": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_port_change": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_prepare_body_position_non_stream": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_rewind_body": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_rewind_partially_read_body": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_rewind_body_no_seek": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_rewind_body_failed_seek": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_rewind_body_failed_tell": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[test-test-Basic": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[\\xd0\\xb8\\xd0\\xbc\\xd1\\x8f-\\xd0\\xbf\\xd0\\xb0\\xd1\\x80\\xd0\\xbe\\xd0\\xbb\\xd1\\x8c-Basic": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_proxy_auth": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_proxy_auth_empty_pass": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestRequests::test_response_without_release_conn": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_docstring_example": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_len": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_getitem": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_fixes_649": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_delitem": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_contains": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_get": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_update": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_iter": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_equality": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_setdefault": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_lower_items": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_copy": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_valid_str": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[100-TypeError]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[woops-ValueError]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_none": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout0]": {
+    "base": "failed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout1]": {
+    "base": "failed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout0]": {
+    "base": "failed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout1]": {
+    "base": "failed",
+    "agent": "failed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_json_encodes_as_bytes": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_data_argument_accepts_tuples[data0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_data_argument_accepts_tuples[data1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_data_argument_accepts_tuples[data2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_prepared_copy[None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_prepared_copy[kwargs1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_prepared_copy[kwargs2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::test_prepared_copy[kwargs3]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://google.com-http://google.com/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\xe3\\x82\\xb8\\xe3\\x82\\xa7\\xe3\\x83\\xbc\\xe3\\x83\\x94\\xe3\\x83\\xbc\\xe3\\x83\\x8b\\xe3\\x83\\x83\\xe3\\x82\\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xdfe.de/stra\\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xc3\\x9fe.de/stra\\xc3\\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xf6nigsg\\xe4\\xdfchen.de/stra\\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xc3\\xb6nigsg\\xc3\\xa4\\xc3\\x9fchen.de/stra\\xc3\\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://\\u2603.net/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]"
+  ],
+  "f2p_not_fixed": [],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [
+   "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout0]",
+   "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout1]",
+   "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout0]",
+   "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout1]"
+  ],
+  "p2p_kept": [
+   "tests/test_requests.py::TestRequests::test_entry_points",
+   "tests/test_requests.py::TestRequests::test_invalid_url[MissingSchema-hiwpefhipowhefopw]",
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost:3128]",
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost.localdomain:3128/]",
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-10.122.1.1:3128/]",
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://]",
+   "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://*example.com]",
+   "tests/test_requests.py::TestRequests::test_basic_building",
+   "tests/test_requests.py::TestRequests::test_path_is_not_double_encoded",
+   "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]",
+   "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&a=b#fragment]",
+   "tests/test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default",
+   "tests/test_requests.py::TestRequests::test_params_bytes_are_encoded",
+   "tests/test_requests.py::TestRequests::test_binary_put",
+   "tests/test_requests.py::TestRequests::test_whitespaces_are_removed_from_url",
+   "tests/test_requests.py::TestRequests::test_basicauth_encodes_byte_strings",
+   "tests/test_requests.py::TestRequests::test_errors[http://doesnotexist.google.com-ConnectionError]",
+   "tests/test_requests.py::TestRequests::test_errors[http://localhost:1-ConnectionError]",
+   "tests/test_requests.py::TestRequests::test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]",
+   "tests/test_requests.py::TestRequests::test_proxy_error",
+   "tests/test_requests.py::TestRequests::test_non_prepared_request_error",
+   "tests/test_requests.py::TestRequests::test_prepare_request_with_bytestring_url",
+   "tests/test_requests.py::TestRequests::test_links",
+   "tests/test_requests.py::TestRequests::test_cookie_parameters",
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_len",
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_items",
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_keys",
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_values",
+   "tests/test_requests.py::TestRequests::test_cookie_as_dict_items",
+   "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_different_domains",
+   "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_raises_cookie_conflict_error",
+   "tests/test_requests.py::TestRequests::test_cookie_policy_copy",
+   "tests/test_requests.py::TestRequests::test_empty_response_has_content_none",
+   "tests/test_requests.py::TestRequests::test_response_is_iterable",
+   "tests/test_requests.py::TestRequests::test_response_decode_unicode",
+   "tests/test_requests.py::TestRequests::test_response_reason_unicode",
+   "tests/test_requests.py::TestRequests::test_response_reason_unicode_fallback",
+   "tests/test_requests.py::TestRequests::test_response_chunk_size_type",
+   "tests/test_requests.py::TestRequests::test_http_error",
+   "tests/test_requests.py::TestRequests::test_transport_adapter_ordering",
+   "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching",
+   "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_mixed_case",
+   "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_is_case_insensitive",
+   "tests/test_requests.py::TestRequests::test_long_authinfo_in_url",
+   "tests/test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_host_change",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_http_downgrade",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_https_upgrade",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_port_change",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]",
+   "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]",
+   "tests/test_requests.py::TestRequests::test_prepare_body_position_non_stream",
+   "tests/test_requests.py::TestRequests::test_rewind_body",
+   "tests/test_requests.py::TestRequests::test_rewind_partially_read_body",
+   "tests/test_requests.py::TestRequests::test_rewind_body_no_seek",
+   "tests/test_requests.py::TestRequests::test_rewind_body_failed_seek",
+   "tests/test_requests.py::TestRequests::test_rewind_body_failed_tell",
+   "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[test-test-Basic",
+   "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[\\xd0\\xb8\\xd0\\xbc\\xd1\\x8f-\\xd0\\xbf\\xd0\\xb0\\xd1\\x80\\xd0\\xbe\\xd0\\xbb\\xd1\\x8c-Basic",
+   "tests/test_requests.py::TestRequests::test_proxy_auth",
+   "tests/test_requests.py::TestRequests::test_proxy_auth_empty_pass",
+   "tests/test_requests.py::TestRequests::test_response_without_release_conn",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid0]",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid1]",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid2]",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_docstring_example",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_len",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_getitem",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_fixes_649",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_delitem",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_contains",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_get",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_update",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_iter",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_equality",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_setdefault",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_lower_items",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case",
+   "tests/test_requests.py::TestCaseInsensitiveDict::test_copy",
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_valid_str",
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[100-TypeError]",
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[woops-ValueError]",
+   "tests/test_requests.py::TestMorselToCookieExpires::test_expires_none",
+   "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int",
+   "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str",
+   "tests/test_requests.py::test_json_encodes_as_bytes",
+   "tests/test_requests.py::test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]",
+   "tests/test_requests.py::test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]",
+   "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]",
+   "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]",
+   "tests/test_requests.py::test_data_argument_accepts_tuples[data0]",
+   "tests/test_requests.py::test_data_argument_accepts_tuples[data1]",
+   "tests/test_requests.py::test_data_argument_accepts_tuples[data2]",
+   "tests/test_requests.py::test_prepared_copy[None]",
+   "tests/test_requests.py::test_prepared_copy[kwargs1]",
+   "tests/test_requests.py::test_prepared_copy[kwargs2]",
+   "tests/test_requests.py::test_prepared_copy[kwargs3]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://google.com-http://google.com/]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\xe3\\x82\\xb8\\xe3\\x82\\xa7\\xe3\\x83\\xbc\\xe3\\x83\\x94\\xe3\\x83\\xbc\\xe3\\x83\\x8b\\xe3\\x83\\x83\\xe3\\x82\\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xdfe.de/stra\\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xc3\\x9fe.de/stra\\xc3\\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xf6nigsg\\xe4\\xdfchen.de/stra\\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xc3\\xb6nigsg\\xc3\\xa4\\xc3\\x9fchen.de/stra\\xc3\\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com0]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*0]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com1]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*1]",
+   "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://\\u2603.net/]",
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]",
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]",
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org0]",
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org1]",
+   "tests/test_requests.py::TestPreparingURLs::test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]",
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]",
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]",
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]",
+   "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]"
+  ],
+  "resolved_functional": true,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "status": "resolved",
+ "reason": "",
+ "done": true,
+ "superseded_4_2": {
+  "status": "failed",
+  "reason": "f2p-not-red-at-base:1; f2p-not-fixed:1",
+  "scoring": {
+   "f2p": {
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]": {
+     "base": "missing",
+     "agent": "missing"
+    }
+   },
+   "p2p": {
+    "tests/test_requests.py::TestRequests::test_entry_points": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "yes"
+    },
+    "tests/test_requests.py::TestRequests::test_invalid_url[MissingSchema-hiwpefhipowhefopw]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "yes"
+    },
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost:3128]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "yes"
+    },
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost.localdomain:3128/]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-10.122.1.1:3128/]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://*example.com]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_basic_building": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_path_is_not_double_encoded": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&a=b#fragment]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_params_bytes_are_encoded": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_binary_put": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_whitespaces_are_removed_from_url": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_basicauth_encodes_byte_strings": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_errors[http://doesnotexist.google.com-ConnectionError]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_errors[http://localhost:1-ConnectionError]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_proxy_error": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_non_prepared_request_error": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_prepare_request_with_bytestring_url": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_links": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_parameters": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_len": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_items": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keys": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_values": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_items": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_different_domains": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_raises_cookie_conflict_error": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_cookie_policy_copy": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_empty_response_has_content_none": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_response_is_iterable": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_response_decode_unicode": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_response_reason_unicode": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_response_reason_unicode_fallback": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_response_chunk_size_type": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_http_error": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_transport_adapter_ordering": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_mixed_case": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_is_case_insensitive": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_long_authinfo_in_url": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_host_change": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_http_downgrade": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_https_upgrade": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_port_change": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_prepare_body_position_non_stream": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_rewind_body": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_rewind_partially_read_body": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_rewind_body_no_seek": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_rewind_body_failed_seek": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_rewind_body_failed_tell": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[test-test-Basic": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[\\xd0\\xb8\\xd0\\xbc\\xd1\\x8f-\\xd0\\xbf\\xd0\\xb0\\xd1\\x80\\xd0\\xbe\\xd0\\xbb\\xd1\\x8c-Basic": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_proxy_auth": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_proxy_auth_empty_pass": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestRequests::test_response_without_release_conn": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid2]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_docstring_example": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_len": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_getitem": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_fixes_649": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_delitem": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_contains": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_get": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_update": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_iter": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_equality": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_setdefault": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_lower_items": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_copy": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_valid_str": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[100-TypeError]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[woops-ValueError]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_none": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_json_encodes_as_bytes": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data2]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_prepared_copy[None]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_prepared_copy[kwargs1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_prepared_copy[kwargs2]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::test_prepared_copy[kwargs3]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://google.com-http://google.com/]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\xe3\\x82\\xb8\\xe3\\x82\\xa7\\xe3\\x83\\xbc\\xe3\\x83\\x94\\xe3\\x83\\xbc\\xe3\\x83\\x8b\\xe3\\x83\\x83\\xe3\\x82\\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xdfe.de/stra\\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xc3\\x9fe.de/stra\\xc3\\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xf6nigsg\\xe4\\xdfchen.de/stra\\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xc3\\xb6nigsg\\xc3\\xa4\\xc3\\x9fchen.de/stra\\xc3\\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://\\u2603.net/]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org0]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org1]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    },
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]": {
+     "base": "missing",
+     "agent": "missing",
+     "golden": "no"
+    }
+   },
+   "f2p_fixed": [],
+   "f2p_not_fixed": [
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]"
+   ],
+   "f2p_not_red_at_base": [
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]"
+   ],
+   "p2p_broken": [],
+   "p2p_env_limited": [
+    "tests/test_requests.py::TestRequests::test_entry_points",
+    "tests/test_requests.py::TestRequests::test_invalid_url[MissingSchema-hiwpefhipowhefopw]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost:3128]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost.localdomain:3128/]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-10.122.1.1:3128/]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://*example.com]",
+    "tests/test_requests.py::TestRequests::test_basic_building",
+    "tests/test_requests.py::TestRequests::test_path_is_not_double_encoded",
+    "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]",
+    "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&a=b#fragment]",
+    "tests/test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default",
+    "tests/test_requests.py::TestRequests::test_params_bytes_are_encoded",
+    "tests/test_requests.py::TestRequests::test_binary_put",
+    "tests/test_requests.py::TestRequests::test_whitespaces_are_removed_from_url",
+    "tests/test_requests.py::TestRequests::test_basicauth_encodes_byte_strings",
+    "tests/test_requests.py::TestRequests::test_errors[http://doesnotexist.google.com-ConnectionError]",
+    "tests/test_requests.py::TestRequests::test_errors[http://localhost:1-ConnectionError]",
+    "tests/test_requests.py::TestRequests::test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]",
+    "tests/test_requests.py::TestRequests::test_proxy_error",
+    "tests/test_requests.py::TestRequests::test_non_prepared_request_error",
+    "tests/test_requests.py::TestRequests::test_prepare_request_with_bytestring_url",
+    "tests/test_requests.py::TestRequests::test_links",
+    "tests/test_requests.py::TestRequests::test_cookie_parameters",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_len",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_items",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keys",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_values",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_items",
+    "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_different_domains",
+    "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_raises_cookie_conflict_error",
+    "tests/test_requests.py::TestRequests::test_cookie_policy_copy",
+    "tests/test_requests.py::TestRequests::test_empty_response_has_content_none",
+    "tests/test_requests.py::TestRequests::test_response_is_iterable",
+    "tests/test_requests.py::TestRequests::test_response_decode_unicode",
+    "tests/test_requests.py::TestRequests::test_response_reason_unicode",
+    "tests/test_requests.py::TestRequests::test_response_reason_unicode_fallback",
+    "tests/test_requests.py::TestRequests::test_response_chunk_size_type",
+    "tests/test_requests.py::TestRequests::test_http_error",
+    "tests/test_requests.py::TestRequests::test_transport_adapter_ordering",
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching",
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_mixed_case",
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_is_case_insensitive",
+    "tests/test_requests.py::TestRequests::test_long_authinfo_in_url",
+    "tests/test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_host_change",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_http_downgrade",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_https_upgrade",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_port_change",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]",
+    "tests/test_requests.py::TestRequests::test_prepare_body_position_non_stream",
+    "tests/test_requests.py::TestRequests::test_rewind_body",
+    "tests/test_requests.py::TestRequests::test_rewind_partially_read_body",
+    "tests/test_requests.py::TestRequests::test_rewind_body_no_seek",
+    "tests/test_requests.py::TestRequests::test_rewind_body_failed_seek",
+    "tests/test_requests.py::TestRequests::test_rewind_body_failed_tell",
+    "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[test-test-Basic",
+    "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[\\xd0\\xb8\\xd0\\xbc\\xd1\\x8f-\\xd0\\xbf\\xd0\\xb0\\xd1\\x80\\xd0\\xbe\\xd0\\xbb\\xd1\\x8c-Basic",
+    "tests/test_requests.py::TestRequests::test_proxy_auth",
+    "tests/test_requests.py::TestRequests::test_proxy_auth_empty_pass",
+    "tests/test_requests.py::TestRequests::test_response_without_release_conn",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid0]",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid1]",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid2]",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_docstring_example",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_len",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_getitem",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_fixes_649",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_delitem",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_contains",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_get",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_update",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_iter",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_equality",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_setdefault",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_lower_items",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_copy",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_valid_str",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[100-TypeError]",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[woops-ValueError]",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_none",
+    "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int",
+    "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str",
+    "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout0]",
+    "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout1]",
+    "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout0]",
+    "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout1]",
+    "tests/test_requests.py::test_json_encodes_as_bytes",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data0]",
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data1]",
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data2]",
+    "tests/test_requests.py::test_prepared_copy[None]",
+    "tests/test_requests.py::test_prepared_copy[kwargs1]",
+    "tests/test_requests.py::test_prepared_copy[kwargs2]",
+    "tests/test_requests.py::test_prepared_copy[kwargs3]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://google.com-http://google.com/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\xe3\\x82\\xb8\\xe3\\x82\\xa7\\xe3\\x83\\xbc\\xe3\\x83\\x94\\xe3\\x83\\xbc\\xe3\\x83\\x8b\\xe3\\x83\\x83\\xe3\\x82\\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xdfe.de/stra\\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xc3\\x9fe.de/stra\\xc3\\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xf6nigsg\\xe4\\xdfchen.de/stra\\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xc3\\xb6nigsg\\xc3\\xa4\\xc3\\x9fchen.de/stra\\xc3\\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://\\u2603.net/]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org0]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org1]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]"
+   ],
+   "p2p_kept": [],
+   "resolved_functional": false,
+   "unmatched_agent_cases": [],
+   "missing_agent_ids": [
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_contains",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_copy",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_delitem",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_docstring_example",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_equality",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_fixes_649",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_get",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_getitem",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid0]",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid1]",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_init[cid2]",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_iter",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_len",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_lower_items",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_setdefault",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_update",
+    "tests/test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[100-TypeError]",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int[woops-ValueError]",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_none",
+    "tests/test_requests.py::TestMorselToCookieExpires::test_expires_valid_str",
+    "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str",
+    "tests/test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]",
+    "tests/test_requests.py::TestPreparingURLs::test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*.google.com1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://*1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_bad_url[http://\\u2603.net/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xc3\\xb6nigsg\\xc3\\xa4\\xc3\\x9fchen.de/stra\\xc3\\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://K\\xf6nigsg\\xe4\\xdfchen.de/stra\\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://\\xe3\\x82\\xb8\\xe3\\x82\\xa7\\xe3\\x83\\xbc\\xe3\\x83\\x94\\xe3\\x83\\xbc\\xe3\\x83\\x8b\\xe3\\x83\\x83\\xe3\\x82\\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://google.com-http://google.com/]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xc3\\x9fe.de/stra\\xc3\\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://stra\\xdfe.de/stra\\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]",
+    "tests/test_requests.py::TestPreparingURLs::test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org0]",
+    "tests/test_requests.py::TestPreparingURLs::test_url_mutation[mailto:user@example.org-mailto:user@example.org1]",
+    "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[\\xd0\\xb8\\xd0\\xbc\\xd1\\x8f-\\xd0\\xbf\\xd0\\xb0\\xd1\\x80\\xd0\\xbe\\xd0\\xbb\\xd1\\x8c-Basic",
+    "tests/test_requests.py::TestRequests::test_basic_auth_str_is_always_native[test-test-Basic",
+    "tests/test_requests.py::TestRequests::test_basic_building",
+    "tests/test_requests.py::TestRequests::test_basicauth_encodes_byte_strings",
+    "tests/test_requests.py::TestRequests::test_binary_put",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_items",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_items",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keeps_len",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_keys",
+    "tests/test_requests.py::TestRequests::test_cookie_as_dict_values",
+    "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_different_domains",
+    "tests/test_requests.py::TestRequests::test_cookie_duplicate_names_raises_cookie_conflict_error",
+    "tests/test_requests.py::TestRequests::test_cookie_parameters",
+    "tests/test_requests.py::TestRequests::test_cookie_policy_copy",
+    "tests/test_requests.py::TestRequests::test_empty_response_has_content_none",
+    "tests/test_requests.py::TestRequests::test_entry_points",
+    "tests/test_requests.py::TestRequests::test_errors[http://doesnotexist.google.com-ConnectionError]",
+    "tests/test_requests.py::TestRequests::test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]",
+    "tests/test_requests.py::TestRequests::test_errors[http://localhost:1-ConnectionError]",
+    "tests/test_requests.py::TestRequests::test_http_error",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-10.122.1.1:3128/]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost.localdomain:3128/]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidSchema-localhost:3128]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://*example.com]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://.example.com]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[InvalidURL-http://]",
+    "tests/test_requests.py::TestRequests::test_invalid_url[MissingSchema-hiwpefhipowhefopw]",
+    "tests/test_requests.py::TestRequests::test_links",
+    "tests/test_requests.py::TestRequests::test_long_authinfo_in_url",
+    "tests/test_requests.py::TestRequests::test_non_prepared_request_error",
+    "tests/test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs",
+    "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]",
+    "tests/test_requests.py::TestRequests::test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&a=b#fragment]",
+    "tests/test_requests.py::TestRequests::test_params_bytes_are_encoded",
+    "tests/test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default",
+    "tests/test_requests.py::TestRequests::test_path_is_not_double_encoded",
+    "tests/test_requests.py::TestRequests::test_prepare_body_position_non_stream",
+    "tests/test_requests.py::TestRequests::test_prepare_request_with_bytestring_url",
+    "tests/test_requests.py::TestRequests::test_proxy_auth",
+    "tests/test_requests.py::TestRequests::test_proxy_auth_empty_pass",
+    "tests/test_requests.py::TestRequests::test_proxy_error",
+    "tests/test_requests.py::TestRequests::test_response_chunk_size_type",
+    "tests/test_requests.py::TestRequests::test_response_decode_unicode",
+    "tests/test_requests.py::TestRequests::test_response_is_iterable",
+    "tests/test_requests.py::TestRequests::test_response_reason_unicode",
+    "tests/test_requests.py::TestRequests::test_response_reason_unicode_fallback",
+    "tests/test_requests.py::TestRequests::test_response_without_release_conn",
+    "tests/test_requests.py::TestRequests::test_rewind_body",
+    "tests/test_requests.py::TestRequests::test_rewind_body_failed_seek",
+    "tests/test_requests.py::TestRequests::test_rewind_body_failed_tell",
+    "tests/test_requests.py::TestRequests::test_rewind_body_no_seek",
+    "tests/test_requests.py::TestRequests::test_rewind_partially_read_body",
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching",
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_is_case_insensitive",
+    "tests/test_requests.py::TestRequests::test_session_get_adapter_prefix_matching_mixed_case",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_host_change",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_http_downgrade",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_https_upgrade",
+    "tests/test_requests.py::TestRequests::test_should_strip_auth_port_change",
+    "tests/test_requests.py::TestRequests::test_transport_adapter_ordering",
+    "tests/test_requests.py::TestRequests::test_whitespaces_are_removed_from_url",
+    "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout0]",
+    "tests/test_requests.py::TestTimeout::test_connect_timeout[timeout1]",
+    "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout0]",
+    "tests/test_requests.py::TestTimeout::test_total_timeout_connect[timeout1]",
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data0]",
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data1]",
+    "tests/test_requests.py::test_data_argument_accepts_tuples[data2]",
+    "tests/test_requests.py::test_json_encodes_as_bytes",
+    "tests/test_requests.py::test_prepared_copy[None]",
+    "tests/test_requests.py::test_prepared_copy[kwargs1]",
+    "tests/test_requests.py::test_prepared_copy[kwargs2]",
+    "tests/test_requests.py::test_prepared_copy[kwargs3]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]",
+    "tests/test_requests.py::test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]"
+   ]
+  },
+  "ts": "2026-10-30T05:24:28.199142+00:00"
+ },
+ "rescore": {
+  "tool": "benchmarks/rescore_4_2.py",
+  "ts": "2026-10-30T16:30:15.498740+00:00",
+  "caveat": ""
+ }
+}

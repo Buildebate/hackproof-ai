@@ -11,10 +11,15 @@ from pathlib import Path
 
 import pytest
 
+from hackproof.debate.roles.architectural_builder import (
+    extract_blocks,
+    revise_patch,
+)
 from hackproof.patcher import (
     GREEN_JUNIT_NAME,
     PatchApplicationError,
     WorkspacePatcher,
+    locate_search,
 )
 from hackproof.provenance import TGRESProvenanceVerifier
 from hackproof.sandbox.guards import RewardHackingDetectedError
@@ -124,6 +129,79 @@ def test_apply_single_block_exact(tmp_path: Path) -> None:
     assert target.read_text(encoding="utf-8") == PATCHED_SRC
 
 
+def test_apply_routed_blocks_multi_file_success(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    (tmp_path / "sub").mkdir()
+    (tmp_path / "sub" / "b.py").write_text("y = 2\n", encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+
+    applied = patcher.apply_routed_blocks(
+        tmp_path,
+        [("a.py", "x = 1\n", "x = 10\n"), ("sub/b.py", "y = 2\n", "y = 20\n")],
+    )
+
+    assert sorted(applied) == ["a.py", "sub/b.py"]
+    assert (tmp_path / "a.py").read_text(encoding="utf-8") == "x = 10\n"
+    assert (tmp_path / "sub" / "b.py").read_text(encoding="utf-8") == "y = 20\n"
+
+
+def test_apply_routed_blocks_atomic_across_files(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    (tmp_path / "b.py").write_text("y = 2\n", encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+
+    with pytest.raises(PatchApplicationError, match="block 0: SEARCH not found"):
+        patcher.apply_routed_blocks(
+            tmp_path,
+            [("a.py", "x = 1\n", "x = 10\n"), ("b.py", "NOPE\n", "y = 20\n")],
+        )
+
+    assert (tmp_path / "a.py").read_text(encoding="utf-8") == "x = 1\n"
+    assert (tmp_path / "b.py").read_text(encoding="utf-8") == "y = 2\n"
+
+
+def test_apply_routed_blocks_refuses_unsafe_targets(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+
+    with pytest.raises(PatchApplicationError, match="unsafe path"):
+        patcher.apply_routed_blocks(tmp_path, [("../evil.py", "x", "y")])
+    with pytest.raises(PatchApplicationError, match="test-infra"):
+        patcher.apply_routed_blocks(tmp_path, [("conftest.py", "x", "y")])
+    with pytest.raises(FileNotFoundError, match="patch target not found"):
+        patcher.apply_routed_blocks(tmp_path, [("missing.py", "x", "y")])
+
+    assert (tmp_path / "a.py").read_text(encoding="utf-8") == "x = 1\n"
+
+
+def test_apply_routed_blocks_routes_unique_straggler(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("x = 1\n", encoding="utf-8")
+    (tmp_path / "b.py").write_text("y = 2\n", encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+
+    applied = patcher.apply_routed_blocks(
+        tmp_path,
+        [("a.py", "x = 1\n", "x = 10\n"), (None, "y = 2\n", "y = 20\n")],
+        universe=["a.py", "b.py"],
+    )
+
+    assert sorted(applied) == ["a.py", "b.py"]
+    assert (tmp_path / "b.py").read_text(encoding="utf-8") == "y = 20\n"
+
+
+def test_apply_routed_blocks_rejects_ambiguous_straggler(tmp_path: Path) -> None:
+    (tmp_path / "a.py").write_text("same = 0\n", encoding="utf-8")
+    (tmp_path / "b.py").write_text("same = 0\n", encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+
+    with pytest.raises(PatchApplicationError, match="2 files"):
+        patcher.apply_routed_blocks(
+            tmp_path,
+            [("a.py", "same = 0\n", "same = 1\n"), (None, "same = 0\n", "same = 2\n")],
+            universe=["a.py", "b.py"],
+        )
+
+
 def test_apply_multiple_blocks_sequential(tmp_path: Path) -> None:
     target = tmp_path / "m.py"
     target.write_text("a = 1\nb = 2\n", encoding="utf-8")
@@ -154,14 +232,22 @@ def test_duplicate_search_rejected_without_touching_file(tmp_path: Path) -> None
     assert target.read_text(encoding="utf-8") == "x = 1\nx = 1\n"
 
 
-def test_whitespace_drifted_search_rejected(tmp_path: Path) -> None:
+def test_whitespace_only_drift_applies_at_ws_level(tmp_path: Path) -> None:
+    # Step 4.3b.3 (R6) INTENTIONAL CONTRACT CHANGE (founder-approved
+    # plan): the exact-only rule used to reject trailing-space drift;
+    # the ladder now applies whitespace-only drift at the ws level.
+    # Content drift is still rejected (see the miss/ambiguity tests).
     target = tmp_path / "app.py"
     target.write_text(VULNERABLE_SRC, encoding="utf-8")
     patcher = WorkspacePatcher(runner=_FakeRunner())
     drifted = "def vulnerable(value): \n    return value\n"  # trailing space
-
-    with pytest.raises(PatchApplicationError, match="0 matches"):
-        patcher.apply_blocks(tmp_path, "app.py", [(drifted, "x")])
+    match = locate_search(VULNERABLE_SRC, drifted)
+    assert match.level == "ws"
+    patcher.apply_blocks(
+        tmp_path,
+        "app.py",
+        [(drifted, "def vulnerable(value):\n    return value")],
+    )
     assert target.read_text(encoding="utf-8") == VULNERABLE_SRC
 
 
@@ -424,3 +510,281 @@ def test_verify_red_to_green_rejects_malformed_report() -> None:
         TGRESProvenanceVerifier.verify_red_to_green(RED_XML, 0, "clean")  # type: ignore[arg-type]
     with pytest.raises(ValueError, match="guard_report"):
         TGRESProvenanceVerifier.verify_red_to_green(RED_XML, 0, (True, [], "x"))  # type: ignore[arg-type]
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3b.3 (R6): matching ladder, region-bearing misses, single retry
+# ---------------------------------------------------------------------------
+
+# Byte-exact excerpts of pristine HEAD bytes (sources: archived
+# prompts/A/*/patch_text.txt + /tmp/hp_bench_work/_clones HEAD blobs).
+ARCHIVED_SEARCH_1142 = (
+    "        else:\n"
+    "            self.headers['Content-Length'] = '0'"
+)
+EXCERPT_1142 = (
+    "            length = False\n"
+    "\n"
+    "        if is_stream:\n"
+    "            body = data\n"
+    "\n"
+    "            if files:\n"
+    "                raise NotImplementedError("
+    "'Streamed bodies and files are mutually exclusive.')\n"
+    "\n"
+    "            if length:\n"
+    "                self.headers['Content-Length'] = length\n"
+    "            else:\n"
+    "                self.headers['Transfer-Encoding'] = 'chunked'\n"
+    "        # Check if file, fo, generator, iterator.\n"
+    "        # If not, run through normal process.\n"
+    "\n"
+    "        else:\n"
+    "            # Multi-part file uploads.\n"
+    "            if files:\n"
+    "                (body, content_type) = self._encode_files(files, data)\n"
+)
+# Verbatim span copied from the shown region (lines 9-10 of the excerpt);
+# the REPLACE side is a simulation artifact of the retry double.
+REVISED_SEARCH_1142 = (
+    "            if length:\n"
+    "                self.headers['Content-Length'] = length"
+)
+REVISED_REPLACE_1142 = (
+    "            if length:\n"
+    "                self.headers['Content-Length'] = str(length)"
+)
+
+ARCHIVED_SEARCH_7432 = (
+    "    if item.config.option.runxfail:\n"
+    "        pass  # don't interfere\n"
+    '    elif call.when == "call":'
+)
+EXCERPT_7432 = (
+    "    # unittest special case, see setting of unexpectedsuccess_key\n"
+    '    if unexpectedsuccess_key in item._store and rep.when == "call":\n'
+    "        reason = item._store[unexpectedsuccess_key]\n"
+    "        if reason:\n"
+    '            rep.longrepr = "Unexpected success: {}".format(reason)\n'
+    "        else:\n"
+    '            rep.longrepr = "Unexpected success"\n'
+    '        rep.outcome = "failed"\n'
+    "    elif item.config.option.runxfail:\n"
+    "        pass  # don't interfere\n"
+    "    elif call.excinfo and isinstance(call.excinfo.value, xfail.Exception):\n"
+    "        assert call.excinfo.value.msg is not None\n"
+    '        rep.wasxfail = "reason: " + call.excinfo.value.msg\n'
+    '        rep.outcome = "skipped"\n'
+    "    elif not rep.skipped and xfailed:\n"
+    "        if call.excinfo:\n"
+    "            raises = xfailed.raises\n"
+    "            if raises is not None and not isinstance(call.excinfo.value, raises):\n"
+    '                rep.outcome = "failed"\n'
+    "            else:\n"
+)
+REVISED_SEARCH_7432 = (
+    "    elif item.config.option.runxfail:\n"
+    "        pass  # don't interfere\n"
+    "    elif call.excinfo and isinstance(call.excinfo.value, xfail.Exception):"
+)
+REVISED_REPLACE_7432 = (
+    "    elif item.config.option.runxfail:\n"
+    "        rep.outcome = 'skipped'  # revised against shown region\n"
+    "    elif call.excinfo and isinstance(call.excinfo.value, xfail.Exception):"
+)
+
+
+class _VerbatimDouble:
+    """Retry double: returns one canned revision, captures prompts."""
+
+    def __init__(self, revised_patch: str) -> None:
+        self._revised = revised_patch
+        self.calls: list[tuple[str, str]] = []
+
+    def debate_round(self, role: str, prompt: str, history: list) -> str:
+        self.calls.append((role, prompt))
+        assert history == []
+        return self._revised
+
+
+def _revision_patch(search: str, replace: str) -> str:
+    return (
+        "<<<<<<< SEARCH\n" + search + "\n=======\n" + replace + "\n>>>>>>> REPLACE\n"
+    )
+
+
+def test_locate_search_exact_level_unchanged() -> None:
+    match = locate_search(VULNERABLE_SRC, "    return value\n")
+    assert (match.start, match.level, match.score) == (23, "exact", 1.0)
+    assert VULNERABLE_SRC[match.start : match.end] == "    return value\n"
+    with pytest.raises(PatchApplicationError, match=r"ambiguous SEARCH \(2"):
+        locate_search("same\nsame\n", "same\n")
+
+
+def test_ladder_ws_level_applies_reindented_search(tmp_path: Path) -> None:
+    target = tmp_path / "app.py"
+    target.write_text(VULNERABLE_SRC, encoding="utf-8")
+    reindented = "def vulnerable(value):\n        return value\n"
+    assert VULNERABLE_SRC.count(reindented) == 0
+    match = locate_search(VULNERABLE_SRC, reindented)
+    assert match.level == "ws"
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+    patcher.apply_blocks(
+        tmp_path,
+        "app.py",
+        [(reindented, "def vulnerable(value):\n    return value\n    # touched")],
+    )
+    assert target.read_text(encoding="utf-8") == (
+        "def vulnerable(value):\n    return value\n    # touched\n"
+    )
+
+
+def test_ladder_fuzzy_level_applies_single_token_typo(tmp_path: Path) -> None:
+    content = (
+        "def compute_total(items):\n"
+        "    total = sum(items)\n"
+        "    return total\n"
+    )
+    typo = (
+        "def compute_total(items):\n"
+        "    total = sum(items)\n"
+        "    return totals"
+    )
+    assert content.count(typo) == 0
+    match = locate_search(content, typo)
+    assert match.level == "fuzzy"
+    assert match.score >= 0.90
+    target = tmp_path / "calc.py"
+    target.write_text(content, encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+    patcher.apply_blocks(
+        tmp_path,
+        "calc.py",
+        [
+            (
+                typo,
+                "def compute_total(items):\n"
+                "    total = sum(items)\n"
+                "    return int(total)",
+            )
+        ],
+    )
+    assert target.read_text(encoding="utf-8") == (
+        "def compute_total(items):\n"
+        "    total = sum(items)\n"
+        "    return int(total)\n"
+    )
+
+
+def test_ladder_ambiguous_fuzzy_refused(tmp_path: Path) -> None:
+    content = (
+        'processed_result_alpha = compute_weighted_total(input_items, mode="alpha")\n'
+        "store_processed_result(processed_result_alphx)\n"
+        'processed_result_alpha = compute_weighted_total(input_items, mode="alpha")\n'
+        "store_processed_result(processed_result_alphy)\n"
+    )
+    search = (
+        'processed_result_alpha = compute_weighted_total(input_items, mode="alpha")\n'
+        "store_processed_result(processed_result_alphz)"
+    )
+    assert content.count(search) == 0
+    with pytest.raises(PatchApplicationError, match="ambiguous SEARCH"):
+        locate_search(content, search)
+    target = tmp_path / "dup.py"
+    target.write_text(content, encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+    with pytest.raises(PatchApplicationError, match="fuzzy matches above"):
+        patcher.apply_blocks(tmp_path, "dup.py", [(search, "x")])
+    assert target.read_text(encoding="utf-8") == content
+
+
+def test_ladder_fuzzy_skipped_for_tiny_search() -> None:
+    with pytest.raises(PatchApplicationError, match="no similar region"):
+        locate_search("abcdefg\n", "abcx")
+
+
+def test_miss_carries_closest_region_7432() -> None:
+    assert EXCERPT_7432.count(ARCHIVED_SEARCH_7432) == 0
+    with pytest.raises(PatchApplicationError) as excinfo:
+        locate_search(EXCERPT_7432, ARCHIVED_SEARCH_7432)
+    message = str(excinfo.value)
+    assert "SEARCH not found (0 matches" in message
+    assert "closest region" in message
+    assert "similarity 0.71" in message
+    assert "elif item.config.option.runxfail:" in message
+    assert "pass  # don't interfere" in message
+    assert " 9 | " in message
+
+
+@pytest.mark.parametrize(
+    "excerpt, archived, revised_search, revised_replace",
+    [
+        (EXCERPT_1142, ARCHIVED_SEARCH_1142, REVISED_SEARCH_1142, REVISED_REPLACE_1142),
+        (EXCERPT_7432, ARCHIVED_SEARCH_7432, REVISED_SEARCH_7432, REVISED_REPLACE_7432),
+    ],
+)
+def test_retry_loop_applies_after_region_shown(
+    tmp_path: Path,
+    excerpt: str,
+    archived: str,
+    revised_search: str,
+    revised_replace: str,
+) -> None:
+    """Step 4.3b.3 acceptance: A-1142 / A-7432 apply via one retry.
+
+    The archived SEARCH (byte-exact debate output) honestly misses;
+    the miss carries the real region; the double plays an instructed
+    model copying its corrected SEARCH verbatim from that region; the
+    re-extracted block applies exactly once. Assertions target the
+    machinery (single retry, region in the retry prompt, byte-exact
+    landing), not model cognition.
+    """
+    assert excerpt.count(archived) == 0
+    assert excerpt.count(revised_search) == 1
+    target = tmp_path / "target.py"
+    target.write_text(excerpt, encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+    with pytest.raises(PatchApplicationError) as excinfo:
+        patcher.apply_blocks(tmp_path, "target.py", [(archived, "revised")])
+    failure = str(excinfo.value)
+    assert "closest region" in failure
+    double = _VerbatimDouble(_revision_patch(revised_search, revised_replace))
+    revised_text = revise_patch(
+        double,
+        issue_description="issue",
+        code_context=excerpt,
+        previous_patch=_revision_patch(archived, "revised"),
+        failure_report=failure,
+    )
+    assert len(double.calls) == 1
+    role, prompt = double.calls[0]
+    assert role == "ArchitecturalBuilder"
+    assert "closest region" in prompt
+    assert revised_search.splitlines()[0].strip() in prompt
+    blocks = extract_blocks(revised_text)
+    assert len(blocks) == 1
+    patcher.apply_blocks(tmp_path, "target.py", blocks)
+    expected = excerpt.replace(revised_search, revised_replace, 1)
+    assert target.read_text(encoding="utf-8") == expected
+    assert revised_replace.splitlines()[-1] in expected
+
+
+def test_missing_target_suggests_closest_path(tmp_path: Path) -> None:
+    # Step 4.3b.3 (R6): the 4.3b.2 ghost-path lesson
+    # (runtime-core vs runtime-dom useCssVars.ts) is now loud.
+    real_dir = tmp_path / "packages" / "runtime-dom" / "src" / "helpers"
+    real_dir.mkdir(parents=True)
+    (real_dir / "useCssVars.ts").write_text("export {}\n", encoding="utf-8")
+    patcher = WorkspacePatcher(runner=_FakeRunner())
+    ghost = "packages/runtime-core/src/helpers/useCssVars.ts"
+    try:
+        patcher.apply_blocks(tmp_path, ghost, [("a", "b")])
+    except FileNotFoundError as exc:
+        message = str(exc)
+    else:  # pragma: no cover - the target genuinely does not exist
+        raise AssertionError("expected FileNotFoundError")
+    assert "patch target not found" in message
+    assert (
+        "did you mean: packages/runtime-dom/src/helpers/useCssVars.ts?"
+        in message
+    )

@@ -1,0 +1,8 @@
+{
+ "instance_id": "psf__requests-5414",
+ "source": "SWE-bench/SWE-bench_Verified@test (datasets-server, harness-only)",
+ "test_patch": "diff --git a/tests/test_requests.py b/tests/test_requests.py\n--- a/tests/test_requests.py\n+++ b/tests/test_requests.py\n@@ -81,6 +81,8 @@ def test_entry_points(self):\n             (InvalidSchema, 'localhost.localdomain:3128/'),\n             (InvalidSchema, '10.122.1.1:3128/'),\n             (InvalidURL, 'http://'),\n+            (InvalidURL, 'http://*example.com'),\n+            (InvalidURL, 'http://.example.com'),\n         ))\n     def test_invalid_url(self, exception, url):\n         with pytest.raises(exception):\n",
+ "environment_setup_commit": "a1a6a549a0143d9b32717dbe3d75cd543ae5a4f6",
+ "version": "2.26",
+ "test_patch_sha256": "46e0fcf881a426fb44dcd64c29be1f1d81113fcbfffe658404fc6298bc028a53"
+}

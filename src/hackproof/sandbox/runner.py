@@ -20,6 +20,8 @@ _TERMINATE_GRACE_SEC = 5.0
 _SSH_FAILURE_EXIT = 255
 _TIMEOUT_EXIT_CODE = 124
 _DEFAULT_CONNECT_TIMEOUT_SEC = 15
+_ALLOWED_RUNTIMES = frozenset({"runsc", "runc"})
+_DEFAULT_RUNTIME = "runsc"
 _PROXY_VARS = {
     "HTTP_PROXY",
     "HTTPS_PROXY",
@@ -168,6 +170,7 @@ class RemoteSSHRunner:
         image: str = "python:3.11-slim",
         connect_timeout_sec: int = _DEFAULT_CONNECT_TIMEOUT_SEC,
         strict_host_key_checking: bool = True,
+        runtime: str = _DEFAULT_RUNTIME,
         executor: Callable[
             [Sequence[str], float], subprocess.CompletedProcess[str]
         ]
@@ -175,9 +178,16 @@ class RemoteSSHRunner:
     ) -> None:
         """Bind OCI credentials (explicit args win over ``OCI_*`` env vars).
 
+        Args:
+            runtime: Container runtime (``runsc`` gVisor by default;
+                ``runc`` only where the host kernel demonstrably
+                breaks gVisor's file-I/O path — see Step 4.2 notes).
+                Allow-listed (no shell interpolation of callers).
+
         Raises:
             OciUnavailableError: Unset host/user/key or missing key file,
                 with an actionable message naming the env var.
+            ValueError: Unknown runtime name.
         """
         resolved_host = host or os.environ.get("OCI_SSH_HOST")
         resolved_user = user or os.environ.get("OCI_SSH_USER")
@@ -201,12 +211,18 @@ class RemoteSSHRunner:
                 f"OCI SSH key file does not exist: {key_file} "
                 "(check OCI_SSH_KEY / Step 1.0 SSH bridge)"
             )
+        if runtime not in _ALLOWED_RUNTIMES:
+            raise ValueError(
+                f"unknown container runtime {runtime!r}: expected one of "
+                f"{sorted(_ALLOWED_RUNTIMES)}"
+            )
         self._host = resolved_host
         self._user = resolved_user
         self._key = str(key_file)
         self._image = image
         self._connect_timeout_sec = connect_timeout_sec
         self._strict_host_key_checking = strict_host_key_checking
+        self._runtime = runtime
         self._executor = executor or _default_ssh_executor
 
     def _build_ssh_argv(self, remote_script: str) -> list[str]:
@@ -234,7 +250,7 @@ class RemoteSSHRunner:
         quoted = " ".join(shlex.quote(part) for part in cmd)
         network_flag = "--network=none " if network_disabled else ""
         return (
-            f"docker run --rm --runtime=runsc {network_flag}"
+            f"docker run --rm --runtime={self._runtime} {network_flag}"
             f"-v {shlex.quote(cwd)}:{shlex.quote(cwd)} "
             f"-w {shlex.quote(cwd)} {shlex.quote(self._image)} {quoted}"
         )

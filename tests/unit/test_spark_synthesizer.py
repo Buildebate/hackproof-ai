@@ -157,3 +157,34 @@ def test_default_runner_is_local_subprocess() -> None:
 
     synth = RegressionTestSynthesizer(client=MockMetaClient())
     assert isinstance(synth._runner, LocalSubprocessRunner)
+
+
+class _CaptureClient:
+    """Client recording the issue text it was asked to address."""
+
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, str]] = []
+
+    def generate_regression_test(
+        self, issue_description: str, code_context: str
+    ) -> str:
+        self.calls.append((issue_description, code_context))
+        return "def test_repro():\n    assert False, 'boom'\n"
+
+
+def test_synthesize_feedback_appends_judge_reason(tmp_path: Path) -> None:
+    """Step 4.3b.6 (R10): resynthesis carries the judge's verdict."""
+    client = _CaptureClient()
+    synth = RegressionTestSynthesizer(client=client)
+    first = synth.synthesize_test("bug", "code", "repo/", "python", tmp_path)
+    assert client.calls[0][0] == "bug"
+    reason = "red run exited 0 (test passed on unpatched base)"
+    second = synth.synthesize_test(
+        "bug", "code", "repo/", "python", tmp_path, feedback=reason
+    )
+    assert "PREVIOUS ATTEMPT REJECTED" in client.calls[1][0]
+    assert reason in client.calls[1][0]
+    assert client.calls[1][0].startswith("bug\n\nPREVIOUS")
+    # Retries never overwrite: the tag covers the feedback.
+    assert first.name != second.name
+    assert first.is_file() and second.is_file()

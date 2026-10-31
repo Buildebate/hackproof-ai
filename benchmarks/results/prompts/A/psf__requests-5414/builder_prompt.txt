@@ -1,0 +1,477 @@
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
+
+ISSUE:
+Getting http://.example.com raises UnicodeError
+Attempting to get e.g. `http://.example.com` results in a `UnicodeError`. It seems like the intention so far has been to raise `InvalidUrl` instead (see e.g. [this line](https://github.com/psf/requests/blob/ca6f9af5dba09591007b15a7368bc0f006b7cc50/requests/models.py#L401)).
+
+I see there was some hesitation in fixing a similar issue (#4168) and would like to add that even catching the error just to rethrow as a requests exception would be beneficial.
+
+## Expected Result
+
+Based on PR #774: `InvalidUrl: URL has an invalid label.`
+
+## Actual Result
+
+`UnicodeError: encoding with 'idna' codec failed (UnicodeError: label empty or too long)`
+
+## Reproduction Steps
+
+```python3
+import requests
+requests.get("http://.example.com")
+```
+
+## System Information
+
+    $ python -m requests.help
+
+```
+{
+  "chardet": {
+    "version": "3.0.4"
+  },
+  "cryptography": {
+    "version": "2.8"
+  },
+  "idna": {
+    "version": "2.8"
+  },
+  "implementation": {
+    "name": "CPython",
+    "version": "3.8.0"
+  },
+  "platform": {
+    "release": "5.3.0-40-generic",
+    "system": "Linux"
+  },
+  "pyOpenSSL": {
+    "openssl_version": "1010104f",
+    "version": "19.1.0"
+  },
+  "requests": {
+    "version": "2.23.0"
+  },
+  "system_ssl": {
+    "version": "1010103f"
+  },
+  "urllib3": {
+    "version": "1.25.8"
+  },
+  "using_pyopenssl": true
+}
+```
+
+CODE CONTEXT:
+requests/__init__.py:
+# -*- coding: utf-8 -*-
+
+#   __
+#  /__)  _  _     _   _ _/   _
+# / (   (- (/ (/ (- _)  /  _)
+#          /
+
+"""
+Requests HTTP Library
+~~~~~~~~~~~~~~~~~~~~~
+
+Requests is an HTTP library, written in Python, for human beings.
+Basic GET usage:
+
+   >>> import requests
+   >>> r = requests.get('https://www.python.org')
+   >>> r.status_code
+   200
+   >>> b'Python is a programming language' in r.content
+   True
+
+... or POST:
+
+   >>> payload = dict(key1='value1', key2='value2')
+   >>> r = requests.post('https://httpbin.org/post', data=payload)
+   >>> print(r.text)
+   {
+     ...
+     "form": {
+       "key1": "value1",
+       "key2": "value2"
+     },
+     ...
+   }
+
+The other HTTP methods are supported - see `requests.api`. Full documentation
+is at <https://requests.readthedocs.io>.
+
+:copyright: (c) 2017 by Kenneth Reitz.
+:license: Apache 2.0, see LICENSE for more details.
+"""
+
+import urllib3
+import warnings
+from .exceptions import RequestsDependencyWarning
+
+try:
+    from charset_normalizer import __version__ as charset_normalizer_version
+except ImportError:
+    charset_normalizer_version = None
+
+try:
+    from chardet import __version__ as chardet_version
+except ImportError:
+    chardet_version = None
+
+def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):
+    urllib3_version = urllib3_version.split('.')
+    assert urllib3_version != ['dev']  # Verify urllib3 isn't installed from git.
+
+    # Sometimes, urllib3 only reports its version as 16.1.
+    if len(urllib3_version) == 2:
+        urllib3_version.append('0')
+
+    # Check urllib3 for compatibility.
+    major, minor, patch = urllib3_version  # noqa: F811
+    major, minor, patch = int(major), int(minor), int(patch)
+    # urllib3 >= 1.21.1, <= 1.26
+    assert major == 1
+    assert minor >= 21
+    assert minor <= 26
+
+    # Check charset_normalizer for compatibility.
+    if chardet_version:
+        major, minor, patch = chardet_version.split('.')[:3]
+        major, minor, patch = int(major), int(minor), int(patch)
+        # chardet_version >= 3.0.2, < 5.0.0
+        assert (3, 0, 2) <= (major, minor, patch) < (5, 0, 0)
+    elif charset_normalizer_version:
+        major, minor, patch = charset_normalizer_version.split('.')[:3]
+        major, minor, patch = int(major), int(minor), int(patch)
+        # charset_normalizer >= 2.0.0 < 3.0.0
+        assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)
+    else:
+        raise Exception("You need either charset_normalizer or chardet installed")
+
+def _check_cryptography(cryptography_version):
+    # cryptography < 1.3.4
+    try:
+        cryptography_version = list(map(int, cryptography_version.split('.')))
+    except ValueError:
+        return
+
+    if cryptography_version < [1, 3, 4]:
+        warning = 'Old version of cryptography ({}) may cause slowdown.'.format(cryptography_version)
+        warnings.warn(warning, RequestsDependencyWarning)
+
+# Check imported dependencies for compatibility.
+try:
+    check_compatibility(urllib3.__version__, chardet_version, charset_normalizer_version)
+except (AssertionError, ValueError):
+    warnings.warn("urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported "
+                  "version!".format(urllib3.__version__, chardet_version, charset_normalizer_version),
+                  RequestsDependencyWarning)
+
+# Attempt to enable urllib3's fallback for SNI support
+# if the standard library doesn't support SNI or the
+# 'ssl' library isn't available.
+try:
+    try:
+        import ssl
+    except ImportError:
+        ssl = None
+
+    if not getattr(ssl, "HAS_SNI", False):
+        from urllib3.contrib import pyopenssl
+        pyopenssl.inject_into_urllib3()
+
+        # Check cryptography version
+        from cryptography import __version__ as cryptography_version
+        _check_cryptography(cryptography_version)
+except ImportError:
+    pass
+
+# urllib3's DependencyWarnings should be silenced.
+from urllib3.exceptions import DependencyWarning
+warnings.simplefilter('ignore', DependencyWarning)
+
+from .__version__ import __title__, __description__, __url__, __version__
+from .__version__ import __build__, __author__, __author_email__, __license__
+from .__version__ import __copyright__, __cake__
+
+from . import utils
+from . import packages
+from .models import Request, Response, PreparedRequest
+from .api import request, get, head, post, patch, put, delete, options
+from .sessions import session, Session
+from .status_codes import codes
+from .exceptions import (
+    RequestException, Timeout, URLRequired,
+    TooManyRedirects, HTTPError, ConnectionError,
+    FileModeWarning, ConnectTimeout, ReadTimeout, JSONDecodeError
+)
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+from logging import NullHandler
+
+logging.getLogger(__name__).addHandler(NullHandler())
+
+# FileModeWarnings go off per the default.
+warnings.simplefilter('default', FileModeWarning, append=True)
+
+
+requests/compat.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.compat
+~~~~~~~~~~~~~~~
+
+This module handles import compatibility issues between Python 2 and
+Python 3.
+"""
+
+try:
+    import chardet
+except ImportError:
+    import charset_normalizer as chardet
+
+import sys
+
+# -------
+# Pythons
+# -------
+
+# Syntax sugar.
+_ver = sys.version_info
+
+#: Python 2.x?
+is_py2 = (_ver[0] == 2)
+
+#: Python 3.x?
+is_py3 = (_ver[0] == 3)
+
+has_simplejson = False
+try:
+    import simplejson as json
+    has_simplejson = True
+except ImportError:
+    import json
+
+# ---------
+# Specifics
+# ---------
+
+if is_py2:
+    from urllib import (
+        quote, unquote, quote_plus, unquote_plus, urlencode, getproxies,
+        proxy_bypass, proxy_bypass_environment, getproxies_environment)
+    from urlparse import urlparse, urlunparse, urljoin, urlsplit, urldefrag
+    from urllib2 import parse_http_list
+    import cookielib
+    from Cookie import Morsel
+    from StringIO import StringIO
+    # Keep OrderedDict for backwards compatibility.
+    from collections import Callable, Mapping, MutableMapping, OrderedDict
+
+    builtin_str = str
+    bytes = str
+    str = unicode
+    basestring = basestring
+    numeric_types = (int, long, float)
+    integer_types = (int, long)
+    JSONDecodeError = ValueError
+
+elif is_py3:
+    from urllib.parse import urlparse, urlunparse, urljoin, urlsplit, urlencode, quote, unquote, quote_plus, unquote_plus, urldefrag
+    from urllib.request import parse_http_list, getproxies, proxy_bypass, proxy_bypass_environment, getproxies_environment
+    from http import cookiejar as cookielib
+    from http.cookies import Morsel
+    from io import StringIO
+    # Keep OrderedDict for backwards compatibility.
+    from collections import OrderedDict
+    from collections.abc import Callable, Mapping, MutableMapping
+    if has_simplejson:
+        from simplejson import JSONDecodeError
+    else:
+        from json import JSONDecodeError
+
+    builtin_str = str
+    str = str
+    bytes = bytes
+    basestring = (str, bytes)
+    numeric_types = (int, float)
+    integer_types = (int,)
+
+
+requests/help.py:
+"""Module containing bug report helper(s)."""
+from __future__ import print_function
+
+import json
+import platform
+import sys
+import ssl
+
+import idna
+import urllib3
+
+from . import __version__ as requests_version
+
+try:
+    import charset_normalizer
+except ImportError:
+    charset_normalizer = None
+
+try:
+    import chardet
+except ImportError:
+    chardet = None
+
+try:
+    from urllib3.contrib import pyopenssl
+except ImportError:
+    pyopenssl = None
+    OpenSSL = None
+    cryptography = None
+else:
+    import OpenSSL
+    import cryptography
+
+
+def _implementation():
+    """Return a dict with the Python implementation and version.
+
+    Provide both the name and the version of the Python implementation
+    currently running. For example, on CPython 2.7.5 it will return
+    {'name': 'CPython', 'version': '2.7.5'}.
+
+    This function works best on CPython and PyPy: in particular, it probably
+    doesn't work for Jython or IronPython. Future investigation should be done
+    to work out the correct shape of the code for those platforms.
+    """
+    implementation = platform.python_implementation()
+
+    if implementation == 'CPython':
+        implementation_version = platform.python_version()
+    elif implementation == 'PyPy':
+        implementation_version = '%s.%s.%s' % (sys.pypy_version_info.major,
+                                               sys.pypy_version_info.minor,
+                                               sys.pypy_version_info.micro)
+        if sys.pypy_version_info.releaselevel != 'final':
+            implementation_version = ''.join([
+                implementation_version, sys.pypy_version_info.releaselevel
+            ])
+    elif implementation == 'Jython':
+        implementation_version = platform.python_version()  # Complete Guess
+    elif implementation == 'IronPython':
+        implementation_version = platform.python_version()  # Complete Guess
+    else:
+        implementation_version = 'Unknown'
+
+    return {'name': implementation, 'version': implementation_version}
+
+
+def info():
+    """Generate information for a bug report."""
+    try:
+        platform_info = {
+            'system': platform.system(),
+            'release': platform.release(),
+        }
+    except IOError:
+        platform_info = {
+            'system': 'Unknown',
+            'release': 'Unknown',
+        }
+
+    implementation_info = _implementation()
+    urllib3_info = {'version': urllib3.__version__}
+    charset_normalizer_info = {'version': None}
+    chardet_info = {'version': None}
+    if charset_normalizer:
+        charset_normalizer_info = {'version': charset_normalizer.__version__}
+    if chardet:
+        chardet_info = {'version': chardet.__version__}
+
+    pyopenssl_info = {
+        'version': None,
+        'openssl_version': '',
+    }
+    if OpenSSL:
+        pyopenssl_info = {
+            'version': OpenSSL.__version__,
+            'openssl_version': '%x' % OpenSSL.SSL.OPENSSL_VERSION_NUMBER,
+        }
+    cryptography_info = {
+        'version': getattr(cryptography, '__version__', ''),
+    }
+    idna_info = {
+        'version': getattr(idna, '__version__', ''),
+    }
+
+    system_ssl = ssl.OPENSSL_VERSION_NUMBER
+    system_ssl_info = {
+        'version': '%x' % system_ssl if system_ssl is not None else ''
+    }
+
+    return {
+        'platform': platform_info,
+        'implementation': implementation_info,
+        'system_ssl': system_ssl_info,
+        'using_pyopenssl': pyopenssl is not None,
+        'using_charset_normalizer': chardet is None,
+        'pyOpenSSL': pyopenssl_info,
+        'urllib3': urllib3_info,
+        'chardet': chardet_info,
+        'charset_normalizer': charset_normalizer_info,
+        'cryptography': cryptography_info,
+        'idna': idna_info,
+        'requests': {
+            'version': requests_version,
+        },
+    }
+
+
+def main():
+    """Pretty-print the bug information as JSON."""
+    print(json.dumps(info(), sort_keys=True, indent=2))
+
+
+if __name__ == '__main__':
+    main()
+
+
+requests/models.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.models
+~~~~~~~~~~~~~~~
+
+This module contains the primary objects that power Requests.
+"""
+
+import datetime
+import sys
+
+# Import encoding now, to avoid implicit import later.
+# Implicit import within threads may cause LookupError when standard library is in a ZIP,
+# such as in Embedded Python. See https://github.com/psf/requests/issues/3578.
+import encodings.idna
+
+from urllib3.fields import RequestField
+from urllib3.filepost import encode_multipart_formdata
+from urllib3.util import parse_url
+from urllib3.exceptions import (
+    DecodeError, ReadTimeoutError, ProtocolError, LocationParseError)
+
+from io import UnsupportedOperation
+from .hooks import default_hooks
+from .structures import CaseInsensitiveDict
+
+from .auth import HTTPBasicAuth
+from .cookies import cookiejar_from_dict, get_cookie_header, _copy_cookie_jar
+from .exceptions import (
+    HTTPError, MissingSchema, InvalidURL, ChunkedEncodingError,
+    ContentDecod
+
+ROUND: 1

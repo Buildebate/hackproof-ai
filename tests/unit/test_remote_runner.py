@@ -202,6 +202,22 @@ def test_custom_image_and_relaxed_host_check(tmp_path: Path) -> None:
     assert "custom:1" in argv[-1]
 
 
+def test_runtime_override_runc(tmp_path: Path) -> None:
+    fake = _Recorder(_completed(0))
+    runner = _runner(tmp_path, fake, runtime="runc")
+    runner.run_in_sandbox(["pytest"], "/r")
+    remote_script = fake.calls[0][0][-1]
+    assert "--runtime=runc" in remote_script
+    assert "--runtime=runsc" not in remote_script
+
+
+def test_runtime_rejects_unknown(tmp_path: Path) -> None:
+    with pytest.raises(ValueError, match="unknown container runtime"):
+        _runner(tmp_path, _Recorder(_completed(0)), runtime="weird;rm")
+    with pytest.raises(ValueError, match="unknown container runtime"):
+        _runner(tmp_path, _Recorder(_completed(0)), runtime="")
+
+
 @pytest.mark.skipif(
     not os.environ.get("OCI_SSH_HOST"), reason="live OCI SSH not configured"
 )

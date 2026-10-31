@@ -1,0 +1,14 @@
+diff --git a/requests/models.py b/requests/models.py
+index e7d292d..86a1ec6 100644
+--- a/requests/models.py
++++ b/requests/models.py
+@@ -391,6 +391,9 @@ class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+ 
+             raise MissingSchema(error)
+ 
++        if host and host.startswith((".", "*")):
++            raise InvalidURL("URL has an invalid label.")
++
+         if not host:
+             raise InvalidURL("Invalid URL %r: No host supplied" % url)
+ 

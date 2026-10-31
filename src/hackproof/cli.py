@@ -69,9 +69,12 @@ RUNNER_CHOICES = ("local", "oci")
 LANGUAGE_CHOICES = ("python", "typescript")
 ISSUE_URL_HELP = "GitHub issue URL, e.g. https://github.com/<owner>/<repo>/issues/42"
 
-_MAX_LOCALIZE_FILES = 200
+_MAX_LOCALIZE_FILES = 2000
+_RETRIEVAL_WIDE_K = 20
 _MAX_CHUNK_CHARS = 8000
 _MAX_CODE_CONTEXT_CHARS = 12000
+_MAX_TOP1_FILE_CHARS = 48000
+_MAX_BUILDER_CONTEXT_CHARS = 60000
 _GIT_TIMEOUT_SEC = 60
 _ISSUE_FETCH_TIMEOUT_SEC = 30
 
@@ -438,10 +441,47 @@ def repo_structure_sketch(repo_path: Path | str, limit: int = 60) -> str:
     return "\n".join(entries)
 
 
+def build_code_context(
+    repo_path: Path | str,
+    snippets: list[str],
+    files: list[str],
+) -> tuple[str, str]:
+    """Build the short head context plus the builder-enriched context.
+
+    Step 4.3b.3 (R6): the builder role (the only role writing SEARCH
+    text) additionally receives the FULL top-1 localized file so it no
+    longer confabulates regions hidden past the 12000-char head
+    (A-1142, A-7432). Every other consumer keeps the short head so
+    wave token spend stays bounded (FinOps scoping, ~+15k chars on
+    ~2 calls per task instead of ~12 calls).
+
+    Returns ``(code_context, builder_code_context)``; when the top-1
+    file is missing or unreadable both collapse to the short head.
+    """
+    code_context = "\n\n".join(snippets)[:_MAX_CODE_CONTEXT_CHARS]
+    if not files:
+        return code_context, code_context
+    try:
+        top1_text = Path(repo_path, files[0]).read_text(encoding="utf-8")
+    except (OSError, UnicodeDecodeError):
+        return code_context, code_context
+    top1_text = top1_text[:_MAX_TOP1_FILE_CHARS]
+    builder_code_context = (
+        f"TOP-1 FULL FILE {files[0]}:\n{top1_text}\n\n"
+        + "\n\n".join(snippets)
+    )[:_MAX_BUILDER_CONTEXT_CHARS]
+    return code_context, builder_code_context
+
+
 def localize_issue(
     repo_path: Path | str, issue_text: str, language: str, top_k: int = 5
 ) -> tuple[list[str], list[str], int]:
-    """Localize relevant code via Contriever + Faiss (CPU-first).
+    """Localize relevant code via hybrid dense + keyword retrieval.
+
+    Dense (Contriever Transformer, offline-hash fallback) and keyword
+    (stdlib BM25) channels each retrieve a wide net; test/doc chunks are
+    downranked per channel; reciprocal-rank fusion merges ranks; the top
+    ``top_k`` fused paths win.
 
     Returns:
         ``(snippets, files, elapsed_ms)`` where snippets are
@@ -459,18 +499,44 @@ def localize_issue(
             "semantic retrieval requires the 'retrieval' extra: "
             "pip install 'hackproof-ai[retrieval]'"
         ) from exc
+    from hackproof.retrieval.bm25 import BM25Index
+    from hackproof.retrieval.fusion import downrank_test_and_doc, rrf_fuse
+
     chunks = collect_code_chunks(repo_path, language)
     if not chunks:
         raise RuntimeError(f"no embeddable {language} files found")
+    paths = [str(chunk["path"]) for chunk in chunks]
+    wide_k = min(_RETRIEVAL_WIDE_K, len(chunks))
     model = ContrieverEmbeddingModel()
     index = FaissCodeIndexer(dim=model.dim)
     index.add_chunks(chunks, model.encode_code_chunks(chunks))
     query = model.encode_queries([issue_text])
-    hits = index.search(query[0], top_k=top_k)
+    dense_hits = index.search(query[0], top_k=wide_k)
+    dense_ranked = downrank_test_and_doc(
+        [(str(hit["path"]), float(score)) for hit, score in dense_hits]
+    )
+    keyword_corpus = [
+        f"{path}\n{chunk['content']}" for path, chunk in zip(paths, chunks)
+    ]
+    keyword_ranked = downrank_test_and_doc(
+        [
+            (paths[doc_id], score)
+            for doc_id, score in BM25Index(keyword_corpus).top(
+                issue_text, n=wide_k
+            )
+        ]
+    )
+    fused = rrf_fuse(
+        [
+            [path for path, _ in dense_ranked],
+            [path for path, _ in keyword_ranked],
+        ]
+    )
+    by_path = dict(zip(paths, chunks))
+    winners = [doc_id for doc_id, _ in fused[:top_k]]
     elapsed_ms = int((time.monotonic() - started) * 1000)
-    snippets = [f"{hit['path']}:\n{hit['content']}" for hit, _ in hits]
-    files = [str(hit["path"]) for hit, _ in hits]
-    return snippets, files, elapsed_ms
+    snippets = [f"{path}:\n{by_path[path]['content']}" for path in winners]
+    return snippets, winners, elapsed_ms
 
 
 def append_finops_entry(
@@ -485,11 +551,12 @@ def append_finops_entry(
 ) -> dict[str, object]:
     """Append one verify-run entry to the FinOps ledger (creating it).
 
-    Cost is honestly unpriced: Meta grant pricing is unknown, so
-    ``est_cost_usd`` stays ``0.0`` with ``priced: False`` instead of a
-    fabricated dollar figure. The ledger file keeps its existing budget
-    (default ``150.0``) and ``total_spent_usd`` is the rounded sum of
-    priced entries.
+    Cost is honestly unpriced at append time: ``est_cost_usd`` stays
+    ``0.0`` with ``priced: False`` instead of a fabricated dollar figure;
+    pricing lands afterwards via ``benchmarks/reprice_ledger.py`` from the
+    ledger ``pricing`` rate card (Step 4.3b.9). The ledger file keeps its
+    existing budget (default ``150.0``) and ``total_spent_usd`` is the
+    rounded sum of priced entries.
     """
     path = Path(ledger_path)
     ledger: dict[str, object]
@@ -529,11 +596,11 @@ def append_finops_entry(
                 total_spent += float(existing.get("est_cost_usd", 0.0))  # type: ignore[arg-type]
             except (TypeError, ValueError):
                 continue
-    ledger = {
-        "budget_usd": budget_usd,
-        "total_spent_usd": round(total_spent, 2),
-        "entries": entries,
-    }
+    # Preserve unknown top-level keys (pricing, cost_basis): Wave-1
+    # appends must not drop the rate card established in Step 4.2.
+    ledger["budget_usd"] = budget_usd
+    ledger["total_spent_usd"] = round(total_spent, 2)
+    ledger["entries"] = entries
     path.write_text(json.dumps(ledger, indent=2), encoding="utf-8")
     return entry
 
@@ -579,7 +646,10 @@ def cmd_verify(
         for every other pipeline failure.
     """
     from hackproof.debate.orchestrator import DebateOrchestrator
-    from hackproof.debate.roles.architectural_builder import extract_blocks
+    from hackproof.debate.roles.architectural_builder import (
+        extract_blocks,
+        revise_patch,
+    )
     from hackproof.patcher.workspace_patcher import (
         PatchApplicationError,
         WorkspacePatcher,
@@ -660,7 +730,9 @@ def cmd_verify(
                 f"verify: localized {len(files)} file(s) in {localize_ms} ms "
                 f"(top: {', '.join(files[:3])})"
             )
-            code_context = "\n\n".join(snippets)[:_MAX_CODE_CONTEXT_CHARS]
+            code_context, builder_code_context = build_code_context(
+                repo_path, snippets, files
+            )
             structure = repo_structure_sketch(repo_path)
 
             patcher = WorkspacePatcher(runner=sandbox_runner)  # type: ignore[arg-type]
@@ -720,6 +792,7 @@ def cmd_verify(
                     issue_description=issue_text,
                     code_context=code_context,
                     repo_structure=structure,
+                    builder_code_context=builder_code_context,
                 )
                 print(
                     f"verify: debate converged={report.converged} "
@@ -730,8 +803,12 @@ def cmd_verify(
                 )
 
                 # 6. deterministic patch: first localized file matching
-                # every block exactly once wins.
-                blocks = extract_blocks(report.patch_candidate)
+                # every block exactly once wins (ladder exact/ws/fuzzy).
+                # Step 4.3b.3 (R6): on total failure, exactly ONE builder
+                # revision against the patcher ground truth (region /
+                # did-you-mean), then one re-attempt.
+                patch_text = report.patch_candidate
+                blocks = extract_blocks(patch_text)
                 if not blocks:
                     _err(
                         "debate produced no complete SEARCH/REPLACE blocks; "
@@ -740,14 +817,48 @@ def cmd_verify(
                     return EXIT_PIPELINE_FAILURE
                 applied_rel: Optional[str] = None
                 patch_errors: list[str] = []
-                for candidate in files:
-                    try:
-                        patcher.apply_blocks(worktree, candidate, blocks)
-                    except (FileNotFoundError, PatchApplicationError) as exc:
-                        patch_errors.append(f"{candidate}: {exc}")
-                        continue
-                    applied_rel = candidate
-                    break
+                revise_usage: dict[str, int] | None = None
+                for attempt in (0, 1):
+                    patch_errors = []
+                    for candidate in files:
+                        try:
+                            patcher.apply_blocks(worktree, candidate, blocks)
+                        except (FileNotFoundError, PatchApplicationError) as exc:
+                            patch_errors.append(f"{candidate}: {exc}")
+                            continue
+                        applied_rel = candidate
+                        break
+                    if applied_rel is not None or attempt == 1:
+                        break
+                    failure_report = "; ".join(patch_errors)[:4000]
+                    print(
+                        "verify: patch missed; single builder revision "
+                        "against patcher ground truth ..."
+                    )
+                    patch_text = revise_patch(
+                        wonder_client,  # type: ignore[arg-type]
+                        issue_description=issue_text,
+                        code_context=builder_code_context,
+                        previous_patch=patch_text,
+                        failure_report=failure_report,
+                    )
+                    seen = getattr(wonder_client, "last_usage", None)
+                    if isinstance(seen, dict):
+                        revise_usage = {
+                            key: int(seen.get(key, 0))
+                            for key in (
+                                "prompt_tokens",
+                                "completion_tokens",
+                                "total_tokens",
+                            )
+                        }
+                    blocks = extract_blocks(patch_text)
+                    if not blocks:
+                        _err(
+                            "revision produced no complete SEARCH/REPLACE "
+                            "blocks; refusing to guess a patch"
+                        )
+                        return EXIT_PIPELINE_FAILURE
                 if applied_rel is None:
                     _err(
                         "patch matches no localized file exactly once: "
@@ -802,24 +913,43 @@ def cmd_verify(
                     return EXIT_PIPELINE_FAILURE
                 print(f"verify: TGRES receipt {receipt['receipt_sha256']}")
 
+                ledger_per_call: list[dict[str, object]] = [
+                    {
+                        "role": usage.role,
+                        "model": usage.model,
+                        "prompt_tokens": usage.prompt_tokens,
+                        "completion_tokens": usage.completion_tokens,
+                        "total_tokens": usage.total_tokens,
+                    }
+                    for usage in report.token_usage
+                ]
+                ledger_prompt = report.total_prompt_tokens
+                ledger_completion = report.total_completion_tokens
+                ledger_total = report.total_tokens
+                if revise_usage is not None:
+                    ledger_prompt += revise_usage["prompt_tokens"]
+                    ledger_completion += revise_usage["completion_tokens"]
+                    ledger_total += revise_usage["total_tokens"]
+                    ledger_per_call.append(
+                        {
+                            "role": "ArchitecturalBuilder-retry",
+                            "model": "muse-wonder-1.0",
+                            "prompt_tokens": revise_usage["prompt_tokens"],
+                            "completion_tokens": revise_usage[
+                                "completion_tokens"
+                            ],
+                            "total_tokens": revise_usage["total_tokens"],
+                        }
+                    )
                 append_finops_entry(
                     ledger,
                     issue,
                     rounds_used=report.rounds_used,
                     converged=report.converged,
-                    prompt_tokens=report.total_prompt_tokens,
-                    completion_tokens=report.total_completion_tokens,
-                    total_tokens=report.total_tokens,
-                    per_call=[
-                        {
-                            "role": usage.role,
-                            "model": usage.model,
-                            "prompt_tokens": usage.prompt_tokens,
-                            "completion_tokens": usage.completion_tokens,
-                            "total_tokens": usage.total_tokens,
-                        }
-                        for usage in report.token_usage
-                    ],
+                    prompt_tokens=ledger_prompt,
+                    completion_tokens=ledger_completion,
+                    total_tokens=ledger_total,
+                    per_call=ledger_per_call,
                 )
                 print(f"verify: verified clean — {owner}/{repo_name}#{number}")
                 return EXIT_OK

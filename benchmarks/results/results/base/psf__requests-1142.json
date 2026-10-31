@@ -1,0 +1,74 @@
+{
+ "task": "psf__requests-1142",
+ "mode": "base",
+ "done": true,
+ "ts": "2026-10-30T05:19:09.806421+00:00",
+ "base_ref": "22623bd8c265b78b161542663ee980738441c307",
+ "tier": "oci",
+ "base_index": {
+  "test_requests.py::RequestsTestCase::test_no_content_length": "failed",
+  "test_requests.py::RequestsTestCase::test_basic_building": "passed",
+  "test_requests.py::RequestsTestCase::test_entry_points": "passed",
+  "test_requests.py::RequestsTestCase::test_invalid_url": "passed",
+  "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": "passed",
+  "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": "passed"
+ },
+ "id_resolution": {
+  "test_requests.py::RequestsTestCase::test_no_content_length": [
+   "test_requests.py::RequestsTestCase::test_no_content_length"
+  ],
+  "test_requests.py::RequestsTestCase::test_basic_building": [
+   "test_requests.py::RequestsTestCase::test_basic_building"
+  ],
+  "test_requests.py::RequestsTestCase::test_entry_points": [
+   "test_requests.py::RequestsTestCase::test_entry_points"
+  ],
+  "test_requests.py::RequestsTestCase::test_invalid_url": [
+   "test_requests.py::RequestsTestCase::test_invalid_url"
+  ],
+  "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": [
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment"
+  ],
+  "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": [
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
+  ]
+ },
+ "unresolved_ids": [],
+ "junit_sha256": "b0bf3b965a78a2a5b26196e8d7647d32eec3fa3e4b7c5cedb9c6f348af97ff05",
+ "superseded_4_2": {
+  "base_index": {
+   "test_requests.py::RequestsTestCase::test_no_content_length": "missing",
+   "test_requests.py::RequestsTestCase::test_basic_building": "missing",
+   "test_requests.py::RequestsTestCase::test_entry_points": "missing",
+   "test_requests.py::RequestsTestCase::test_invalid_url": "missing",
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": "missing",
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": "missing"
+  },
+  "id_resolution": {
+   "test_requests.py::RequestsTestCase::test_no_content_length": [
+    "test_requests.py::RequestsTestCase::test_no_content_length"
+   ],
+   "test_requests.py::RequestsTestCase::test_basic_building": [
+    "test_requests.py::RequestsTestCase::test_basic_building"
+   ],
+   "test_requests.py::RequestsTestCase::test_entry_points": [
+    "test_requests.py::RequestsTestCase::test_entry_points"
+   ],
+   "test_requests.py::RequestsTestCase::test_invalid_url": [
+    "test_requests.py::RequestsTestCase::test_invalid_url"
+   ],
+   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": [
+    "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment"
+   ],
+   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": [
+    "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
+   ]
+  },
+  "unresolved_ids": [],
+  "ts": "2026-10-30T05:19:09.806421+00:00"
+ },
+ "rescore": {
+  "tool": "benchmarks/rescore_4_2.py",
+  "ts": "2026-10-30T16:30:15.466716+00:00"
+ }
+}

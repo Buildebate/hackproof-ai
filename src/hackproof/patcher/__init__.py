@@ -5,13 +5,19 @@ from hackproof.patcher.workspace_patcher import (
     SUPPORTED_LANGUAGES,
     GreenCheck,
     PatchApplicationError,
+    SearchMatch,
     WorkspacePatcher,
+    locate_search,
+    suggest_path,
 )
 
 __all__ = [
     "WorkspacePatcher",
     "PatchApplicationError",
     "GreenCheck",
+    "SearchMatch",
     "SUPPORTED_LANGUAGES",
     "GREEN_JUNIT_NAME",
+    "locate_search",
+    "suggest_path",
 ]

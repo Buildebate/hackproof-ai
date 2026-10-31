@@ -206,25 +206,38 @@ def test_no_convergence_on_revise_verdicts() -> None:
     assert report.convergence_score == pytest.approx(0.0)
 
 
-def test_custom_threshold_changes_convergence() -> None:
+def test_early_exit_on_five_sixths_plus_judge() -> None:
+    """Step 4.3b.8 (R11): 5/6 with an approving judge closes round 1."""
     verdicts = dict(_approve_verdicts())
-    verdicts["OccamsRazorCritic"] = "OccamsRazorCritic: unsure, needs data"
+    verdicts["OccamsRazorCritic"] = "OccamsRazorCritic: too big. REVISE"
     spark = _ScriptedClient("muse-spark-1.3", verdicts)
     wonder = _ScriptedClient("muse-wonder-1.0", verdicts)
+    report = DebateOrchestrator(spark, wonder).run(ISSUE, CODE)
 
-    strict = DebateOrchestrator(
-        spark, wonder, convergence_threshold=1.0
-    ).run(ISSUE, CODE)
-    assert strict.converged is False
-    assert strict.convergence_score == pytest.approx(11 / 12)
+    assert report.converged is True
+    assert report.rounds_used == 1
+    # 5/6 ≈ 0.833: the retired 0.85 threshold would have missed this.
+    assert report.convergence_score == pytest.approx(5 / 6)
 
-    relaxed = DebateOrchestrator(
-        _ScriptedClient("muse-spark-1.3", verdicts),
-        _ScriptedClient("muse-wonder-1.0", verdicts),
-        convergence_threshold=0.9,
-    ).run(ISSUE, CODE)
-    assert relaxed.converged is True
-    assert relaxed.rounds_used == 1
+
+def test_no_exit_when_judge_dissents_or_two_dissent() -> None:
+    """A dissenting judge (or two dissenters) forces round 2."""
+    verdicts = dict(_approve_verdicts())
+    verdicts["ConsensusJudge"] = "ConsensusJudge: blocked. REVISE"
+    spark = _ScriptedClient("muse-spark-1.3", verdicts)
+    wonder = _ScriptedClient("muse-wonder-1.0", verdicts)
+    report = DebateOrchestrator(spark, wonder).run(ISSUE, CODE)
+    assert report.converged is False
+    assert report.rounds_used == 2
+
+    verdicts = dict(_approve_verdicts())
+    verdicts["OccamsRazorCritic"] = "OccamsRazorCritic: big. REVISE"
+    verdicts["EdgeScout"] = "EdgeScout: vague. REVISE"
+    spark = _ScriptedClient("muse-spark-1.3", verdicts)
+    wonder = _ScriptedClient("muse-wonder-1.0", verdicts)
+    report = DebateOrchestrator(spark, wonder).run(ISSUE, CODE)
+    assert report.converged is False
+    assert report.rounds_used == 2
 
 
 def test_history_grows_monotonically_across_roles_and_rounds() -> None:
@@ -256,12 +269,7 @@ def test_constructor_rejects_invalid_bounds() -> None:
         DebateOrchestrator(spark, wonder, max_rounds=0)
     with pytest.raises(ValueError, match="max_rounds"):
         DebateOrchestrator(spark, wonder, max_rounds=-2)
-    with pytest.raises(ValueError, match="convergence_threshold"):
-        DebateOrchestrator(spark, wonder, convergence_threshold=0.0)
-    with pytest.raises(ValueError, match="convergence_threshold"):
-        DebateOrchestrator(spark, wonder, convergence_threshold=1.5)
-    ok = DebateOrchestrator(spark, wonder, convergence_threshold=1.0)
-    assert ok.convergence_threshold == pytest.approx(1.0)
+    ok = DebateOrchestrator(spark, wonder)
     assert ok.max_rounds == 2
 
 
@@ -300,14 +308,44 @@ def test_clients_without_usage_report_zeros() -> None:
 
 
 def test_consensus_score_matrix() -> None:
+    # Step 4.3b.8 (R11): end-position markers only; negations dissent.
     assert consensus_judge.score([]) == 0.0
-    assert consensus_judge.score(["x APPROVE y"]) == pytest.approx(1.0)
+    assert consensus_judge.score(["all green. APPROVE"]) == pytest.approx(1.0)
+    assert consensus_judge.score(["approve."]) == pytest.approx(1.0)
+    assert consensus_judge.score(["(APPROVE)"]) == pytest.approx(1.0)
+    assert consensus_judge.score(["x APPROVE y"]) == pytest.approx(0.5)
     assert consensus_judge.score(["needs REVISE"]) == pytest.approx(0.0)
-    assert consensus_judge.score(["REJECT this"]) == pytest.approx(0.0)
+    assert consensus_judge.score(["REJECT this"]) == pytest.approx(0.5)
     assert consensus_judge.score(["plain note"]) == pytest.approx(0.5)
-    assert consensus_judge.score(["approve (lowercase)"]) == pytest.approx(1.0)
+    assert consensus_judge.score(["DO NOT APPROVE"]) == pytest.approx(0.0)
+    assert consensus_judge.score(["APPROVED"]) == pytest.approx(0.5)
+    assert consensus_judge.score(["DISAPPROVE"]) == pytest.approx(0.5)
+    assert consensus_judge.score(["DO NOT REVISE"]) == pytest.approx(0.5)
     mixed = ["A APPROVE", "B REVISE", "C neutral"]
     assert consensus_judge.score(mixed) == pytest.approx(0.5)
+
+
+def test_consensus_reached_matrix() -> None:
+    """Step 4.3b.8 (R11): 6/6, or 5/6 with an approving judge."""
+    full = {role: f"{role}: ok. APPROVE" for role in EXPECTED_ORDER}
+    assert consensus_judge.consensus_reached(full) is True
+    five = dict(full)
+    five["OccamsRazorCritic"] = "OccamsRazorCritic: big. REVISE"
+    assert consensus_judge.consensus_reached(five) is True
+    judge_out = dict(full)
+    judge_out["ConsensusJudge"] = "ConsensusJudge: blocked. REVISE"
+    assert consensus_judge.consensus_reached(judge_out) is False
+    judge_neg = dict(full)
+    judge_neg["ConsensusJudge"] = "ConsensusJudge: DO NOT APPROVE"
+    assert consensus_judge.consensus_reached(judge_neg) is False
+    four = dict(five)
+    four["EdgeScout"] = "EdgeScout: vague. REVISE"
+    assert consensus_judge.consensus_reached(four) is False
+    assert consensus_judge.consensus_reached({}) is False
+    assert consensus_judge.verdict_marker("final word: APPROVE") == "APPROVE"
+    assert consensus_judge.verdict_marker("DO NOT APPROVE") is None
+    assert consensus_judge.approves("ok. APPROVE") is True
+    assert consensus_judge.approves("ok. DO NOT APPROVE") is False
 
 
 PATCH_SMALL = (
@@ -381,6 +419,32 @@ def test_builder_extracts_only_complete_blocks() -> None:
     assert architectural_builder.extract_blocks(missing_sep) == []
 
 
+def test_builder_extracts_routed_blocks_with_file_headers() -> None:
+    # Step 4.3b.1 (R4): real header spellings from B-11739 patch_text.txt.
+    text = (
+        "packages/shared/src/normalizeProp.ts\n"
+        "<<<<<<< SEARCH\nS1\n=======\nR1\n>>>>>>> REPLACE\n"
+        "noise line\n"
+        "packages/runtime-core/src/helpers/useCssVars.ts\n"
+        "<<<<<<< SEARCH\nS2\n=======\nR2\n>>>>>>> REPLACE\n"
+        "Fix:\n"
+        "<<<<<<< SEARCH\nS3\n=======\nR3\n>>>>>>> REPLACE\n"
+    )
+    assert architectural_builder.extract_routed_blocks(text) == [
+        ("packages/shared/src/normalizeProp.ts", "S1", "R1"),
+        ("packages/runtime-core/src/helpers/useCssVars.ts", "S2", "R2"),
+        (None, "S3", "R3"),
+    ]
+    assert architectural_builder.extract_routed_blocks("no markers here") == []
+    assert architectural_builder.extract_routed_blocks(
+        "./src/app.py\n<<<<<<< SEARCH\nS\n=======\nR\n>>>>>>> REPLACE\n"
+    ) == [("src/app.py", "S", "R")]
+    # Traversal survives parsing intact so the patcher can refuse it loudly.
+    assert architectural_builder.extract_routed_blocks(
+        "../evil.py\n<<<<<<< SEARCH\nS\n=======\nR\n>>>>>>> REPLACE\n"
+    ) == [("../evil.py", "S", "R")]
+
+
 def test_scout_parses_numbered_and_bullet_cases() -> None:
     verdict = (
         "1. None password crashes\n"
@@ -406,3 +470,116 @@ def test_adversary_parses_findings() -> None:
         "leaks session token",
     ]
     assert formal_adversary_critic.parse_findings("") == []
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3b.3 (R6): verbatim directive, grounded retry, builder-only context
+# ---------------------------------------------------------------------------
+
+
+def test_builder_prompt_carries_verbatim_directive() -> None:
+    prompt = architectural_builder.ROLE_SYSTEM_PROMPT
+    assert "byte-for-byte" in prompt
+    assert "never reconstruct code from memory" in prompt
+
+
+def test_revise_patch_builds_grounded_retry_prompt() -> None:
+    client = _ScriptedClient(
+        model="muse-wonder-1.0",
+        verdicts={"ArchitecturalBuilder": "REVISED-PATCH"},
+    )
+    out = architectural_builder.revise_patch(
+        client,
+        issue_description="ISSUE-TEXT",
+        code_context="CODE-CONTEXT",
+        previous_patch="PREVIOUS-PATCH",
+        failure_report="FAILURE-REGION",
+    )
+    assert out == "REVISED-PATCH"
+    assert len(client.calls) == 1
+    role, prompt, history = client.calls[0]
+    assert role == "ArchitecturalBuilder"
+    assert history == []
+    for needle in (
+        "FAILURE-REGION",
+        "PREVIOUS-PATCH",
+        "ISSUE-TEXT",
+        "CODE-CONTEXT",
+        "byte-for-byte",
+        "ONLY corrected SEARCH/REPLACE blocks",
+    ):
+        assert needle in prompt
+
+
+def test_orchestrator_scopes_full_context_to_builder() -> None:
+    spark = _ScriptedClient(model="muse-spark-1.3")
+    wonder = _ScriptedClient(model="muse-wonder-1.0")
+    orchestrator = DebateOrchestrator(
+        spark, wonder, max_rounds=1
+    )
+    orchestrator.run(
+        issue_description=ISSUE,
+        code_context="SHORT-HEAD",
+        builder_code_context="FULL-TOP1-FILE",
+    )
+    prompts: dict[str, str] = {}
+    for client in (spark, wonder):
+        for role, prompt, _history in client.calls:
+            if role != "synthesize_patch":
+                prompts.setdefault(role, prompt)
+    assert set(prompts) == set(EXPECTED_ORDER)
+    assert "FULL-TOP1-FILE" in prompts["ArchitecturalBuilder"]
+    assert "SHORT-HEAD" not in prompts["ArchitecturalBuilder"]
+    for role, prompt in prompts.items():
+        if role != "ArchitecturalBuilder":
+            assert "FULL-TOP1-FILE" not in prompt
+
+
+def test_orchestrator_default_context_unchanged_for_all_roles() -> None:
+    spark = _ScriptedClient(model="muse-spark-1.3")
+    wonder = _ScriptedClient(model="muse-wonder-1.0")
+    orchestrator = DebateOrchestrator(
+        spark, wonder, max_rounds=1
+    )
+    orchestrator.run(issue_description=ISSUE, code_context="SHORT-HEAD")
+    seen = [
+        prompt
+        for client in (spark, wonder)
+        for role, prompt, _history in client.calls
+        if role == "ArchitecturalBuilder"
+    ]
+    assert len(seen) == 1
+    assert "SHORT-HEAD" in seen[0]
+
+
+# ---------------------------------------------------------------------------
+# Step 4.3b.8 (R11): end-position markers on every role
+# ---------------------------------------------------------------------------
+
+
+def test_scout_and_builder_prompts_require_end_marker() -> None:
+    for prompt in (
+        edge_scout.ROLE_SYSTEM_PROMPT,
+        architectural_builder.ROLE_SYSTEM_PROMPT,
+    ):
+        assert "exactly one marker word" in prompt
+        assert "APPROVE" in prompt
+        assert "REVISE" in prompt
+    # The builder's verbatim directive survives the marker sentence.
+    prompt = architectural_builder.ROLE_SYSTEM_PROMPT
+    assert "byte-for-byte" in prompt
+    assert "never reconstruct code from memory" in prompt
+
+
+def test_builder_extract_ignores_trailing_marker() -> None:
+    plain = architectural_builder.extract_routed_blocks(PATCH_SMALL)
+    marked = architectural_builder.extract_routed_blocks(
+        PATCH_SMALL + "APPROVE\n"
+    )
+    assert len(plain) == 1
+    assert marked == plain
+
+
+def test_scout_parse_ignores_trailing_marker() -> None:
+    verdict = "1. None input\n2. empty string\nAPPROVE"
+    assert edge_scout.parse_cases(verdict) == ["None input", "empty string"]

@@ -1,0 +1,37 @@
+{
+ "task": "pytest-dev__pytest-7432",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T04:11:08.677716+00:00",
+ "base_ref": "e6e300e729dd33956e5448d8be9a0b1540b4e53a",
+ "agent": {
+  "ok": false,
+  "reason": "no complete SEARCH/REPLACE blocks",
+  "files": [
+   "src/_pytest/skipping.py",
+   "testing/test_helpconfig.py",
+   "doc/en/example/xfail_demo.py",
+   "bench/skip.py",
+   "testing/test_faulthandler.py"
+  ],
+  "localize_ms": 230426,
+  "backend": "contriever-transformer-cpu"
+ },
+ "usage": {
+  "prompt_tokens": 3185,
+  "completion_tokens": 1500,
+  "total_tokens": 4685,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3185,
+    "completion_tokens": 1500,
+    "total_tokens": 4685
+   }
+  ]
+ },
+ "status": "failed",
+ "reason": "no complete SEARCH/REPLACE blocks",
+ "done": true
+}

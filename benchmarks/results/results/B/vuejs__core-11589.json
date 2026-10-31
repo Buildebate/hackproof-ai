@@ -1,0 +1,15 @@
+{
+ "task": "vuejs__core-11589",
+ "mode": "B",
+ "tier": "oci",
+ "ts": "2026-10-30T13:53:49.529443+00:00",
+ "status": "failed",
+ "done": true,
+ "reason": "unmeasurable: unresolved test IDs: packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>",
+ "usage": {
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "total_tokens": 0,
+  "per_call": []
+ }
+}

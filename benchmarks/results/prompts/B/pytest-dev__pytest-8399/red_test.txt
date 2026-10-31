@@ -1,0 +1,43 @@
+from _pytest.pytester import Pytester
+
+
+def test_unittest_setUpClass_fixture_is_private(pytester: Pytester) -> None:
+    pytester.makepyfile(
+        """
+        import unittest
+
+        class Tests(unittest.TestCase):
+            @classmethod
+            def setUpClass(cls):
+                pass
+
+            def test_1(self):
+                pass
+        """
+    )
+    result = pytester.runpytest("--fixtures")
+    assert result.ret == 0
+    result.stdout.no_fnmatch_line("*setUpClass*fixture*")
+    result = pytester.runpytest("--fixtures", "-v")
+    assert result.ret == 0
+    result.stdout.fnmatch_lines(["*_unittest_setUpClass_fixture_*"])
+
+
+def test_xunit_setup_class_fixture_is_private(pytester: Pytester) -> None:
+    pytester.makepyfile(
+        """
+        class TestX:
+            @classmethod
+            def setup_class(cls):
+                pass
+
+            def test_1(self):
+                pass
+        """
+    )
+    result = pytester.runpytest("--fixtures")
+    assert result.ret == 0
+    result.stdout.no_fnmatch_line("*setup_class*fixture*")
+    result = pytester.runpytest("--fixtures", "-v")
+    assert result.ret == 0
+    result.stdout.fnmatch_lines(["*_xunit_setup_class_fixture_*"])
