@@ -4,5 +4,5 @@
  "binding": true,
  "verdict": "not-applicable",
  "violations": [],
- "note": "no agent patch evaluated (failed: unmeasurable: unresolved test IDs: packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated sy)"
+ "note": "no agent patch evaluated (failed: patch application failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: blo)"
 }

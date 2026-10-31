@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="0.183" timestamp="2026-10-30T05:19:07.531434+00:00" hostname="5e19c225397a"><testcase classname="test_requests.RequestsTestCase" name="test_no_content_length" time="0.007"><failure message="AssertionError: False is not true">self = &lt;test_requests.RequestsTestCase testMethod=test_no_content_length&gt;
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="0.180" timestamp="2026-10-31T08:07:15.051947+00:00" hostname="0c4aac75bc75"><testcase classname="test_requests.RequestsTestCase" name="test_no_content_length" time="0.006"><failure message="AssertionError: False is not true">self = &lt;test_requests.RequestsTestCase testMethod=test_no_content_length&gt;
 
     def test_no_content_length(self):
         get_req = requests.Request('GET', httpbin('get')).prepare()

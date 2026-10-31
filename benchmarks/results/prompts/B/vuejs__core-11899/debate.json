@@ -1,0 +1,14 @@
+{
+ "rounds_used": 2,
+ "converged": false,
+ "convergence_score": 0.5,
+ "duration_ms": 182101,
+ "verdicts": {
+  "EdgeScout": "1. Scoped `.foo { @media (max-width:800px) { background:green } }` with no outer declarations and no nested selectors\n2. Scoped `.foo { color:red; .bar{}; @media{color:green} }` vs `.foo { color:red; @media{color:green} }` with empty nested `.bar`\n3. Scoped `.foo { color:red; @container (min-width:100px){color:green} }`, `@supports`, `@layer`, `@starting-style` variants with direct declarations\n4. Doubly nested `.foo { .bar { @media{color:blue} } }` vs `.foo { @media{ .bar{color:blue} } }`\n5. Empty `@media {}` and `@media only screen and (max-width:800px) { }` with empty declaration block in scoped mode\n6. Unicode class `.f\u00f6\u00f6-\ud83d\ude00 { @media{color:red} }` and empty-string `\"\"` selector inside `@media` in scoped nested CSS\nAPPROVE",
+  "ArchitecturalBuilder": "REVISE",
+  "OccamsRazorCritic": "APPROVE",
+  "SignatureFactChecker": "APPROVE",
+  "FormalAdversaryCritic": "- Patch is a bare marker with no code diff, test additions, or snapshot updates, so none of the six scoped nested-CSS cases are implemented or verified.\n- Case 1 remains uncovered: scoped `.foo` containing only `@media (max-width:800px) { background:green }` with no outer declarations and no nested selectors.\n- Case 2 remains uncovered: equivalence or divergence between `.foo { color:red; .bar{}; @media{color:green} }` and the variant without the empty nested `.bar`.\n- Case 3 remains uncovered: direct declarations inside scoped `@container (min-width:100px)`, `@supports`, `@layer`, and `@starting-style` nested in `.foo`.\n- Case 4 remains uncovered: doubly nested `.foo { .bar { @media{color:blue} } }` versus `.foo { @media{ .bar{color:blue} } }` scoping and selector rewriting.\n- Case 5 remains uncovered: empty `@media {}` and `@media only screen and (max-width:800px) { }` handling in scoped mode, including potential empty-rule emission.\n- Case 6 remains uncovered: Unicode class `.f\u00f6\u00f6-\ud83d\ude00` and empty-string `\"\"` selector inside `@media` in scoped nested CSS, including hashing, escaping, and parser edge cases.\n- No evidence is provided that existing compiler or SFC scoped-style invariants are preserved, as the supplied invariant list is truncated and no affected files are changed.\n\nREVISE",
+  "ConsensusJudge": "DIVERGED blocker REVISE"
+ }
+}

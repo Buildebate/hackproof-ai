@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.032" timestamp="2026-10-31T08:57:32.968043" hostname="cd5c5252639e"><testcase classname="testing.test_repro_577bcaa21439" name="test_unittest_setupclass_fixture_is_private" time="0.001"><failure message="AssertionError: fixture 'unittest_setUpClass_fixture_test_unittest_setupclass_fixture_is_private.&lt;locals&gt;.Dummy' should be private&#10;assert False&#10; +  where False = &lt;built-in method startswith of str object at 0xe991cf819540&gt;('_')&#10; +    where &lt;built-in method startswith of str object at 0xe991cf819540&gt; = 'unittest_setUpClass_fixture_test_unittest_setupclass_fixture_is_private.&lt;locals&gt;.Dummy'.startswith">def test_unittest_setupclass_fixture_is_private():
+        class Dummy:
+            def setUpClass():
+                pass
+    
+            def tearDownClass():
+                pass
+    
+            def doClassCleanups():
+                pass
+    
+        fixture = _make_xunit_fixture(
+            Dummy,
+            "setUpClass",
+            "tearDownClass",
+            "doClassCleanups",
+            scope="class",
+            pass_self=False,
+        )
+        assert fixture is not None
+        name = fixture._pytestfixturefunction.name
+&gt;       assert name.startswith("_"), f"fixture {name!r} should be private"
+E       AssertionError: fixture 'unittest_setUpClass_fixture_test_unittest_setupclass_fixture_is_private.&lt;locals&gt;.Dummy' should be private
+E       assert False
+E        +  where False = &lt;built-in method startswith of str object at 0xe991cf819540&gt;('_')
+E        +    where &lt;built-in method startswith of str object at 0xe991cf819540&gt; = 'unittest_setUpClass_fixture_test_unittest_setupclass_fixture_is_private.&lt;locals&gt;.Dummy'.startswith
+
+testing/test_repro_577bcaa21439.py:25: AssertionError</failure></testcase></testsuite></testsuites>

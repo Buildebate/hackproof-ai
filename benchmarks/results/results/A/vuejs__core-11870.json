@@ -2,37 +2,43 @@
  "task": "vuejs__core-11870",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T06:04:42.601732+00:00",
+ "ts": "2026-10-31T09:52:15.333295+00:00",
  "base_ref": "67d6596d40b1807b9cd8eb0d9282932ea77be3c0",
  "agent": {
   "ok": false,
-  "reason": "patch application failed: vuejs__core-11870: patch matches no localized file exactly once: packages/reactivity/src/arrayInstrumentations.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/baseHandlers.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/ref.ts: block 0: SEARCH not found (0 matches)",
+  "reason": "no complete SEARCH/REPLACE blocks",
   "files": [
-   "packages/reactivity/src/arrayInstrumentations.ts",
-   "packages/reactivity/src/baseHandlers.ts",
+   "packages/reactivity/src/reactive.ts",
    "packages/reactivity/src/ref.ts",
-   "packages/reactivity/__tests__/computed.spec.ts",
-   "packages/compiler-dom/src/transforms/vOn.ts"
+   "packages/compiler-core/src/options.ts",
+   "packages/reactivity/__tests__/shallowReactive.spec.ts",
+   "packages/runtime-core/src/apiSetupHelpers.ts"
   ],
-  "localize_ms": 189904,
-  "backend": "contriever-transformer-cpu"
+  "localize_ms": 4246,
+  "backend": "hybrid-rrf-hash-cpu"
  },
  "usage": {
-  "prompt_tokens": 3956,
-  "completion_tokens": 26038,
-  "total_tokens": 29994,
+  "prompt_tokens": 13601,
+  "completion_tokens": 13686,
+  "total_tokens": 27287,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 3956,
-    "completion_tokens": 26038,
-    "total_tokens": 29994,
+    "prompt_tokens": 13601,
+    "completion_tokens": 13686,
+    "total_tokens": 27287,
     "finish_reason": "stop"
    }
   ]
  },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
  "status": "failed",
- "reason": "patch application failed: vuejs__core-11870: patch matches no localized file exactly once: packages/reactivity/src/arrayInstrumentations.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/baseHandlers.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/ref.ts: block 0: SEARCH not found (0 matches)",
+ "reason": "no complete SEARCH/REPLACE blocks",
  "done": true
 }

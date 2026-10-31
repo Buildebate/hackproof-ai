@@ -1,8 +1,1 @@
-<<<<<<< SEARCH
-        if not host:
-=======
-        if host and host.startswith((".", "*")):
-            raise InvalidURL("URL has an invalid label.")
-
-        if not host:
->>>>>>> REPLACE
+REVISE

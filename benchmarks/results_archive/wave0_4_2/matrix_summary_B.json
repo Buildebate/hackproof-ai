@@ -1,0 +1,115 @@
+{
+ "mode": "B",
+ "tier": "oci",
+ "ts": "2026-10-30T14:44:58.913412+00:00",
+ "runs": [
+  {
+   "task": "psf__requests-1142",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0: SEARCH not found (0 matches); requests/cookies.py: block 0: SEARCH not found (0 matches); requests/api.py: block 0: SEARCH not found (0 matches)",
+   "status": "failed",
+   "reason": "patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0: SEARCH not found (0 matches); requests/cookies.py: block 0: SEARCH not found (0 matches); requests/api.py: block 0: SEARCH not found (0 matches)",
+   "done": true
+  },
+  {
+   "task": "psf__requests-2931",
+   "mode": "B",
+   "tier": "oci",
+   "status": "failed",
+   "reason": "unmeasurable: unresolved test IDs: test_requests.py::TestRequests::test_binary_put, test_requests.py::TestRequests::test_entry_points, test_requests.py::TestRequests::test_invalid_url, test_requests.py::TestRequests::test_basic_building, test_requests.py::TestRequests::test_path_is_not_double_encoded",
+   "done": true
+  },
+  {
+   "task": "psf__requests-5414",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "failed",
+   "reason": "f2p-not-red-at-base:1; f2p-not-fixed:1",
+   "done": true
+  },
+  {
+   "task": "psf__requests-6028",
+   "mode": "B",
+   "tier": "oci",
+   "status": "failed",
+   "reason": "unmeasurable: unresolved test IDs: tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py], tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/__init__.py], tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/location], tests/test_utils.py::test_get_auth_from_url[http://%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20:%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20@request.com/url.html#test-auth0]",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-10081",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "failed",
+   "reason": "red-rejected: red run exited 0 (test passed on unpatched base)",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-5787",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "patch application failed: pytest-dev__pytest-5787: patch matches no localized file exactly once: doc/en/example/py2py3/test_py3.py: block 0: SEARCH not found (0 matches); doc/en/example/py2py3/test_py2.py: block 0: SEARCH not found (0 matches); testing/io/test_saferepr.py: block 0: SEARCH not found (0 matches)",
+   "status": "failed",
+   "reason": "patch application failed: pytest-dev__pytest-5787: patch matches no localized file exactly once: doc/en/example/py2py3/test_py3.py: block 0: SEARCH not found (0 matches); doc/en/example/py2py3/test_py2.py: block 0: SEARCH not found (0 matches); testing/io/test_saferepr.py: block 0: SEARCH not found (0 matches)",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-7432",
+   "mode": "B",
+   "status": "failed",
+   "resumed": true
+  },
+  {
+   "task": "pytest-dev__pytest-8399",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "patch application failed: pytest-dev__pytest-8399: patch matches no localized file exactly once: src/_pytest/unittest.py: block 1: SEARCH not found (0 matches); testing/example_scripts/unittest/test_parametrized_fixture_error_message.py: block 0: SEARCH not found (0 matches); testing/python/show_fixtures_per_test.py: block 0: SEARCH not found (0 matches)",
+   "status": "failed",
+   "reason": "patch application failed: pytest-dev__pytest-8399: patch matches no localized file exactly once: src/_pytest/unittest.py: block 1: SEARCH not found (0 matches); testing/example_scripts/unittest/test_parametrized_fixture_error_message.py: block 0: SEARCH not found (0 matches); testing/python/show_fixtures_per_test.py: block 0: SEARCH not found (0 matches)",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11589",
+   "mode": "B",
+   "tier": "oci",
+   "status": "failed",
+   "reason": "unmeasurable: unresolved test IDs: packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11739",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests__/ssrSuspense.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrVIf.spec.ts: block 0: SEARCH not found (0 matches)",
+   "status": "failed",
+   "reason": "patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests__/ssrSuspense.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrVIf.spec.ts: block 0: SEARCH not found (0 matches)",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11870",
+   "mode": "B",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "patch application failed: vuejs__core-11870: patch matches no localized file exactly once: packages/reactivity/src/arrayInstrumentations.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/baseHandlers.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/ref.ts: block 0: SEARCH not found (0 matches)",
+   "status": "failed",
+   "reason": "patch application failed: vuejs__core-11870: patch matches no localized file exactly once: packages/reactivity/src/arrayInstrumentations.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/baseHandlers.ts: block 0: SEARCH not found (0 matches); packages/reactivity/src/ref.ts: block 0: SEARCH not found (0 matches)",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11899",
+   "mode": "B",
+   "tier": "oci",
+   "status": "failed",
+   "reason": "unmeasurable: unresolved test IDs: packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)",
+   "done": true
+  }
+ ]
+}

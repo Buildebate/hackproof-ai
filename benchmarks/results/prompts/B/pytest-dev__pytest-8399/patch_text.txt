@@ -1,25 +1,16 @@
+src/_pytest/unittest.py
 <<<<<<< SEARCH
+    @pytest.fixture(
+        scope=scope,
+        autouse=True,
+        # Use a unique name to speed up lookup.
         name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
+    )
 =======
+    @pytest.fixture(
+        scope=scope,
+        autouse=True,
+        # Use a unique name to speed up lookup.
         name=f"_unittest_{setup_name}_fixture_{obj.__qualname__}",
->>>>>>> REPLACE
-<<<<<<< SEARCH
-            name=f"xunit_setup_module_fixture_{self.obj.__name__}",
-=======
-            name=f"_xunit_setup_module_fixture_{self.obj.__name__}",
->>>>>>> REPLACE
-<<<<<<< SEARCH
-            name=f"xunit_setup_function_fixture_{self.obj.__name__}",
-=======
-            name=f"_xunit_setup_function_fixture_{self.obj.__name__}",
->>>>>>> REPLACE
-<<<<<<< SEARCH
-            name=f"xunit_setup_class_fixture_{self.obj.__qualname__}",
-=======
-            name=f"_xunit_setup_class_fixture_{self.obj.__qualname__}",
->>>>>>> REPLACE
-<<<<<<< SEARCH
-            name=f"xunit_setup_method_fixture_{self.obj.__qualname__}",
-=======
-            name=f"_xunit_setup_method_fixture_{self.obj.__qualname__}",
+    )
 >>>>>>> REPLACE

@@ -2,7 +2,7 @@
  "task": "vuejs__core-11739",
  "mode": "base",
  "done": true,
- "ts": "2026-10-30T05:48:46.825338+00:00",
+ "ts": "2026-10-31T09:08:00.134059+00:00",
  "base_ref": "cb843e0be31f9e563ccfc30eca0c06f2a224b505",
  "tier": "oci",
  "base_index": {
@@ -118,5 +118,16 @@
   ]
  },
  "unresolved_ids": [],
- "junit_sha256": "1cdde9deffeced7d8b45fe13e021dd698581253b2455f2f46b830ed3d2b0b5a7"
+ "junit_sha256": "7d19b7b62dadc12e6abc56bb4840f2529663ff016632154fb2cd9c88cb6e715b",
+ "collect": {
+  "image": "node:22-slim",
+  "fallback": null,
+  "note": "typescript self-resolves from JUnit"
+ },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ }
 }

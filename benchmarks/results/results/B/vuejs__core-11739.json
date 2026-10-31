@@ -2,148 +2,214 @@
  "task": "vuejs__core-11739",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-30T14:21:34.806713+00:00",
+ "ts": "2026-10-31T09:20:15.720553+00:00",
  "base_ref": "cb843e0be31f9e563ccfc30eca0c06f2a224b505",
  "agent": {
   "ok": false,
-  "reason": "patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests__/ssrSuspense.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrVIf.spec.ts: block 0: SEARCH not found (0 matches)",
+  "reason": "patch application failed: vuejs__core-11739: revision produced no complete SEARCH/REPLACE blocks",
   "files": [
-   "packages/compiler-ssr/__tests__/ssrSuspense.spec.ts",
-   "packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts",
-   "packages/compiler-ssr/__tests__/ssrVIf.spec.ts",
-   "packages/compiler-ssr/__tests__/ssrVModel.spec.ts",
-   "packages/compiler-ssr/__tests__/ssrVShow.spec.ts"
+   "packages/runtime-core/src/apiSetupHelpers.ts",
+   "packages/runtime-dom/src/jsx.ts",
+   "packages/compiler-core/src/options.ts",
+   "packages/compiler-ssr/src/transforms/ssrTransformComponent.ts",
+   "packages/compiler-sfc/src/compileScript.ts"
   ],
-  "localize_ms": 267533,
-  "backend": "contriever-transformer-cpu",
-  "red_rel": "packages/runtime-core/__tests__/repro-87bedfca761b.test.ts",
+  "localize_ms": 3506,
+  "backend": "hybrid-rrf-hash-cpu",
+  "red_rel": "packages/runtime-core/__tests__/repro-0742563332a6.test.ts",
   "debate": {
    "rounds_used": 2,
    "converged": false,
-   "score": 0.5833333333333334,
-   "duration_ms": 1337750
+   "score": 0.5,
+   "duration_ms": 450284
   }
  },
  "usage": {
-  "prompt_tokens": 37441,
-  "completion_tokens": 141293,
-  "total_tokens": 178734,
+  "prompt_tokens": 110918,
+  "completion_tokens": 193952,
+  "total_tokens": 304870,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 8374,
-    "completion_tokens": 7097,
-    "total_tokens": 15471,
-    "finish_reason": "stop"
+    "prompt_tokens": 11858,
+    "completion_tokens": 12288,
+    "total_tokens": 24146,
+    "finish_reason": "length"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 4931,
-    "completion_tokens": 801,
-    "total_tokens": 5732,
+    "prompt_tokens": 4528,
+    "completion_tokens": 1314,
+    "total_tokens": 5842,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 5213,
-    "completion_tokens": 32768,
-    "total_tokens": 37981,
-    "finish_reason": "length"
+    "prompt_tokens": 15172,
+    "completion_tokens": 24572,
+    "total_tokens": 39744,
+    "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 439,
-    "completion_tokens": 759,
-    "total_tokens": 1198,
+    "prompt_tokens": 320,
+    "completion_tokens": 760,
+    "total_tokens": 1080,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 431,
-    "completion_tokens": 762,
-    "total_tokens": 1193,
+    "prompt_tokens": 312,
+    "completion_tokens": 710,
+    "total_tokens": 1022,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 859,
-    "completion_tokens": 768,
-    "total_tokens": 1627,
+    "prompt_tokens": 740,
+    "completion_tokens": 1450,
+    "total_tokens": 2190,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 759,
-    "completion_tokens": 1577,
-    "total_tokens": 2336,
+    "prompt_tokens": 649,
+    "completion_tokens": 1748,
+    "total_tokens": 2397,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 5580,
-    "completion_tokens": 1335,
-    "total_tokens": 6915,
+    "prompt_tokens": 5063,
+    "completion_tokens": 1210,
+    "total_tokens": 6273,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 5833,
-    "completion_tokens": 32768,
-    "total_tokens": 38601,
-    "finish_reason": "length"
+    "prompt_tokens": 15699,
+    "completion_tokens": 12730,
+    "total_tokens": 28429,
+    "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1059,
-    "completion_tokens": 392,
-    "total_tokens": 1451,
+    "prompt_tokens": 847,
+    "completion_tokens": 716,
+    "total_tokens": 1563,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1051,
-    "completion_tokens": 616,
-    "total_tokens": 1667,
+    "prompt_tokens": 839,
+    "completion_tokens": 412,
+    "total_tokens": 1251,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1479,
-    "completion_tokens": 32768,
-    "total_tokens": 34247,
-    "finish_reason": "length"
+    "prompt_tokens": 1267,
+    "completion_tokens": 1545,
+    "total_tokens": 2812,
+    "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1054,
-    "completion_tokens": 1105,
-    "total_tokens": 2159,
+    "prompt_tokens": 1150,
+    "completion_tokens": 2686,
+    "total_tokens": 3836,
     "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 379,
-    "completion_tokens": 27777,
-    "total_tokens": 28156,
+    "prompt_tokens": 604,
+    "completion_tokens": 29373,
+    "total_tokens": 29977,
     "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15172,
+    "completion_tokens": 24572,
+    "total_tokens": 39744,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 740,
+    "completion_tokens": 1450,
+    "total_tokens": 2190,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15699,
+    "completion_tokens": 12730,
+    "total_tokens": 28429,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1267,
+    "completion_tokens": 1545,
+    "total_tokens": 2812,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 604,
+    "completion_tokens": 29373,
+    "total_tokens": 29977,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 18388,
+    "completion_tokens": 32768,
+    "total_tokens": 51156,
+    "finish_reason": "length"
    }
   ]
  },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": true
+ },
  "status": "failed",
- "reason": "patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests__/ssrSuspense.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrVIf.spec.ts: block 0: SEARCH not found (0 matches)",
- "done": true
+ "reason": "patch application failed: vuejs__core-11739: revision produced no complete SEARCH/REPLACE blocks",
+ "done": true,
+ "red": {
+  "rel": "packages/runtime-core/__tests__/repro-0742563332a6.test.ts",
+  "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 891,
+  "junit_sha256": "088373c91ba0836393b26c715848e540f3a2d83153802fae5c72f4fef8a1454b"
+ }
 }

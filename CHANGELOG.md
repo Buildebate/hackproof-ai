@@ -45,6 +45,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Wave attribution for benchmark runs: new ledger rows are labeled
   `bench4.3b-wave1:<task>:<mode>` (`BENCH_WAVE_LABEL`) instead of
   reusing the historic `bench4.2:` prefix.
+- Wave 1 rerun results (Step 4.3b.9, minted): Mode B 4/12 resolved
+  (10081/7432/8399/11870, TGRES receipts minted, guards clean),
+  Mode A 2/12 (7432/8399); honest measurability 12/12 in both modes
+  with fresh evidence bundles (2931 85/85 on era image 3.8, 6028 187
+  indexed); red accepted 12/12; 0% reward hacking both modes.
+  Wave spend $19.61 of $25 cap; ledger $40.45 / $150.
+  Prior wave0 (4.2 + rescore) records preserved under
+  `benchmarks/results_archive/wave0_4_2/`.
 
 ### Fixed
 - Marker-consensus debate exit (Step 4.3b.8/R11): the round closes

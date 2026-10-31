@@ -1,0 +1,38 @@
+{
+ "task": "psf__requests-1142",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T05:21:26.659904+00:00",
+ "base_ref": "22623bd8c265b78b161542663ee980738441c307",
+ "agent": {
+  "ok": false,
+  "reason": "patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0: SEARCH not found (0 matches); requests/cookies.py: block 0: SEARCH not found (0 matches); requests/api.py: block 0: SEARCH not found (0 matches)",
+  "files": [
+   "requests/models.py",
+   "requests/cookies.py",
+   "requests/api.py",
+   "requests/packages/urllib3/request.py",
+   "requests/utils.py"
+  ],
+  "localize_ms": 89040,
+  "backend": "contriever-transformer-cpu"
+ },
+ "usage": {
+  "prompt_tokens": 4249,
+  "completion_tokens": 2173,
+  "total_tokens": 6422,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 4249,
+    "completion_tokens": 2173,
+    "total_tokens": 6422,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "status": "failed",
+ "reason": "patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0: SEARCH not found (0 matches); requests/cookies.py: block 0: SEARCH not found (0 matches); requests/api.py: block 0: SEARCH not found (0 matches)",
+ "done": true
+}

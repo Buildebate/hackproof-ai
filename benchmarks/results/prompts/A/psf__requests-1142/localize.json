@@ -1,12 +1,12 @@
 {
  "files": [
-  "requests/models.py",
-  "requests/cookies.py",
-  "requests/api.py",
+  "requests/packages/charade/hebrewprober.py",
   "requests/packages/urllib3/request.py",
-  "requests/utils.py"
+  "requests/sessions.py",
+  "requests/utils.py",
+  "requests/cookies.py"
  ],
- "elapsed_ms": 89040,
- "backend": "contriever-transformer-cpu",
+ "elapsed_ms": 1403,
+ "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "7636e87075303040a565ea7a336f46deb43ef2b515343b04b28793d4b18f1bc2"
 }

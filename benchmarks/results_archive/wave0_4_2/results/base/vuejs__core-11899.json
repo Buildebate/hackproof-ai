@@ -1,0 +1,207 @@
+{
+ "task": "vuejs__core-11899",
+ "mode": "base",
+ "done": true,
+ "ts": "2026-10-30T06:05:27.548444+00:00",
+ "base_ref": "706d4ac1d0210b2d9134b3228280187fe02fc971",
+ "tier": "oci",
+ "base_index": {
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment": "failed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData": "passed",
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector": "passed"
+ },
+ "id_resolution": {
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData"
+  ],
+  "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector"
+  ]
+ },
+ "unresolved_ids": [],
+ "junit_sha256": "4877104b98eb3e46bd0f7491327d98efb8e4457fbd502a23199f3689888b2bb1",
+ "superseded_4_2": {
+  "base_index": {},
+  "id_resolution": {
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector with atrule and comment"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > simple selectors"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > descendent selector"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > nesting selector"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > multiple selectors"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo class"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > pseudo element"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces before pseudo element"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-deep"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-slotted"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > ::v-global"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() with multiple selectors"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > :is() and :where() in compound selectors"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > media query"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > supports query"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > scoped keyframes"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > spaces after selector"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > ::v-deep as combinator"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)": [],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > /deep/ (deprecated syntax)"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > should include resulting classes object in result"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC CSS modules > postcss-modules options"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss @import"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined string options.additionalData"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > scss respect user-defined function options.additionalData"
+   ],
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector": [
+    "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC style preprocessors > should mount scope on correct selector when have universal selector"
+   ]
+  },
+  "unresolved_ids": [
+   "packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)"
+  ],
+  "ts": "2026-10-30T06:05:27.548444+00:00"
+ },
+ "rescore": {
+  "tool": "benchmarks/rescore_4_2.py",
+  "ts": "2026-10-30T16:30:15.485634+00:00"
+ }
+}

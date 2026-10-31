@@ -1,0 +1,38 @@
+{
+ "task": "vuejs__core-11739",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T05:57:05.050500+00:00",
+ "base_ref": "cb843e0be31f9e563ccfc30eca0c06f2a224b505",
+ "agent": {
+  "ok": false,
+  "reason": "patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests__/ssrSuspense.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrVIf.spec.ts: block 0: SEARCH not found (0 matches)",
+  "files": [
+   "packages/compiler-ssr/__tests__/ssrSuspense.spec.ts",
+   "packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts",
+   "packages/compiler-ssr/__tests__/ssrVIf.spec.ts",
+   "packages/compiler-ssr/__tests__/ssrVModel.spec.ts",
+   "packages/compiler-ssr/__tests__/ssrVShow.spec.ts"
+  ],
+  "localize_ms": 199553,
+  "backend": "contriever-transformer-cpu"
+ },
+ "usage": {
+  "prompt_tokens": 4949,
+  "completion_tokens": 30849,
+  "total_tokens": 35798,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 4949,
+    "completion_tokens": 30849,
+    "total_tokens": 35798,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "status": "failed",
+ "reason": "patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests__/ssrSuspense.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts: block 0: SEARCH not found (0 matches); packages/compiler-ssr/__tests__/ssrVIf.spec.ts: block 0: SEARCH not found (0 matches)",
+ "done": true
+}

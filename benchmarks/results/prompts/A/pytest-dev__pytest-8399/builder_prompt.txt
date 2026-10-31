@@ -1,4 +1,4 @@
-You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences. Prefix each block with its repo-relative target file path on its own line. Copy every SEARCH block byte-for-byte from the shown CODE CONTEXT (exact indentation and punctuation); never reconstruct code from memory. After the blocks, end your verdict with exactly one marker word on its own final line: APPROVE if the patch is complete, or REVISE if the context is insufficient to write one.
 BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
 
 ISSUE:
@@ -81,6 +81,415 @@ I'm out of time right now to write a proper PR, but I'm leaving this in case som
 I can take a cut at this
 
 CODE CONTEXT:
+TOP-1 FULL FILE src/_pytest/unittest.py:
+"""Discover and run std-library "unittest" style tests."""
+import sys
+import traceback
+import types
+from typing import Any
+from typing import Callable
+from typing import Generator
+from typing import Iterable
+from typing import List
+from typing import Optional
+from typing import Tuple
+from typing import Type
+from typing import TYPE_CHECKING
+from typing import Union
+
+import _pytest._code
+import pytest
+from _pytest.compat import getimfunc
+from _pytest.compat import is_async_function
+from _pytest.config import hookimpl
+from _pytest.fixtures import FixtureRequest
+from _pytest.nodes import Collector
+from _pytest.nodes import Item
+from _pytest.outcomes import exit
+from _pytest.outcomes import fail
+from _pytest.outcomes import skip
+from _pytest.outcomes import xfail
+from _pytest.python import Class
+from _pytest.python import Function
+from _pytest.python import PyCollector
+from _pytest.runner import CallInfo
+
+if TYPE_CHECKING:
+    import unittest
+    import twisted.trial.unittest
+
+    from _pytest.fixtures import _Scope
+
+    _SysExcInfoType = Union[
+        Tuple[Type[BaseException], BaseException, types.TracebackType],
+        Tuple[None, None, None],
+    ]
+
+
+def pytest_pycollect_makeitem(
+    collector: PyCollector, name: str, obj: object
+) -> Optional["UnitTestCase"]:
+    # Has unittest been imported and is obj a subclass of its TestCase?
+    try:
+        ut = sys.modules["unittest"]
+        # Type ignored because `ut` is an opaque module.
+        if not issubclass(obj, ut.TestCase):  # type: ignore
+            return None
+    except Exception:
+        return None
+    # Yes, so let's collect it.
+    item: UnitTestCase = UnitTestCase.from_parent(collector, name=name, obj=obj)
+    return item
+
+
+class UnitTestCase(Class):
+    # Marker for fixturemanger.getfixtureinfo()
+    # to declare that our children do not support funcargs.
+    nofuncargs = True
+
+    def collect(self) -> Iterable[Union[Item, Collector]]:
+        from unittest import TestLoader
+
+        cls = self.obj
+        if not getattr(cls, "__test__", True):
+            return
+
+        skipped = _is_skipped(cls)
+        if not skipped:
+            self._inject_setup_teardown_fixtures(cls)
+            self._inject_setup_class_fixture()
+
+        self.session._fixturemanager.parsefactories(self, unittest=True)
+        loader = TestLoader()
+        foundsomething = False
+        for name in loader.getTestCaseNames(self.obj):
+            x = getattr(self.obj, name)
+            if not getattr(x, "__test__", True):
+                continue
+            funcobj = getimfunc(x)
+            yield TestCaseFunction.from_parent(self, name=name, callobj=funcobj)
+            foundsomething = True
+
+        if not foundsomething:
+            runtest = getattr(self.obj, "runTest", None)
+            if runtest is not None:
+                ut = sys.modules.get("twisted.trial.unittest", None)
+                # Type ignored because `ut` is an opaque module.
+                if ut is None or runtest != ut.TestCase.runTest:  # type: ignore
+                    yield TestCaseFunction.from_parent(self, name="runTest")
+
+    def _inject_setup_teardown_fixtures(self, cls: type) -> None:
+        """Injects a hidden auto-use fixture to invoke setUpClass/setup_method and corresponding
+        teardown functions (#517)."""
+        class_fixture = _make_xunit_fixture(
+            cls,
+            "setUpClass",
+            "tearDownClass",
+            "doClassCleanups",
+            scope="class",
+            pass_self=False,
+        )
+        if class_fixture:
+            cls.__pytest_class_setup = class_fixture  # type: ignore[attr-defined]
+
+        method_fixture = _make_xunit_fixture(
+            cls,
+            "setup_method",
+            "teardown_method",
+            None,
+            scope="function",
+            pass_self=True,
+        )
+        if method_fixture:
+            cls.__pytest_method_setup = method_fixture  # type: ignore[attr-defined]
+
+
+def _make_xunit_fixture(
+    obj: type,
+    setup_name: str,
+    teardown_name: str,
+    cleanup_name: Optional[str],
+    scope: "_Scope",
+    pass_self: bool,
+):
+    setup = getattr(obj, setup_name, None)
+    teardown = getattr(obj, teardown_name, None)
+    if setup is None and teardown is None:
+        return None
+
+    if cleanup_name:
+        cleanup = getattr(obj, cleanup_name, lambda *args: None)
+    else:
+
+        def cleanup(*args):
+            pass
+
+    @pytest.fixture(
+        scope=scope,
+        autouse=True,
+        # Use a unique name to speed up lookup.
+        name=f"unittest_{setup_name}_fixture_{obj.__qualname__}",
+    )
+    def fixture(self, request: FixtureRequest) -> Generator[None, None, None]:
+        if _is_skipped(self):
+            reason = self.__unittest_skip_why__
+            raise pytest.skip.Exception(reason, _use_item_location=True)
+        if setup is not None:
+            try:
+                if pass_self:
+                    setup(self, request.function)
+                else:
+                    setup()
+            # unittest does not call the cleanup function for every BaseException, so we
+            # follow this here.
+            except Exception:
+                if pass_self:
+                    cleanup(self)
+                else:
+                    cleanup()
+
+                raise
+        yield
+        try:
+            if teardown is not None:
+                if pass_self:
+                    teardown(self, request.function)
+                else:
+                    teardown()
+        finally:
+            if pass_self:
+                cleanup(self)
+            else:
+                cleanup()
+
+    return fixture
+
+
+class TestCaseFunction(Function):
+    nofuncargs = True
+    _excinfo: Optional[List[_pytest._code.ExceptionInfo[BaseException]]] = None
+    _testcase: Optional["unittest.TestCase"] = None
+
+    def setup(self) -> None:
+        # A bound method to be called during teardown() if set (see 'runtest()').
+        self._explicit_tearDown: Optional[Callable[[], None]] = None
+        assert self.parent is not None
+        self._testcase = self.parent.obj(self.name)  # type: ignore[attr-defined]
+        self._obj = getattr(self._testcase, self.name)
+        if hasattr(self, "_request"):
+            self._request._fillfixtures()
+
+    def teardown(self) -> None:
+        if self._explicit_tearDown is not None:
+            self._explicit_tearDown()
+            self._explicit_tearDown = None
+        self._testcase = None
+        self._obj = None
+
+    def startTest(self, testcase: "unittest.TestCase") -> None:
+        pass
+
+    def _addexcinfo(self, rawexcinfo: "_SysExcInfoType") -> None:
+        # Unwrap potential exception info (see twisted trial support below).
+        rawexcinfo = getattr(rawexcinfo, "_rawexcinfo", rawexcinfo)
+        try:
+            excinfo = _pytest._code.ExceptionInfo(rawexcinfo)  # type: ignore[arg-type]
+            # Invoke the attributes to trigger storing the traceback
+            # trial causes some issue there.
+            excinfo.value
+            excinfo.traceback
+        except TypeError:
+            try:
+                try:
+                    values = traceback.format_exception(*rawexcinfo)
+                    values.insert(
+                        0,
+                        "NOTE: Incompatible Exception Representation, "
+                        "displaying natively:\n\n",
+                    )
+                    fail("".join(values), pytrace=False)
+                except (fail.Exception, KeyboardInterrupt):
+                    raise
+                except BaseException:
+                    fail(
+                        "ERROR: Unknown Incompatible Exception "
+                        "representation:\n%r" % (rawexcinfo,),
+                        pytrace=False,
+                    )
+            except KeyboardInterrupt:
+                raise
+            except fail.Exception:
+                excinfo = _pytest._code.ExceptionInfo.from_current()
+        self.__dict__.setdefault("_excinfo", []).append(excinfo)
+
+    def addError(
+        self, testcase: "unittest.TestCase", rawexcinfo: "_SysExcInfoType"
+    ) -> None:
+        try:
+            if isinstance(rawexcinfo[1], exit.Exception):
+                exit(rawexcinfo[1].msg)
+        except TypeError:
+            pass
+        self._addexcinfo(rawexcinfo)
+
+    def addFailure(
+        self, testcase: "unittest.TestCase", rawexcinfo: "_SysExcInfoType"
+    ) -> None:
+        self._addexcinfo(rawexcinfo)
+
+    def addSkip(self, testcase: "unittest.TestCase", reason: str) -> None:
+        try:
+            raise pytest.skip.Exception(reason, _use_item_location=True)
+        except skip.Exception:
+            self._addexcinfo(sys.exc_info())
+
+    def addExpectedFailure(
+        self,
+        testcase: "unittest.TestCase",
+        rawexcinfo: "_SysExcInfoType",
+        reason: str = "",
+    ) -> None:
+        try:
+            xfail(str(reason))
+        except xfail.Exception:
+            self._addexcinfo(sys.exc_info())
+
+    def addUnexpectedSuccess(
+        self,
+        testcase: "unittest.TestCase",
+        reason: Optional["twisted.trial.unittest.Todo"] = None,
+    ) -> None:
+        msg = "Unexpected success"
+        if reason:
+            msg += f": {reason.reason}"
+        # Preserve unittest behaviour - fail the test. Explicitly not an XPASS.
+        try:
+            fail(msg, pytrace=False)
+        except fail.Exception:
+            self._addexcinfo(sys.exc_info())
+
+    def addSuccess(self, testcase: "unittest.TestCase") -> None:
+        pass
+
+    def stopTest(self, testcase: "unittest.TestCase") -> None:
+        pass
+
+    def runtest(self) -> None:
+        from _pytest.debugging import maybe_wrap_pytest_function_for_tracing
+
+        assert self._testcase is not None
+
+        maybe_wrap_pytest_function_for_tracing(self)
+
+        # Let the unittest framework handle async functions.
+        if is_async_function(self.obj):
+            # Type ignored because self acts as the TestResult, but is not actually one.
+            self._testcase(result=self)  # type: ignore[arg-type]
+        else:
+            # When --pdb is given, we want to postpone calling tearDown() otherwise
+            # when entering the pdb prompt, tearDown() would have probably cleaned up
+            # instance variables, which makes it difficult to debug.
+            # Arguably we could always postpone tearDown(), but this changes the moment where the
+            # TestCase instance interacts with the results object, so better to only do it
+            # when absolutely needed.
+            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
+                self._explicit_tearDown = self._testcase.tearDown
+                setattr(self._testcase, "tearDown", lambda *args: None)
+
+            # We need to update the actual bound method with self.obj, because
+            # wrap_pytest_function_for_tracing replaces self.obj by a wrapper.
+            setattr(self._testcase, self.name, self.obj)
+            try:
+                self._testcase(result=self)  # type: ignore[arg-type]
+            finally:
+                delattr(self._testcase, self.name)
+
+    def _prunetraceback(
+        self, excinfo: _pytest._code.ExceptionInfo[BaseException]
+    ) -> None:
+        Function._prunetraceback(self, excinfo)
+        traceback = excinfo.traceback.filter(
+            lambda x: not x.frame.f_globals.get("__unittest")
+        )
+        if traceback:
+            excinfo.traceback = traceback
+
+
+@hookimpl(tryfirst=True)
+def pytest_runtest_makereport(item: Item, call: CallInfo[None]) -> None:
+    if isinstance(item, TestCaseFunction):
+        if item._excinfo:
+            call.excinfo = item._excinfo.pop(0)
+            try:
+                del call.result
+            except AttributeError:
+                pass
+
+    # Convert unittest.SkipTest to pytest.skip.
+    # This is actually only needed for nose, which reuses unittest.SkipTest for
+    # its own nose.SkipTest. For unittest TestCases, SkipTest is already
+    # handled internally, and doesn't reach here.
+    unittest = sys.modules.get("unittest")
+    if (
+        unittest
+        and call.excinfo
+        and isinstance(call.excinfo.value, unittest.SkipTest)  # type: ignore[attr-defined]
+    ):
+        excinfo = call.excinfo
+        call2 = CallInfo[None].from_call(
+            lambda: pytest.skip(str(excinfo.value)), call.when
+        )
+        call.excinfo = call2.excinfo
+
+
+# Twisted trial support.
+
+
+@hookimpl(hookwrapper=True)
+def pytest_runtest_protocol(item: Item) -> Generator[None, None, None]:
+    if isinstance(item, TestCaseFunction) and "twisted.trial.unittest" in sys.modules:
+        ut: Any = sys.modules["twisted.python.failure"]
+        Failure__init__ = ut.Failure.__init__
+        check_testcase_implements_trial_reporter()
+
+        def excstore(
+            self, exc_value=None, exc_type=None, exc_tb=None, captureVars=None
+        ):
+            if exc_value is None:
+                self._rawexcinfo = sys.exc_info()
+            else:
+                if exc_type is None:
+                    exc_type = type(exc_value)
+                self._rawexcinfo = (exc_type, exc_value, exc_tb)
+            try:
+                Failure__init__(
+                    self, exc_value, exc_type, exc_tb, captureVars=captureVars
+                )
+            except TypeError:
+                Failure__init__(self, exc_value, exc_type, exc_tb)
+
+        ut.Failure.__init__ = excstore
+        yield
+        ut.Failure.__init__ = Failure__init__
+    else:
+        yield
+
+
+def check_testcase_implements_trial_reporter(done: List[int] = []) -> None:
+    if done:
+        return
+    from zope.interface import classImplements
+    from twisted.trial.itrial import IReporter
+
+    classImplements(TestCaseFunction, IReporter)
+    done.append(1)
+
+
+def _is_skipped(obj) -> bool:
+    """Return True if the given object has been marked with @unittest.skip."""
+    return bool(getattr(obj, "__unittest_skip__", False))
+
+
 src/_pytest/unittest.py:
 """Discover and run std-library "unittest" style tests."""
 import sys
@@ -324,6 +733,396 @@ class TestCaseFunction(Function):
 
     d
 
+testing/test_setupplan.py:
+from _pytest.pytester import Pytester
+
+
+def test_show_fixtures_and_test(
+    pytester: Pytester, dummy_yaml_custom_test: None
+) -> None:
+    """Verify that fixtures are not executed."""
+    pytester.makepyfile(
+        """
+        import pytest
+        @pytest.fixture
+        def arg():
+            assert False
+        def test_arg(arg):
+            assert False
+    """
+    )
+
+    result = pytester.runpytest("--setup-plan")
+    assert result.ret == 0
+
+    result.stdout.fnmatch_lines(
+        ["*SETUP    F arg*", "*test_arg (fixtures used: arg)", "*TEARDOWN F arg*"]
+    )
+
+
+def test_show_multi_test_fixture_setup_and_teardown_correctly_simple(
+    pytester: Pytester,
+) -> None:
+    """Verify that when a fixture lives for longer than a single test, --setup-plan
+    correctly displays the SETUP/TEARDOWN indicators the right number of times.
+
+    As reported in https://github.com/pytest-dev/pytest/issues/2049
+    --setup-plan was showing SETUP/TEARDOWN on every test, even when the fixture
+    should persist through multiple tests.
+
+    (Note that this bug never affected actual test execution, which used the
+    correct fixture lifetimes. It was purely a display bug for --setup-plan, and
+    did not affect the related --setup-show or --setup-only.)
+    """
+    pytester.makepyfile(
+        """
+        import pytest
+        @pytest.fixture(scope = 'class')
+        def fix():
+            return object()
+        class TestClass:
+            def test_one(self, fix):
+                assert False
+            def test_two(self, fix):
+                assert False
+    """
+    )
+
+    result = pytester.runpytest("--setup-plan")
+    assert result.ret == 0
+
+    setup_fragment = "SETUP    C fix"
+    setup_count = 0
+
+    teardown_fragment = "TEARDOWN C fix"
+    teardown_count = 0
+
+    for line in result.stdout.lines:
+        if setup_fragment in line:
+            setup_count += 1
+        if teardown_fragment in line:
+            teardown_count += 1
+
+    # before the fix this tests, there would have been a setup/teardown
+    # message for each test, so the counts would each have been 2
+    assert setup_count == 1
+    assert teardown_count == 1
+
+
+def test_show_multi_test_fixture_setup_and_teardown_same_as_setup_show(
+    pytester: Pytester,
+) -> None:
+    """Verify that SETUP/TEARDOWN messages match what comes out of --setup-show."""
+    pytester.makepyfile(
+        """
+        import pytest
+        @pytest.fixture(scope = 'session')
+        def sess():
+            return True
+        @pytest.fixture(scope = 'module')
+        def mod():
+            return True
+        @pytest.fixture(scope = 'class')
+        def cls():
+            return True
+        @pytest.fixture(scope = 'function')
+        def func():
+            return True
+        def test_outside(sess, mod, cls, func):
+            assert True
+        class TestCls:
+            def test_one(self, sess, mod, cls, func):
+                assert True
+            def test_two(self, sess, mod, cls, func):
+                assert True
+    """
+    )
+
+    plan_result = pytester.runpytest("--setup-plan")
+    show_result = pytester.runpytest("--setup-show")
+
+    # the number and text of these lines should be identical
+    plan_lines = [
+        line
+        for line in plan_result.stdout.lines
+        if "SETUP" in line or "TEARDOWN" in line
+    ]
+    show_lines = [
+        line
+        for line in show_result.stdout.lines
+        if "SETUP" in line or "TEARDOWN" in line
+    ]
+
+    assert plan_lines == show_lines
+
+
+src/_pytest/capture.py:
+"""Per-test stdout/stderr capturing mechanism."""
+import contextlib
+import functools
+import io
+import os
+import sys
+from io import UnsupportedOperation
+from tempfile import TemporaryFile
+from typing import Any
+from typing import AnyStr
+from typing import Generator
+from typing import Generic
+from typing import Iterator
+from typing import Optional
+from typing import TextIO
+from typing import Tuple
+from typing import TYPE_CHECKING
+from typing import Union
+
+from _pytest.compat import final
+from _pytest.config import Config
+from _pytest.config import hookimpl
+from _pytest.config.argparsing import Parser
+from _pytest.deprecated import check_ispytest
+from _pytest.fixtures import fixture
+from _pytest.fixtures import SubRequest
+from _pytest.nodes import Collector
+from _pytest.nodes import File
+from _pytest.nodes import Item
+
+if TYPE_CHECKING:
+    from typing_extensions import Literal
+
+    _CaptureMethod = Literal["fd", "sys", "no", "tee-sys"]
+
+
+def pytest_addoption(parser: Parser) -> None:
+    group = parser.getgroup("general")
+    group._addoption(
+        "--capture",
+        action="store",
+        default="fd",
+        metavar="method",
+        choices=["fd", "sys", "no", "tee-sys"],
+        help="per-test capturing method: one of fd|sys|no|tee-sys.",
+    )
+    group._addoption(
+        "-s",
+        action="store_const",
+        const="no",
+        dest="capture",
+        help="shortcut for --capture=no.",
+    )
+
+
+def _colorama_workaround() -> None:
+    """Ensure colorama is imported so that it attaches to the correct stdio
+    handles on Windows.
+
+    colorama uses the terminal on import time. So if something does the
+    first import of colorama while I/O capture is active, colorama will
+    fail in various ways.
+    """
+    if sys.platform.startswith("win32"):
+        try:
+            import colorama  # noqa: F401
+        except ImportError:
+            pass
+
+
+def _readline_workaround() -> None:
+    """Ensure readline is imported so that it attaches to the correct stdio
+    handles on Windows.
+
+    Pdb uses readline support where available--when not running from the Python
+    prompt, the readline module is not imported until running the pdb REPL.  If
+    running pytest with the --pdb option this means the readline module is not
+    imported until after I/O capture has been started.
+
+    This is a problem for pyreadline, which is often used to implement readline
+    support on Windows, as it does not attach to the correct handles for stdout
+    and/or stdin if they have been redirected by the FDCapture mechanism.  This
+    workaround ensures that readline is imported before I/O capture is setup so
+    that it can attach to the actual stdin/out for the console.
+
+    See https://github.com/pytest-dev/pytest/pull/1281.
+    """
+    if sys.platform.startswith("win32"):
+        try:
+            import readline  # noqa: F401
+        except ImportError:
+            pass
+
+
+def _py36_windowsconsoleio_workaround(stream: TextIO) -> None:
+    """Workaround for Windows Unicode console handling on Python>=3.6.
+
+    Python 3.6 implemented Unicode console handling for Windows. This works
+    by reading/writing to the raw console handle using
+    ``{Read,Write}ConsoleW``.
+
+    The problem is that we are going to ``dup2`` over the stdio file
+    descriptors when doing ``FDCapture`` and this will ``CloseHandle`` the
+    handles used by Python to write to the console. Though there is still some
+    weirdness and the console handle seems to only be closed randomly and not
+    on the first call to ``CloseHandle``, or maybe it gets reopened with the
+    same handle value when we suspend capturing.
+
+    The workaround in this case will reopen stdio with a different fd which
+    also means a different handle by replicating the logic in
+    "Py_lifecycle.c:initstdio/create_stdio".
+
+    :param stream:
+        In practice ``sys.stdout`` or ``sys.stderr``, but given
+        here as parameter for unittesting purposes.
+
+    See https://github.com/pytest-dev/py/issues/103.
+    """
+    if not sys.platform.startswith("win32") or hasattr(sys, "pypy_version_info"):
+        return
+
+    # Bail out if ``stream`` doesn't seem like a proper ``io`` stream (#2666).
+    if not hasattr(stream, "buffer"):  # type: ignore[unreachable]
+        return
+
+    buffered = hasattr(stream.buffer, "raw")
+    raw_stdout = stream.buffer.raw if buffered else stream.buffer  # type: ignore[attr-defined]
+
+    if not isinstance(raw_stdout, io._WindowsConsoleIO):  # type: ignore[attr-defined]
+        return
+
+    def _reopen_stdio(f, mode):
+        if not buffered and mode[0] == "w":
+            buffering = 0
+        else:
+            buffering = -1
+
+        return io.TextIOWrapper(
+            open(os.dup(f.fileno()), mode, buffering),  # type: ignore[arg-type]
+            f.encoding,
+            f.errors,
+            f.newlines,
+            f.line_buffering,
+        )
+
+    sys.stdin = _reopen_stdio(sys.stdin, "rb")
+    sys.stdout = _reopen_stdio(sys.stdout, "wb")
+    sys.stderr = _reopen_stdio(sys.stderr, "wb")
+
+
+@hookimpl(hookwrapper=True)
+def pytest_load_initial_conftests(early_config: Config):
+    ns = early_config.known_args_namespace
+    if ns.capture == "fd":
+        _py36_windowsconsoleio_workaround(sys.stdout)
+    _colorama_workaround()
+    _readline_workaround()
+    pluginmanager = early_config.pluginmanager
+    capman = CaptureManager(ns.capture)
+    pluginmanager.register(capman, "capturemanager")
+
+    # Make sure that capturemanager is properly reset at final shutdown.
+    early_config.add_cleanup(capman.stop_global_capturing)
+
+    # Finally trigger conftest loading but while capturing (issue #93).
+    capman.start_global_capturing()
+    outcome = yield
+    capman.suspend_global_capture()
+    if outcome.excinfo is not None:
+        out, err = capman.read_global_capture()
+        sys.stdout.write(out)
+        sys.stderr.write(err)
+
+
+# IO Helpers.
+
+
+class EncodedFile(io.TextIOWrapper):
+    __slots__ = ()
+
+    @property
+    def name(self) -> str:
+        # Ensure that file.name is a string. Workaround for a Python bug
+        # fixed in >=3.7.4: https://bugs.python.org/issue36015
+        return repr(self.buffer)
+
+    @property
+    def mode(self) -> str:
+        # TextIOWrapper doesn't expose a mode, but at least some of our
+        # tests check it.
+        return self.buffer.mode.replace("b", "")
+
+
+class CaptureIO(io.TextIOWrapper):
+    def __init__(self) -> None:
+        super().__init__(io.BytesIO(), encoding="UTF-8", newline="", write_through=True)
+
+    def getvalue(self) -> str:
+        assert isinstance(self.buffer, io.BytesIO)
+        return self.buffer.getvalue().decode("UTF-8")
+
+
+class TeeCaptureIO(CaptureIO):
+    def __init__(self, other: TextIO) -> None:
+        self._other = other
+        super().__init__()
+
+    def write(self, s: str) -> int:
+        super().write(s)
+        return self._other.write(s)
+
+
+class DontReadFromInput:
+    encoding = None
+
+    def read(self, *args):
+        raise OSError(
+            "pytest: reading from stdin while output is captured!  Consider using `-s`."
+        )
+
+    readline = read
+    readlines = read
+    __next__ = read
+
+    def __iter__(self):
+        return self
+
+    def fileno(self) -> int:
+        raise UnsupportedOperation("redirected stdin is pseudofile, has no fileno()")
+
+    def isatty(self) -> bool:
+        return False
+
+    def close(self) -> None:
+        pass
+
+    @property
+    def buffer(self):
+        return self
+
+
+# Capture classes.
+
+
+patchsysdict = {0: "stdin", 1: "stdout", 2: "stderr"}
+
+
+class NoCapture:
+    EMPTY_BUFFER = None
+    __init__ = start = done = suspend = resume = lambda *args: None
+
+
+class SysCaptureBinary:
+
+    EMPTY_BUFFER = b""
+
+    def __init__(self, fd: int, tmpfile=None, *, tee: bool = False) -> None:
+        name = patchsysdict[fd]
+        self._old = getattr(sys, name)
+        self.name = name
+        if tmpfile is None:
+            if name == "stdin":
+                tmpfile = DontReadFromInput()
+            else:
+  
+
 testing/example_scripts/unittest/test_parametrized_fixture_error_message.py:
 import unittest
 
@@ -341,156 +1140,268 @@ class TestSomethingElse(unittest.TestCase):
         pass
 
 
-testing/python/show_fixtures_per_test.py:
-from _pytest.pytester import Pytester
+scripts/release-on-comment.py:
+"""
+This script is part of the pytest release process which is triggered by comments
+in issues.
+
+This script is started by the `release-on-comment.yml` workflow, which always executes on
+`master` and is triggered by two comment related events:
+
+* https://help.github.com/en/actions/reference/events-that-trigger-workflows#issue-comment-event-issue_comment
+* https://help.github.com/en/actions/reference/events-that-trigger-workflows#issues-event-issues
+
+This script receives the payload and a secrets on the command line.
+
+The payload must contain a comment with a phrase matching this pseudo-regular expression:
+
+    @pytestbot please prepare (major )? release from <branch name>
+
+Then the appropriate version will be obtained based on the given branch name:
+
+* a major release from master if "major" appears in the phrase in that position
+* a feature or bug fix release from master (based if there are features in the current changelog
+  folder)
+* a bug fix from a maintenance branch
+
+After that, it will create a release using the `release` tox environment, and push a new PR.
+
+**Secret**: currently the secret is defined in the @pytestbot account, which the core maintainers
+have access to. There we created a new secret named `chatops` with write access to the repository.
+"""
+import argparse
+import json
+import os
+import re
+import traceback
+from pathlib import Path
+from subprocess import CalledProcessError
+from subprocess import check_call
+from subprocess import check_output
+from subprocess import run
+from textwrap import dedent
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+
+from colorama import Fore
+from colorama import init
+from github3.repos import Repository
 
 
-def test_no_items_should_not_show_output(pytester: Pytester) -> None:
-    result = pytester.runpytest("--fixtures-per-test")
-    result.stdout.no_fnmatch_line("*fixtures used by*")
-    assert result.ret == 0
+class InvalidFeatureRelease(Exception):
+    pass
 
 
-def test_fixtures_in_module(pytester: Pytester) -> None:
-    p = pytester.makepyfile(
-        '''
-        import pytest
-        @pytest.fixture
-        def _arg0():
-            """hidden arg0 fixture"""
-        @pytest.fixture
-        def arg1():
-            """arg1 docstring"""
-        def test_arg1(arg1):
-            pass
-    '''
+SLUG = "pytest-dev/pytest"
+
+PR_BODY = """\
+Created automatically from {comment_url}.
+
+Once all builds pass and it has been **approved** by one or more maintainers, the build
+can be released by pushing a tag `{version}` to this repository.
+
+Closes #{issue_number}.
+"""
+
+
+def login(token: str) -> Repository:
+    import github3
+
+    github = github3.login(token=token)
+    owner, repo = SLUG.split("/")
+    return github.repository(owner, repo)
+
+
+def get_comment_data(payload: Dict) -> str:
+    if "comment" in payload:
+        return payload["comment"]
+    else:
+        return payload["issue"]
+
+
+def validate_and_get_issue_comment_payload(
+    issue_payload_path: Optional[Path],
+) -> Tuple[str, str, bool]:
+    payload = json.loads(issue_payload_path.read_text(encoding="UTF-8"))
+    body = get_comment_data(payload)["body"]
+    m = re.match(r"@pytestbot please prepare (major )?release from ([\w\-_\.]+)", body)
+    if m:
+        is_major, base_branch = m.group(1) is not None, m.group(2)
+    else:
+        is_major, base_branch = False, None
+    return payload, base_branch, is_major
+
+
+def print_and_exit(msg) -> None:
+    print(msg)
+    raise SystemExit(1)
+
+
+def trigger_release(payload_path: Path, token: str) -> None:
+    payload, base_branch, is_major = validate_and_get_issue_comment_payload(
+        payload_path
     )
+    if base_branch is None:
+        url = get_comment_data(payload)["html_url"]
+        print_and_exit(
+            f"Comment {Fore.CYAN}{url}{Fore.RESET} did not match the trigger command."
+        )
+    print()
+    print(f"Precessing release for branch {Fore.CYAN}{base_branch}")
 
-    result = pytester.runpytest("--fixtures-per-test", p)
-    assert result.ret == 0
+    repo = login(token)
 
-    result.stdout.fnmatch_lines(
-        [
-            "*fixtures used by test_arg1*",
-            "*(test_fixtures_in_module.py:9)*",
-            "arg1",
-            "    arg1 docstring",
-        ]
-    )
-    result.stdout.no_fnmatch_line("*_arg0*")
+    issue_number = payload["issue"]["number"]
+    issue = repo.issue(issue_number)
+
+    check_call(["git", "checkout", f"origin/{base_branch}"])
+
+    try:
+        version = find_next_version(base_branch, is_major)
+    except InvalidFeatureRelease as e:
+        issue.create_comment(str(e))
+        print_and_exit(f"{Fore.RED}{e}")
+
+    error_contents = ""
+    try:
+        print(f"Version: {Fore.CYAN}{version}")
+
+        release_branch = f"release-{version}"
+
+        run(
+            ["git", "config", "user.name", "pytest bot"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        run(
+            ["git", "config", "user.email", "pytestbot@gmail.com"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+        run(
+            ["git", "checkout", "-b", release_branch, f"origin/{base_branch}"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+        print(f"Branch {Fore.CYAN}{release_branch}{Fore.RESET} created.")
+
+        # important to use tox here because we have changed branches, so dependencies
+        # might have changed as well
+        cmdline = ["tox", "-e", "release", "--", version, "--skip-check-links"]
+        print("Running", " ".join(cmdline))
+        run(
+            cmdline,
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+        oauth_url = f"https://{token}:x-oauth-basic@github.com/{SLUG}.git"
+        run(
+            ["git", "push", oauth_url, f"HEAD:{release_branch}", "--force"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        print(f"Branch {Fore.CYAN}{release_branch}{Fore.RESET} pushed.")
+
+        body = PR_BODY.format(
+            comment_url=get_comment_data(payload)["html_url"],
+            version=version,
+            issue_number=issue_number,
+        )
+        pr = repo.create_pull(
+            f"Prepare release {version}",
+            base=base_branch,
+            head=release_branch,
+            body=body,
+        )
+        print(f"Pull request {Fore.CYAN}{pr.url}{Fore.RESET} created.")
+
+        comment = issue.create_comment(
+            f"As requested, opened a PR for release `{version}`: #{pr.number}."
+        )
+        print(f"Notified in original comment {Fore.CYAN}{comment.url}{Fore.RESET}.")
+
+    except CalledProcessError as e:
+        error_contents = f"CalledProcessError\noutput:\n{e.output}\nstderr:\n{e.stderr}"
+    except Exception:
+        error_contents = f"Exception:\n{traceback.format_exc()}"
+
+    if error_contents:
+        link = f"https://github.com/{SLUG}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+        msg = ERROR_COMMENT.format(
+            version=version, base_branch=base_branch, contents=error_contents, link=link
+        )
+        issue.create_comment(msg)
+        print_and_exit(f"{Fore.RED}{error_contents}")
+    else:
+        print(f"{Fore.GREEN}Success.")
 
 
-def test_fixtures_in_conftest(pytester: Pytester) -> None:
-    pytester.makeconftest(
-        '''
-        import pytest
-        @pytest.fixture
-        def arg1():
-            """arg1 docstring"""
-        @pytest.fixture
-        def arg2():
-            """arg2 docstring"""
-        @pytest.fixture
-        def arg3(arg1, arg2):
-            """arg3
-            docstring
-            """
-    '''
-    )
-    p = pytester.makepyfile(
+ERROR_COMMENT = """\
+The request to prepare release `{version}` from {base_branch} failed with:
+
+```
+{contents}
+```
+
+See: {link}.
+"""
+
+
+def find_next_version(base_branch: str, is_major: bool) -> str:
+    output = check_output(["git", "tag"], encoding="UTF-8")
+    valid_versions = []
+    for v in output.splitlines():
+        m = re.match(r"\d.\d.\d+$", v.strip())
+        if m:
+            valid_versions.append(tuple(int(x) for x in v.split(".")))
+
+    valid_versions.sort()
+    last_version = valid_versions[-1]
+
+    changelog = Path("changelog")
+
+    features = list(changelog.glob("*.feature.rst"))
+    breaking = list(changelog.glob("*.breaking.rst"))
+    is_feature_release = features or breaking
+
+    if is_feature_release and base_branch != "master":
+        msg = dedent(
+            f"""
+            Found features or breaking changes in `{base_branch}`, and feature releases can only be
+            created from `master`:
         """
-        def test_arg2(arg2):
-            pass
-        def test_arg3(arg3):
-            pass
-    """
-    )
-    result = pytester.runpytest("--fixtures-per-test", p)
-    assert result.ret == 0
+        )
+        msg += "\n".join(f"* `{x.name}`" for x in sorted(features + breaking))
+        raise InvalidFeatureRelease(msg)
 
-    result.stdout.fnmatch_lines(
-        [
-            "*fixtures used by test_arg2*",
-            "*(test_fixtures_in_conftest.py:2)*",
-            "arg2",
-            "    arg2 docstring",
-            "*fixtures used by test_arg3*",
-            "*(test_fixtures_in_conftest.py:4)*",
-            "arg1",
-            "    arg1 docstring",
-            "arg2",
-            "    arg2 docstring",
-            "arg3",
-            "    arg3",
-            "    docstring",
-        ]
-    )
+    if is_major:
+        return f"{last_version[0]+1}.0.0"
+    elif is_feature_release:
+        return f"{last_version[0]}.{last_version[1] + 1}.0"
+    else:
+        return f"{last_version[0]}.{last_version[1]}.{last_version[2] + 1}"
 
 
-def test_should_show_fixtures_used_by_test(pytester: Pytester) -> None:
-    pytester.makeconftest(
-        '''
-        import pytest
-        @pytest.fixture
-        def arg1():
-            """arg1 from conftest"""
-        @pytest.fixture
-        def arg2():
-            """arg2 from conftest"""
-    '''
-    )
-    p = pytester.makepyfile(
-        '''
-        import pytest
-        @pytest.fixture
-        def arg1():
-            """arg1 from testmodule"""
-        def test_args(arg1, arg2):
-            pass
-    '''
-    )
-    result = pytester.runpytest("--fixtures-per-test", p)
-    assert result.ret == 0
-
-    result.stdout.fnmatch_lines(
-        [
-            "*fixtures used by test_args*",
-            "*(test_should_show_fixtures_used_by_test.py:6)*",
-            "arg1",
-            "    arg1 from testmodule",
-            "arg2",
-            "    arg2 from conftest",
-        ]
-    )
+def main() -> None:
+    init(autoreset=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("payload")
+    parser.add_argument("token")
+    options = parser.parse_args()
+    trigger_release(Path(options.payload), options.token)
 
 
-def test_verbose_include_private_fixtures_and_loc(pytester: Pytester) -> None:
-    pytester.makeconftest(
-        '''
-        import pytest
-        @pytest.fixture
-        def _arg1():
-            """_arg1 from conftest"""
-        @pytest.fixture
-        def arg2(_arg1):
-            """arg2 from conftest"""
-    '''
-    )
-    p = pytester.makepyfile(
-        '''
-        import pytest
-        @pytest.fixture
-        def arg3():
-            """arg3 from testmodule"""
-        def test_args(arg2, arg3):
-            pass
-    '''
-    )
-    result = pytester.runpytest("--fixtures-per-test", "-v", p)
-    assert result.ret == 0
+if __name__ == "__main__":
+    main()
 
-    result.stdout.fnmatch_lines(
-        [
-            "*fixture
 
 ROUND: 1

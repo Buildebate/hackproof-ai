@@ -1,0 +1,28 @@
+<<<<<<< SEARCH
+    def prepare_content_length(self, body):
+        """Prepare Content-Length header based on request method and body"""
+        if body is not None:
+            self.headers['Content-Length'] = builtin_str(super_len(body))
+        else:
+            self.headers['Content-Length'] = '0'
+=======
+    def prepare_content_length(self, body):
+        """Prepare Content-Length header based on request method and body"""
+        if self.headers and 'Content-Length' in self.headers:
+            return
+
+        if body is not None:
+            if isinstance(body, str):
+                length = len(body.encode('utf-8'))
+            else:
+                try:
+                    length = super_len(body)
+                except (TypeError, AttributeError, IOError, OSError, ValueError):
+                    length = None
+            if length:
+                self.headers['Content-Length'] = builtin_str(length)
+            elif length == 0 and (self.method or '').upper() in ('POST', 'PUT', 'PATCH'):
+                self.headers['Content-Length'] = '0'
+        elif (self.method or '').upper() in ('POST', 'PUT', 'PATCH'):
+            self.headers['Content-Length'] = '0'
+>>>>>>> REPLACE

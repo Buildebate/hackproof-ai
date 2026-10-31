@@ -1,10 +1,28 @@
-import unittest
+import _pytest.debugging
 
-@unittest.skip("hello")
-class MyTestCase(unittest.TestCase):
-    def setUp(self):
-        xxx
-    def test_one(self):
-        pass
-    def tearDown(self):
-        xxx
+
+def test_pdb_skipped_class_teardown_not_executed(pytester, monkeypatch):
+    pdb_calls = []
+
+    def fake_post_mortem(*args, **kwargs):
+        pdb_calls.append(args)
+
+    monkeypatch.setattr(_pytest.debugging, "post_mortem", fake_post_mortem)
+    p = pytester.makepyfile(
+        """
+        import unittest
+
+        @unittest.skip("hello")
+        class MyTestCase(unittest.TestCase):
+            def test_one(self):
+                pass
+
+            def tearDown(self):
+                raise AssertionError("tearDown must not run for skipped class")
+        """
+    )
+    result = pytester.runpytest_inprocess("--pdb", p)
+    reports = result.reprec.getreports("pytest_runtest_logreport")
+    teardown = [r for r in reports if r.when == "teardown"][0]
+    assert teardown.passed or teardown.skipped, f"tearDown executed for skipped class: {teardown.longrepr}"
+    assert pdb_calls == [], "pdb must not trigger for skipped class"

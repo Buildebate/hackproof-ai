@@ -1,66 +1,253 @@
+exception_chain.py
 <<<<<<< SEARCH
-            if exc.__cause__ is not None:
-                chain_exc = exc.__cause__
 =======
-            if isinstance(getattr(exc, "__cause__", None), BaseException):
-                chain_exc = exc.__cause__
->>>>>>> REPLACE
-<<<<<<< SEARCH
-            elif exc.__context__ is not None and not exc.__suppress_context__:
-                chain_exc = exc.__context__
-=======
-            elif isinstance(
-                getattr(exc, "__context__", None), BaseException
-            ) and not getattr(exc, "__suppress_context__", False):
-                chain_exc = exc.__context__
->>>>>>> REPLACE
-<<<<<<< SEARCH
+"""Safe, iterative handling of chained exceptions."""
+
+MAX_CHAIN_DEPTH = 100
+
+
+def _safe_str(exc):
+    try:
+        return str(exc)
+    except Exception:
+        return f"<{type(exc).__name__}: __str__ raised>"
+
+
+def _safe_repr(exc):
+    try:
+        return repr(exc)
+    except Exception:
+        return f"<{type(exc).__name__}: __repr__ raised>"
+
+
+def _safe_args_repr(args):
+    try:
+        return repr(args)
+    except Exception:
+        return "<unrepresentable args>"
+
+
+def _next_in_chain(exc):
+    cause = getattr(exc, "__cause__", None)
+    if cause is not None:
+        return cause if isinstance(cause, BaseException) else None
+    if getattr(exc, "__suppress_context__", False):
+        return None
+    context = getattr(exc, "__context__", None)
+    if context is not None:
+        return context if isinstance(context, BaseException) else None
+    return None
+
+
+def iter_exception_chain(exc, max_depth=MAX_CHAIN_DEPTH):
+    """Yield chain iteratively: cycle-safe, depth-capped, BaseException-aware."""
+    seen = set()
+    current = exc if isinstance(exc, BaseException) else None
+    depth = 0
+    while current is not None and depth < max_depth:
+        if id(current) in seen:
+            break
+        seen.add(id(current))
+        yield current
+        depth += 1
+        current = _next_in_chain(current)
+
+
+def describe_exception(exc):
+    cause = getattr(exc, "__cause__", None)
+    context = getattr(exc, "__context__", None)
+    try:
+        args = exc.args
+    except Exception:
+        args = ()
     return {
-        "reprcrash": serialize_repr_crash(repr_exception.reprcrash),
-        "reprtraceback": serialize_repr_traceback(repr_exception.reprtraceback),
-        "sections": repr_exception.sections,
+        "type": type(exc).__name__,
+        "message": _safe_str(exc),
+        "repr": _safe_repr(exc),
+        "args": args,
+        "has_cause": cause is not None,
+        "has_context": context is not None,
+        "suppress_context": bool(getattr(exc, "__suppress_context__", False)),
+        "is_base_exception": isinstance(exc, BaseException)
+        and not isinstance(exc, Exception),
+        "has_invalid_cause": cause is not None
+        and not isinstance(cause, BaseException),
     }
-=======
-    return {
-        "reprcrash": serialize_repr_crash(repr_exception.reprcrash),
-        "reprtraceback": serialize_repr_traceback(repr_exception.reprtraceback),
-        "sections": repr_exception.sections,
-        "chain": [
-            [
-                serialize_repr_traceback(repr_traceback)
-                if repr_traceback is not None
-                else None,
-                serialize_repr_crash(repr_crash),
-                description,
-            ]
-            for repr_traceback, repr_crash, description in repr_exception.chain
-        ]
-        if getattr(repr_exception, "chain", None) is not None
-        else None,
-    }
+
+
+def exception_chain(exc, max_depth=MAX_CHAIN_DEPTH):
+    return [
+        describe_exception(item)
+        for item in iter_exception_chain(exc, max_depth=max_depth)
+    ]
+
+
+def format_exception_chain(exc, max_depth=MAX_CHAIN_DEPTH):
+    chain = exception_chain(exc, max_depth=max_depth)
+    if not chain:
+        return "<no exception>"
+    return "\n".join(
+        f"{depth}: {item['type']}: args={_safe_args_repr(item['args'])} "
+        f"message={item['message']!r} "
+        f"cause={'present' if item['has_cause'] else 'none'} "
+        f"context={'present' if item['has_context'] else 'none'} "
+        f"suppress_context={item['suppress_context']} "
+        f"invalid_cause={item['has_invalid_cause']}"
+        for depth, item in enumerate(chain)
+    )
 >>>>>>> REPLACE
+tests/test_exception_chain.py
 <<<<<<< SEARCH
-    return ReprExceptionInfo(
-        reprtraceback=deserialize_repr_traceback(data["reprtraceback"]),
-        reprcrash=deserialize_repr_crash(data["reprcrash"]),
-        sections=data["sections"],
-    )
 =======
-    return ReprExceptionInfo(
-        reprtraceback=deserialize_repr_traceback(data["reprtraceback"]),
-        reprcrash=deserialize_repr_crash(data["reprcrash"]),
-        sections=data["sections"],
-        chain=[
-            (
-                deserialize_repr_traceback(item[0])
-                if item[0] is not None
-                else ReprTraceback([], None, "long"),
-                deserialize_repr_crash(item[1]),
-                item[2],
-            )
-            for item in data["chain"]
-        ]
-        if data.get("chain") is not None
-        else None,
-    )
+import pytest
+
+from exception_chain import (
+    MAX_CHAIN_DEPTH,
+    exception_chain,
+    format_exception_chain,
+    iter_exception_chain,
+)
+
+
+# 1: __cause__/__context__ is None, __suppress_context__ True vs False
+def test_no_cause_no_context_and_suppress_variants():
+    plain = ValueError("x")
+    assert plain.__cause__ is None and plain.__context__ is None
+    assert exception_chain(plain) == [
+        {
+            "type": "ValueError",
+            "message": "x",
+            "repr": "ValueError('x')",
+            "args": ("x",),
+            "has_cause": False,
+            "has_context": False,
+            "suppress_context": False,
+            "is_base_exception": False,
+            "has_invalid_cause": False,
+        }
+    ]
+    try:
+        try:
+            raise ValueError("inner")
+        except ValueError:
+            raise ValueError("suppressed") from None
+    except ValueError as exc:
+        suppressed = exc
+    assert suppressed.__cause__ is None
+    assert suppressed.__context__ is not None
+    assert suppressed.__suppress_context__ is True
+    assert [d["message"] for d in exception_chain(suppressed)] == ["suppressed"]
+
+    try:
+        try:
+            raise ValueError("inner")
+        except ValueError:
+            raise ValueError("implicit")
+    except ValueError as exc:
+        implicit = exc
+    assert implicit.__cause__ is None
+    assert implicit.__context__ is not None
+    assert implicit.__suppress_context__ is False
+    assert [d["message"] for d in exception_chain(implicit)] == ["implicit", "inner"]
+
+    try:
+        raise ValueError("outer") from ValueError("cause")
+    except ValueError as exc:
+        explicit = exc
+    assert explicit.__suppress_context__ is True
+    assert [d["message"] for d in exception_chain(explicit)] == ["outer", "cause"]
+
+
+# 2: ValueError() empty args vs ValueError(None) None arg
+def test_empty_args_vs_none_arg_in_chain():
+    assert ValueError().args == () and ValueError(None).args == (None,)
+    for cause, args in ((ValueError(), ()), (ValueError(None), (None,))):
+        outer = ValueError("outer")
+        outer.__cause__ = cause
+        chain = exception_chain(outer)
+        assert chain[1]["args"] == args
+        assert chain[1]["message"] == ("" if args == () else "None")
+    assert "args=()" in format_exception_chain(ValueError())
+    assert "args=(None,)" in format_exception_chain(ValueError(None))
+
+
+# 3: __cause__ non-exception/string/None via raise-from and manual override
+def test_invalid_cause():
+    with pytest.raises(TypeError):
+        raise ValueError("x") from "bad"  # noqa: B904
+
+    class BadCause(ValueError):
+        @property
+        def __cause__(self):  # type: ignore[override]
+            return "not-an-exception"
+
+    chain = exception_chain(BadCause("x"))
+    assert len(chain) == 1 and chain[0]["has_invalid_cause"] is True
+    assert format_exception_chain(BadCause("x"))  # must not raise
+    assert exception_chain(None) == [] and exception_chain("bad") == []
+    assert format_exception_chain(None) == "<no exception>"
+
+
+# 4: 3-level vs 2-level, 100+ deep without recursion
+def test_chain_depths_and_recursion_limit():
+    def build(messages):
+        head = None
+        for message in reversed(messages):
+            exc = ValueError(message)
+            exc.__cause__ = head
+            head = exc
+        return head
+
+    assert [d["message"] for d in exception_chain(build(["11", "12"]))] == ["11", "12"]
+    assert [d["message"] for d in exception_chain(build(["11", "12", "13"]))] == [
+        "11",
+        "12",
+        "13",
+    ]
+    deep = build([str(i) for i in range(150)])
+    assert len(exception_chain(deep)) == MAX_CHAIN_DEPTH == 100
+    assert len(exception_chain(deep, max_depth=200)) == 150
+    assert len(list(iter_exception_chain(deep))) == 100  # no RecursionError
+
+
+# 5: Unicode/empty messages, __str__/__repr__ raising
+def test_unicode_empty_and_bad_str_repr():
+    assert exception_chain(ValueError("héllo 🌍"))[0]["message"] == "héllo 🌍"
+    assert "héllo 🌍" in format_exception_chain(ValueError("héllo 🌍"))
+    assert exception_chain(ValueError(""))[0]["args"] == ("",)
+    assert exception_chain(ValueError(""))[0]["message"] == ""
+
+    class BadStr(ValueError):
+        def __str__(self):
+            raise RuntimeError("str boom")
+
+        def __repr__(self):
+            raise RuntimeError("repr boom")
+
+    outer = ValueError("outer")
+    outer.__cause__ = BadStr("x")
+    chain = exception_chain(outer)
+    assert chain[1]["message"] == "<BadStr: __str__ raised>"
+    assert chain[1]["repr"] == "<BadStr: __repr__ raised>"
+    assert format_exception_chain(outer)  # must not raise
+
+
+# 6: Self-cycle and BaseException (KeyboardInterrupt/SystemExit) chains
+def test_cycle_and_base_exceptions():
+    self_ref = ValueError("self")
+    self_ref.__cause__ = self_ref
+    assert len(exception_chain(self_ref)) == 1
+
+    first, second = ValueError("a"), ValueError("b")
+    first.__cause__ = second
+    second.__cause__ = first
+    assert [d["message"] for d in exception_chain(first)] == ["a", "b"]
+
+    for base in (KeyboardInterrupt("k"), SystemExit(3)):
+        outer = ValueError("outer")
+        outer.__cause__ = base
+        chain = exception_chain(outer)
+        assert chain[1]["type"] == type(base).__name__
+        assert chain[1]["is_base_exception"] is True
+    assert exception_chain(KeyboardInterrupt())[0]["is_base_exception"] is True
 >>>>>>> REPLACE

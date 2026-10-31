@@ -1,0 +1,8 @@
+{
+ "task": "vuejs__core-11589",
+ "mode": "B",
+ "binding": true,
+ "verdict": "not-applicable",
+ "violations": [],
+ "note": "no agent patch evaluated (failed: unmeasurable: unresolved test IDs: packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref)"
+}

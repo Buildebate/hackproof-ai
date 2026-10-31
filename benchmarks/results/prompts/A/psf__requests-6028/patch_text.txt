@@ -1,0 +1,18 @@
+requests/utils.py
+<<<<<<< SEARCH
+    netloc = parsed.netloc
+    if not netloc:
+        netloc, path = path, netloc
+
+    if scheme is None:
+=======
+    netloc = parsed.netloc
+    if not netloc:
+        netloc, path = path, netloc
+
+    if auth:
+        netloc = '@'.join([auth, netloc])
+
+    if scheme is None:
+>>>>>>> REPLACE
+APPROVE

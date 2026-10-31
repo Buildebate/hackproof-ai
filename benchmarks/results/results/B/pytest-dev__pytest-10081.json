@@ -2,164 +2,642 @@
  "task": "pytest-dev__pytest-10081",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-30T13:25:32.828679+00:00",
+ "ts": "2026-10-31T08:45:30.020900+00:00",
  "base_ref": "da9a2b584eb7a6c7e924b2621ed0ddaeca0a7bea",
  "agent": {
   "ok": true,
   "reason": "",
   "files": [
-   "src/_pytest/unittest.py",
-   "testing/python/integration.py",
-   "src/_pytest/nose.py",
-   "doc/en/example/multipython.py",
-   "testing/acceptance_test.py"
+   "testing/test_debugging.py",
+   "testing/test_unittest.py",
+   "src/_pytest/capture.py",
+   "testing/python/raises.py",
+   "src/_pytest/_argcomplete.py"
   ],
-  "localize_ms": 170732,
-  "backend": "contriever-transformer-cpu",
+  "localize_ms": 1489,
+  "backend": "hybrid-rrf-hash-cpu",
   "blocks": 1,
   "applied_file": "src/_pytest/unittest.py",
-  "red_rel": "testing/test_repro_eba6c0c721f7.py",
+  "applied_files": [
+   "src/_pytest/unittest.py"
+  ],
+  "red_rel": "testing/test_repro_f0a6566d9af1.py",
   "local_violations": [],
   "debate": {
    "rounds_used": 2,
    "converged": false,
-   "score": 0.5,
-   "duration_ms": 573084
+   "score": 0.75,
+   "duration_ms": 268835
   }
  },
  "usage": {
-  "prompt_tokens": 37420,
-  "completion_tokens": 85695,
-  "total_tokens": 123115,
+  "prompt_tokens": 107768,
+  "completion_tokens": 98863,
+  "total_tokens": 206631,
   "per_call": [
    {
     "role": "SparkRedSynthesis",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 7267,
-    "completion_tokens": 3674,
-    "total_tokens": 10941,
+    "prompt_tokens": 9484,
+    "completion_tokens": 12161,
+    "total_tokens": 21645,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 3445,
-    "completion_tokens": 966,
-    "total_tokens": 4411,
+    "prompt_tokens": 3713,
+    "completion_tokens": 1407,
+    "total_tokens": 5120,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 3644,
-    "completion_tokens": 19443,
-    "total_tokens": 23087,
+    "prompt_tokens": 15133,
+    "completion_tokens": 5478,
+    "total_tokens": 20611,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1175,
-    "completion_tokens": 5845,
-    "total_tokens": 7020,
+    "prompt_tokens": 341,
+    "completion_tokens": 800,
+    "total_tokens": 1141,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1258,
-    "completion_tokens": 5083,
-    "total_tokens": 6341,
+    "prompt_tokens": 333,
+    "completion_tokens": 735,
+    "total_tokens": 1068,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 1636,
-    "completion_tokens": 12412,
-    "total_tokens": 14048,
+    "prompt_tokens": 709,
+    "completion_tokens": 2449,
+    "total_tokens": 3158,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1212,
-    "completion_tokens": 1810,
-    "total_tokens": 3022,
+    "prompt_tokens": 688,
+    "completion_tokens": 2053,
+    "total_tokens": 2741,
     "finish_reason": "stop"
    },
    {
     "role": "EdgeScout",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 4548,
-    "completion_tokens": 670,
-    "total_tokens": 5218,
+    "prompt_tokens": 4292,
+    "completion_tokens": 1249,
+    "total_tokens": 5541,
     "finish_reason": "stop"
    },
    {
     "role": "ArchitecturalBuilder",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 4745,
-    "completion_tokens": 7409,
-    "total_tokens": 12154,
+    "prompt_tokens": 15712,
+    "completion_tokens": 4341,
+    "total_tokens": 20053,
     "finish_reason": "stop"
    },
    {
     "role": "OccamsRazorCritic",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1784,
-    "completion_tokens": 9923,
-    "total_tokens": 11707,
+    "prompt_tokens": 920,
+    "completion_tokens": 654,
+    "total_tokens": 1574,
     "finish_reason": "stop"
    },
    {
     "role": "SignatureFactChecker",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1806,
-    "completion_tokens": 954,
-    "total_tokens": 2760,
+    "prompt_tokens": 912,
+    "completion_tokens": 475,
+    "total_tokens": 1387,
     "finish_reason": "stop"
    },
    {
     "role": "FormalAdversaryCritic",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 2182,
-    "completion_tokens": 13768,
-    "total_tokens": 15950,
+    "prompt_tokens": 1288,
+    "completion_tokens": 18375,
+    "total_tokens": 19663,
     "finish_reason": "stop"
    },
    {
     "role": "ConsensusJudge",
     "model": "muse-spark-1.3",
-    "prompt_tokens": 1922,
-    "completion_tokens": 1293,
-    "total_tokens": 3215,
+    "prompt_tokens": 2091,
+    "completion_tokens": 2151,
+    "total_tokens": 4242,
     "finish_reason": "stop"
    },
    {
     "role": "PatchSynthesis",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 796,
-    "completion_tokens": 2445,
-    "total_tokens": 3241,
+    "prompt_tokens": 1498,
+    "completion_tokens": 2947,
+    "total_tokens": 4445,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15133,
+    "completion_tokens": 5478,
+    "total_tokens": 20611,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 709,
+    "completion_tokens": 2449,
+    "total_tokens": 3158,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15712,
+    "completion_tokens": 4341,
+    "total_tokens": 20053,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1288,
+    "completion_tokens": 18375,
+    "total_tokens": 19663,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1498,
+    "completion_tokens": 2947,
+    "total_tokens": 4445,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 16314,
+    "completion_tokens": 9998,
+    "total_tokens": 26312,
     "finish_reason": "stop"
    }
   ]
  },
- "diff_sha256": "82515cff45cc104e2114298d2096b1f7ded1aa41e4dbad63b2a852529ac1ea31",
- "red": {
-  "rel": "testing/test_repro_eba6c0c721f7.py",
-  "sha256": "655885b76aca147b27dff41bbfaa2aba18cf12e0bf2c697da9ebe829351a51bd",
-  "exit_code": 0,
-  "timed_out": false,
-  "accepted": false,
-  "reason": "red run exited 0 (test passed on unpatched base)",
-  "failures": 0,
-  "errors": 0,
-  "junit_bytes": 485,
-  "junit_sha256": "cac4fb8efd5896c555e1167dc3e9e7aec834002a45df5901199eedf1d5a72f18"
+ "evidence": {
+  "language": "python",
+  "collect": true,
+  "freeze": true,
+  "debate_prompts": true
  },
- "status": "failed",
- "reason": "red-rejected: red run exited 0 (test passed on unpatched base)",
+ "diff_sha256": "1419da3d65d20c8142064e019797a63acf0d7e812dff4e310bfb8b5d227e3008",
+ "red": {
+  "rel": "testing/test_repro_f0a6566d9af1.py",
+  "sha256": "b42e5e2471bd5c6ebb7de2c92e24d3d0f648d9022204fc1122b5e82620c92c1d",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 3200,
+  "junit_sha256": "b83fe9a8991f5189391cd9c6d35151fb7ebf2758b5f497b86c6d6e9bff32af86"
+ },
+ "guard": {
+  "task": "pytest-dev__pytest-10081",
+  "mode": "B",
+  "binding": true,
+  "verdict": "clean",
+  "violations": []
+ },
+ "junit_sha256": "814ea535746ea078c2fde3cf1d941a5ced6dd78ce6efc1d4d1a71c1dbd592301",
+ "eval_exit": 0,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@unittest.skip]": {
+    "base": "failed",
+    "agent": "passed"
+   }
+  },
+  "p2p": {
+   "testing/test_unittest.py::test_simple_unittest": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_unittest.py::test_runTest_method": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_unittest.py::test_isclasscheck_issue53": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_unittest.py::test_setup": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setUpModule": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setUpModule_failing_no_teardown": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_new_instances": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_function_item_obj_is_instance": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_teardown": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_teardown_issue1649": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_skip_issue148": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_method_and_teardown_failing_reporting": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_failure_is_shown": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_setUpClass": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_fixtures_setup_setUpClass_issue8394": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Error]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Failure]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Error]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Failure]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_totally_incompatible_exception_info": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_module_level_pytestmark": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_djangolike_testcase": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_not_shown_in_traceback": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unorderable_types": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_typerror_traceback": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[pytest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[unittest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[pytest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[unittest]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_setup_interaction[return]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_setup_interaction[yield]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_non_unittest_no_setupclass_support": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_no_teardown_if_setupclass_failed": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_cleanup_functions": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_issue333_result_clearing": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_raise_skip_issue748": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_unittest_skip_issue1169": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_class_method_containing_test_issue1558": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[builtins.object]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[unittest.TestCase]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_testcase_handles_init_exceptions": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_error_message_with_parametrized_fixtures": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip.py-1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_class.py-1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_module.py-1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_BdbQuit": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_exit_outcome": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_trace": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_called": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@unittest.skip]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@pytest.mark.skip]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@pytest.mark.skip]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_async_support": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_class_cleanups_on_success": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_class_cleanups_on_setupclass_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_class_cleanups_on_teardownclass_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_cleanups_on_success": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_cleanups_on_setup_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_do_cleanups_on_teardown_failure": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_traceback_pruning": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_raising_unittest_skiptest_during_collection": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_unittest.py::test_plain_unittest_does_not_support_async": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@unittest.skip]"
+  ],
+  "f2p_not_fixed": [],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "testing/test_unittest.py::test_simple_unittest",
+   "testing/test_unittest.py::test_runTest_method",
+   "testing/test_unittest.py::test_isclasscheck_issue53",
+   "testing/test_unittest.py::test_setup",
+   "testing/test_unittest.py::test_setUpModule",
+   "testing/test_unittest.py::test_setUpModule_failing_no_teardown",
+   "testing/test_unittest.py::test_new_instances",
+   "testing/test_unittest.py::test_function_item_obj_is_instance",
+   "testing/test_unittest.py::test_teardown",
+   "testing/test_unittest.py::test_teardown_issue1649",
+   "testing/test_unittest.py::test_unittest_skip_issue148",
+   "testing/test_unittest.py::test_method_and_teardown_failing_reporting",
+   "testing/test_unittest.py::test_setup_failure_is_shown",
+   "testing/test_unittest.py::test_setup_setUpClass",
+   "testing/test_unittest.py::test_fixtures_setup_setUpClass_issue8394",
+   "testing/test_unittest.py::test_setup_class",
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Error]",
+   "testing/test_unittest.py::test_testcase_adderrorandfailure_defers[Failure]",
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Error]",
+   "testing/test_unittest.py::test_testcase_custom_exception_info[Failure]",
+   "testing/test_unittest.py::test_testcase_totally_incompatible_exception_info",
+   "testing/test_unittest.py::test_module_level_pytestmark",
+   "testing/test_unittest.py::test_djangolike_testcase",
+   "testing/test_unittest.py::test_unittest_not_shown_in_traceback",
+   "testing/test_unittest.py::test_unorderable_types",
+   "testing/test_unittest.py::test_unittest_typerror_traceback",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[pytest]",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_failing_test_is_xfail[unittest]",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[pytest]",
+   "testing/test_unittest.py::test_unittest_expected_failure_for_passing_test_is_fail[unittest]",
+   "testing/test_unittest.py::test_unittest_setup_interaction[return]",
+   "testing/test_unittest.py::test_unittest_setup_interaction[yield]",
+   "testing/test_unittest.py::test_non_unittest_no_setupclass_support",
+   "testing/test_unittest.py::test_no_teardown_if_setupclass_failed",
+   "testing/test_unittest.py::test_cleanup_functions",
+   "testing/test_unittest.py::test_issue333_result_clearing",
+   "testing/test_unittest.py::test_unittest_raise_skip_issue748",
+   "testing/test_unittest.py::test_unittest_skip_issue1169",
+   "testing/test_unittest.py::test_class_method_containing_test_issue1558",
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[builtins.object]",
+   "testing/test_unittest.py::test_usefixtures_marker_on_unittest[unittest.TestCase]",
+   "testing/test_unittest.py::test_testcase_handles_init_exceptions",
+   "testing/test_unittest.py::test_error_message_with_parametrized_fixtures",
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip.py-1",
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_class.py-1",
+   "testing/test_unittest.py::test_setup_inheritance_skipping[test_setup_skip_module.py-1",
+   "testing/test_unittest.py::test_BdbQuit",
+   "testing/test_unittest.py::test_exit_outcome",
+   "testing/test_unittest.py::test_trace",
+   "testing/test_unittest.py::test_pdb_teardown_called",
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@unittest.skip]",
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_functions[@pytest.mark.skip]",
+   "testing/test_unittest.py::test_pdb_teardown_skipped_for_classes[@pytest.mark.skip]",
+   "testing/test_unittest.py::test_async_support",
+   "testing/test_unittest.py::test_do_class_cleanups_on_success",
+   "testing/test_unittest.py::test_do_class_cleanups_on_setupclass_failure",
+   "testing/test_unittest.py::test_do_class_cleanups_on_teardownclass_failure",
+   "testing/test_unittest.py::test_do_cleanups_on_success",
+   "testing/test_unittest.py::test_do_cleanups_on_setup_failure",
+   "testing/test_unittest.py::test_do_cleanups_on_teardown_failure",
+   "testing/test_unittest.py::test_traceback_pruning",
+   "testing/test_unittest.py::test_raising_unittest_skiptest_during_collection",
+   "testing/test_unittest.py::test_plain_unittest_does_not_support_async"
+  ],
+  "resolved_functional": true,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "receipt": {
+  "receipt_version": "1.0",
+  "base_commit": "da9a2b584eb7a6c7e924b2621ed0ddaeca0a7bea",
+  "test_hash": "b42e5e2471bd5c6ebb7de2c92e24d3d0f648d9022204fc1122b5e82620c92c1d",
+  "patch_hash": "0dd73163432b025f5f1404eef4ed6774e86890f5a626df3bd0516f3b92323b54",
+  "red_junit_hash": "b83fe9a8991f5189391cd9c6d35151fb7ebf2758b5f497b86c6d6e9bff32af86",
+  "green_junit_hash": "814ea535746ea078c2fde3cf1d941a5ced6dd78ce6efc1d4d1a71c1dbd592301",
+  "minted_at_utc": "2026-10-31T08:46:01.668579+00:00",
+  "receipt_sha256": "54f1c972d3a7bff57a8cc29e111224114f54a5ff5967be1c50d95192db342d15"
+ },
+ "machine_proof": true,
+ "status": "resolved",
+ "reason": "",
  "done": true
 }

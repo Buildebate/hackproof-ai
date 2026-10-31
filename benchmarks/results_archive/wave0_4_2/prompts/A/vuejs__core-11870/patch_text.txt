@@ -1,0 +1,15 @@
+<<<<<<< SEARCH
+import { isReactive, shallowReadArray, toReactive } from '@vue/reactivity'
+=======
+import {
+  isReactive,
+  isShallow,
+  shallowReadArray,
+  toReactive,
+} from '@vue/reactivity'
+>>>>>>> REPLACE
+<<<<<<< SEARCH
+      isReactive(source) ? toReactive(item) : item,
+=======
+      isReactive(source) && !isShallow(source) ? toReactive(item) : item,
+>>>>>>> REPLACE

@@ -2,183 +2,367 @@
  "task": "psf__requests-2931",
  "mode": "base",
  "done": true,
- "ts": "2026-10-30T05:21:45.429081+00:00",
+ "ts": "2026-10-31T08:14:05.976773+00:00",
  "base_ref": "5f7a3a74aab1625c2bb65f643197ee885e3da576",
  "tier": "oci",
- "base_index": {},
- "id_resolution": {
-  "test_requests.py::TestRequests::test_binary_put": [],
-  "test_requests.py::TestRequests::test_entry_points": [],
-  "test_requests.py::TestRequests::test_invalid_url": [],
-  "test_requests.py::TestRequests::test_basic_building": [],
-  "test_requests.py::TestRequests::test_path_is_not_double_encoded": [],
-  "test_requests.py::TestRequests::test_params_are_added_before_fragment": [],
-  "test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default": [],
-  "test_requests.py::TestRequests::test_params_bytes_are_encoded": [],
-  "test_requests.py::TestRequests::test_connection_error_invalid_domain": [],
-  "test_requests.py::TestRequests::test_connection_error_invalid_port": [],
-  "test_requests.py::TestRequests::test_LocationParseError": [],
-  "test_requests.py::TestRequests::test_links": [],
-  "test_requests.py::TestRequests::test_cookie_parameters": [],
-  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_len": [],
-  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_items": [],
-  "test_requests.py::TestRequests::test_cookie_as_dict_keys": [],
-  "test_requests.py::TestRequests::test_cookie_as_dict_values": [],
-  "test_requests.py::TestRequests::test_cookie_as_dict_items": [],
-  "test_requests.py::TestRequests::test_response_is_iterable": [],
-  "test_requests.py::TestRequests::test_response_decode_unicode": [],
-  "test_requests.py::TestRequests::test_get_auth_from_url": [],
-  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_spaces": [],
-  "test_requests.py::TestRequests::test_get_auth_from_url_not_encoded_spaces": [],
-  "test_requests.py::TestRequests::test_get_auth_from_url_percent_chars": [],
-  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_hashes": [],
-  "test_requests.py::TestRequests::test_http_error": [],
-  "test_requests.py::TestRequests::test_transport_adapter_ordering": [],
-  "test_requests.py::TestRequests::test_long_authinfo_in_url": [],
-  "test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs": [],
-  "test_requests.py::TestRequests::test_basic_auth_str_is_always_native": [],
-  "test_requests.py::TestContentEncodingDetection::test_html4_pragma": [],
-  "test_requests.py::TestContentEncodingDetection::test_html_charset": [],
-  "test_requests.py::TestContentEncodingDetection::test_none": [],
-  "test_requests.py::TestContentEncodingDetection::test_precedence": [],
-  "test_requests.py::TestContentEncodingDetection::test_xhtml_pragma": [],
-  "test_requests.py::TestContentEncodingDetection::test_xml": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_contains": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_copy": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_delitem": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_docstring_example": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_equality": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_fixes_649": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_get": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_getitem": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_iter": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_iterable_init": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_kwargs_init": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_len": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_lower_items": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_mapping_init": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_setdefault": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_update": [],
-  "test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged": [],
-  "test_requests.py::UtilsTestCase::test_address_in_network": [],
-  "test_requests.py::UtilsTestCase::test_dotted_netmask": [],
-  "test_requests.py::UtilsTestCase::test_get_auth_from_url": [],
-  "test_requests.py::UtilsTestCase::test_get_environ_proxies": [],
-  "test_requests.py::UtilsTestCase::test_get_environ_proxies_ip_ranges": [],
-  "test_requests.py::UtilsTestCase::test_guess_filename_when_filename_is_an_int": [],
-  "test_requests.py::UtilsTestCase::test_guess_filename_when_int": [],
-  "test_requests.py::UtilsTestCase::test_guess_filename_with_file_like_obj": [],
-  "test_requests.py::UtilsTestCase::test_guess_filename_with_unicode_name": [],
-  "test_requests.py::UtilsTestCase::test_is_ipv4_address": [],
-  "test_requests.py::UtilsTestCase::test_is_valid_cidr": [],
-  "test_requests.py::UtilsTestCase::test_requote_uri_properly_requotes": [],
-  "test_requests.py::UtilsTestCase::test_requote_uri_with_unquoted_percents": [],
-  "test_requests.py::UtilsTestCase::test_select_proxies": [],
-  "test_requests.py::UtilsTestCase::test_super_len_correctly_calculates_len_of_partially_read_file": [],
-  "test_requests.py::UtilsTestCase::test_super_len_io_streams": [],
-  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int": [],
-  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_str": [],
-  "test_requests.py::TestMorselToCookieExpires::test_expires_none": [],
-  "test_requests.py::TestMorselToCookieExpires::test_expires_valid_str": [],
-  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str": [],
-  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int": [],
-  "test_requests.py::TestTimeout::test_connect_timeout": [],
-  "test_requests.py::TestTimeout::test_total_timeout_connect": [],
-  "test_requests.py::test_data_argument_accepts_tuples": [],
-  "test_requests.py::test_prepared_request_empty_copy": [],
-  "test_requests.py::test_prepared_request_no_cookies_copy": [],
-  "test_requests.py::test_prepared_request_complete_copy": [],
-  "test_requests.py::test_prepare_unicode_url": [],
-  "test_requests.py::test_vendor_aliases": []
+ "base_index": {
+  "test_requests.py::TestRequests::test_binary_put": "failed",
+  "test_requests.py::TestRequests::test_entry_points": "passed",
+  "test_requests.py::TestRequests::test_invalid_url": "passed",
+  "test_requests.py::TestRequests::test_basic_building": "passed",
+  "test_requests.py::TestRequests::test_path_is_not_double_encoded": "passed",
+  "test_requests.py::TestRequests::test_params_are_added_before_fragment": "passed",
+  "test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default": "passed",
+  "test_requests.py::TestRequests::test_params_bytes_are_encoded": "passed",
+  "test_requests.py::TestRequests::test_connection_error_invalid_domain": "passed",
+  "test_requests.py::TestRequests::test_connection_error_invalid_port": "passed",
+  "test_requests.py::TestRequests::test_LocationParseError": "passed",
+  "test_requests.py::TestRequests::test_links": "passed",
+  "test_requests.py::TestRequests::test_cookie_parameters": "passed",
+  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_len": "passed",
+  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_items": "passed",
+  "test_requests.py::TestRequests::test_cookie_as_dict_keys": "passed",
+  "test_requests.py::TestRequests::test_cookie_as_dict_values": "passed",
+  "test_requests.py::TestRequests::test_cookie_as_dict_items": "passed",
+  "test_requests.py::TestRequests::test_response_is_iterable": "passed",
+  "test_requests.py::TestRequests::test_response_decode_unicode": "passed",
+  "test_requests.py::TestRequests::test_get_auth_from_url": "passed",
+  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_spaces": "passed",
+  "test_requests.py::TestRequests::test_get_auth_from_url_not_encoded_spaces": "passed",
+  "test_requests.py::TestRequests::test_get_auth_from_url_percent_chars": "passed",
+  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_hashes": "passed",
+  "test_requests.py::TestRequests::test_http_error": "passed",
+  "test_requests.py::TestRequests::test_transport_adapter_ordering": "passed",
+  "test_requests.py::TestRequests::test_long_authinfo_in_url": "passed",
+  "test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs": "passed",
+  "test_requests.py::TestRequests::test_basic_auth_str_is_always_native": "passed",
+  "test_requests.py::TestContentEncodingDetection::test_html4_pragma": "passed",
+  "test_requests.py::TestContentEncodingDetection::test_html_charset": "passed",
+  "test_requests.py::TestContentEncodingDetection::test_none": "passed",
+  "test_requests.py::TestContentEncodingDetection::test_precedence": "passed",
+  "test_requests.py::TestContentEncodingDetection::test_xhtml_pragma": "passed",
+  "test_requests.py::TestContentEncodingDetection::test_xml": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_contains": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_copy": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_delitem": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_docstring_example": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_equality": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_fixes_649": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_get": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_getitem": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_iter": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_iterable_init": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_kwargs_init": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_len": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_lower_items": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_mapping_init": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_setdefault": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_update": "passed",
+  "test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged": "passed",
+  "test_requests.py::UtilsTestCase::test_address_in_network": "passed",
+  "test_requests.py::UtilsTestCase::test_dotted_netmask": "passed",
+  "test_requests.py::UtilsTestCase::test_get_auth_from_url": "passed",
+  "test_requests.py::UtilsTestCase::test_get_environ_proxies": "passed",
+  "test_requests.py::UtilsTestCase::test_get_environ_proxies_ip_ranges": "passed",
+  "test_requests.py::UtilsTestCase::test_guess_filename_when_filename_is_an_int": "passed",
+  "test_requests.py::UtilsTestCase::test_guess_filename_when_int": "passed",
+  "test_requests.py::UtilsTestCase::test_guess_filename_with_file_like_obj": "passed",
+  "test_requests.py::UtilsTestCase::test_guess_filename_with_unicode_name": "passed",
+  "test_requests.py::UtilsTestCase::test_is_ipv4_address": "passed",
+  "test_requests.py::UtilsTestCase::test_is_valid_cidr": "passed",
+  "test_requests.py::UtilsTestCase::test_requote_uri_properly_requotes": "passed",
+  "test_requests.py::UtilsTestCase::test_requote_uri_with_unquoted_percents": "passed",
+  "test_requests.py::UtilsTestCase::test_select_proxies": "passed",
+  "test_requests.py::UtilsTestCase::test_super_len_correctly_calculates_len_of_partially_read_file": "passed",
+  "test_requests.py::UtilsTestCase::test_super_len_io_streams": "passed",
+  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int": "passed",
+  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_str": "passed",
+  "test_requests.py::TestMorselToCookieExpires::test_expires_none": "passed",
+  "test_requests.py::TestMorselToCookieExpires::test_expires_valid_str": "passed",
+  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str": "passed",
+  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int": "passed",
+  "test_requests.py::TestTimeout::test_connect_timeout": "failed",
+  "test_requests.py::TestTimeout::test_total_timeout_connect": "failed",
+  "test_requests.py::test_data_argument_accepts_tuples": "passed",
+  "test_requests.py::test_prepared_request_empty_copy": "passed",
+  "test_requests.py::test_prepared_request_no_cookies_copy": "passed",
+  "test_requests.py::test_prepared_request_complete_copy": "passed",
+  "test_requests.py::test_prepare_unicode_url": "passed",
+  "test_requests.py::test_vendor_aliases": "passed"
  },
- "unresolved_ids": [
-  "test_requests.py::TestRequests::test_binary_put",
-  "test_requests.py::TestRequests::test_entry_points",
-  "test_requests.py::TestRequests::test_invalid_url",
-  "test_requests.py::TestRequests::test_basic_building",
-  "test_requests.py::TestRequests::test_path_is_not_double_encoded",
-  "test_requests.py::TestRequests::test_params_are_added_before_fragment",
-  "test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default",
-  "test_requests.py::TestRequests::test_params_bytes_are_encoded",
-  "test_requests.py::TestRequests::test_connection_error_invalid_domain",
-  "test_requests.py::TestRequests::test_connection_error_invalid_port",
-  "test_requests.py::TestRequests::test_LocationParseError",
-  "test_requests.py::TestRequests::test_links",
-  "test_requests.py::TestRequests::test_cookie_parameters",
-  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_len",
-  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_items",
-  "test_requests.py::TestRequests::test_cookie_as_dict_keys",
-  "test_requests.py::TestRequests::test_cookie_as_dict_values",
-  "test_requests.py::TestRequests::test_cookie_as_dict_items",
-  "test_requests.py::TestRequests::test_response_is_iterable",
-  "test_requests.py::TestRequests::test_response_decode_unicode",
-  "test_requests.py::TestRequests::test_get_auth_from_url",
-  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_spaces",
-  "test_requests.py::TestRequests::test_get_auth_from_url_not_encoded_spaces",
-  "test_requests.py::TestRequests::test_get_auth_from_url_percent_chars",
-  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_hashes",
-  "test_requests.py::TestRequests::test_http_error",
-  "test_requests.py::TestRequests::test_transport_adapter_ordering",
-  "test_requests.py::TestRequests::test_long_authinfo_in_url",
-  "test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs",
-  "test_requests.py::TestRequests::test_basic_auth_str_is_always_native",
-  "test_requests.py::TestContentEncodingDetection::test_html4_pragma",
-  "test_requests.py::TestContentEncodingDetection::test_html_charset",
-  "test_requests.py::TestContentEncodingDetection::test_none",
-  "test_requests.py::TestContentEncodingDetection::test_precedence",
-  "test_requests.py::TestContentEncodingDetection::test_xhtml_pragma",
-  "test_requests.py::TestContentEncodingDetection::test_xml",
-  "test_requests.py::TestCaseInsensitiveDict::test_contains",
-  "test_requests.py::TestCaseInsensitiveDict::test_copy",
-  "test_requests.py::TestCaseInsensitiveDict::test_delitem",
-  "test_requests.py::TestCaseInsensitiveDict::test_docstring_example",
-  "test_requests.py::TestCaseInsensitiveDict::test_equality",
-  "test_requests.py::TestCaseInsensitiveDict::test_fixes_649",
-  "test_requests.py::TestCaseInsensitiveDict::test_get",
-  "test_requests.py::TestCaseInsensitiveDict::test_getitem",
-  "test_requests.py::TestCaseInsensitiveDict::test_iter",
-  "test_requests.py::TestCaseInsensitiveDict::test_iterable_init",
-  "test_requests.py::TestCaseInsensitiveDict::test_kwargs_init",
-  "test_requests.py::TestCaseInsensitiveDict::test_len",
-  "test_requests.py::TestCaseInsensitiveDict::test_lower_items",
-  "test_requests.py::TestCaseInsensitiveDict::test_mapping_init",
-  "test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case",
-  "test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case",
-  "test_requests.py::TestCaseInsensitiveDict::test_setdefault",
-  "test_requests.py::TestCaseInsensitiveDict::test_update",
-  "test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged",
-  "test_requests.py::UtilsTestCase::test_address_in_network",
-  "test_requests.py::UtilsTestCase::test_dotted_netmask",
-  "test_requests.py::UtilsTestCase::test_get_auth_from_url",
-  "test_requests.py::UtilsTestCase::test_get_environ_proxies",
-  "test_requests.py::UtilsTestCase::test_get_environ_proxies_ip_ranges",
-  "test_requests.py::UtilsTestCase::test_guess_filename_when_filename_is_an_int",
-  "test_requests.py::UtilsTestCase::test_guess_filename_when_int",
-  "test_requests.py::UtilsTestCase::test_guess_filename_with_file_like_obj",
-  "test_requests.py::UtilsTestCase::test_guess_filename_with_unicode_name",
-  "test_requests.py::UtilsTestCase::test_is_ipv4_address",
-  "test_requests.py::UtilsTestCase::test_is_valid_cidr",
-  "test_requests.py::UtilsTestCase::test_requote_uri_properly_requotes",
-  "test_requests.py::UtilsTestCase::test_requote_uri_with_unquoted_percents",
-  "test_requests.py::UtilsTestCase::test_select_proxies",
-  "test_requests.py::UtilsTestCase::test_super_len_correctly_calculates_len_of_partially_read_file",
-  "test_requests.py::UtilsTestCase::test_super_len_io_streams",
-  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int",
-  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_str",
-  "test_requests.py::TestMorselToCookieExpires::test_expires_none",
-  "test_requests.py::TestMorselToCookieExpires::test_expires_valid_str",
-  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str",
-  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int",
-  "test_requests.py::TestTimeout::test_connect_timeout",
-  "test_requests.py::TestTimeout::test_total_timeout_connect",
-  "test_requests.py::test_data_argument_accepts_tuples",
-  "test_requests.py::test_prepared_request_empty_copy",
-  "test_requests.py::test_prepared_request_no_cookies_copy",
-  "test_requests.py::test_prepared_request_complete_copy",
-  "test_requests.py::test_prepare_unicode_url",
-  "test_requests.py::test_vendor_aliases"
- ],
- "junit_sha256": ""
+ "id_resolution": {
+  "test_requests.py::TestRequests::test_binary_put": [
+   "test_requests.py::TestRequests::test_binary_put"
+  ],
+  "test_requests.py::TestRequests::test_entry_points": [
+   "test_requests.py::TestRequests::test_entry_points"
+  ],
+  "test_requests.py::TestRequests::test_invalid_url": [
+   "test_requests.py::TestRequests::test_invalid_url"
+  ],
+  "test_requests.py::TestRequests::test_basic_building": [
+   "test_requests.py::TestRequests::test_basic_building"
+  ],
+  "test_requests.py::TestRequests::test_path_is_not_double_encoded": [
+   "test_requests.py::TestRequests::test_path_is_not_double_encoded"
+  ],
+  "test_requests.py::TestRequests::test_params_are_added_before_fragment": [
+   "test_requests.py::TestRequests::test_params_are_added_before_fragment"
+  ],
+  "test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default": [
+   "test_requests.py::TestRequests::test_params_original_order_is_preserved_by_default"
+  ],
+  "test_requests.py::TestRequests::test_params_bytes_are_encoded": [
+   "test_requests.py::TestRequests::test_params_bytes_are_encoded"
+  ],
+  "test_requests.py::TestRequests::test_connection_error_invalid_domain": [
+   "test_requests.py::TestRequests::test_connection_error_invalid_domain"
+  ],
+  "test_requests.py::TestRequests::test_connection_error_invalid_port": [
+   "test_requests.py::TestRequests::test_connection_error_invalid_port"
+  ],
+  "test_requests.py::TestRequests::test_LocationParseError": [
+   "test_requests.py::TestRequests::test_LocationParseError"
+  ],
+  "test_requests.py::TestRequests::test_links": [
+   "test_requests.py::TestRequests::test_links"
+  ],
+  "test_requests.py::TestRequests::test_cookie_parameters": [
+   "test_requests.py::TestRequests::test_cookie_parameters"
+  ],
+  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_len": [
+   "test_requests.py::TestRequests::test_cookie_as_dict_keeps_len"
+  ],
+  "test_requests.py::TestRequests::test_cookie_as_dict_keeps_items": [
+   "test_requests.py::TestRequests::test_cookie_as_dict_keeps_items"
+  ],
+  "test_requests.py::TestRequests::test_cookie_as_dict_keys": [
+   "test_requests.py::TestRequests::test_cookie_as_dict_keys"
+  ],
+  "test_requests.py::TestRequests::test_cookie_as_dict_values": [
+   "test_requests.py::TestRequests::test_cookie_as_dict_values"
+  ],
+  "test_requests.py::TestRequests::test_cookie_as_dict_items": [
+   "test_requests.py::TestRequests::test_cookie_as_dict_items"
+  ],
+  "test_requests.py::TestRequests::test_response_is_iterable": [
+   "test_requests.py::TestRequests::test_response_is_iterable"
+  ],
+  "test_requests.py::TestRequests::test_response_decode_unicode": [
+   "test_requests.py::TestRequests::test_response_decode_unicode"
+  ],
+  "test_requests.py::TestRequests::test_get_auth_from_url": [
+   "test_requests.py::TestRequests::test_get_auth_from_url"
+  ],
+  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_spaces": [
+   "test_requests.py::TestRequests::test_get_auth_from_url_encoded_spaces"
+  ],
+  "test_requests.py::TestRequests::test_get_auth_from_url_not_encoded_spaces": [
+   "test_requests.py::TestRequests::test_get_auth_from_url_not_encoded_spaces"
+  ],
+  "test_requests.py::TestRequests::test_get_auth_from_url_percent_chars": [
+   "test_requests.py::TestRequests::test_get_auth_from_url_percent_chars"
+  ],
+  "test_requests.py::TestRequests::test_get_auth_from_url_encoded_hashes": [
+   "test_requests.py::TestRequests::test_get_auth_from_url_encoded_hashes"
+  ],
+  "test_requests.py::TestRequests::test_http_error": [
+   "test_requests.py::TestRequests::test_http_error"
+  ],
+  "test_requests.py::TestRequests::test_transport_adapter_ordering": [
+   "test_requests.py::TestRequests::test_transport_adapter_ordering"
+  ],
+  "test_requests.py::TestRequests::test_long_authinfo_in_url": [
+   "test_requests.py::TestRequests::test_long_authinfo_in_url"
+  ],
+  "test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs": [
+   "test_requests.py::TestRequests::test_nonhttp_schemes_dont_check_URLs"
+  ],
+  "test_requests.py::TestRequests::test_basic_auth_str_is_always_native": [
+   "test_requests.py::TestRequests::test_basic_auth_str_is_always_native"
+  ],
+  "test_requests.py::TestContentEncodingDetection::test_html4_pragma": [
+   "test_requests.py::TestContentEncodingDetection::test_html4_pragma"
+  ],
+  "test_requests.py::TestContentEncodingDetection::test_html_charset": [
+   "test_requests.py::TestContentEncodingDetection::test_html_charset"
+  ],
+  "test_requests.py::TestContentEncodingDetection::test_none": [
+   "test_requests.py::TestContentEncodingDetection::test_none"
+  ],
+  "test_requests.py::TestContentEncodingDetection::test_precedence": [
+   "test_requests.py::TestContentEncodingDetection::test_precedence"
+  ],
+  "test_requests.py::TestContentEncodingDetection::test_xhtml_pragma": [
+   "test_requests.py::TestContentEncodingDetection::test_xhtml_pragma"
+  ],
+  "test_requests.py::TestContentEncodingDetection::test_xml": [
+   "test_requests.py::TestContentEncodingDetection::test_xml"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_contains": [
+   "test_requests.py::TestCaseInsensitiveDict::test_contains"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_copy": [
+   "test_requests.py::TestCaseInsensitiveDict::test_copy"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_delitem": [
+   "test_requests.py::TestCaseInsensitiveDict::test_delitem"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_docstring_example": [
+   "test_requests.py::TestCaseInsensitiveDict::test_docstring_example"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_equality": [
+   "test_requests.py::TestCaseInsensitiveDict::test_equality"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_fixes_649": [
+   "test_requests.py::TestCaseInsensitiveDict::test_fixes_649"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_get": [
+   "test_requests.py::TestCaseInsensitiveDict::test_get"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_getitem": [
+   "test_requests.py::TestCaseInsensitiveDict::test_getitem"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_iter": [
+   "test_requests.py::TestCaseInsensitiveDict::test_iter"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_iterable_init": [
+   "test_requests.py::TestCaseInsensitiveDict::test_iterable_init"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_kwargs_init": [
+   "test_requests.py::TestCaseInsensitiveDict::test_kwargs_init"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_len": [
+   "test_requests.py::TestCaseInsensitiveDict::test_len"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_lower_items": [
+   "test_requests.py::TestCaseInsensitiveDict::test_lower_items"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_mapping_init": [
+   "test_requests.py::TestCaseInsensitiveDict::test_mapping_init"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case": [
+   "test_requests.py::TestCaseInsensitiveDict::test_preserve_key_case"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case": [
+   "test_requests.py::TestCaseInsensitiveDict::test_preserve_last_key_case"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_setdefault": [
+   "test_requests.py::TestCaseInsensitiveDict::test_setdefault"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_update": [
+   "test_requests.py::TestCaseInsensitiveDict::test_update"
+  ],
+  "test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged": [
+   "test_requests.py::TestCaseInsensitiveDict::test_update_retains_unchanged"
+  ],
+  "test_requests.py::UtilsTestCase::test_address_in_network": [
+   "test_requests.py::UtilsTestCase::test_address_in_network"
+  ],
+  "test_requests.py::UtilsTestCase::test_dotted_netmask": [
+   "test_requests.py::UtilsTestCase::test_dotted_netmask"
+  ],
+  "test_requests.py::UtilsTestCase::test_get_auth_from_url": [
+   "test_requests.py::UtilsTestCase::test_get_auth_from_url"
+  ],
+  "test_requests.py::UtilsTestCase::test_get_environ_proxies": [
+   "test_requests.py::UtilsTestCase::test_get_environ_proxies"
+  ],
+  "test_requests.py::UtilsTestCase::test_get_environ_proxies_ip_ranges": [
+   "test_requests.py::UtilsTestCase::test_get_environ_proxies_ip_ranges"
+  ],
+  "test_requests.py::UtilsTestCase::test_guess_filename_when_filename_is_an_int": [
+   "test_requests.py::UtilsTestCase::test_guess_filename_when_filename_is_an_int"
+  ],
+  "test_requests.py::UtilsTestCase::test_guess_filename_when_int": [
+   "test_requests.py::UtilsTestCase::test_guess_filename_when_int"
+  ],
+  "test_requests.py::UtilsTestCase::test_guess_filename_with_file_like_obj": [
+   "test_requests.py::UtilsTestCase::test_guess_filename_with_file_like_obj"
+  ],
+  "test_requests.py::UtilsTestCase::test_guess_filename_with_unicode_name": [
+   "test_requests.py::UtilsTestCase::test_guess_filename_with_unicode_name"
+  ],
+  "test_requests.py::UtilsTestCase::test_is_ipv4_address": [
+   "test_requests.py::UtilsTestCase::test_is_ipv4_address"
+  ],
+  "test_requests.py::UtilsTestCase::test_is_valid_cidr": [
+   "test_requests.py::UtilsTestCase::test_is_valid_cidr"
+  ],
+  "test_requests.py::UtilsTestCase::test_requote_uri_properly_requotes": [
+   "test_requests.py::UtilsTestCase::test_requote_uri_properly_requotes"
+  ],
+  "test_requests.py::UtilsTestCase::test_requote_uri_with_unquoted_percents": [
+   "test_requests.py::UtilsTestCase::test_requote_uri_with_unquoted_percents"
+  ],
+  "test_requests.py::UtilsTestCase::test_select_proxies": [
+   "test_requests.py::UtilsTestCase::test_select_proxies"
+  ],
+  "test_requests.py::UtilsTestCase::test_super_len_correctly_calculates_len_of_partially_read_file": [
+   "test_requests.py::UtilsTestCase::test_super_len_correctly_calculates_len_of_partially_read_file"
+  ],
+  "test_requests.py::UtilsTestCase::test_super_len_io_streams": [
+   "test_requests.py::UtilsTestCase::test_super_len_io_streams"
+  ],
+  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int": [
+   "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_int"
+  ],
+  "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_str": [
+   "test_requests.py::TestMorselToCookieExpires::test_expires_invalid_str"
+  ],
+  "test_requests.py::TestMorselToCookieExpires::test_expires_none": [
+   "test_requests.py::TestMorselToCookieExpires::test_expires_none"
+  ],
+  "test_requests.py::TestMorselToCookieExpires::test_expires_valid_str": [
+   "test_requests.py::TestMorselToCookieExpires::test_expires_valid_str"
+  ],
+  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str": [
+   "test_requests.py::TestMorselToCookieMaxAge::test_max_age_invalid_str"
+  ],
+  "test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int": [
+   "test_requests.py::TestMorselToCookieMaxAge::test_max_age_valid_int"
+  ],
+  "test_requests.py::TestTimeout::test_connect_timeout": [
+   "test_requests.py::TestTimeout::test_connect_timeout"
+  ],
+  "test_requests.py::TestTimeout::test_total_timeout_connect": [
+   "test_requests.py::TestTimeout::test_total_timeout_connect"
+  ],
+  "test_requests.py::test_data_argument_accepts_tuples": [
+   "test_requests.py::test_data_argument_accepts_tuples"
+  ],
+  "test_requests.py::test_prepared_request_empty_copy": [
+   "test_requests.py::test_prepared_request_empty_copy"
+  ],
+  "test_requests.py::test_prepared_request_no_cookies_copy": [
+   "test_requests.py::test_prepared_request_no_cookies_copy"
+  ],
+  "test_requests.py::test_prepared_request_complete_copy": [
+   "test_requests.py::test_prepared_request_complete_copy"
+  ],
+  "test_requests.py::test_prepare_unicode_url": [
+   "test_requests.py::test_prepare_unicode_url"
+  ],
+  "test_requests.py::test_vendor_aliases": [
+   "test_requests.py::test_vendor_aliases"
+  ]
+ },
+ "unresolved_ids": [],
+ "junit_sha256": "b2a297cbcf7b6d0c20c9fe24d957385dfc7b9c2fb9531263496ff2b2e94ee109",
+ "collect": {
+  "image": "python:3.8-slim",
+  "exit_code": 0,
+  "n_ids": 168,
+  "stdout_tail": "cationWarning: invalid escape sequence \\*\n    \"\"\"\n\nrequests/packages/urllib3/connectionpool.py:795\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/packages/urllib3/connectionpool.py:795: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"\n\nrequests/packages/urllib3/_collections.py:2\nrequests/packages/urllib3/_collections.py:2\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/packages/urllib3/_collections.py:2: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working\n    from collections import Mapping, MutableMapping\n\nrequests/packages/urllib3/poolmanager.py:33\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/packages/urllib3/poolmanager.py:33: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"\n\nrequests/models.py:783\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/models.py:783: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Returns the json-encoded content of a response, if any.\n\nrequests/api.py:57\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:57: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a GET request.\n\nrequests/api.py:71\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:71: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a OPTIONS request.\n\nrequests/api.py:84\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:84: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a HEAD request.\n\nrequests/api.py:97\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:97: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a POST request.\n\nrequests/api.py:111\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:111: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PUT request.\n\nrequests/api.py:124\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:124: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PATCH request.\n\nrequests/api.py:137\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/api.py:137: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a DELETE request.\n\nrequests/sessions.py:473\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:473: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a GET request. Returns :class:`Response` object.\n\nrequests/sessions.py:483\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:483: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\nrequests/sessions.py:493\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:493: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\nrequests/sessions.py:503\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:503: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a POST request. Returns :class:`Response` object.\n\nrequests/sessions.py:514\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:514: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PUT request. Returns :class:`Response` object.\n\nrequests/sessions.py:524\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:524: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\nrequests/sessions.py:534\n  /home/ubuntu/hackproof-bench/runs/psf__requests-2931/base/requests/sessions.py:534: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n168 tests collected in 0.44s\n",
+  "stderr_tail": "",
+  "fallback": null
+ },
+ "evidence": {
+  "language": "python",
+  "collect": true,
+  "freeze": true,
+  "debate_prompts": false
+ }
 }

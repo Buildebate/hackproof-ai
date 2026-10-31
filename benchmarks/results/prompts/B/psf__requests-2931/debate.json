@@ -1,0 +1,14 @@
+{
+ "rounds_used": 1,
+ "converged": true,
+ "convergence_score": 1.0,
+ "duration_ms": 109984,
+ "verdicts": {
+  "EdgeScout": "1. data=None\n2. data=b''\n3. data={}\n4. data=u'\u00f6\u00f6\u00f6'.encode('utf-8')\n5. data=b'\\xff\\xfe\\xfd\\xfc'\n6. data=[('k', u'\u00f6\u00f6\u00f6'.encode('utf-8'))]\n7. data=BytesIO(u'\u00f6\u00f6\u00f6'.encode('utf-8'))\nAPPROVE",
+  "ArchitecturalBuilder": "requests/models.py\n<<<<<<< SEARCH\n        if isinstance(data, (str, bytes)):\n            return to_native_string(data)\n=======\n        if isinstance(data, (str, bytes)):\n            return data\n>>>>>>> REPLACE\nAPPROVE",
+  "OccamsRazorCritic": "APPROVE",
+  "SignatureFactChecker": "APPROVE",
+  "FormalAdversaryCritic": "- `str` path unchanged: on Python 3 `to_native_string(str)` was identity, and on Python 2 `str`/`bytes` was also identity, so returning `data` directly introduces no change there.\n- Bytes path fixed, not regressed: previously Python 3 decoded bytes as ASCII, raising `UnicodeDecodeError` for `u'\u00f6\u00f6\u00f6'.encode('utf-8')` and `b'\\xff\\xfe\\xfd\\xfc'`; preserving bytes keeps payload and length intact.\n- ASCII bytes change type from `str` to `bytes`, but downstream `PreparedRequest.prepare_body`/`prepare_content_length`/`super_len` and urllib3 sending accept both, with identical length and content for ASCII.\n- Unaffected cases retain prior routing: `None` and `{}` do not enter this branch as raw body, list-of-tuples enters the iterable/`urlencode` branch, and `BytesIO` enters the `read` stream branch.\n- No orphaned dependency: `to_native_string` remains used elsewhere in `requests/models.py`, notably URL preparation, so the import is still required.\n- Residual external-caller risk is limited to code assuming `_encode_params(b'...')` returns `str`; that private helper's byte-preserving behavior is the intended contract for raw request bodies.\n\nAPPROVE",
+  "ConsensusJudge": "CONVERGED APPROVE"
+ }
+}

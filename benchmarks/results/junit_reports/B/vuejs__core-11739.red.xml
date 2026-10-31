@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="0.398">
+    <testsuite name="packages/runtime-core/__tests__/repro-0742563332a6.test.ts" timestamp="2026-10-31T09:09:23.709Z" hostname="ab12e3ca469e" tests="1" failures="1" errors="0" skipped="0" time="0">
+        <testcase classname="packages/runtime-core/__tests__/repro-0742563332a6.test.ts" name="packages/runtime-core/__tests__/repro-0742563332a6.test.ts" time="0">
+            <failure message="No test suite found in file /home/ubuntu/hackproof-bench/runs/vuejs__core-11739/B/packages/runtime-core/__tests__/repro-0742563332a6.test.ts" type="Error">
+Error: No test suite found in file /home/ubuntu/hackproof-bench/runs/vuejs__core-11739/B/packages/runtime-core/__tests__/repro-0742563332a6.test.ts
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

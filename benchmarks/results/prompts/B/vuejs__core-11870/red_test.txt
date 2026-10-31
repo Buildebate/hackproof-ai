@@ -1,16 +1,24 @@
-import { isReactive, ref, renderList, shallowReactive } from 'vue'
+// @vitest-environment jsdom
+import { createApp, shallowReactive, ref } from 'vue'
 
-describe('shallowReactive array v-for', () => {
-  it('should not convert items to reactive', () => {
-    const arr = shallowReactive([{ aaa: ref('aaa1') }])
-    expect(typeof (arr[0] as any).aaa).toBe('object')
-    let vForType: string | undefined
-    let vForReactive: boolean | undefined
-    renderList(arr, (item: any) => {
-      vForType = typeof item.aaa
-      vForReactive = isReactive(item)
-    })
-    expect(vForType).toBe('object')
-    expect(vForReactive).toBe(false)
+describe('shallowReactive v-for regression', () => {
+  test('v-for over shallowReactive array should not unwrap refs', () => {
+    const App = {
+      setup() {
+        const shallowReactiveArray = shallowReactive([
+          {
+            aaa: ref('aaa1'),
+          },
+        ])
+        return { shallowReactiveArray }
+      },
+      template: `<span id="a"><template v-for="item in shallowReactiveArray">{{ typeof item.aaa }}</template></span><span id="b">{{ typeof shallowReactiveArray[0].aaa }}</span>`,
+    }
+    const root = document.createElement('div')
+    createApp(App).mount(root)
+    const a = root.querySelector('#a')!.textContent
+    const b = root.querySelector('#b')!.textContent
+    expect(b).toBe('object')
+    expect(a).toBe('object')
   })
 })

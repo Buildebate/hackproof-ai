@@ -1,0 +1,14 @@
+{
+ "rounds_used": 2,
+ "converged": false,
+ "convergence_score": 0.5833333333333334,
+ "duration_ms": 1337750,
+ "verdicts": {
+  "EdgeScout": "1. Parent `backgroundColor=null` / `padding=undefined` via `v-bind()` \u2014 SSR `_cssVars.style={\"--xxx\":null}` as attrs vs client `useCssVars` omitting unset vars\n2. Parent `backgroundColor=\"\"` / `padding=\"\"` \u2014 SSR emits `--xxx:;` vs client empty-string style handling and merge\n3. Child root `:style=\"{ display }\"` with `display=null/undefined/\"\"` merged with incoming `--xxx` vars \u2014 `ssrRenderStyle` vs `normalizeStyle`\n4. Child root `:style` type mismatch `{display:'flex'}` vs `\"display:flex\"` vs `[{display}]` merged with parent `_cssVars.style` via `ssrRenderComponent`\n5. Child fragment/multiple roots or empty/default `<slot>` with fallthrough `class=\"parent-component\"` + `_cssVars` \u2014 vars dropped on fragments vs single root\n6. Slot content `Hello \ud83d\udc4b` / `\"\"` with unicode/whitespace-only `v-bind(padding)` value \u2014 SSR style string serialization vs client css-vars setter\n7. Async/Suspense child `display` resolved post-SSR changing root `:style` after parent css-vars inlined \u2014 SSR snapshot vs hydrated merge order",
+  "ArchitecturalBuilder": "",
+  "OccamsRazorCritic": "APPROVE",
+  "SignatureFactChecker": "APPROVE",
+  "FormalAdversaryCritic": "",
+  "ConsensusJudge": "DIVERGED blocker REVISE"
+ }
+}

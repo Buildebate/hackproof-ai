@@ -1,4 +1,4 @@
-You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences. Prefix each block with its repo-relative target file path on its own line. Copy every SEARCH block byte-for-byte from the shown CODE CONTEXT (exact indentation and punctuation); never reconstruct code from memory. After the blocks, end your verdict with exactly one marker word on its own final line: APPROVE if the patch is complete, or REVISE if the context is insufficient to write one.
 BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
 
 ISSUE:
@@ -148,405 +148,1736 @@ currently exception serialization is best described as limited and simplicistic,
 thats the main issue there
 
 CODE CONTEXT:
-doc/en/example/py2py3/test_py3.py:
-def test_exception_syntax():
-    try:
-        0 / 0
-    except ZeroDivisionError as e:
-        assert e
-
-
-doc/en/example/py2py3/test_py2.py:
-def test_exception_syntax():
-    try:
-        0 / 0
-    except ZeroDivisionError, e:
-        assert e
-
-
-testing/io/test_saferepr.py:
-from _pytest._io.saferepr import saferepr
-
-
-def test_simple_repr():
-    assert saferepr(1) == "1"
-    assert saferepr(None) == "None"
-
-
-def test_maxsize():
-    s = saferepr("x" * 50, maxsize=25)
-    assert len(s) == 25
-    expected = repr("x" * 10 + "..." + "x" * 10)
-    assert s == expected
-
-
-def test_maxsize_error_on_instance():
-    class A:
-        def __repr__(self):
-            raise ValueError("...")
-
-    s = saferepr(("*" * 50, A()), maxsize=25)
-    assert len(s) == 25
-    assert s[0] == "(" and s[-1] == ")"
-
-
-def test_exceptions():
-    class BrokenRepr:
-        def __init__(self, ex):
-            self.ex = ex
-
-        def __repr__(self):
-            raise self.ex
-
-    class BrokenReprException(Exception):
-        __str__ = None
-        __repr__ = None
-
-    assert "Exception" in saferepr(BrokenRepr(Exception("broken")))
-    s = saferepr(BrokenReprException("really broken"))
-    assert "TypeError" in s
-    assert "TypeError" in saferepr(BrokenRepr("string"))
-
-    s2 = saferepr(BrokenRepr(BrokenReprException("omg even worse")))
-    assert "NameError" not in s2
-    assert "unknown" in s2
-
-
-def test_buggy_builtin_repr():
-    # Simulate a case where a repr for a builtin raises.
-    # reprlib dispatches by type name, so use "int".
-
-    class int:
-        def __repr__(self):
-            raise ValueError("Buggy repr!")
-
-    assert "Buggy" in saferepr(int())
-
-
-def test_big_repr():
-    from _pytest._io.saferepr import SafeRepr
-
-    assert len(saferepr(range(1000))) <= len("[" + SafeRepr(0).maxlist * "1000" + "]")
-
-
-def test_repr_on_newstyle():
-    class Function:
-        def __repr__(self):
-            return "<%s>" % (self.name)
-
-    assert saferepr(Function())
-
-
-def test_unicode():
-    val = "£€"
-    reprval = "'£€'"
-    assert saferepr(val) == reprval
-
-
-testing/python/raises.py:
+TOP-1 FULL FILE src/_pytest/main.py:
+""" core implementation of testing process: init, session, runtest loop. """
+import enum
+import fnmatch
+import functools
+import importlib
+import os
 import sys
 
-import pytest
-from _pytest.outcomes import Failed
+import attr
+import py
+
+import _pytest._code
+from _pytest import nodes
+from _pytest.config import directory_arg
+from _pytest.config import hookimpl
+from _pytest.config import UsageError
+from _pytest.outcomes import exit
+from _pytest.runner import collect_one_node
 
 
-class TestRaises:
-    def test_check_callable(self):
-        with pytest.raises(TypeError, match=r".* must be callable"):
-            pytest.raises(RuntimeError, "int('qwe')")
+class ExitCode(enum.IntEnum):
+    """
+    Encodes the valid exit codes by pytest.
 
-    def test_raises(self):
-        excinfo = pytest.raises(ValueError, int, "qwe")
-        assert "invalid literal" in str(excinfo.value)
+    Currently users and plugins may supply other exit codes as well.
+    """
 
-    def test_raises_function(self):
-        excinfo = pytest.raises(ValueError, int, "hello")
-        assert "invalid literal" in str(excinfo.value)
+    #: tests passed
+    OK = 0
+    #: tests failed
+    TESTS_FAILED = 1
+    #: pytest was interrupted
+    INTERRUPTED = 2
+    #: an internal error got in the way
+    INTERNAL_ERROR = 3
+    #: pytest was misused
+    USAGE_ERROR = 4
+    #: pytest couldn't find tests
+    NO_TESTS_COLLECTED = 5
 
-    def test_raises_callable_no_exception(self):
-        class A:
-            def __call__(self):
-                pass
 
+def pytest_addoption(parser):
+    parser.addini(
+        "norecursedirs",
+        "directory patterns to avoid for recursion",
+        type="args",
+        default=[".*", "build", "dist", "CVS", "_darcs", "{arch}", "*.egg", "venv"],
+    )
+    parser.addini(
+        "testpaths",
+        "directories to search for tests when no files or directories are given in the "
+        "command line.",
+        type="args",
+        default=[],
+    )
+    group = parser.getgroup("general", "running and selection options")
+    group._addoption(
+        "-x",
+        "--exitfirst",
+        action="store_const",
+        dest="maxfail",
+        const=1,
+        help="exit instantly on first error or failed test.",
+    ),
+    group._addoption(
+        "--maxfail",
+        metavar="num",
+        action="store",
+        type=int,
+        dest="maxfail",
+        default=0,
+        help="exit after first num failures or errors.",
+    )
+    group._addoption(
+        "--strict-markers",
+        "--strict",
+        action="store_true",
+        help="markers not registered in the `markers` section of the configuration file raise errors.",
+    )
+    group._addoption(
+        "-c",
+        metavar="file",
+        type=str,
+        dest="inifilename",
+        help="load configuration from `file` instead of trying to locate one of the implicit "
+        "configuration files.",
+    )
+    group._addoption(
+        "--continue-on-collection-errors",
+        action="store_true",
+        default=False,
+        dest="continue_on_collection_errors",
+        help="Force test execution even if collection errors occur.",
+    )
+    group._addoption(
+        "--rootdir",
+        action="store",
+        dest="rootdir",
+        help="Define root directory for tests. Can be relative path: 'root_dir', './root_dir', "
+        "'root_dir/another_dir/'; absolute path: '/home/user/root_dir'; path with variables: "
+        "'$HOME/root_dir'.",
+    )
+
+    group = parser.getgroup("collect", "collection")
+    group.addoption(
+        "--collectonly",
+        "--collect-only",
+        action="store_true",
+        help="only collect tests, don't execute them.",
+    ),
+    group.addoption(
+        "--pyargs",
+        action="store_true",
+        help="try to interpret all arguments as python packages.",
+    )
+    group.addoption(
+        "--ignore",
+        action="append",
+        metavar="path",
+        help="ignore path during collection (multi-allowed).",
+    )
+    group.addoption(
+        "--ignore-glob",
+        action="append",
+        metavar="path",
+        help="ignore path pattern during collection (multi-allowed).",
+    )
+    group.addoption(
+        "--deselect",
+        action="append",
+        metavar="nodeid_prefix",
+        help="deselect item during collection (multi-allowed).",
+    )
+    # when changing this to --conf-cut-dir, config.py Conftest.setinitial
+    # needs upgrading as well
+    group.addoption(
+        "--confcutdir",
+        dest="confcutdir",
+        default=None,
+        metavar="dir",
+        type=functools.partial(directory_arg, optname="--confcutdir"),
+        help="only load conftest.py's relative to specified dir.",
+    )
+    group.addoption(
+        "--noconftest",
+        action="store_true",
+        dest="noconftest",
+        default=False,
+        help="Don't load any conftest.py files.",
+    )
+    group.addoption(
+        "--keepduplicates",
+        "--keep-duplicates",
+        action="store_true",
+        dest="keepduplicates",
+        default=False,
+        help="Keep duplicate tests.",
+    )
+    group.addoption(
+        "--collect-in-virtualenv",
+        action="store_true",
+        dest="collect_in_virtualenv",
+        default=False,
+        help="Don't ignore tests in a local virtualenv directory",
+    )
+
+    group = parser.getgroup("debugconfig", "test session debugging and configuration")
+    group.addoption(
+        "--basetemp",
+        dest="basetemp",
+        default=None,
+        metavar="dir",
+        help=(
+            "base temporary directory for this test run."
+            "(warning: this directory is removed if it exists)"
+        ),
+    )
+
+
+def wrap_session(config, doit):
+    """Skeleton command line program"""
+    session = Session(config)
+    session.exitstatus = ExitCode.OK
+    initstate = 0
+    try:
         try:
-            pytest.raises(ValueError, A())
-        except pytest.raises.Exception:
-            pass
+            config._do_configure()
+            initstate = 1
+            config.hook.pytest_sessionstart(session=session)
+            initstate = 2
+            session.exitstatus = doit(config, session) or 0
+        except UsageError:
+            session.exitstatus = ExitCode.USAGE_ERROR
+            raise
+        except Failed:
+            session.exitstatus = ExitCode.TESTS_FAILED
+        except (KeyboardInterrupt, exit.Exception):
+            excinfo = _pytest._code.ExceptionInfo.from_current()
+            exitstatus = ExitCode.INTERRUPTED
+            if isinstance(excinfo.value, exit.Exception):
+                if excinfo.value.returncode is not None:
+                    exitstatus = excinfo.value.returncode
+                if initstate < 2:
+                    sys.stderr.write(
+                        "{}: {}\n".format(excinfo.typename, excinfo.value.msg)
+                    )
+            config.hook.pytest_keyboard_interrupt(excinfo=excinfo)
+            session.exitstatus = exitstatus
+        except:  # noqa
+            excinfo = _pytest._code.ExceptionInfo.from_current()
+            config.notify_exception(excinfo, config.option)
+            session.exitstatus = ExitCode.INTERNAL_ERROR
+            if excinfo.errisinstance(SystemExit):
+                sys.stderr.write("mainloop: caught unexpected SystemExit!\n")
 
-    def test_raises_falsey_type_error(self):
-        with pytest.raises(TypeError):
-            with pytest.raises(AssertionError, match=0):
-                raise AssertionError("ohai")
+    finally:
+        excinfo = None  # Explicitly break reference cycle.
+        session.startdir.chdir()
+        if initstate >= 2:
+            config.hook.pytest_sessionfinish(
+                session=session, exitstatus=session.exitstatus
+            )
+        config._ensure_unconfigure()
+    return session.exitstatus
 
-    def test_raises_repr_inflight(self):
-        """Ensure repr() on an exception info inside a pytest.raises with block works (#4386)"""
 
-        class E(Exception):
-            pass
+def pytest_cmdline_main(config):
+    return wrap_session(config, _main)
 
-        with pytest.raises(E) as excinfo:
-            # this test prints the inflight uninitialized object
-            # using repr and str as well as pprint to demonstrate
-            # it works
-            print(str(excinfo))
-            print(repr(excinfo))
-            import pprint
 
-            pprint.pprint(excinfo)
-            raise E()
+def _main(config, session):
+    """ default command line protocol for initialization, session,
+    running tests and reporting. """
+    config.hook.pytest_collection(session=session)
+    config.hook.pytest_runtestloop(session=session)
 
-    def test_raises_as_contextmanager(self, testdir):
-        testdir.makepyfile(
-            """
-            import pytest
-            import _pytest._code
+    if session.testsfailed:
+        return ExitCode.TESTS_FAILED
+    elif session.testscollected == 0:
+        return ExitCode.NO_TESTS_COLLECTED
 
-            def test_simple():
-                with pytest.raises(ZeroDivisionError) as excinfo:
-                    assert isinstance(excinfo, _pytest._code.ExceptionInfo)
-                    1/0
-                print(excinfo)
-                assert excinfo.type == ZeroDivisionError
-                assert isinstance(excinfo.value, ZeroDivisionError)
 
-            def test_noraise():
-                with pytest.raises(pytest.raises.Exception):
-                    with pytest.raises(ValueError):
-                           int()
+def pytest_collection(session):
+    return session.perform_collect()
 
-            def test_raise_wrong_exception_passes_by():
-                with pytest.raises(ZeroDivisionError):
-                    with pytest.raises(ValueError):
-                           1/0
-        """
+
+def pytest_runtestloop(session):
+    if session.testsfailed and not session.config.option.continue_on_collection_errors:
+        raise session.Interrupted("%d errors during collection" % session.testsfailed)
+
+    if session.config.option.collectonly:
+        return True
+
+    for i, item in enumerate(session.items):
+        nextitem = session.items[i + 1] if i + 1 < len(session.items) else None
+        item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+        if session.shouldfail:
+            raise session.Failed(session.shouldfail)
+        if session.shouldstop:
+            raise session.Interrupted(session.shouldstop)
+    return True
+
+
+def _in_venv(path):
+    """Attempts to detect if ``path`` is the root of a Virtual Environment by
+    checking for the existence of the appropriate activate script"""
+    bindir = path.join("Scripts" if sys.platform.startswith("win") else "bin")
+    if not bindir.isdir():
+        return False
+    activates = (
+        "activate",
+        "activate.csh",
+        "activate.fish",
+        "Activate",
+        "Activate.bat",
+        "Activate.ps1",
+    )
+    return any([fname.basename in activates for fname in bindir.listdir()])
+
+
+def pytest_ignore_collect(path, config):
+    ignore_paths = config._getconftest_pathlist("collect_ignore", path=path.dirpath())
+    ignore_paths = ignore_paths or []
+    excludeopt = config.getoption("ignore")
+    if excludeopt:
+        ignore_paths.extend([py.path.local(x) for x in excludeopt])
+
+    if py.path.local(path) in ignore_paths:
+        return True
+
+    ignore_globs = config._getconftest_pathlist(
+        "collect_ignore_glob", path=path.dirpath()
+    )
+    ignore_globs = ignore_globs or []
+    excludeglobopt = config.getoption("ignore_glob")
+    if excludeglobopt:
+        ignore_globs.extend([py.path.local(x) for x in excludeglobopt])
+
+    if any(fnmatch.fnmatch(str(path), str(glob)) for glob in ignore_globs):
+        return True
+
+    allow_in_venv = config.getoption("collect_in_virtualenv")
+    if not allow_in_venv and _in_venv(path):
+        return True
+
+    return False
+
+
+def pytest_collection_modifyitems(items, config):
+    deselect_prefixes = tuple(config.getoption("deselect") or [])
+    if not deselect_prefixes:
+        return
+
+    remaining = []
+    deselected = []
+    for colitem in items:
+        if colitem.nodeid.startswith(deselect_prefixes):
+            deselected.append(colitem)
+        else:
+            remaining.append(colitem)
+
+    if deselected:
+        config.hook.pytest_deselected(items=deselected)
+        items[:] = remaining
+
+
+class FSHookProxy:
+    def __init__(self, fspath, pm, remove_mods):
+        self.fspath = fspath
+        self.pm = pm
+        self.remove_mods = remove_mods
+
+    def __getattr__(self, name):
+        x = self.pm.subset_hook_caller(name, remove_plugins=self.remove_mods)
+        self.__dict__[name] = x
+        return x
+
+
+class NoMatch(Exception):
+    """ raised if matching cannot locate a matching names. """
+
+
+class Interrupted(KeyboardInterrupt):
+    """ signals an interrupted test run. """
+
+    __module__ = "builtins"  # for py3
+
+
+class Failed(Exception):
+    """ signals a stop as failed test run. """
+
+
+@attr.s
+class _bestrelpath_cache(dict):
+    path = attr.ib()
+
+    def __missing__(self, path):
+        r = self.path.bestrelpath(path)
+        self[path] = r
+        return r
+
+
+class Session(nodes.FSCollector):
+    Interrupted = Interrupted
+    Failed = Failed
+
+    def __init__(self, config):
+        nodes.FSCollector.__init__(
+            self, config.rootdir, parent=None, config=config, session=self, nodeid=""
         )
-        result = testdir.runpytest()
-        result.stdout.fnmatch_lines(["*3 passed*"])
+        self.testsfailed = 0
+        self.testscollected = 0
+        self.shouldstop = False
+        self.shouldfail = False
+        self.trace = config.trace.root.get("collection")
+        self._norecursepatterns = config.getini("norecursedirs")
+        self.startdir = config.invocation_dir
+        self._initialpaths = frozenset()
+        # Keep track of any collected nodes in here, so we don't duplicate fixtures
+        self._node_cache = {}
+        self._bestrelpathcache = _bestrelpath_cache(config.rootdir)
+        # Dirnames of pkgs with dunder-init files.
+        self._pkg_roots = {}
 
-    def test_does_not_raise(self, testdir):
-        testdir.makepyfile(
-            """
-            from contextlib import contextmanager
-            import pytest
+        self.config.pluginmanager.register(self, name="session")
 
-            @contextmanager
-            def does_not_raise():
-                yield
-
-            @pytest.mark.parametrize('example_input,expectation', [
-                (3, does_not_raise()),
-                (2, does_not_raise()),
-                (1, does_not_raise()),
-                (0, pytest.raises(ZeroDivisionError)),
-            ])
-            def test_division(example_input, expectation):
-                '''Test how much I know division.'''
-                with expectation:
-                    assert (6 / example_input) is not None
-        """
+    def __repr__(self):
+        return "<%s %s exitstatus=%r testsfailed=%d testscollected=%d>" % (
+            self.__class__.__name__,
+            self.name,
+            getattr(self, "exitstatus", "<UNSET>"),
+            self.testsfailed,
+            self.testscollected,
         )
-        result = testdir.runpytest()
-        result.stdout.fnmatch_lines(["*4 passed*"])
 
-    def test_does_not_raise_does_raise(self, testdir):
-        testdir.makepyfile(
-            """
-            from contextlib import contextmanager
-            import pytest
+    def _node_location_to_relpath(self, node_path):
+        # bestrelpath is a quite slow function
+        return self._bestrelpathcache[node_path]
 
-            @contextmanager
-            def does_not_raise():
-                yield
+    @hookimpl(tryfirst=True)
+    def pytest_collectstart(self):
+        if self.shouldfail:
+            raise self.Failed(self.shouldfail)
+        if self.shouldstop:
+            raise self.Interrupted(self.shouldstop)
 
-            @pytest.mark.parametrize('example_input,expectation', [
-                (0, does_not_raise()),
-                (1, pytest.raises(ZeroDivisionError)),
-            ])
-            def test_division(example_input, expectation):
-                '''Test how much I know division.'''
-                with expectation:
-                    assert (6 / example_input) is not None
-        """
-        )
-        result = testdir.runpytest()
-        result.stdout.fnmatch_lines(["*2 failed*"])
+    @hookimpl(tryfirst=True)
+    def pytest_runtest_logreport(self, report):
+        if report.failed and not hasattr(report, "wasxfail"):
+            self.testsfailed += 1
+            maxfail = self.config.getvalue("maxfail")
+            if maxfail and self.testsfailed >= maxfail:
+                self.shouldfail = "stopping after %d failures" % (self.testsfailed)
 
-    def test_noclass(self):
-        with pytest.raises(TypeError):
-            pytest.raises("wrong", lambda: None)
+    pytest_collectreport = pytest_runtest_logreport
 
-    def test_invalid_arguments_to_raises(self):
-        with pytest.raises(TypeError, match="unknown"):
-            with pytest.raises(TypeError, unknown="bogus"):
-                raise ValueError()
+    def isinitpath(self, path):
+        return path in self._initialpaths
 
-    def test_tuple(self):
-        with pytest.raises((KeyError, ValueError)):
-            raise KeyError("oops")
+    def gethookproxy(self, fspath):
+        # check if we have the common case of running
+        # hooks with all conftest.py files
+        pm = self.config.pluginmanager
+        my_conftestmodules = pm._getconftestmodules(fspath)
+        remove_mods = pm._conftest_plugins.difference(my_conftestmodules)
+        if remove_mods:
+            # one or more conftests are not in use at this fspath
+            proxy = FSHookProxy(fspath, pm, remove_mods)
+        else:
+            # all plugis are active for this fspath
+            proxy = self.config.hook
+        return proxy
 
-    def test_no_raise_message(self):
+    def perform_collect(self, args=None, genitems=True):
+        hook = self.config.hook
         try:
-            pytest.raises(ValueError, int, "0")
-        except pytest.raises.Exception as e:
-            assert e.msg == "DID NOT RAISE {}".format(repr(ValueError))
+            items = self._perform_collect(args, genitems)
+            self.config.pluginmanager.check_pending()
+            hook.pytest_collection_modifyitems(
+                session=self, config=self.config, items=items
+            )
+        finally:
+            hook.pytest_collection_finish(session=self)
+        self.testscollected = len(items)
+        return items
+
+    def _perform_collect(self, args, genitems):
+        if args is None:
+            args = self.config.args
+        self.trace("perform_collect", self, args)
+        self.trace.root.indent += 1
+        self._notfound = []
+        initialpaths = []
+        self._initialparts = []
+        self.items = items = []
+        for arg in args:
+            parts = self._parsearg(arg)
+            self._initialparts.append(parts)
+            initialpaths.append(parts[0])
+        self._initialpaths = frozenset(initialpaths)
+        rep = collect_one_node(self)
+        self.ihook.pytest_collectreport(report=rep)
+        self.trace.root.indent -= 1
+        if self._notfound:
+            errors = []
+            for arg, exc in self._notfound:
+                line = "(no name {!r} in any of {!r})".format(arg, exc.args[0])
+                errors.append("not found: {}\n{}".format(arg, line))
+                # XXX: test this
+            raise UsageError(*errors)
+        if not genitems:
+            return rep.result
         else:
-            assert False, "Expected pytest.raises.Exception"
+            if rep.passed:
+                for node in rep.result:
+                    self.items.extend(self.genitems(node))
+            return items
 
-        try:
-            with pytest.raises(ValueError):
-                pass
-        except pytest.raises.Exception as e:
-            assert e.msg == "DID NOT RAISE {}".format(repr(ValueError))
+    def collect(self):
+        for initialpart in self._initialparts:
+            arg = "::".join(map(str, initialpart))
+            self.trace("processing argument", arg)
+            self.trace.root.indent += 1
+            try:
+                yield from self._collect(arg)
+            except NoMatch:
+                # we are inside a make_report hook so
+                # we cannot directly pass through the exception
+                self._notfound.append((arg, sys.exc_info()[1]))
+
+            self.trace.root.indent -= 1
+
+    def _collect(self, arg):
+        from _pytest.python import Package
+
+        names = self._parsearg(arg)
+        argpath = names.pop(0)
+
+        # Start with a Session root, and delve to argpath item (dir or file)
+        # and stack all Packages found on the way.
+        # No point in finding packages when collecting doctests
+        if not self.config.getoption("doctestmodules", False):
+            pm = self.config.pluginmanager
+            for parent in reversed(argpath.parts()):
+                if pm._confcutdir and pm._confcutdir.relto(parent):
+                    break
+
+                if parent.isdir():
+                    pkginit = parent.join("__init__.py")
+                    if pkginit.isfile():
+                        if pkginit not in self._node_cache:
+                            col = self._collectfile(pkginit, handle_dupes=False)
+                            if col:
+                                if isinstance(col[0], Package):
+                                    self._pkg_roots[parent] = col[0]
+                                # always store a list in the cache, matchnodes expects it
+                                self._node_cache[col[0].fspath] = [col[0]]
+
+        # If it's a directory argument, recurse and look for any Subpackages.
+        # Let the Package collector deal with subnodes, don't collect here.
+        if argpath.check(dir=1):
+            assert not names, "invalid arg {!r}".format(arg)
+
+            seen_dirs = set()
+            for path in argpath.visit(
+                fil=self._visit_filter, rec=self._recurse, bf=True, sort=True
+            ):
+                dirpath = path.dirpath()
+                if dirpath not in seen_dirs:
+                    # Collect packages first.
+                    seen_dirs.add(dirpath)
+                    pkginit = dirpath.join("__init__.py")
+                    if pkginit.exists():
+                        for x in self._collectfile(pkginit):
+                            yield x
+                            if isinstance(x, Package):
+                                self._pkg_roots[dirpath] = x
+                if dirpath in self._pkg_roots:
+                    # Do not collect packages here.
+                    continue
+
+                for x in self._collectfile(path):
+                    key = (type(x), x.fspath)
+                    if key in self._node_cache:
+                        yield self._node_cache[key]
+                    else:
+                        self._node_cache[key] = x
+                        yield x
         else:
-            assert False, "Expected pytest.raises.Exception"
+            assert argpath.check(file=1)
 
-    @pytest.mark.parametrize("method", ["function", "with"])
-    def test_raises_cyclic_reference(self, method):
-        """
-        Ensure pytest.raises does not leave a reference cycle (#1965).
-        """
-        import gc
-
-        class T:
-            def __call__(self):
-                # Early versions of Python 3.5 have some bug causing the
-                # __call__ frame to still refer to t even after everything
-                # is done. This makes the test pass for them.
-                if sys.version_info < (3, 5, 2):  # pragma: no cover
-                    del self
-                raise ValueError
-
-        t = T()
-        refcount = len(gc.get_referrers(t))
-
-        if method == "function":
-            pytest.raises(ValueError, t)
-        else:
-            with pytest.raises(ValueError):
-                t()
-
-        # ensure both forms of pytest.raises don't leave exceptions in sys.exc_info()
-        assert sys.exc_info() == (None, None, None)
-
-        assert refcount == len(gc.get_referrers(t))
-
-    def test_raises_match(self):
-        msg = r"with base \d+"
-        with pytest.raises(ValueError, match=msg):
-            int("asdf")
-
-        msg = "with base 10"
-        with pytest.raises(ValueError, match=msg):
-            int("asdf")
-
-        msg = "with base 16"
-        expr = r"Pattern '{}' not found in \"invalid literal for int\(\) with base 10: 'asdf'\"".format(
-            msg
-        )
-        with pytest.raises(AssertionError, match=expr):
-            with pytest.raises(ValueError, match=msg):
-                int("asdf", base=10)
-
-    def test_match_failure_string_quoting(self):
-        with pytest.raises(AssertionError) as excinfo:
-            with pytest.raises(AssertionError, match="'foo"):
-                raise AssertionError("'bar")
-        msg, = excinfo.value.args
-        assert msg == 'Pattern "\'foo" not found in "\'bar"'
-
-    def test_raises_match_wrong_type(self):
-        """Raising an exception with the wrong type and match= given.
-
-        pytest should throw the unexpected exception - the pattern match is not
-        really relevant if we got a different exception.
-        """
-        with pytest.raises(ValueError):
-            with pytest.raises(IndexError, match="nomatch"):
-                int("asdf")
-
-    def test_raises_exception_looks_iterable(self):
-        class Meta(type):
-            def __getitem__(self, item):
-                return 1 / 0
-
-            def __len__(self):
-                return 1
-
-        class ClassLooksIterableException(Exception, metaclass=Meta):
-            pass
-
-        with pytest.raises(
-            Failed,
-            match=r"DID NOT RAISE <class 'raises(\..*)*ClassLooksIterableException'>",
-        ):
-            pytest.raises(ClassLooksIterableException, lambda: None)
-
-    def test_raises_with_raising_dunder_class(self):
-        """Test current behavior with regard to exceptions via __class__ (#4284)."""
-
-        class CrappyCla
-
-testing/test_session.py:
-import pytest
-from _pytest.main import ExitCode
-
-
-class SessionTests:
-    def test_basic_testitem_events(self, testdir):
-        tfile = testdir.makepyfile(
-            """
-            def test_one():
-                pass
-            def test_one_one():
-                assert 0
-            def test_other():
-                raise ValueError(23)
-            class TestClass(object):
-                def test_two(self, someargs):
+            if argpath in self._node_cache:
+                col = self._node_cache[argpath]
+            else:
+                collect_root = self._pkg_roots.get(argpath.dirname, self)
+                col = collect_root._collectfile(argpath, handle_dupes=False)
+                if col:
+                    self._node_cache[argpath] = col
+            m = self.matchnodes(col, names)
+            # If __init__.py was the only file requested, then the matched node will be
+            # the corresponding Package, and the first yielded item will be the __init__
+            # Module itself, so just use that. If this special case isn't taken, then all
+            # the files in the package will be yielded.
+            if argpath.basename == "__init__.py":
+                try:
+                    yield next(m[0].collect())
+                except StopIteration:
+                    # The package collects nothing with only an __init__.py
+                    # file in it, which gets ignored by the default
+                    # "python_files" option.
                     pass
+                return
+            yield from m
+
+    def _collectfile(self, path, handle_dupes=True):
+        assert (
+            path.isfile()
+        ), "{!r} is not a file (isdir={!r}, exists={!r}, islink={!r})".format(
+            path, path.isdir(), path.exists(), path.islink()
+        )
+        ihook = self.gethookproxy(path)
+        if not self.isinitpath(path):
+            if ihook.pytest_ignore_collect(path=path, config=self.config):
+                return ()
+
+        if handle_dupes:
+            keepduplicates = self.config.getoption("keepduplicates")
+            if not keepduplicates:
+                duplicate_paths = self.config.pluginmanager._duplicatepaths
+                if path in duplicate_paths:
+                    return ()
+                else:
+                    duplicate_paths.add(path)
+
+        return ihook.pytest_collect_file(path=path, parent=self)
+
+    def _recurse(self, dirpath):
+        if dirpath.basename == "__pycache__":
+            return False
+        ihook = self.gethookproxy(dirpath.dirpath())
+        if ihook.pytest_ignore_collect(path=dirpath, config=self.config):
+            return False
+        for pat in self._norecursepatterns:
+            if dirpath.check(fnmatch=pat):
+                return False
+        ihook = self.gethookproxy(dirpath)
+        ihook.pytest_collect_directory(path=dirpath, parent=self)
+        return True
+
+    @staticmethod
+    def _visit_filter(f):
+        return f.check(file=1)
+
+    def _tryconvertpyarg(self, x):
+        """Convert a dotted module name to path."""
+        try:
+            spec = importlib.util.find_spec(x)
+        # AttributeError: looks like package module, but actually filename
+        # ImportError: module does not exist
+        # ValueError: not a module name
+        except (AttributeError, ImportError, ValueError):
+            return x
+        if spec is None or spec.origin in {None, "namespace"}:
+            return x
+        elif spec.submodule_search_locations:
+            return os.path.dirname(spec.origin)
+        else:
+            return spec.origin
+
+    def _parsearg(self, arg):
+        """ return (fspath, names) tuple after checking the file exists. """
+        parts = str(arg).split("::")
+        if self.config.option.pyargs:
+            parts[0] = self._tryconvertpyarg(parts[0])
+        relpath = parts[0].replace("/", os.sep)
+        path = self.config.invocation_dir.join(relpath, abs=True)
+        if not path.check():
+            if self.config.option.pyargs:
+                raise UsageError(
+                    "file or package not found: " + arg + " (missing __init__.py?)"
+                )
+            raise UsageError("file not found: " + arg)
+        parts[0] = path.realpath()
+        return parts
+
+    def matchnodes(self, matching, names):
+        self.trace("matchnodes", matching, names)
+        self.trace.root.indent += 1
+        nodes = self._matchnodes(matching, names)
+        num = len(nodes)
+        self.trace("matchnodes finished -> ", num, "nodes")
+        self.trace.root.indent -= 1
+        if num == 0:
+            raise NoMatch(matching, names[:1])
+        return nodes
+
+    def _matchnodes(self, matching, names):
+        if not matching or not names:
+            return matching
+        name = names[0]
+        assert name
+        nextnames = names[1:]
+        resultnodes = []
+        for node in matching:
+            if isinstance(node, nodes.Item):
+                if not names:
+                    resultnodes.append(node)
+                continue
+            assert isinstance(node, nodes.Collector)
+            key = (type(node), node.nodeid)
+            if key in self._node_cache:
+                rep = self._node_cache[key]
+            else:
+                rep = collect_one_node(node)
+                self._node_cache[key] = rep
+            if rep.passed:
+                has_matched = False
+                for x in rep.result:
+                    # TODO: remove parametrized workaround once collection structure contains parametrization
+                    if x.name == name or x.name.split("[")[0] == name:
+                        resultnodes.extend(self.matchnodes([x], nextnames))
+                        has_matched = True
+                # XXX accept IDs that don't have "()" for class instances
+                if not has_matched and len(rep.result) == 1 and x.name == "()":
+                    nextnames.insert(0, name)
+                    resultnodes.extend(self.matchnodes([x], nextnames))
+            else:
+                # report collection failures here to avoid failing to run some test
+                # specified in the command line because the module could not be
+                # imported (#134)
+                node.ihook.pytest_collectreport(report=rep)
+        return resultnodes
+
+    def genitems(self, node):
+        self.trace("genitems", node)
+        if isinstance(node, nodes.Item):
+            node.ihook.pytest_itemcollected(item=node)
+            yield node
+        else:
+            assert isinstance(node, nodes.Collector)
+            rep = collect_one_node(node)
+            if rep.passed:
+                for subnode in rep.result:
+                    yield from self.genitems(subnode)
+            node.ihook.pytest_collectreport(report=rep)
+
+
+src/_pytest/main.py:
+""" core implementation of testing process: init, session, runtest loop. """
+import enum
+import fnmatch
+import functools
+import importlib
+import os
+import sys
+
+import attr
+import py
+
+import _pytest._code
+from _pytest import nodes
+from _pytest.config import directory_arg
+from _pytest.config import hookimpl
+from _pytest.config import UsageError
+from _pytest.outcomes import exit
+from _pytest.runner import collect_one_node
+
+
+class ExitCode(enum.IntEnum):
+    """
+    Encodes the valid exit codes by pytest.
+
+    Currently users and plugins may supply other exit codes as well.
+    """
+
+    #: tests passed
+    OK = 0
+    #: tests failed
+    TESTS_FAILED = 1
+    #: pytest was interrupted
+    INTERRUPTED = 2
+    #: an internal error got in the way
+    INTERNAL_ERROR = 3
+    #: pytest was misused
+    USAGE_ERROR = 4
+    #: pytest couldn't find tests
+    NO_TESTS_COLLECTED = 5
+
+
+def pytest_addoption(parser):
+    parser.addini(
+        "norecursedirs",
+        "directory patterns to avoid for recursion",
+        type="args",
+        default=[".*", "build", "dist", "CVS", "_darcs", "{arch}", "*.egg", "venv"],
+    )
+    parser.addini(
+        "testpaths",
+        "directories to search for tests when no files or directories are given in the "
+        "command line.",
+        type="args",
+        default=[],
+    )
+    group = parser.getgroup("general", "running and selection options")
+    group._addoption(
+        "-x",
+        "--exitfirst",
+        action="store_const",
+        dest="maxfail",
+        const=1,
+        help="exit instantly on first error or failed test.",
+    ),
+    group._addoption(
+        "--maxfail",
+        metavar="num",
+        action="store",
+        type=int,
+        dest="maxfail",
+        default=0,
+        help="exit after first num failures or errors.",
+    )
+    group._addoption(
+        "--strict-markers",
+        "--strict",
+        action="store_true",
+        help="markers not registered in the `markers` section of the configuration file raise errors.",
+    )
+    group._addoption(
+        "-c",
+        metavar="file",
+        type=str,
+        dest="inifilename",
+        help="load configuration from `file` instead of trying to locate one of the implicit "
+        "configuration files.",
+    )
+    group._addoption(
+        "--continue-on-collection-errors",
+        action="store_true",
+        default=False,
+        dest="continue_on_collection_errors",
+        help="Force test execution even if collection errors occur.",
+    )
+    group._addoption(
+        "--rootdir",
+        action="store",
+        dest="rootdir",
+        help="Define root directory for tests. Can be relative path: 'root_dir', './root_dir', "
+        "'root_dir/another_dir/'; absolute path: '/home/user/root_dir'; path with variables: "
+        "'$HOME/root_dir'.",
+    )
+
+    group = parser.getgroup("collect", "collection")
+    group.addoption(
+        "--collectonly",
+        "--collect-only",
+        action="store_true",
+        help="only collect tests, don't execute them.",
+    ),
+    group.addoption(
+        "--pyargs",
+        action="store_true",
+        help="try to interpret all arguments as python packages.",
+    )
+    group.addoption(
+        "--ignore",
+        action="append",
+        metavar="path",
+        help="ignore path during collection (multi-allowed).",
+    )
+    group.addoption(
+        "--ignore-glob",
+        action="append",
+        metavar="path",
+        help="ignore path pattern during collection (multi-allowed).",
+    )
+    group.addoption(
+        "--deselect",
+        action="append",
+        metavar="nodeid_prefix",
+        help="deselect item during collection (multi-allowed).",
+    )
+    # when changing this to --conf-cut-dir, config.py Conftest.setinitial
+    # needs upgrading as well
+    group.addoption(
+        "--confcutdir",
+        dest="confcutdir",
+        default=None,
+        metavar="dir",
+        type=functools.partial(directory_arg, optname="--confcutdir"),
+        help="only load conftest.py's relative to specified dir.",
+    )
+    group.addoption(
+        "--noconftest",
+        action="store_true",
+        dest="noconftest",
+        default=False,
+        help="Don't load any conftest.py files.",
+    )
+    group.addoption(
+        "--keepduplicates",
+        "--keep-duplicates",
+        action="store_true",
+        dest="keepduplicates",
+        default=False,
+        help="Keep duplicate tests.",
+    )
+    group.addoption(
+        "--collect-in-virtualenv",
+        action="store_true",
+        dest="collect_in_virtualenv",
+        default=False,
+        help="Don't ignore tests in a local virtualenv directory",
+    )
+
+    group = parser.getgroup("debugconfig", "test session debugging and configuration")
+    group.addoption(
+        "--basetemp",
+        dest="basetemp",
+        default=None,
+        metavar="dir",
+        help=(
+            "base temporary directory for this test run."
+            "(warning: this directory is removed if it exists)"
+        ),
+    )
+
+
+def wrap_session(config, doit):
+    """Skeleton command line program"""
+    session = Session(config)
+    session.exitstatus = ExitCode.OK
+    initstate = 0
+    try:
+        try:
+            config._do_configure()
+            initstate = 1
+            config.hook.pytest_sessionstart(session=session)
+            initstate = 2
+            session.exitstatus = doit(config, session) or 0
+        except UsageError:
+            session.exitstatus = ExitCode.USAGE_ERROR
+            raise
+        except Failed:
+            session.exitstatus = ExitCode.TESTS_FAILED
+        except (KeyboardInterrupt, exit.Exception):
+            excinfo = _pytest._code.ExceptionInfo.from_current()
+            exitstatus = ExitCode.INTERRUPTED
+            if isinstance(excinfo.value, exit.Exception):
+                if excinfo.value.returncode is not None:
+                    exitstatus = excinfo.value.returncode
+                if initstate < 2:
+                    sys.stderr.write(
+                        "{}: {}\n".format(excinfo.typename, excinfo.value.msg)
+                    )
+            config.hook.pytest_keyboard_interrupt(excinfo=excinfo)
+            session.exitstatus = exitstatus
+        except:  # noqa
+            excinfo = _pytest._code.ExceptionInfo.from_current()
+            config.notify_exception(excinfo, config.option)
+            session.exitstatus = ExitCode.INTERNAL_ERROR
+            if excinfo.errisinstance(SystemExit):
+                sys.stderr.write("mainloop: caught unexpected SystemExit!\n")
+
+    finally:
+        excinfo = None  # Explicitly break reference cycle.
+        session.startdir.chdir()
+        if initstate >= 2:
+            config.hook.pytest_sessionfinish(
+                session=session, exitstatus=session.exitstatus
+            )
+        config._ensure_unconfigure()
+    return session.exitstatus
+
+
+def pytest_cmdline_main(config):
+    return wrap_session(config, _main)
+
+
+def _main(config, session):
+    """ default command line protocol for initialization, session,
+    running tests and reporting. """
+    config.hook.pytest_collection(session=session)
+    config.hook.pytest_runtestloop(session=session)
+
+    if session.testsfailed:
+        return ExitCode.TESTS_FAILED
+    elif session.testscollected == 0:
+        return ExitCode.NO_TESTS_COLLECTED
+
+
+def pytest_collection(session):
+    return session.perform_collect()
+
+
+def pytest_runtestloop(session):
+    if session.testsfailed and not session.config.option.continue_on_collection_errors:
+        raise session.Interrupted("%d errors during collection" % session.testsfailed)
+
+    if session.config.option.collectonly:
+        return True
+
+    for i, item in enumerate(session.items):
+        nextitem = session.items[i + 1] if i + 1 < len(session.items) else None
+        item.config.hook.pytest_runtest_protocol(item=item, nextitem=nextitem)
+        if session.shouldfail:
+            raise session.Failed(session.shouldfail)
+        if session.shouldstop:
+            raise session.Interrupte
+
+src/_pytest/_io/saferepr.py:
+import pprint
+import reprlib
+
+
+def _format_repr_exception(exc, obj):
+    exc_name = type(exc).__name__
+    try:
+        exc_info = str(exc)
+    except Exception:
+        exc_info = "unknown"
+    return '<[{}("{}") raised in repr()] {} object at 0x{:x}>'.format(
+        exc_name, exc_info, obj.__class__.__name__, id(obj)
+    )
+
+
+def _ellipsize(s, maxsize):
+    if len(s) > maxsize:
+        i = max(0, (maxsize - 3) // 2)
+        j = max(0, maxsize - 3 - i)
+        return s[:i] + "..." + s[len(s) - j :]
+    return s
+
+
+class SafeRepr(reprlib.Repr):
+    """subclass of repr.Repr that limits the resulting size of repr()
+    and includes information on exceptions raised during the call.
+    """
+
+    def __init__(self, maxsize):
+        super().__init__()
+        self.maxstring = maxsize
+        self.maxsize = maxsize
+
+    def repr(self, x):
+        try:
+            s = super().repr(x)
+        except Exception as exc:
+            s = _format_repr_exception(exc, x)
+        return _ellipsize(s, self.maxsize)
+
+    def repr_instance(self, x, level):
+        try:
+            s = repr(x)
+        except Exception as exc:
+            s = _format_repr_exception(exc, x)
+        return _ellipsize(s, self.maxsize)
+
+
+def safeformat(obj):
+    """return a pretty printed string for the given object.
+    Failing __repr__ functions of user instances will be represented
+    with a short exception info.
+    """
+    try:
+        return pprint.pformat(obj)
+    except Exception as exc:
+        return _format_repr_exception(exc, obj)
+
+
+def saferepr(obj, maxsize=240):
+    """return a size-limited safe repr-string for the given object.
+    Failing __repr__ functions of user instances will be represented
+    with a short exception info and 'saferepr' generally takes
+    care to never raise exceptions itself.  This function is a wrapper
+    around the Repr/reprlib functionality of the standard 2.6 lib.
+    """
+    return SafeRepr(maxsize).repr(obj)
+
+
+src/_pytest/outcomes.py:
+"""
+exception classes and constants handling test outcomes
+as well as functions creating them
+"""
+import sys
+from typing import Any
+from typing import Optional
+
+from packaging.version import Version
+
+if False:  # TYPE_CHECKING
+    from typing import NoReturn
+
+
+class OutcomeException(BaseException):
+    """ OutcomeException and its subclass instances indicate and
+        contain info about test and collection outcomes.
+    """
+
+    def __init__(self, msg: Optional[str] = None, pytrace: bool = True) -> None:
+        if msg is not None and not isinstance(msg, str):
+            error_msg = (
+                "{} expected string as 'msg' parameter, got '{}' instead.\n"
+                "Perhaps you meant to use a mark?"
+            )
+            raise TypeError(error_msg.format(type(self).__name__, type(msg).__name__))
+        BaseException.__init__(self, msg)
+        self.msg = msg
+        self.pytrace = pytrace
+
+    def __repr__(self) -> str:
+        if self.msg:
+            return self.msg
+        return "<{} instance>".format(self.__class__.__name__)
+
+    __str__ = __repr__
+
+
+TEST_OUTCOME = (OutcomeException, Exception)
+
+
+class Skipped(OutcomeException):
+    # XXX hackish: on 3k we fake to live in the builtins
+    # in order to have Skipped exception printing shorter/nicer
+    __module__ = "builtins"
+
+    def __init__(
+        self,
+        msg: Optional[str] = None,
+        pytrace: bool = True,
+        allow_module_level: bool = False,
+    ) -> None:
+        OutcomeException.__init__(self, msg=msg, pytrace=pytrace)
+        self.allow_module_level = allow_module_level
+
+
+class Failed(OutcomeException):
+    """ raised from an explicit call to pytest.fail() """
+
+    __module__ = "builtins"
+
+
+class Exit(Exception):
+    """ raised for immediate program exits (no tracebacks/summaries)"""
+
+    def __init__(
+        self, msg: str = "unknown reason", returncode: Optional[int] = None
+    ) -> None:
+        self.msg = msg
+        self.returncode = returncode
+        super().__init__(msg)
+
+
+# exposed helper methods
+
+
+def exit(msg: str, returncode: Optional[int] = None) -> "NoReturn":
+    """
+    Exit testing process.
+
+    :param str msg: message to display upon exit.
+    :param int returncode: return code to be used when exiting pytest.
+    """
+    __tracebackhide__ = True
+    raise Exit(msg, returncode)
+
+
+# Ignore type because of https://github.com/python/mypy/issues/2087.
+exit.Exception = Exit  # type: ignore
+
+
+def skip(msg: str = "", *, allow_module_level: bool = False) -> "NoReturn":
+    """
+    Skip an executing test with the given message.
+
+    This function should be called only during testing (setup, call or teardown) or
+    during collection by using the ``allow_module_level`` flag.  This function can
+    be called in doctests as well.
+
+    :kwarg bool allow_module_level: allows this function to be called at
+        module level, skipping the rest of the module. Default to False.
+
+    .. note::
+        It is better to use the :ref:`pytest.mark.skipif ref` marker when possible to declare a test to be
+        skipped under certain conditions like mismatching platforms or
+        dependencies.
+        Similarly, use the ``# doctest: +SKIP`` directive (see `doctest.SKIP
+        <https://docs.python.org/3/library/doctest.html#doctest.SKIP>`_)
+        to skip a doctest statically.
+    """
+    __tracebackhide__ = True
+    raise Skipped(msg=msg, allow_module_level=allow_module_level)
+
+
+# Ignore type because of https://github.com/python/mypy/issues/2087.
+skip.Exception = Skipped  # type: ignore
+
+
+def fail(msg: str = "", pytrace: bool = True) -> "NoReturn":
+    """
+    Explicitly fail an executing test with the given message.
+
+    :param str msg: the message to show the user as reason for the failure.
+    :param bool pytrace: if false the msg represents the full failure information and no
+        python traceback will be reported.
+    """
+    __tracebackhide__ = True
+    raise Failed(msg=msg, pytrace=pytrace)
+
+
+# Ignore type because of https://github.com/python/mypy/issues/2087.
+fail.Exception = Failed  # type: ignore
+
+
+class XFailed(Failed):
+    """ raised from an explicit call to pytest.xfail() """
+
+
+def xfail(reason: str = "") -> "NoReturn":
+    """
+    Imperatively xfail an executing test or setup functions with the given reason.
+
+    This function should be called only during testing (setup, call or teardown).
+
+    .. note::
+        It is better to use the :ref:`pytest.mark.xfail ref` marker when possible to declare a test to be
+        xfailed under certain conditions like known bugs or missing features.
+    """
+    __tracebackhide__ = True
+    raise XFailed(reason)
+
+
+# Ignore type because of https://github.com/python/mypy/issues/2087.
+xfail.Exception = XFailed  # type: ignore
+
+
+def importorskip(
+    modname: str, minversion: Optional[str] = None, reason: Optional[str] = None
+) -> Any:
+    """Imports and returns the requested module ``modname``, or skip the
+    current test if the module cannot be imported.
+
+    :param str modname: the name of the module to import
+    :param str minversion: if given, the imported module's ``__version__``
+        attribute must be at least this minimal version, otherwise the test is
+        still skipped.
+    :param str reason: if given, this reason is shown as the message when the
+        module cannot be imported.
+    :returns: The imported module. This should be assigned to its canonical
+        name.
+
+    Example::
+
+        docutils = pytest.importorskip("docutils")
+    """
+    import warnings
+
+    __tracebackhide__ = True
+    compile(modname, "", "eval")  # to catch syntaxerrors
+
+    with warnings.catch_warnings():
+        # make sure to ignore ImportWarnings that might happen because
+        # of existing directories with the same name we're trying to
+        # import but without a __init__.py file
+        warnings.simplefilter("ignore")
+        try:
+            __import__(modname)
+        except ImportError as exc:
+            if reason is None:
+                reason = "could not import {!r}: {}".format(modname, exc)
+            raise Skipped(reason, allow_module_level=True) from None
+    mod = sys.modules[modname]
+    if minversion is None:
+        return mod
+    verattr = getattr(mod, "__version__", None)
+    if minversion is not None:
+        if verattr is None or Version(verattr) < Version(minversion):
+            raise Skipped(
+                "module %r has __version__ %r, required is: %r"
+                % (modname, verattr, minversion),
+                allow_module_level=True,
+            )
+    return mod
+
+
+src/_pytest/assertion/util.py:
+"""Utilities for assertion debugging"""
+import pprint
+from collections.abc import Sequence
+
+import _pytest._code
+from _pytest import outcomes
+from _pytest._io.saferepr import saferepr
+
+# The _reprcompare attribute on the util module is used by the new assertion
+# interpretation code and assertion rewriter to detect this plugin was
+# loaded and in turn call the hooks defined here as part of the
+# DebugInterpreter.
+_reprcompare = None
+
+# Works similarly as _reprcompare attribute. Is populated with the hook call
+# when pytest_runtest_setup is called.
+_assertion_pass = None
+
+
+def format_explanation(explanation):
+    """This formats an explanation
+
+    Normally all embedded newlines are escaped, however there are
+    three exceptions: \n{, \n} and \n~.  The first two are intended
+    cover nested explanations, see function and attribute explanations
+    for examples (.visit_Call(), visit_Attribute()).  The last one is
+    for when one explanation needs to span multiple lines, e.g. when
+    displaying diffs.
+    """
+    explanation = explanation
+    lines = _split_explanation(explanation)
+    result = _format_lines(lines)
+    return "\n".join(result)
+
+
+def _split_explanation(explanation):
+    """Return a list of individual lines in the explanation
+
+    This will return a list of lines split on '\n{', '\n}' and '\n~'.
+    Any other newlines will be escaped and appear in the line as the
+    literal '\n' characters.
+    """
+    raw_lines = (explanation or "").split("\n")
+    lines = [raw_lines[0]]
+    for values in raw_lines[1:]:
+        if values and values[0] in ["{", "}", "~", ">"]:
+            lines.append(values)
+        else:
+            lines[-1] += "\\n" + values
+    return lines
+
+
+def _format_lines(lines):
+    """Format the individual lines
+
+    This will replace the '{', '}' and '~' characters of our mini
+    formatting language with the proper 'where ...', 'and ...' and ' +
+    ...' text, taking care of indentation along the way.
+
+    Return a list of formatted lines.
+    """
+    result = lines[:1]
+    stack = [0]
+    stackcnt = [0]
+    for line in lines[1:]:
+        if line.startswith("{"):
+            if stackcnt[-1]:
+                s = "and   "
+            else:
+                s = "where "
+            stack.append(len(result))
+            stackcnt[-1] += 1
+            stackcnt.append(0)
+            result.append(" +" + "  " * (len(stack) - 1) + s + line[1:])
+        elif line.startswith("}"):
+            stack.pop()
+            stackcnt.pop()
+            result[stack[-1]] += line[1:]
+        else:
+            assert line[0] in ["~", ">"]
+            stack[-1] += 1
+            indent = len(stack) if line.startswith("~") else len(stack) - 1
+            result.append("  " * indent + line[1:])
+    assert len(stack) == 1
+    return result
+
+
+def issequence(x):
+    return isinstance(x, Sequence) and not isinstance(x, str)
+
+
+def istext(x):
+    return isinstance(x, str)
+
+
+def isdict(x):
+    return isinstance(x, dict)
+
+
+def isset(x):
+    return isinstance(x, (set, frozenset))
+
+
+def isdatacls(obj):
+    return getattr(obj, "__dataclass_fields__", None) is not None
+
+
+def isattrs(obj):
+    return getattr(obj, "__attrs_attrs__", None) is not None
+
+
+def isiterable(obj):
+    try:
+        iter(obj)
+        return not istext(obj)
+    except TypeError:
+        return False
+
+
+def assertrepr_compare(config, op, left, right):
+    """Return specialised explanations for some operators/operands"""
+    maxsize = (80 - 15 - len(op) - 2) // 2  # 15 chars indentation, 1 space around op
+    left_repr = saferepr(left, maxsize=maxsize)
+    right_repr = saferepr(right, maxsize=maxsize)
+
+    summary = "{} {} {}".format(left_repr, op, right_repr)
+
+    verbose = config.getoption("verbose")
+    explanation = None
+    try:
+        if op == "==":
+            if istext(left) and istext(right):
+                explanation = _diff_text(left, right, verbose)
+            else:
+                if issequence(left) and issequence(right):
+                    explanation = _compare_eq_sequence(left, right, verbose)
+                elif isset(left) and isset(right):
+                    explanation = _compare_eq_set(left, right, verbose)
+                elif isdict(left) and isdict(right):
+                    explanation = _compare_eq_dict(left, right, verbose)
+                elif type(left) == type(right) and (isdatacls(left) or isattrs(left)):
+                    type_fn = (isdatacls, isattrs)
+                    explanation = _compare_eq_cls(left, right, verbose, type_fn)
+                elif verbose > 0:
+                    explanation = _compare_eq_verbose(left, right)
+                if isiterable(left) and isiterable(right):
+                    expl = _compare_eq_iterable(left, right, verbose)
+                    if explanation is not None:
+                        explanation.extend(expl)
+                    else:
+                        explanation = expl
+        elif op == "not in":
+            if istext(left) and istext(right):
+                explanation = _notin_text(left, right, verbose)
+    except outcomes.Exit:
+        raise
+    except Exception:
+        explanation = [
+            "(pytest_assertion plugin: representation of details failed.  "
+            "Probably an object has a faulty __repr__.)",
+            str(_pytest._code.ExceptionInfo.from_current()),
+        ]
+
+    if not explanation:
+        return None
+
+    return [summary] + explanation
+
+
+def _diff_text(left, right, verbose=0):
+    """Return the explanation for the diff between text or bytes.
+
+    Unless --verbose is used this will skip leading and trailing
+    characters which are identical to keep the diff minimal.
+
+    If the input are bytes they will be safely converted to text.
+    """
+    from difflib import ndiff
+
+    explanation = []
+
+    def escape_for_readable_diff(binary_text):
         """
+        Ensures that the internal string is always valid unicode, converting any bytes safely to valid unicode.
+        This is done using repr() which then needs post-processing to fix the encompassing quotes and un-escape
+        newlines and carriage returns (#429).
+        """
+        r = str(repr(binary_text)[1:-1])
+        r = r.replace(r"\n", "\n")
+        r = r.replace(r"\r", "\r")
+        return r
+
+    if isinstance(left, bytes):
+        left = escape_for_readable_diff(left)
+    if isinstance(right, bytes):
+        right = escape_for_readable_diff(right)
+    if verbose < 1:
+        i = 0  # just in case left or right has zero length
+        for i in range(min(len(left), len(right))):
+            if left[i] != right[i]:
+                break
+        if i > 42:
+            i -= 10  # Provide some context
+            explanation = [
+                "Skipping %s identical leading characters in diff, use -v to show" % i
+            ]
+            left = left[i:]
+            right = right[i:]
+        if len(left) == len(right):
+            for i in range(len(left)):
+                if left[-i] != right[-i]:
+                    break
+            if i > 42:
+                i -= 10  # Provide some context
+                explanation += [
+                    "Skipping {} identical trailing "
+                    "characters in diff, use -v to show".format(i)
+                ]
+                left = left[:-i]
+                right = right[:-i]
+    keepends = True
+    if left.isspace() or right.isspace():
+        left = repr(str(left))
+        right = repr(str(right))
+        explanation += ["Strings contain only whitespace, escaping them using repr()"]
+    explanation += [
+        line.strip("\n")
+        for line in ndiff(left.splitlines(keepends), right.splitlines(keepends))
+    ]
+    return explanation
+
+
+def _compare_eq_verbose(left, right):
+    keepends = True
+    left_lines = repr(left).splitlines(keepends)
+    right_lines = repr(right).splitlines(keepends)
+
+    explanation = []
+    explanation += ["-" + line for line in left_lines]
+    explanation += ["+" + line for line in right_lines]
+
+    return explanation
+
+
+de
+
+src/_pytest/unittest.py:
+""" discovery and running of std-library "unittest" style tests. """
+import sys
+import traceback
+
+import _pytest._code
+import pytest
+from _pytest.compat import getimfunc
+from _pytest.config import hookimpl
+from _pytest.outcomes import exit
+from _pytest.outcomes import fail
+from _pytest.outcomes import skip
+from _pytest.outcomes import xfail
+from _pytest.python import Class
+from _pytest.python import Function
+from _pytest.runner import CallInfo
+
+
+def pytest_pycollect_makeitem(collector, name, obj):
+    # has unittest been imported and is obj a subclass of its TestCase?
+    try:
+        if not issubclass(obj, sys.modules["unittest"].TestCase):
+            return
+    except Exception:
+        return
+    # yes, so let's collect it
+    return UnitTestCase(name, parent=collector)
+
+
+class UnitTestCase(Class):
+    # marker for fixturemanger.getfixtureinfo()
+    # to declare that our children do not support funcargs
+    nofuncargs = True
+
+    def collect(self):
+        from unittest import TestLoader
+
+        cls = self.obj
+        if not getattr(cls, "__test__", True):
+            return
+
+        skipped = getattr(cls, "__unittest_skip__", False)
+        if not skipped:
+            self._inject_setup_teardown_fixtures(cls)
+            self._inject_setup_class_fixture()
+
+        self.session._fixturemanager.parsefactories(self, unittest=True)
+        loader = TestLoader()
+        foundsomething = False
+        for name in loader.getTestCaseNames(self.obj):
+            x = getattr(self.obj, name)
+            if not getattr(x, "__test__", True):
+                continue
+            funcobj = getimfunc(x)
+            yield TestCaseFunction(name, parent=self, callobj=funcobj)
+            foundsomething = True
+
+        if not foundsomething:
+            runtest = getattr(self.obj, "runTest", None)
+            if runtest is not None:
+                ut = sys.modules.get("twisted.trial.unittest", None)
+                if ut is None or runtest != ut.TestCase.runTest:
+                    yield TestCaseFunction("runTest", parent=self)
+
+    def _inject_setup_teardown_fixtures(self, cls):
+        """Injects a hidden auto-use fixture to invoke setUpClass/setup_method and corresponding
+        teardown functions (#517)"""
+        class_fixture = _make_xunit_fixture(
+            cls, "setUpClass", "tearDownClass", scope="class", pass_self=False
         )
-        reprec = testdir.inline_run(tfile)
-        passed, skipped, failed = reprec.listoutcomes()
-        assert len(skipped) == 0
-        assert len(passed) == 1
-        assert len(failed) == 3
+        if class_fixture:
+            cls.__pytest_class_setup = class_fixture
 
-        def end(x):
-            return x.nodeid.split("::")[-1]
-
-        assert end(failed[0]) == "test_one_one"
-        assert end(failed[1]) == "test_other"
-        itemstarted = reprec.getcalls("pytest_itemcollected")
-        assert len(itemstarted) == 4
-        # XXX check for failing funcarg setup
-        # colreports = reprec.getcalls("pytest_collectreport")
-        # assert len(colreports) == 4
-        # assert colreports[1].report.failed
-
-    def test_nested_import_error(self, testdir):
-        tfile = testdir.makepyfile(
-            """
-            import import_fails
-            def test_this():
-                assert import_fails.a == 1
-        """,
-            import_fails="""
-            import does_not_work
-            a = 1
-        """,
+        method_fixture = _make_xunit_fixture(
+            cls, "setup_method", "teardown_method", scope="function", pass_self=True
         )
-        reprec = testdir.inline_run(tfile)
-        values = reprec.getfailedcollections()
-        assert len(values) == 1
-        out = str(values[0].longrepr)
-        assert out.find("does_not_work") != -1
+        if method_fixture:
+            cls.__pytest_method_setup = method_fixture
 
-    def test_raises_output(self, testdir):
-        reprec = testdir.inline_runsource(
-            """
-            import pytest
-            def test_raises_doesnt():
-                pytest.raises(Value
+
+def _make_xunit_fixture(obj, setup_name, teardown_name, scope, pass_self):
+    setup = getattr(obj, setup_name, None)
+    teardown = getattr(obj, teardown_name, None)
+    if setup is None and teardown is None:
+        return None
+
+    @pytest.fixture(scope=scope, autouse=True)
+    def fixture(self, request):
+        if getattr(self, "__unittest_skip__", None):
+            reason = self.__unittest_skip_why__
+            pytest.skip(reason)
+        if setup is not None:
+            if pass_self:
+                setup(self, request.function)
+            else:
+                setup()
+        yield
+        if teardown is not None:
+            if pass_self:
+                teardown(self, request.function)
+            else:
+                teardown()
+
+    return fixture
+
+
+class TestCaseFunction(Function):
+    nofuncargs = True
+    _excinfo = None
+    _testcase = None
+
+    def setup(self):
+        self._testcase = self.parent.obj(self.name)
+        self._obj = getattr(self._testcase, self.name)
+        if hasattr(self, "_request"):
+            self._request._fillfixtures()
+
+    def teardown(self):
+        self._testcase = None
+        self._obj = None
+
+    def startTest(self, testcase):
+        pass
+
+    def _addexcinfo(self, rawexcinfo):
+        # unwrap potential exception info (see twisted trial support below)
+        rawexcinfo = getattr(rawexcinfo, "_rawexcinfo", rawexcinfo)
+        try:
+            excinfo = _pytest._code.ExceptionInfo(rawexcinfo)
+            # invoke the attributes to trigger storing the traceback
+            # trial causes some issue there
+            excinfo.value
+            excinfo.traceback
+        except TypeError:
+            try:
+                try:
+                    values = traceback.format_exception(*rawexcinfo)
+                    values.insert(
+                        0,
+                        "NOTE: Incompatible Exception Representation, "
+                        "displaying natively:\n\n",
+                    )
+                    fail("".join(values), pytrace=False)
+                except (fail.Exception, KeyboardInterrupt):
+                    raise
+                except:  # noqa
+                    fail(
+                        "ERROR: Unknown Incompatible Exception "
+                        "representation:\n%r" % (rawexcinfo,),
+                        pytrace=False,
+                    )
+            except KeyboardInterrupt:
+                raise
+            except fail.Exception:
+                excinfo = _pytest._code.ExceptionInfo.from_current()
+        self.__dict__.setdefault("_excinfo", []).append(excinfo)
+
+    def addError(self, testcase, rawexcinfo):
+        try:
+            if isinstance(rawexcinfo[1], exit.Exception):
+                exit(rawexcinfo[1].msg)
+        except TypeError:
+            pass
+        self._addexcinfo(rawexcinfo)
+
+    def addFailure(self, testcase, rawexcinfo):
+        self._addexcinfo(rawexcinfo)
+
+    def addSkip(self, testcase, reason):
+        try:
+            skip(reason)
+        except skip.Exception:
+            self._skipped_by_mark = True
+            self._addexcinfo(sys.exc_info())
+
+    def addExpectedFailure(self, testcase, rawexcinfo, reason=""):
+        try:
+            xfail(str(reason))
+        except xfail.Exception:
+            self._addexcinfo(sys.exc_info())
+
+    def addUnexpectedSuccess(self, testcase, reason=""):
+        self._unexpectedsuccess = reason
+
+    def addSuccess(self, testcase):
+        pass
+
+    def stopTest(self, testcase):
+        pass
+
+    def _handle_skip(self):
+        # implements the skipping machinery (see #2137)
+        # analog to pythons Lib/unittest/case.py:run
+        testMethod = getattr(self._testcase, self._testcase._testMethodName)
+        if getattr(self._testcase.__class__, "__unittest_skip__", False) or getattr(
+            testMethod, "__unittest_skip__", False
+        ):
+            # If the class or method was skipped.
+            skip_why = getattr(
+                self._testcase.__class__, "__unittest_skip_why__", ""
+            ) or getattr(testMethod, "__unittest_skip_why__", "")
+            self._testcase._addSkip(self, self._testcase, skip_why)
+            return True
+        return False
+
+    def runtest(self):
+        if self.config.pluginmanager.get_plugin("pdbinvoke") is None:
+            self._testcase(result=self)
+        else:
+            # disables tearDown and cleanups for post mortem debugging (see #1890)
+            if self._handle_skip():
+                return
+            self._testcase.debug()
+
+    def _prunetraceback(self, excinfo):
+        Function._prunetraceback(self, excinfo)
+        traceback = excinfo.traceback.filter(
+            lambda x: not x.frame.f_globals.get("__unittest")
+        )
+        if traceback:
+            excinfo.traceback = traceback
+
+
+@hookimpl(tryfirst=True)
+def pytest_runtest_makereport(item, call):
+    if isinstance(item, TestCaseFunction):
+        if item._excinfo:
+            call.excinfo = item._excinfo.pop(0)
+            try:
+                del call.result
+            except AttributeError:
+                pass
+
+    unittest = sys.modules.get("unittest")
+    if unittest and call.excinfo and call.excinfo.errisinstance(unittest.SkipTest):
+        # let's substitute the excinfo with a pytest.skip one
+        call2 = CallInfo.from_call(
+         
 
 ROUND: 1

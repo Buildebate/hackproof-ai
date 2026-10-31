@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="79" failures="1" errors="0" time="1.516">
-    <testsuite name="packages/runtime-core/__tests__/apiWatch.spec.ts" timestamp="2026-10-30T06:06:41.113Z" hostname="adc727adfde0" tests="79" failures="1" errors="0" skipped="0" time="0.1">
+<testsuites name="vitest tests" tests="79" failures="1" errors="0" time="1.46">
+    <testsuite name="packages/runtime-core/__tests__/apiWatch.spec.ts" timestamp="2026-10-31T09:00:33.755Z" hostname="84a184477d58" tests="79" failures="1" errors="0" skipped="0" time="0.1">
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect" time="0.004">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: getter" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: ref" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: array" time="0.003">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: array" time="0.004">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not call functions inside a reactive source array" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not call functions inside a reactive source array" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not unwrap refs in a reactive source array" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not unwrap refs in a reactive source array" time="0.003">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire if watched getter result did not change" time="0.001">
         </testcase>
@@ -19,19 +19,19 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching primitive with deep: true" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object (with automatic deep: true)" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object (with automatic deep: true)" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object with explicit deep: false" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive array with explicit deep: false" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive array with explicit deep: false" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching shallow reactive array with deep: false" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching shallow reactive array with deep: false" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should still respect deep: true on shallowReactive source" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: undefined initial values and immediate: true" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: undefined initial values and immediate: true" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: readonly array" time="0.001">
         </testcase>
@@ -39,13 +39,13 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn invalid watch source" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn invalid watch source: multiple sources" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn invalid watch source: multiple sources" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; stopping the watcher (effect)" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; stopping the watcher (effect)" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; stopping the watcher (with source)" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; stopping the watcher (with source)" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; cleanup registration (effect)" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; cleanup registration (effect)" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; cleanup registration (with source)" time="0.001">
         </testcase>
@@ -53,19 +53,19 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: post" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchPostEffect" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchPostEffect" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: sync" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: sync" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchSyncEffect" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchSyncEffect" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on component unmount w/ flush: post" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on component unmount w/ flush: pre" time="0.003">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on child component unmount w/ flush: pre" time="0.003">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on child component unmount w/ flush: pre" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre watcher in child component should not fire before parent update" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre watcher in child component should not fire before parent update" time="0.003">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre watcher watching props should fire before child update" time="0.001">
         </testcase>
@@ -73,17 +73,17 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: post watcher should fire after template refs updated" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep" time="0.003">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching deep ref" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching deep ref" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep with symbols" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is null" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is null" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is undefined" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is undefined" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn immediate option when using effect" time="0.001">
         </testcase>
@@ -107,9 +107,9 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; $watch should always register its effects with its own instance" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; this.$watch should pass `this.proxy` to watch source as the first argument " time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; this.$watch should pass `this.proxy` to watch source as the first argument " time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not leak `this.proxy` to setup()" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not leak `this.proxy` to setup()" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; pre watcher callbacks should not track dependencies" time="0.002">
         </testcase>
@@ -123,23 +123,23 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchEffect should keep running if created in a detached scope" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch&apos;" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch&apos;" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with deep&apos;" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with deep&apos;" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with flush: s…&apos;" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with flush: p…&apos;" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with flush: p…&apos;" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with immediate&apos;" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with immediate&apos;" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; OnCleanup also needs to be cleaned，" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; OnCleanup also needs to be cleaned，" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive depth" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive depth" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching ref depth" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching ref depth" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching array depth" time="0.004">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching array depth" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; pause / resume" time="0.001">
         </testcase>
@@ -147,13 +147,13 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive with deep: false" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect should be removed from scope&apos;s effects after it is stopped" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect should be removed from scope&apos;s effects after it is stopped" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; sync watcher should not be batched" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; sync watcher should not be batched" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchEffect should not fire on computed deps that did not change" time="0">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchEffect should not fire on computed deps that did not change" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; circular reference" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; circular reference" time="0">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watch immediate error in effect scope should be catched by onErrorCaptured" time="0.002">
         </testcase>

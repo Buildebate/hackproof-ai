@@ -2,14 +2,1323 @@
  "task": "psf__requests-6028",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-30T13:12:33.254540+00:00",
- "status": "failed",
- "done": true,
- "reason": "unmeasurable: unresolved test IDs: tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py], tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/__init__.py], tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/location], tests/test_utils.py::test_get_auth_from_url[http://%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20:%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20@request.com/url.html#test-auth0]",
+ "ts": "2026-10-31T08:36:57.458251+00:00",
+ "base_ref": "0192aac24123735b3eaf9b08df46429bb770c283",
+ "agent": {
+  "ok": true,
+  "reason": "",
+  "files": [
+   "requests/utils.py",
+   "requests/sessions.py",
+   "requests/__init__.py",
+   "requests/help.py",
+   "setup.py"
+  ],
+  "localize_ms": 515,
+  "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 2,
+  "applied_file": "requests/utils.py",
+  "applied_files": [
+   "requests/utils.py"
+  ],
+  "red_rel": "tests/test_repro_c71617b9d571.py",
+  "local_violations": [],
+  "debate": {
+   "rounds_used": 2,
+   "converged": false,
+   "score": 0.5,
+   "duration_ms": 772492
+  }
+ },
  "usage": {
-  "prompt_tokens": 0,
-  "completion_tokens": 0,
-  "total_tokens": 0,
-  "per_call": []
- }
+  "prompt_tokens": 74598,
+  "completion_tokens": 130544,
+  "total_tokens": 205142,
+  "per_call": [
+   {
+    "role": "SparkRedSynthesis",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 8309,
+    "completion_tokens": 3724,
+    "total_tokens": 12033,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 4064,
+    "completion_tokens": 1379,
+    "total_tokens": 5443,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 15548,
+    "completion_tokens": 27149,
+    "total_tokens": 42697,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1844,
+    "completion_tokens": 4736,
+    "total_tokens": 6580,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1916,
+    "completion_tokens": 1157,
+    "total_tokens": 3073,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 2233,
+    "completion_tokens": 31748,
+    "total_tokens": 33981,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1599,
+    "completion_tokens": 1869,
+    "total_tokens": 3468,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 5553,
+    "completion_tokens": 1641,
+    "total_tokens": 7194,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 17033,
+    "completion_tokens": 19958,
+    "total_tokens": 36991,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 3419,
+    "completion_tokens": 2164,
+    "total_tokens": 5583,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 3697,
+    "completion_tokens": 462,
+    "total_tokens": 4159,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 4014,
+    "completion_tokens": 13536,
+    "total_tokens": 17550,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 3434,
+    "completion_tokens": 827,
+    "total_tokens": 4261,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "PatchSynthesis",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1935,
+    "completion_tokens": 20194,
+    "total_tokens": 22129,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "evidence": {
+  "language": "python",
+  "collect": true,
+  "freeze": true,
+  "debate_prompts": true
+ },
+ "diff_sha256": "02dfc86eb89be6687e0970d413a0e25da288c5b9f0417e47f8c239ce65998820",
+ "red": {
+  "rel": "tests/test_repro_c71617b9d571.py",
+  "sha256": "294dddfa64faeade3f65dc61157c5aef94e822c3ea5a0f02122570b094eaeb3b",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 1016,
+  "junit_sha256": "f277e9c0a933ca1a5ea862d083067ddb7e6d45c505a433335ab221641679c58a"
+ },
+ "guard": {
+  "task": "psf__requests-6028",
+  "mode": "B",
+  "binding": true,
+  "verdict": "clean",
+  "violations": []
+ },
+ "junit_sha256": "878494e0478d341b1e7dbbe66ee4954e2e1e0397300da20a3e4c1d95bb206839",
+ "eval_exit": 1,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "tests/test_utils.py::test_prepend_scheme_if_needed[http://user:pass@example.com/path?query-http://user:pass@example.com/path?query]": {
+    "base": "failed",
+    "agent": "failed"
+   },
+   "tests/test_utils.py::test_prepend_scheme_if_needed[http://user@example.com/path?query-http://user@example.com/path?query]": {
+    "base": "failed",
+    "agent": "failed"
+   }
+  },
+  "p2p": {
+   "tests/test_utils.py::TestSuperLen::test_io_streams[StringIO-Test]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "tests/test_utils.py::TestSuperLen::test_io_streams[BytesIO-Test]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_correctly_calculates_len_of_partially_read_file": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_handles_files_raising_weird_errors_in_tell[OSError0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_handles_files_raising_weird_errors_in_tell[OSError1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_tell_ioerror[OSError0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_tell_ioerror[OSError1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_string": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_file[r-1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_file[rb-0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_tarfile_member": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_with__len__": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_no__len__": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_tell": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_fileno": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_no_matches": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestToKeyValList::test_valid[value0-expected0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestToKeyValList::test_valid[value1-expected1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestToKeyValList::test_valid[value2-expected2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestToKeyValList::test_valid[None-None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestToKeyValList::test_invalid": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[None-None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[Test-Test]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[\"Test\"-Test]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[\"Test\\\\\\\\\"-Test\\\\]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[\"\\\\\\\\Comp\\\\Res\"-\\\\Comp\\\\Res]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_is_filename": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://192.168.0.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://192.168.0.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://172.16.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://172.16.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://localhost.localdomain:5000/v1.0/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://192.168.0.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://192.168.0.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://172.16.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://172.16.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://localhost.localdomain:5000/v1.0/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[no_proxy-http://192.168.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[no_proxy-http://192.168.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[no_proxy-http://www.requests.com/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[NO_PROXY-http://192.168.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[NO_PROXY-http://192.168.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[NO_PROXY-http://www.requests.com/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[no_proxy-http://192.168.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[no_proxy-http://192.168.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[no_proxy-http://www.requests.com/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[NO_PROXY-http://192.168.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[NO_PROXY-http://192.168.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[NO_PROXY-http://www.requests.com/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://192.168.0.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://192.168.0.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://172.16.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://172.16.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://localhost.localdomain:5000/v1.0/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://192.168.0.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://192.168.0.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://172.16.1.1/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://172.16.1.1:5000/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://localhost.localdomain:5000/v1.0/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsIPv4Address::test_valid": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsIPv4Address::test_invalid[8.8.8.8.8]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsIPv4Address::test_invalid[localhost.localdomain]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsValidCIDR::test_valid": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[8.8.8.8]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.0/a]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.0/128]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.0/-1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.999/24]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestAddressInNetwork::test_valid": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestAddressInNetwork::test_invalid": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_invalid[1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_invalid[value1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_valid[value-bytes]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_valid[value-str]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py]": {
+    "base": "passed",
+    "agent": "missing",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/__init__.py]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/location]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestExtractZippedPaths::test_zipped_paths_extracted": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestExtractZippedPaths::test_invalid_unc_path": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestContentEncodingDetection::test_none": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestContentEncodingDetection::test_pragmas[<meta": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestContentEncodingDetection::test_pragmas[<?xml": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestContentEncodingDetection::test_precedence": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-32]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-8-sig]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-16]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-8]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-16-be]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-16-le]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-32-be]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-32-le]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_bad_utf_like_encoding": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-16-be-utf-16]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-16-le-utf-16]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-32-be-utf-32]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-32-le-utf-32]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20:%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20@request.com/url.html#test-auth0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass@complex.url.com/path?query=yes-auth1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass%20pass@complex.url.com/path?query=yes-auth2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://user%25user:pass@complex.url.com/path?query=yes-auth4]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass%23pass@complex.url.com/path?query=yes-auth5]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_auth_from_url[http://complex.url.com/path?query=yes-auth6]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_requote_uri_with_unquoted_percents[http://example.com/fiz?buz=%25ppicture-http://example.com/fiz?buz=%25ppicture]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_requote_uri_with_unquoted_percents[http://example.com/fiz?buz=%ppicture-http://example.com/fiz?buz=%25ppicture]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_unquote_unreserved[http://example.com/?a=%---http://example.com/?a=%--]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_unquote_unreserved[http://example.com/?a=%300-http://example.com/?a=00]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_dotted_netmask[8-255.0.0.0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_dotted_netmask[24-255.255.255.0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_dotted_netmask[25-255.255.255.128]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Some.Host/path-http://some.host.proxy-proxies0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Other.Host/path-http://http.proxy-proxies1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTp:///path-http://http.proxy-proxies2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTps://Other.Host-None-proxies3]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[file:///etc/motd-None-proxies4]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Some.Host/path-socks5://some.host.proxy-proxies5]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Other.Host/path-socks5://http.proxy-proxies6]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTp:///path-socks5://http.proxy-proxies7]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[hTTps://Other.Host-socks5://http.proxy-proxies8]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[http://u:p@other.host/path-http://http.proxy-proxies9]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[http://u:p@some.host/path-http://some.host.proxy-proxies10]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[https://u:p@other.host/path-socks5://http.proxy-proxies11]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[https://u:p@some.host/path-socks5://http.proxy-proxies12]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[https://-socks5://http.proxy-proxies13]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_select_proxies[file:///etc/motd-socks5://http.proxy-proxies14]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_parse_dict_header[foo=\"is": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_parse_dict_header[key_without_value-expected1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test__parse_content_type_header[application/xml-expected0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test__parse_content_type_header[application/json": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test__parse_content_type_header[text/plain-expected3]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test__parse_content_type_header[multipart/form-data;": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_encoding_from_headers[value0-None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_encoding_from_headers[value1-utf-8]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_get_encoding_from_headers[value2-ISO-8859-1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_iter_slices[-0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_iter_slices[T-1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_iter_slices[Test-4]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_iter_slices[Cont-0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_iter_slices[Other--5]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_iter_slices[Content-None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>;": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>-expected1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>;-expected2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_parse_header_links[-expected4]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_prepend_scheme_if_needed[example.com/path-http://example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_prepend_scheme_if_needed[//example.com/path-http://example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_prepend_scheme_if_needed[example.com:80-http://example.com:80]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_to_native_string[T-T0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_to_native_string[T-T1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_to_native_string[T-T2]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_urldefragauth[http://u:p@example.com/path?a=1#test-http://example.com/path?a=1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_urldefragauth[http://example.com/path-http://example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_urldefragauth[//u:p@example.com/path-//example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_urldefragauth[//example.com/path-//example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_urldefragauth[example.com/path-//example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_urldefragauth[scheme:u:p@example.com/path-scheme://example.com/path]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://192.168.0.1:5000/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://192.168.0.1/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.1/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.1:5000/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://localhost.localdomain:5000/v1.0/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://google.com:6000/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.12/-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.12:5000/-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[http://google.com:5000/v1.0/-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies[file:///some/path/on/disk-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_add_dict_to_cookiejar[cookiejar0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_add_dict_to_cookiejar[cookiejar1]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_unicode_is_ascii[test-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_unicode_is_ascii[\\xe6\\xed\\xf6\\xfb-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_unicode_is_ascii[\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://192.168.0.1:5000/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://192.168.0.1/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.1/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.1:5000/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://localhost.localdomain:5000/v1.0/-True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.12/-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.12:5000/-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://google.com:5000/v1.0/-False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_set_environ[no_proxy-192.168.0.0/24,127.0.0.1,localhost.localdomain]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_set_environ[no_proxy-None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_set_environ[a_new_key-192.168.0.0/24,127.0.0.1,localhost.localdomain]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_set_environ[a_new_key-None]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "tests/test_utils.py::test_set_environ_raises_exception": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [],
+  "f2p_not_fixed": [
+   "tests/test_utils.py::test_prepend_scheme_if_needed[http://user:pass@example.com/path?query-http://user:pass@example.com/path?query]",
+   "tests/test_utils.py::test_prepend_scheme_if_needed[http://user@example.com/path?query-http://user@example.com/path?query]"
+  ],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py]"
+  ],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "tests/test_utils.py::TestSuperLen::test_io_streams[StringIO-Test]",
+   "tests/test_utils.py::TestSuperLen::test_io_streams[BytesIO-Test]",
+   "tests/test_utils.py::TestSuperLen::test_super_len_correctly_calculates_len_of_partially_read_file",
+   "tests/test_utils.py::TestSuperLen::test_super_len_handles_files_raising_weird_errors_in_tell[OSError0]",
+   "tests/test_utils.py::TestSuperLen::test_super_len_handles_files_raising_weird_errors_in_tell[OSError1]",
+   "tests/test_utils.py::TestSuperLen::test_super_len_tell_ioerror[OSError0]",
+   "tests/test_utils.py::TestSuperLen::test_super_len_tell_ioerror[OSError1]",
+   "tests/test_utils.py::TestSuperLen::test_string",
+   "tests/test_utils.py::TestSuperLen::test_file[r-1]",
+   "tests/test_utils.py::TestSuperLen::test_file[rb-0]",
+   "tests/test_utils.py::TestSuperLen::test_tarfile_member",
+   "tests/test_utils.py::TestSuperLen::test_super_len_with__len__",
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_no__len__",
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_tell",
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_fileno",
+   "tests/test_utils.py::TestSuperLen::test_super_len_with_no_matches",
+   "tests/test_utils.py::TestToKeyValList::test_valid[value0-expected0]",
+   "tests/test_utils.py::TestToKeyValList::test_valid[value1-expected1]",
+   "tests/test_utils.py::TestToKeyValList::test_valid[value2-expected2]",
+   "tests/test_utils.py::TestToKeyValList::test_valid[None-None]",
+   "tests/test_utils.py::TestToKeyValList::test_invalid",
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[None-None]",
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[Test-Test]",
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[\"Test\"-Test]",
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[\"Test\\\\\\\\\"-Test\\\\]",
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_valid[\"\\\\\\\\Comp\\\\Res\"-\\\\Comp\\\\Res]",
+   "tests/test_utils.py::TestUnquoteHeaderValue::test_is_filename",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://192.168.0.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://192.168.0.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://172.16.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://172.16.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[no_proxy-http://localhost.localdomain:5000/v1.0/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://192.168.0.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://192.168.0.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://172.16.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://172.16.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass[NO_PROXY-http://localhost.localdomain:5000/v1.0/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[no_proxy-http://192.168.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[no_proxy-http://192.168.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[no_proxy-http://www.requests.com/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[NO_PROXY-http://192.168.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[NO_PROXY-http://192.168.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass[NO_PROXY-http://www.requests.com/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[no_proxy-http://192.168.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[no_proxy-http://192.168.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[no_proxy-http://www.requests.com/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[NO_PROXY-http://192.168.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[NO_PROXY-http://192.168.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_bypass_no_proxy_keyword[NO_PROXY-http://www.requests.com/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://192.168.0.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://192.168.0.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://172.16.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://172.16.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[no_proxy-http://localhost.localdomain:5000/v1.0/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://192.168.0.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://192.168.0.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://172.16.1.1/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://172.16.1.1:5000/]",
+   "tests/test_utils.py::TestGetEnvironProxies::test_not_bypass_no_proxy_keyword[NO_PROXY-http://localhost.localdomain:5000/v1.0/]",
+   "tests/test_utils.py::TestIsIPv4Address::test_valid",
+   "tests/test_utils.py::TestIsIPv4Address::test_invalid[8.8.8.8.8]",
+   "tests/test_utils.py::TestIsIPv4Address::test_invalid[localhost.localdomain]",
+   "tests/test_utils.py::TestIsValidCIDR::test_valid",
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[8.8.8.8]",
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.0/a]",
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.0/128]",
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.0/-1]",
+   "tests/test_utils.py::TestIsValidCIDR::test_invalid[192.168.1.999/24]",
+   "tests/test_utils.py::TestAddressInNetwork::test_valid",
+   "tests/test_utils.py::TestAddressInNetwork::test_invalid",
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_invalid[1]",
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_invalid[value1]",
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_valid[value-bytes]",
+   "tests/test_utils.py::TestGuessFilename::test_guess_filename_valid[value-str]",
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/]",
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/__init__.py]",
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/location]",
+   "tests/test_utils.py::TestExtractZippedPaths::test_zipped_paths_extracted",
+   "tests/test_utils.py::TestExtractZippedPaths::test_invalid_unc_path",
+   "tests/test_utils.py::TestContentEncodingDetection::test_none",
+   "tests/test_utils.py::TestContentEncodingDetection::test_pragmas[<meta",
+   "tests/test_utils.py::TestContentEncodingDetection::test_pragmas[<?xml",
+   "tests/test_utils.py::TestContentEncodingDetection::test_precedence",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-32]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-8-sig]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-16]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-8]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-16-be]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-16-le]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-32-be]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_encoded[utf-32-le]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_bad_utf_like_encoding",
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-16-be-utf-16]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-16-le-utf-16]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-32-be-utf-32]",
+   "tests/test_utils.py::TestGuessJSONUTF::test_guess_by_bom[utf-32-le-utf-32]",
+   "tests/test_utils.py::test_get_auth_from_url[http://%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20:%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20@request.com/url.html#test-auth0]",
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass@complex.url.com/path?query=yes-auth1]",
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass%20pass@complex.url.com/path?query=yes-auth2]",
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass",
+   "tests/test_utils.py::test_get_auth_from_url[http://user%25user:pass@complex.url.com/path?query=yes-auth4]",
+   "tests/test_utils.py::test_get_auth_from_url[http://user:pass%23pass@complex.url.com/path?query=yes-auth5]",
+   "tests/test_utils.py::test_get_auth_from_url[http://complex.url.com/path?query=yes-auth6]",
+   "tests/test_utils.py::test_requote_uri_with_unquoted_percents[http://example.com/fiz?buz=%25ppicture-http://example.com/fiz?buz=%25ppicture]",
+   "tests/test_utils.py::test_requote_uri_with_unquoted_percents[http://example.com/fiz?buz=%ppicture-http://example.com/fiz?buz=%25ppicture]",
+   "tests/test_utils.py::test_unquote_unreserved[http://example.com/?a=%---http://example.com/?a=%--]",
+   "tests/test_utils.py::test_unquote_unreserved[http://example.com/?a=%300-http://example.com/?a=00]",
+   "tests/test_utils.py::test_dotted_netmask[8-255.0.0.0]",
+   "tests/test_utils.py::test_dotted_netmask[24-255.255.255.0]",
+   "tests/test_utils.py::test_dotted_netmask[25-255.255.255.128]",
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Some.Host/path-http://some.host.proxy-proxies0]",
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Other.Host/path-http://http.proxy-proxies1]",
+   "tests/test_utils.py::test_select_proxies[hTTp:///path-http://http.proxy-proxies2]",
+   "tests/test_utils.py::test_select_proxies[hTTps://Other.Host-None-proxies3]",
+   "tests/test_utils.py::test_select_proxies[file:///etc/motd-None-proxies4]",
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Some.Host/path-socks5://some.host.proxy-proxies5]",
+   "tests/test_utils.py::test_select_proxies[hTTp://u:p@Other.Host/path-socks5://http.proxy-proxies6]",
+   "tests/test_utils.py::test_select_proxies[hTTp:///path-socks5://http.proxy-proxies7]",
+   "tests/test_utils.py::test_select_proxies[hTTps://Other.Host-socks5://http.proxy-proxies8]",
+   "tests/test_utils.py::test_select_proxies[http://u:p@other.host/path-http://http.proxy-proxies9]",
+   "tests/test_utils.py::test_select_proxies[http://u:p@some.host/path-http://some.host.proxy-proxies10]",
+   "tests/test_utils.py::test_select_proxies[https://u:p@other.host/path-socks5://http.proxy-proxies11]",
+   "tests/test_utils.py::test_select_proxies[https://u:p@some.host/path-socks5://http.proxy-proxies12]",
+   "tests/test_utils.py::test_select_proxies[https://-socks5://http.proxy-proxies13]",
+   "tests/test_utils.py::test_select_proxies[file:///etc/motd-socks5://http.proxy-proxies14]",
+   "tests/test_utils.py::test_parse_dict_header[foo=\"is",
+   "tests/test_utils.py::test_parse_dict_header[key_without_value-expected1]",
+   "tests/test_utils.py::test__parse_content_type_header[application/xml-expected0]",
+   "tests/test_utils.py::test__parse_content_type_header[application/json",
+   "tests/test_utils.py::test__parse_content_type_header[text/plain-expected3]",
+   "tests/test_utils.py::test__parse_content_type_header[multipart/form-data;",
+   "tests/test_utils.py::test_get_encoding_from_headers[value0-None]",
+   "tests/test_utils.py::test_get_encoding_from_headers[value1-utf-8]",
+   "tests/test_utils.py::test_get_encoding_from_headers[value2-ISO-8859-1]",
+   "tests/test_utils.py::test_iter_slices[-0]",
+   "tests/test_utils.py::test_iter_slices[T-1]",
+   "tests/test_utils.py::test_iter_slices[Test-4]",
+   "tests/test_utils.py::test_iter_slices[Cont-0]",
+   "tests/test_utils.py::test_iter_slices[Other--5]",
+   "tests/test_utils.py::test_iter_slices[Content-None]",
+   "tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>;",
+   "tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>-expected1]",
+   "tests/test_utils.py::test_parse_header_links[<http:/.../front.jpeg>;-expected2]",
+   "tests/test_utils.py::test_parse_header_links[-expected4]",
+   "tests/test_utils.py::test_prepend_scheme_if_needed[example.com/path-http://example.com/path]",
+   "tests/test_utils.py::test_prepend_scheme_if_needed[//example.com/path-http://example.com/path]",
+   "tests/test_utils.py::test_prepend_scheme_if_needed[example.com:80-http://example.com:80]",
+   "tests/test_utils.py::test_to_native_string[T-T0]",
+   "tests/test_utils.py::test_to_native_string[T-T1]",
+   "tests/test_utils.py::test_to_native_string[T-T2]",
+   "tests/test_utils.py::test_urldefragauth[http://u:p@example.com/path?a=1#test-http://example.com/path?a=1]",
+   "tests/test_utils.py::test_urldefragauth[http://example.com/path-http://example.com/path]",
+   "tests/test_utils.py::test_urldefragauth[//u:p@example.com/path-//example.com/path]",
+   "tests/test_utils.py::test_urldefragauth[//example.com/path-//example.com/path]",
+   "tests/test_utils.py::test_urldefragauth[example.com/path-//example.com/path]",
+   "tests/test_utils.py::test_urldefragauth[scheme:u:p@example.com/path-scheme://example.com/path]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://192.168.0.1:5000/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://192.168.0.1/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.1/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.1:5000/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://localhost.localdomain:5000/v1.0/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://google.com:6000/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.12/-False]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://172.16.1.12:5000/-False]",
+   "tests/test_utils.py::test_should_bypass_proxies[http://google.com:5000/v1.0/-False]",
+   "tests/test_utils.py::test_should_bypass_proxies[file:///some/path/on/disk-True]",
+   "tests/test_utils.py::test_add_dict_to_cookiejar[cookiejar0]",
+   "tests/test_utils.py::test_add_dict_to_cookiejar[cookiejar1]",
+   "tests/test_utils.py::test_unicode_is_ascii[test-True]",
+   "tests/test_utils.py::test_unicode_is_ascii[\\xe6\\xed\\xf6\\xfb-False]",
+   "tests/test_utils.py::test_unicode_is_ascii[\\u30b8\\u30a7\\u30fc\\u30d4\\u30fc\\u30cb\\u30c3\\u30af-False]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://192.168.0.1:5000/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://192.168.0.1/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.1/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.1:5000/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://localhost.localdomain:5000/v1.0/-True]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.12/-False]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://172.16.1.12:5000/-False]",
+   "tests/test_utils.py::test_should_bypass_proxies_no_proxy[http://google.com:5000/v1.0/-False]",
+   "tests/test_utils.py::test_set_environ[no_proxy-192.168.0.0/24,127.0.0.1,localhost.localdomain]",
+   "tests/test_utils.py::test_set_environ[no_proxy-None]",
+   "tests/test_utils.py::test_set_environ[a_new_key-192.168.0.0/24,127.0.0.1,localhost.localdomain]",
+   "tests/test_utils.py::test_set_environ[a_new_key-None]",
+   "tests/test_utils.py::test_set_environ_raises_exception"
+  ],
+  "resolved_functional": false,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": [
+   "tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py]"
+  ]
+ },
+ "status": "failed",
+ "reason": "f2p-not-fixed:2; p2p-broken:1",
+ "done": true
 }

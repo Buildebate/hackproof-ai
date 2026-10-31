@@ -1,0 +1,8 @@
+requests/models.py
+<<<<<<< SEARCH
+        if isinstance(data, (str, bytes)):
+            return to_native_string(data)
+=======
+        if isinstance(data, (str, bytes)):
+            return data
+>>>>>>> REPLACE

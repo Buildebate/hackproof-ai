@@ -1,0 +1,8 @@
+{
+ "task": "pytest-dev__pytest-8399",
+ "mode": "A",
+ "binding": false,
+ "verdict": "clean",
+ "violations": [],
+ "note": "post-hoc measurement; does not gate Mode A"
+}

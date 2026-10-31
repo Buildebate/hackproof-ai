@@ -1,0 +1,18 @@
+diff --git a/src/_pytest/skipping.py b/src/_pytest/skipping.py
+index 7bd975e..59501d6 100644
+--- a/src/_pytest/skipping.py
++++ b/src/_pytest/skipping.py
+@@ -261,6 +261,13 @@ def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
+ def pytest_runtest_makereport(item: Item, call: CallInfo[None]):
+     outcome = yield
+     rep = outcome.get_result()
++    if (
++        item._store.get(skipped_by_mark_key, False)
++        and rep.skipped
++        and isinstance(rep.longrepr, tuple)
++        and item.location
++    ):
++        rep.longrepr = item.location[:2] + rep.longrepr[2:]
+     xfailed = item._store.get(xfailed_key, None)
+     # unittest special case, see setting of unexpectedsuccess_key
+     if unexpectedsuccess_key in item._store and rep.when == "call":

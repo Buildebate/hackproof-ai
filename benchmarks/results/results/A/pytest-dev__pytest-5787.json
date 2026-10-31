@@ -2,37 +2,43 @@
  "task": "pytest-dev__pytest-5787",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T05:46:57.746771+00:00",
+ "ts": "2026-10-31T09:46:16.204554+00:00",
  "base_ref": "955e54221008aba577ecbaefa15679f6777d3bf8",
  "agent": {
   "ok": false,
-  "reason": "patch application failed: pytest-dev__pytest-5787: patch matches no localized file exactly once: doc/en/example/py2py3/test_py3.py: block 0: SEARCH not found (0 matches); doc/en/example/py2py3/test_py2.py: block 0: SEARCH not found (0 matches); testing/io/test_saferepr.py: block 0: SEARCH not found (0 matches)",
+  "reason": "no complete SEARCH/REPLACE blocks",
   "files": [
-   "doc/en/example/py2py3/test_py3.py",
-   "doc/en/example/py2py3/test_py2.py",
-   "testing/io/test_saferepr.py",
-   "testing/python/raises.py",
-   "testing/test_session.py"
+   "src/_pytest/main.py",
+   "src/_pytest/_io/saferepr.py",
+   "src/_pytest/outcomes.py",
+   "src/_pytest/assertion/util.py",
+   "src/_pytest/unittest.py"
   ],
-  "localize_ms": 220652,
-  "backend": "contriever-transformer-cpu"
+  "localize_ms": 1996,
+  "backend": "hybrid-rrf-hash-cpu"
  },
  "usage": {
-  "prompt_tokens": 3710,
-  "completion_tokens": 15105,
-  "total_tokens": 18815,
+  "prompt_tokens": 13754,
+  "completion_tokens": 1699,
+  "total_tokens": 15453,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 3710,
-    "completion_tokens": 15105,
-    "total_tokens": 18815,
+    "prompt_tokens": 13754,
+    "completion_tokens": 1699,
+    "total_tokens": 15453,
     "finish_reason": "stop"
    }
   ]
  },
+ "evidence": {
+  "language": "python",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
  "status": "failed",
- "reason": "patch application failed: pytest-dev__pytest-5787: patch matches no localized file exactly once: doc/en/example/py2py3/test_py3.py: block 0: SEARCH not found (0 matches); doc/en/example/py2py3/test_py2.py: block 0: SEARCH not found (0 matches); testing/io/test_saferepr.py: block 0: SEARCH not found (0 matches)",
+ "reason": "no complete SEARCH/REPLACE blocks",
  "done": true
 }

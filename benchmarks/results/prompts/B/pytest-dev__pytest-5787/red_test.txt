@@ -1,58 +1,34 @@
-from _pytest._code.code import ExceptionInfo
+from _pytest._code import ExceptionInfo
 from _pytest.reports import TestReport
 
 
-def _make_report(excinfo):
+def test_chained_exception_serialization():
+    try:
+        try:
+            raise ValueError(11)
+        except ValueError as e1:
+            raise ValueError(12) from e1
+    except ValueError:
+        excinfo = ExceptionInfo.from_current()
     longrepr = excinfo.getrepr(style="long")
-    return TestReport(
-        nodeid="test_example.py::test",
-        location=("test_example.py", 0, "test"),
+    report = TestReport(
+        nodeid="test_x",
+        location=("test_x.py", 0, "test_x"),
         keywords={},
         outcome="failed",
         longrepr=longrepr,
         when="call",
-        sections=(),
-        duration=0,
     )
-
-
-def _roundtrip(report):
-    if hasattr(report, "_to_json"):
-        data = report._to_json()
-    else:
-        data = report.to_json()
-    if hasattr(TestReport, "_from_json"):
-        return TestReport._from_json(data)
-    return TestReport.from_json(data)
-
-
-def test_serialized_chained_exception_with_from():
     try:
-        try:
-            raise ValueError(11)
-        except Exception as e1:
-            raise ValueError(12) from e1
-    except Exception:
-        excinfo = ExceptionInfo.from_current()
-    report = _make_report(excinfo)
-    loaded = _roundtrip(report)
-    text = str(loaded.longrepr)
-    assert "11" in text
-    assert "12" in text
-    assert "direct cause" in text
-
-
-def test_serialized_chained_exception_without_from():
-    try:
-        try:
-            raise ValueError(21)
-        except Exception:
-            raise ValueError(22)
-    except Exception:
-        excinfo = ExceptionInfo.from_current()
-    report = _make_report(excinfo)
-    loaded = _roundtrip(report)
-    text = str(loaded.longrepr)
-    assert "21" in text
-    assert "22" in text
-    assert "During handling" in text
+        if hasattr(report, "_to_json"):
+            data = report._to_json()
+            loaded = TestReport._from_json(data)
+        else:
+            from _pytest.reports import _report_to_json
+            from _pytest.reports import _report_from_json
+            data = _report_to_json(report)
+            loaded = _report_from_json(data)
+    except (AttributeError, ImportError, TypeError) as e:
+        assert False, "serialization API missing: %r" % (e,)
+    assert "11" in str(data), "chained cause (11) lost in serialized data: %r" % (data,)
+    assert "12" in str(data), "last exception (12) missing: %r" % (data,)

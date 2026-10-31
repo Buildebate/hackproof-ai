@@ -1,0 +1,31 @@
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
+function processRule(id: string, rule: Rule) {
+  if (!(rule.selector && !rule.selector.startsWith('%'))) {
+    return
+  }
+=======
+function processRule(id: string, rule: Rule) {
+  if (!(rule.selector && !rule.selector.startsWith('%'))) {
+    return
+  }
+  // Nested rules are processed regardless of parent type (rule or
+  // at-rules such as @media/@container/@supports/@layer/@starting-style).
+  // Skip empty and string-only selectors (e.g. `""` inside @media):
+  // there is no element to scope and injecting would produce invalid CSS.
+  const trimmedSelector = rule.selector.trim()
+  if (
+    !trimmedSelector ||
+    trimmedSelector === '""' ||
+    trimmedSelector === "''"
+  ) {
+    return
+  }
+>>>>>>> REPLACE
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
+    selector.first.spaces.before = ''
+=======
+    if (selector.first) selector.first.spaces.before = ''
+>>>>>>> REPLACE
+APPROVE

@@ -1,0 +1,38 @@
+{
+ "task": "pytest-dev__pytest-5787",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T05:46:57.746771+00:00",
+ "base_ref": "955e54221008aba577ecbaefa15679f6777d3bf8",
+ "agent": {
+  "ok": false,
+  "reason": "patch application failed: pytest-dev__pytest-5787: patch matches no localized file exactly once: doc/en/example/py2py3/test_py3.py: block 0: SEARCH not found (0 matches); doc/en/example/py2py3/test_py2.py: block 0: SEARCH not found (0 matches); testing/io/test_saferepr.py: block 0: SEARCH not found (0 matches)",
+  "files": [
+   "doc/en/example/py2py3/test_py3.py",
+   "doc/en/example/py2py3/test_py2.py",
+   "testing/io/test_saferepr.py",
+   "testing/python/raises.py",
+   "testing/test_session.py"
+  ],
+  "localize_ms": 220652,
+  "backend": "contriever-transformer-cpu"
+ },
+ "usage": {
+  "prompt_tokens": 3710,
+  "completion_tokens": 15105,
+  "total_tokens": 18815,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3710,
+    "completion_tokens": 15105,
+    "total_tokens": 18815,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "status": "failed",
+ "reason": "patch application failed: pytest-dev__pytest-5787: patch matches no localized file exactly once: doc/en/example/py2py3/test_py3.py: block 0: SEARCH not found (0 matches); doc/en/example/py2py3/test_py2.py: block 0: SEARCH not found (0 matches); testing/io/test_saferepr.py: block 0: SEARCH not found (0 matches)",
+ "done": true
+}

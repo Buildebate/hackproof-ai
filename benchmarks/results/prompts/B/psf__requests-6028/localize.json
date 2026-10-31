@@ -1,0 +1,12 @@
+{
+ "files": [
+  "requests/utils.py",
+  "requests/sessions.py",
+  "requests/__init__.py",
+  "requests/help.py",
+  "setup.py"
+ ],
+ "elapsed_ms": 515,
+ "backend": "hybrid-rrf-hash-cpu",
+ "issue_sha256": "b9297c01554a8da008271e55b86d074ca9eafaa115dfd095a86b3c36f1901d53"
+}

@@ -1,0 +1,36 @@
+import { computed, ref, watch } from 'vue'
+
+describe('sync watcher execution order', () => {
+  it('executes sync watchers in definition order (FIFO) for ref and computed', () => {
+    const n = ref(0)
+    const refOrder: number[] = []
+    for (let i = 0; i < 5; i++) {
+      const idx = i
+      watch(
+        n,
+        () => {
+          refOrder.push(idx)
+        },
+        { flush: 'sync' },
+      )
+    }
+    n.value++
+    expect(refOrder).toEqual([0, 1, 2, 3, 4])
+
+    const s = ref(0)
+    const c = computed(() => s.value)
+    const compOrder: number[] = []
+    for (let i = 0; i < 5; i++) {
+      const idx = i
+      watch(
+        c,
+        () => {
+          compOrder.push(idx)
+        },
+        { flush: 'sync' },
+      )
+    }
+    s.value++
+    expect(compOrder).toEqual([0, 1, 2, 3, 4])
+  })
+})

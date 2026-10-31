@@ -1,0 +1,12 @@
+{
+ "files": [
+  "packages/runtime-core/src/apiSetupHelpers.ts",
+  "packages/compiler-core/src/compat/compatConfig.ts",
+  "packages/runtime-dom/src/jsx.ts",
+  "packages/compiler-core/src/options.ts",
+  "packages/runtime-core/src/scheduler.ts"
+ ],
+ "elapsed_ms": 3125,
+ "backend": "hybrid-rrf-hash-cpu",
+ "issue_sha256": "c4fe5c4f77f8f980430416d1ac1ceb863b134d0c0bea058651750e9f5570423b"
+}

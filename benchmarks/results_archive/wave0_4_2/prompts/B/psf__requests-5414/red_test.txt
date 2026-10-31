@@ -1,0 +1,7 @@
+import pytest
+import requests
+from requests.exceptions import InvalidURL
+
+def test_leading_dot_host_raises_invalid_url():
+    with pytest.raises(InvalidURL):
+        requests.Request("GET", "http://.example.com").prepare()

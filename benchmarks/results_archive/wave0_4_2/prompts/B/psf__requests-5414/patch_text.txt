@@ -1,0 +1,12 @@
+<<<<<<< SEARCH
+        if not host:
+            raise InvalidURL("Invalid URL %r: No host supplied" % url)
+=======
+        if not host:
+            raise InvalidURL("Invalid URL %r: No host supplied" % url)
+
+        try:
+            host = host.encode('idna').decode('utf-8')
+        except UnicodeError:
+            raise InvalidURL('URL has an invalid label.')
+>>>>>>> REPLACE

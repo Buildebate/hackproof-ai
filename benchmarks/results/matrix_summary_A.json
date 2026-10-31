@@ -1,14 +1,126 @@
 {
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T06:06:44.857467+00:00",
+ "ts": "2026-10-31T09:53:03.182886+00:00",
  "runs": [
+  {
+   "task": "psf__requests-1142",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "psf__requests-2931",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "failed",
+   "reason": "p2p-broken:1",
+   "done": true
+  },
+  {
+   "task": "psf__requests-5414",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "psf__requests-6028",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "failed",
+   "reason": "p2p-broken:1",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-10081",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-5787",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-7432",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "resolved",
+   "reason": "",
+   "done": true
+  },
+  {
+   "task": "pytest-dev__pytest-8399",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": true,
+   "agent_reason": "",
+   "status": "resolved",
+   "reason": "",
+   "done": true
+  },
   {
    "task": "vuejs__core-11589",
    "mode": "A",
    "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
    "status": "failed",
-   "reason": "unmeasurable: unresolved test IDs: packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11739",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11870",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
+   "done": true
+  },
+  {
+   "task": "vuejs__core-11899",
+   "mode": "A",
+   "tier": "oci",
+   "agent_ok": false,
+   "agent_reason": "no complete SEARCH/REPLACE blocks",
+   "status": "failed",
+   "reason": "no complete SEARCH/REPLACE blocks",
    "done": true
   }
  ]

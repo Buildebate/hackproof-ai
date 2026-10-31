@@ -1,0 +1,122 @@
+{
+ "task": "vuejs__core-11739",
+ "mode": "base",
+ "done": true,
+ "ts": "2026-10-30T05:48:46.825338+00:00",
+ "base_ref": "cb843e0be31f9e563ccfc30eca0c06f2a224b505",
+ "tier": "oci",
+ "base_index": {
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > escape css var name": "failed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > text node": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > element text content": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > not enough children": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > too many children": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > complete mismatch": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment mismatch removal": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment not enough children": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment too many children": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > Teleport target has empty children": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (element)": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (text)": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > class mismatch": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch when no style attribute is present": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch w/ v-show": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr mismatch": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr special case: textarea value": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > boolean attr handling": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > client value is null or undefined": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn against object values": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on falsy bindings of non-property keys": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on non-renderable option values": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn css v-bind": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars should only be added to expected on component root dom": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars support fallthrough": "passed",
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn for directives that mutate DOM in created": "passed"
+ },
+ "id_resolution": {
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > escape css var name": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > escape css var name"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > text node": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > text node"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > element text content": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > element text content"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > not enough children": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > not enough children"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > too many children": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > too many children"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > complete mismatch": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > complete mismatch"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment mismatch removal": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment mismatch removal"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment not enough children": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment not enough children"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment too many children": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > fragment too many children"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > Teleport target has empty children": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > Teleport target has empty children"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (element)": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (element)"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (text)": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > comment mismatch (text)"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > class mismatch": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > class mismatch"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch when no style attribute is present": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch when no style attribute is present"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch w/ v-show": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > style mismatch w/ v-show"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr mismatch": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr mismatch"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr special case: textarea value": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > attr special case: textarea value"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > boolean attr handling": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > boolean attr handling"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > client value is null or undefined": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > client value is null or undefined"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn against object values": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn against object values"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on falsy bindings of non-property keys": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on falsy bindings of non-property keys"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on non-renderable option values": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn on non-renderable option values"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn css v-bind": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn css v-bind"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars should only be added to expected on component root dom": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars should only be added to expected on component root dom"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars support fallthrough": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > css vars support fallthrough"
+  ],
+  "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn for directives that mutate DOM in created": [
+   "packages/runtime-core/__tests__/hydration.spec.ts > SSR hydration > mismatch handling > should not warn for directives that mutate DOM in created"
+  ]
+ },
+ "unresolved_ids": [],
+ "junit_sha256": "1cdde9deffeced7d8b45fe13e021dd698581253b2455f2f46b830ed3d2b0b5a7"
+}

@@ -4,5 +4,5 @@
  "binding": true,
  "verdict": "not-applicable",
  "violations": [],
- "note": "no agent patch evaluated (failed: patch application failed: vuejs__core-11739: patch matches no localized file exactly once: packages/compiler-ssr/__tests)"
+ "note": "no agent patch evaluated (failed: patch application failed: vuejs__core-11739: revision produced no complete SEARCH/REPLACE blocks)"
 }

@@ -1,0 +1,38 @@
+{
+ "task": "pytest-dev__pytest-7432",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T04:47:15.036170+00:00",
+ "base_ref": "e6e300e729dd33956e5448d8be9a0b1540b4e53a",
+ "agent": {
+  "ok": false,
+  "reason": "patch application failed: pytest-dev__pytest-7432: patch matches no localized file exactly once: src/_pytest/skipping.py: block 0: SEARCH not found (0 matches); testing/test_helpconfig.py: block 0: SEARCH not found (0 matches); doc/en/example/xfail_demo.py: block 0: SEARCH not found (0 matches)",
+  "files": [
+   "src/_pytest/skipping.py",
+   "testing/test_helpconfig.py",
+   "doc/en/example/xfail_demo.py",
+   "bench/skip.py",
+   "testing/test_faulthandler.py"
+  ],
+  "localize_ms": 248686,
+  "backend": "contriever-transformer-cpu"
+ },
+ "usage": {
+  "prompt_tokens": 3212,
+  "completion_tokens": 5921,
+  "total_tokens": 9133,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3212,
+    "completion_tokens": 5921,
+    "total_tokens": 9133,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "status": "failed",
+ "reason": "patch application failed: pytest-dev__pytest-7432: patch matches no localized file exactly once: src/_pytest/skipping.py: block 0: SEARCH not found (0 matches); testing/test_helpconfig.py: block 0: SEARCH not found (0 matches); doc/en/example/xfail_demo.py: block 0: SEARCH not found (0 matches)",
+ "done": true
+}

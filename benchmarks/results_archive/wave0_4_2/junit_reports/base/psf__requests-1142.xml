@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="6" time="0.183" timestamp="2026-10-30T05:19:07.531434+00:00" hostname="5e19c225397a"><testcase classname="test_requests.RequestsTestCase" name="test_no_content_length" time="0.007"><failure message="AssertionError: False is not true">self = &lt;test_requests.RequestsTestCase testMethod=test_no_content_length&gt;
+
+    def test_no_content_length(self):
+        get_req = requests.Request('GET', httpbin('get')).prepare()
+&gt;       self.assertTrue('Content-Length' not in get_req.headers)
+E       AssertionError: False is not true
+
+test_requests.py:63: AssertionError</failure></testcase><testcase classname="test_requests.RequestsTestCase" name="test_basic_building" time="0.001" /><testcase classname="test_requests.RequestsTestCase" name="test_entry_points" time="0.001" /><testcase classname="test_requests.RequestsTestCase" name="test_invalid_url" time="0.001" /><testcase classname="test_requests.RequestsTestCase" name="test_params_are_added_before_fragment" time="0.001" /><testcase classname="test_requests.RequestsTestCase" name="test_path_is_not_double_encoded" time="0.001" /></testsuite></testsuites>

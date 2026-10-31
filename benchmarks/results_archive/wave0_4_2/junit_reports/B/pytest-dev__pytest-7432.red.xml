@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="1" hostname="da6853b91d99" name="pytest" skipped="0" tests="1" time="0.071" timestamp="2026-10-30T09:37:23.151181"><testcase classname="testing.test_repro_cc6624b4f394" file="testing/test_repro_cc6624b4f394.py" line="0" name="test_runxfail_does_not_affect_skip_location" time="0.046"><failure message="Failed: nomatch: &apos;SKIPPED [1] test_it.py:3: unconditional skip&apos;
+    and: &apos;============================= test session starts ==============================&apos;
+    and: &apos;platform linux -- Python 3.8.20, pytest-5.4.1.dev593+ge6e300e72, py-1.11.0, pluggy-0.13.1&apos;
+    and: &apos;rootdir: /tmp/pytest-of-root/pytest-0/test_runxfail_does_not_affect_skip_location0&apos;
+    and: &apos;collected 1 item&apos;
+    and: &apos;&apos;
+    and: &apos;test_it.py s                                                             [100%]&apos;
+    and: &apos;&apos;
+    and: &apos;=========================== short test summary info ============================&apos;
+    and: &apos;SKIPPED [1] ../../../../home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-7432/B/src/_pytest/skipping.py:239: unconditional skip&apos;
+    and: &apos;============================== 1 skipped in 0.01s ==============================&apos;
+remains unmatched: &apos;SKIPPED [1] test_it.py:3: unconditional skip&apos;">testdir = &lt;Testdir local(&apos;/tmp/pytest-of-root/pytest-0/test_runxfail_does_not_affect_skip_location0&apos;)&gt;
+
+    def test_runxfail_does_not_affect_skip_location(testdir):
+        testdir.makepyfile(test_it=&quot;import pytest\n@pytest.mark.skip\ndef test_skip_location():\n    assert 0\n&quot;)
+        result = testdir.runpytest(&quot;-rs&quot;, &quot;--runxfail&quot;)
+&gt;       result.stdout.fnmatch_lines([&quot;SKIPPED [1] test_it.py:3: unconditional skip&quot;])
+E       Failed: nomatch: &apos;SKIPPED [1] test_it.py:3: unconditional skip&apos;
+E           and: &apos;============================= test session starts ==============================&apos;
+E           and: &apos;platform linux -- Python 3.8.20, pytest-5.4.1.dev593+ge6e300e72, py-1.11.0, pluggy-0.13.1&apos;
+E           and: &apos;rootdir: /tmp/pytest-of-root/pytest-0/test_runxfail_does_not_affect_skip_location0&apos;
+E           and: &apos;collected 1 item&apos;
+E           and: &apos;&apos;
+E           and: &apos;test_it.py s                                                             [100%]&apos;
+E           and: &apos;&apos;
+E           and: &apos;=========================== short test summary info ============================&apos;
+E           and: &apos;SKIPPED [1] ../../../../home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-7432/B/src/_pytest/skipping.py:239: unconditional skip&apos;
+E           and: &apos;============================== 1 skipped in 0.01s ==============================&apos;
+E       remains unmatched: &apos;SKIPPED [1] test_it.py:3: unconditional skip&apos;
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-7432/B/testing/test_repro_cc6624b4f394.py:4: Failed</failure></testcase></testsuite></testsuites>

@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="131" time="0.896" timestamp="2026-10-30T05:22:09.483075+00:00" hostname="18335b100e34"><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidURL-http://.example.com]" time="0.004"><failure message="urllib3.exceptions.LocationParseError: Failed to parse: '.example.com', label empty or too long">self = &lt;tests.test_requests.TestRequests object at 0xeaa424a67590&gt;
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="5" skipped="0" tests="131" time="0.910" timestamp="2026-10-31T08:17:23.143573+00:00" hostname="04ffe67f0c6b"><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidURL-http://.example.com]" time="0.004"><failure message="urllib3.exceptions.LocationParseError: Failed to parse: '.example.com', label empty or too long">self = &lt;tests.test_requests.TestRequests object at 0xe9b8a60a6f50&gt;
 exception = &lt;class 'requests.exceptions.InvalidURL'&gt;
 url = 'http://.example.com'
 
@@ -62,7 +62,7 @@ value = None, from_value = None
 &gt;   ???
 E   urllib3.exceptions.LocationParseError: Failed to parse: '.example.com', label empty or too long
 
-&lt;string&gt;:3: LocationParseError</failure></testcase><testcase classname="tests.test_requests.TestRequests" name="test_entry_points" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[MissingSchema-hiwpefhipowhefopw]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidSchema-localhost:3128]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidSchema-localhost.localdomain:3128/]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidSchema-10.122.1.1:3128/]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidURL-http://]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidURL-http://*example.com]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_basic_building" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_path_is_not_double_encoded" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&amp;a=b#fragment]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_params_original_order_is_preserved_by_default" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_params_bytes_are_encoded" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_binary_put" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_whitespaces_are_removed_from_url" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_basicauth_encodes_byte_strings" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_errors[http://doesnotexist.google.com-ConnectionError]" time="0.002" /><testcase classname="tests.test_requests.TestRequests" name="test_errors[http://localhost:1-ConnectionError]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_proxy_error" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_non_prepared_request_error" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_prepare_request_with_bytestring_url" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_links" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_parameters" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_keeps_len" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_keeps_items" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_keys" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_values" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_items" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_duplicate_names_different_domains" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_duplicate_names_raises_cookie_conflict_error" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_policy_copy" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_empty_response_has_content_none" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_is_iterable" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_decode_unicode" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_response_reason_unicode" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_reason_unicode_fallback" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_chunk_size_type" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_http_error" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_transport_adapter_ordering" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_session_get_adapter_prefix_matching" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_session_get_adapter_prefix_matching_mixed_case" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_session_get_adapter_prefix_matching_is_case_insensitive" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_long_authinfo_in_url" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_nonhttp_schemes_dont_check_URLs" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_host_change" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_http_downgrade" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_https_upgrade" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_port_change" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_prepare_body_position_non_stream" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_partially_read_body" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body_no_seek" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body_failed_seek" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body_failed_tell" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_basic_auth_str_is_always_native[test-test-Basic dGVzdDp0ZXN0]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_basic_auth_str_is_always_native[\xd0\xb8\xd0\xbc\xd1\x8f-\xd0\xbf\xd0\xb0\xd1\x80\xd0\xbe\xd0\xbb\xd1\x8c-Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_proxy_auth" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_proxy_auth_empty_pass" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_without_release_conn" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_init[cid0]" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_init[cid1]" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_init[cid2]" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_docstring_example" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_len" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_getitem" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_fixes_649" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_delitem" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_contains" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_get" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_update" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_update_retains_unchanged" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_iter" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_equality" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_setdefault" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_lower_items" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_preserve_key_case" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_preserve_last_key_case" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_copy" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_valid_str" time="0.005" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_invalid_int[100-TypeError]" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_invalid_int[woops-ValueError]" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_none" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieMaxAge" name="test_max_age_valid_int" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieMaxAge" name="test_max_age_invalid_str" time="0.000" /><testcase classname="tests.test_requests.TestTimeout" name="test_connect_timeout[timeout0]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;
+&lt;string&gt;:3: LocationParseError</failure></testcase><testcase classname="tests.test_requests.TestRequests" name="test_entry_points" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[MissingSchema-hiwpefhipowhefopw]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidSchema-localhost:3128]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidSchema-localhost.localdomain:3128/]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidSchema-10.122.1.1:3128/]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidURL-http://]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_invalid_url[InvalidURL-http://*example.com]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_basic_building" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_path_is_not_double_encoded" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_params_are_added_before_fragment[http://example.com/path#fragment-http://example.com/path?a=b#fragment]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_params_are_added_before_fragment[http://example.com/path?key=value#fragment-http://example.com/path?key=value&amp;a=b#fragment]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_params_original_order_is_preserved_by_default" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_params_bytes_are_encoded" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_binary_put" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_whitespaces_are_removed_from_url" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_basicauth_encodes_byte_strings" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_errors[http://doesnotexist.google.com-ConnectionError]" time="0.002" /><testcase classname="tests.test_requests.TestRequests" name="test_errors[http://localhost:1-ConnectionError]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_errors[http://fe80::5054:ff:fe5a:fc0-InvalidURL]" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_proxy_error" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_non_prepared_request_error" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_prepare_request_with_bytestring_url" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_links" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_parameters" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_keeps_len" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_keeps_items" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_keys" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_values" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_as_dict_items" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_duplicate_names_different_domains" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_duplicate_names_raises_cookie_conflict_error" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_cookie_policy_copy" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_empty_response_has_content_none" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_is_iterable" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_decode_unicode" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_response_reason_unicode" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_reason_unicode_fallback" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_chunk_size_type" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_http_error" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_transport_adapter_ordering" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_session_get_adapter_prefix_matching" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_session_get_adapter_prefix_matching_mixed_case" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_session_get_adapter_prefix_matching_is_case_insensitive" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_long_authinfo_in_url" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_nonhttp_schemes_dont_check_URLs" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_host_change" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_http_downgrade" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_https_upgrade" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_port_change" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[https://example.com:443/foo-https://example.com/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[http://example.com:80/foo-http://example.com/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[https://example.com/foo-https://example.com:443/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_should_strip_auth_default_port[http://example.com/foo-http://example.com:80/bar]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_prepare_body_position_non_stream" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_partially_read_body" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body_no_seek" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body_failed_seek" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_rewind_body_failed_tell" time="0.001" /><testcase classname="tests.test_requests.TestRequests" name="test_basic_auth_str_is_always_native[test-test-Basic dGVzdDp0ZXN0]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_basic_auth_str_is_always_native[\xd0\xb8\xd0\xbc\xd1\x8f-\xd0\xbf\xd0\xb0\xd1\x80\xd0\xbe\xd0\xbb\xd1\x8c-Basic 0LjQvNGPOtC/0LDRgNC+0LvRjA==]" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_proxy_auth" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_proxy_auth_empty_pass" time="0.000" /><testcase classname="tests.test_requests.TestRequests" name="test_response_without_release_conn" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_init[cid0]" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_init[cid1]" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_init[cid2]" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_docstring_example" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_len" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_getitem" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_fixes_649" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_delitem" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_contains" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_get" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_update" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_update_retains_unchanged" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_iter" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_equality" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_setdefault" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_lower_items" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_preserve_key_case" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_preserve_last_key_case" time="0.000" /><testcase classname="tests.test_requests.TestCaseInsensitiveDict" name="test_copy" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_valid_str" time="0.005" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_invalid_int[100-TypeError]" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_invalid_int[woops-ValueError]" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieExpires" name="test_expires_none" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieMaxAge" name="test_max_age_valid_int" time="0.000" /><testcase classname="tests.test_requests.TestMorselToCookieMaxAge" name="test_max_age_invalid_str" time="0.000" /><testcase classname="tests.test_requests.TestTimeout" name="test_connect_timeout[timeout0]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -145,7 +145,7 @@ E               OSError: [Errno 101] Network is unreachable
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa424e59c50&gt;
+self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a6248c10&gt;
 method = 'GET', url = '/', body = None
 headers = {'User-Agent': 'python-requests/2.26.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
@@ -366,7 +366,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
            ^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;
+self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -396,13 +396,13 @@ self = &lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;
 &gt;           raise NewConnectionError(
                 self, "Failed to establish a new connection: %s" % e
             )
-E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
+E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
 
 .bench-venv/lib/python3.11/site-packages/urllib3/connection.py:186: NewConnectionError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa424c08b50&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a6274890&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=None, total=None), verify = True
 cert = None, proxies = OrderedDict()
@@ -473,9 +473,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 self = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 method = 'GET', url = '/', response = None
-error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
-_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa424e59c50&gt;
-_stacktrace = &lt;traceback object at 0xeaa42489f080&gt;
+error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
+_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a6248c10&gt;
+_stacktrace = &lt;traceback object at 0xe9b8a62ad340&gt;
 
     def increment(
         self,
@@ -566,13 +566,13 @@ _stacktrace = &lt;traceback object at 0xeaa42489f080&gt;
     
         if new_retry.is_exhausted():
 &gt;           raise MaxRetryError(_pool, url, error or ResponseError(cause))
-E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
 .bench-venv/lib/python3.11/site-packages/urllib3/util/retry.py:594: MaxRetryError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;tests.test_requests.TestTimeout object at 0xeaa4248ddb50&gt;
+self = &lt;tests.test_requests.TestTimeout object at 0xe9b8a5f19350&gt;
 timeout = (0.1, None)
 
     @pytest.mark.parametrize(
@@ -600,7 +600,7 @@ requests/sessions.py:645: in send
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa424c08b50&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a6274890&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=None, total=None), verify = True
 cert = None, proxies = OrderedDict()
@@ -730,9 +730,9 @@ cert = None, proxies = OrderedDict()
                 raise SSLError(e, request=request)
     
 &gt;           raise ConnectionError(e, request=request)
-E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa42489f550&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5b1a390&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
-requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests.TestTimeout" name="test_connect_timeout[timeout1]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;
+requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests.TestTimeout" name="test_connect_timeout[timeout1]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -815,7 +815,7 @@ E               OSError: [Errno 101] Network is unreachable
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa423ff2110&gt;
+self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a5625f10&gt;
 method = 'GET', url = '/', body = None
 headers = {'User-Agent': 'python-requests/2.26.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
@@ -1036,7 +1036,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
            ^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;
+self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -1066,13 +1066,13 @@ self = &lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;
 &gt;           raise NewConnectionError(
                 self, "Failed to establish a new connection: %s" % e
             )
-E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
+E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
 
 .bench-venv/lib/python3.11/site-packages/urllib3/connection.py:186: NewConnectionError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa423ff1010&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a5624650&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=None, total=None), verify = True
 cert = None, proxies = OrderedDict()
@@ -1143,9 +1143,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 self = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 method = 'GET', url = '/', response = None
-error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
-_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa423ff2110&gt;
-_stacktrace = &lt;traceback object at 0xeaa423ff1f00&gt;
+error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
+_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a5625f10&gt;
+_stacktrace = &lt;traceback object at 0xe9b8a5625b80&gt;
 
     def increment(
         self,
@@ -1236,13 +1236,13 @@ _stacktrace = &lt;traceback object at 0xeaa423ff1f00&gt;
     
         if new_retry.is_exhausted():
 &gt;           raise MaxRetryError(_pool, url, error or ResponseError(cause))
-E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
 .bench-venv/lib/python3.11/site-packages/urllib3/util/retry.py:594: MaxRetryError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;tests.test_requests.TestTimeout object at 0xeaa4248ddcd0&gt;
+self = &lt;tests.test_requests.TestTimeout object at 0xe9b8a5f194d0&gt;
 timeout = Timeout(connect=0.1, read=None, total=None)
 
     @pytest.mark.parametrize(
@@ -1270,7 +1270,7 @@ requests/sessions.py:645: in send
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa423ff1010&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a5624650&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=None, total=None), verify = True
 cert = None, proxies = OrderedDict()
@@ -1400,9 +1400,9 @@ cert = None, proxies = OrderedDict()
                 raise SSLError(e, request=request)
     
 &gt;           raise ConnectionError(e, request=request)
-E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa423ff2b10&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a5625250&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
-requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests.TestTimeout" name="test_total_timeout_connect[timeout0]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;
+requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests.TestTimeout" name="test_total_timeout_connect[timeout0]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -1485,7 +1485,7 @@ E               OSError: [Errno 101] Network is unreachable
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa424012410&gt;
+self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a5809f10&gt;
 method = 'GET', url = '/', body = None
 headers = {'User-Agent': 'python-requests/2.26.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
@@ -1706,7 +1706,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
            ^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;
+self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -1736,13 +1736,13 @@ self = &lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;
 &gt;           raise NewConnectionError(
                 self, "Failed to establish a new connection: %s" % e
             )
-E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
+E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
 
 .bench-venv/lib/python3.11/site-packages/urllib3/connection.py:186: NewConnectionError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa424011310&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a5808bd0&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=0.1, total=None), verify = True, cert = None
 proxies = OrderedDict()
@@ -1813,9 +1813,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 self = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 method = 'GET', url = '/', response = None
-error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
-_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa424012410&gt;
-_stacktrace = &lt;traceback object at 0xeaa424012240&gt;
+error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
+_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a5809f10&gt;
+_stacktrace = &lt;traceback object at 0xe9b8a5809a00&gt;
 
     def increment(
         self,
@@ -1906,13 +1906,13 @@ _stacktrace = &lt;traceback object at 0xeaa424012240&gt;
     
         if new_retry.is_exhausted():
 &gt;           raise MaxRetryError(_pool, url, error or ResponseError(cause))
-E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
 .bench-venv/lib/python3.11/site-packages/urllib3/util/retry.py:594: MaxRetryError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;tests.test_requests.TestTimeout object at 0xeaa4248de490&gt;
+self = &lt;tests.test_requests.TestTimeout object at 0xe9b8a5f19c90&gt;
 timeout = (0.1, 0.1)
 
     @pytest.mark.parametrize(
@@ -1940,7 +1940,7 @@ requests/sessions.py:645: in send
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa424011310&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a5808bd0&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=0.1, total=None), verify = True, cert = None
 proxies = OrderedDict()
@@ -2070,9 +2070,9 @@ proxies = OrderedDict()
                 raise SSLError(e, request=request)
     
 &gt;           raise ConnectionError(e, request=request)
-E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424012d50&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a580a890&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
-requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests.TestTimeout" name="test_total_timeout_connect[timeout1]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;
+requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests.TestTimeout" name="test_total_timeout_connect[timeout1]" time="0.001"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -2155,7 +2155,7 @@ E               OSError: [Errno 101] Network is unreachable
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa4242139d0&gt;
+self = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a561b010&gt;
 method = 'GET', url = '/', body = None
 headers = {'User-Agent': 'python-requests/2.26.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
 retries = Retry(total=0, connect=None, read=False, redirect=None, status=None)
@@ -2376,7 +2376,7 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
            ^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;
+self = &lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;
 
     def _new_conn(self):
         """Establish a socket connection and set nodelay settings on it.
@@ -2406,13 +2406,13 @@ self = &lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;
 &gt;           raise NewConnectionError(
                 self, "Failed to establish a new connection: %s" % e
             )
-E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
+E           urllib3.exceptions.NewConnectionError: &lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
 
 .bench-venv/lib/python3.11/site-packages/urllib3/connection.py:186: NewConnectionError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa4242122d0&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a5619d90&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=0.1, total=None), verify = True, cert = None
 proxies = OrderedDict()
@@ -2483,9 +2483,9 @@ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
 
 self = Retry(total=0, connect=None, read=False, redirect=None, status=None)
 method = 'GET', url = '/', response = None
-error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
-_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xeaa4242139d0&gt;
-_stacktrace = &lt;traceback object at 0xeaa4242136c0&gt;
+error = NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
+_pool = &lt;urllib3.connectionpool.HTTPConnectionPool object at 0xe9b8a561b010&gt;
+_stacktrace = &lt;traceback object at 0xe9b8a561aec0&gt;
 
     def increment(
         self,
@@ -2576,13 +2576,13 @@ _stacktrace = &lt;traceback object at 0xeaa4242136c0&gt;
     
         if new_retry.is_exhausted():
 &gt;           raise MaxRetryError(_pool, url, error or ResponseError(cause))
-E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
 .bench-venv/lib/python3.11/site-packages/urllib3/util/retry.py:594: MaxRetryError
 
 During handling of the above exception, another exception occurred:
 
-self = &lt;tests.test_requests.TestTimeout object at 0xeaa4248de610&gt;
+self = &lt;tests.test_requests.TestTimeout object at 0xe9b8a5f19e10&gt;
 timeout = Timeout(connect=0.1, read=0.1, total=None)
 
     @pytest.mark.parametrize(
@@ -2610,7 +2610,7 @@ requests/sessions.py:645: in send
         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
 
-self = &lt;requests.adapters.HTTPAdapter object at 0xeaa4242122d0&gt;
+self = &lt;requests.adapters.HTTPAdapter object at 0xe9b8a5619d90&gt;
 request = &lt;PreparedRequest [GET]&gt;, stream = False
 timeout = Timeout(connect=0.1, read=0.1, total=None), verify = True, cert = None
 proxies = OrderedDict()
@@ -2740,6 +2740,6 @@ proxies = OrderedDict()
                 raise SSLError(e, request=request)
     
 &gt;           raise ConnectionError(e, request=request)
-E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xeaa424213ed0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;urllib3.connection.HTTPConnection object at 0xe9b8a561bd90&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
 
-requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests" name="test_json_encodes_as_bytes" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_data_argument_accepts_tuples[data0]" time="0.000" /><testcase classname="tests.test_requests" name="test_data_argument_accepts_tuples[data1]" time="0.000" /><testcase classname="tests.test_requests" name="test_data_argument_accepts_tuples[data2]" time="0.000" /><testcase classname="tests.test_requests" name="test_prepared_copy[None]" time="0.000" /><testcase classname="tests.test_requests" name="test_prepared_copy[kwargs1]" time="0.000" /><testcase classname="tests.test_requests" name="test_prepared_copy[kwargs2]" time="0.001" /><testcase classname="tests.test_requests" name="test_prepared_copy[kwargs3]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://google.com-http://google.com/]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://\u30b8\u30a7\u30fc\u30d4\u30fc\u30cb\u30c3\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]" time="0.003" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://\xe3\x82\xb8\xe3\x82\xa7\xe3\x83\xbc\xe3\x83\x94\xe3\x83\xbc\xe3\x83\x8b\xe3\x83\x83\xe3\x82\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://stra\xdfe.de/stra\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://stra\xc3\x9fe.de/stra\xc3\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://K\xf6nigsg\xe4\xdfchen.de/stra\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://K\xc3\xb6nigsg\xc3\xa4\xc3\x9fchen.de/stra\xc3\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*.google.com0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*.google.com1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://\u2603.net/]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[mailto:user@example.org-mailto:user@example.org0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[mailto:user@example.org-mailto:user@example.org1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]" time="0.000" /></testsuite></testsuites>
+requests/adapters.py:519: ConnectionError</failure></testcase><testcase classname="tests.test_requests" name="test_json_encodes_as_bytes" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[http_proxy-http://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[https_proxy-https://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[all_proxy-http://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_proxy_env_vars_override_default[all_proxy-https://example.com-socks5://proxy.com:9876]" time="0.001" /><testcase classname="tests.test_requests" name="test_data_argument_accepts_tuples[data0]" time="0.000" /><testcase classname="tests.test_requests" name="test_data_argument_accepts_tuples[data1]" time="0.000" /><testcase classname="tests.test_requests" name="test_data_argument_accepts_tuples[data2]" time="0.000" /><testcase classname="tests.test_requests" name="test_prepared_copy[None]" time="0.000" /><testcase classname="tests.test_requests" name="test_prepared_copy[kwargs1]" time="0.000" /><testcase classname="tests.test_requests" name="test_prepared_copy[kwargs2]" time="0.001" /><testcase classname="tests.test_requests" name="test_prepared_copy[kwargs3]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://google.com-http://google.com/]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://\u30b8\u30a7\u30fc\u30d4\u30fc\u30cb\u30c3\u30af.jp-http://xn--hckqz9bzb1cyrb.jp/]" time="0.003" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://\xe3\x82\xb8\xe3\x82\xa7\xe3\x83\xbc\xe3\x83\x94\xe3\x83\xbc\xe3\x83\x8b\xe3\x83\x83\xe3\x82\xaf.jp-http://xn--hckqz9bzb1cyrb.jp/]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://stra\xdfe.de/stra\xdfe-http://xn--strae-oqa.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://stra\xc3\x9fe.de/stra\xc3\x9fe-http://xn--strae-oqa.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://K\xf6nigsg\xe4\xdfchen.de/stra\xdfe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://K\xc3\xb6nigsg\xc3\xa4\xc3\x9fchen.de/stra\xc3\x9fe-http://xn--knigsgchen-b4a3dun.de/stra%C3%9Fe]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://xn--n3h.net/-http://xn--n3h.net/1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/0]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_url[http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/-http://[1200:0000:ab00:1234:0000:2552:7777:1313]:12345/1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*.google.com0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*.google.com1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://*1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_preparing_bad_url[http://\u2603.net/]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[http+unix://%2Fvar%2Frun%2Fsocket/path%7E-http+unix://%2Fvar%2Frun%2Fsocket/path~1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[mailto:user@example.org-mailto:user@example.org0]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[mailto:user@example.org-mailto:user@example.org1]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_url_mutation[data:SSDimaUgUHl0aG9uIQ==-data:SSDimaUgUHl0aG9uIQ==]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params0-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]" time="0.001" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[http+unix://%2Fvar%2Frun%2Fsocket/path-params1-http+unix://%2Fvar%2Frun%2Fsocket/path?key=value]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[mailto:user@example.org-params2-mailto:user@example.org]" time="0.000" /><testcase classname="tests.test_requests.TestPreparingURLs" name="test_parameters_for_nonstandard_schemes[mailto:user@example.org-params3-mailto:user@example.org]" time="0.000" /></testsuite></testsuites>

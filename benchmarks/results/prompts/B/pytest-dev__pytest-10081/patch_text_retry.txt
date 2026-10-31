@@ -1,0 +1,15 @@
+src/_pytest/unittest.py
+<<<<<<< SEARCH
+            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
+                self._explicit_tearDown = self._testcase.tearDown
+                setattr(self._testcase, "tearDown", lambda *args: None)
+=======
+            if (
+                self.config.getoption("usepdb")
+                and not _is_skipped(self.obj)
+                and not _is_skipped(self._testcase)
+            ):
+                self._explicit_tearDown = self._testcase.tearDown
+                setattr(self._testcase, "tearDown", lambda *args: None)
+>>>>>>> REPLACE
+APPROVE

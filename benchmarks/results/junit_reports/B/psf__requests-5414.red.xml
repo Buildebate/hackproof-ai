@@ -1,5 +1,13 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.060" timestamp="2026-10-30T13:12:05.308403+00:00" hostname="8795f987c1f7"><testcase classname="tests.test_repro_ba23e825b8d4" name="test_leading_dot_host_raises_invalid_url" time="0.001"><failure message="Failed: DID NOT RAISE InvalidURL">def test_leading_dot_host_raises_invalid_url():
-&gt;       with pytest.raises(InvalidURL):
-E       Failed: DID NOT RAISE InvalidURL
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.061" timestamp="2026-10-31T08:17:55.978510+00:00" hostname="01c0213ad7db"><testcase classname="tests.test_repro_7abca3f4919a" name="test_leading_dot_host_raises_invalid_url" time="0.001"><failure message="AssertionError: expected InvalidURL for http://.example.com, got no exception&#10;assert False">def test_leading_dot_host_raises_invalid_url():
+        req = requests.PreparedRequest()
+        try:
+            req.prepare_url("http://.example.com", None)
+        except InvalidURL:
+            return
+        except UnicodeError as e:
+            assert False, f"expected InvalidURL, got UnicodeError: {e}"
+&gt;       assert False, "expected InvalidURL for http://.example.com, got no exception"
+E       AssertionError: expected InvalidURL for http://.example.com, got no exception
+E       assert False
 
-tests/test_repro_ba23e825b8d4.py:6: Failed</failure></testcase></testsuite></testsuites>
+tests/test_repro_7abca3f4919a.py:13: AssertionError</failure></testcase></testsuite></testsuites>

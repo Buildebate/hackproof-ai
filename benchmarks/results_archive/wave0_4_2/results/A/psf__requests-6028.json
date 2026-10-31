@@ -1,0 +1,15 @@
+{
+ "task": "psf__requests-6028",
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T05:25:28.371609+00:00",
+ "status": "failed",
+ "done": true,
+ "reason": "unmeasurable: unresolved test IDs: tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/test_utils.py], tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/__init__.py], tests/test_utils.py::TestExtractZippedPaths::test_unzipped_paths_unchanged[/location], tests/test_utils.py::test_get_auth_from_url[http://%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20:%25%21%2A%27%28%29%3B%3A%40%26%3D%2B%24%2C%2F%3F%23%5B%5D%20@request.com/url.html#test-auth0]",
+ "usage": {
+  "prompt_tokens": 0,
+  "completion_tokens": 0,
+  "total_tokens": 0,
+  "per_call": []
+ }
+}

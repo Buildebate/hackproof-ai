@@ -1,0 +1,12 @@
+{
+ "files": [
+  "src/_pytest/skipping.py",
+  "testing/test_helpconfig.py",
+  "doc/en/example/xfail_demo.py",
+  "bench/skip.py",
+  "testing/test_faulthandler.py"
+ ],
+ "elapsed_ms": 211199,
+ "backend": "contriever-transformer-cpu",
+ "issue_sha256": "aa0b91bfbff2566ee8ae8f395277a456ee1cf849b89763a6160597527d15f270"
+}

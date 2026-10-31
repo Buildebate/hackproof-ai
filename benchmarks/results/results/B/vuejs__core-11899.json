@@ -2,14 +2,214 @@
  "task": "vuejs__core-11899",
  "mode": "B",
  "tier": "oci",
- "ts": "2026-10-30T14:44:58.901658+00:00",
- "status": "failed",
- "done": true,
- "reason": "unmeasurable: unresolved test IDs: packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)",
+ "ts": "2026-10-31T09:39:46.360796+00:00",
+ "base_ref": "706d4ac1d0210b2d9134b3228280187fe02fc971",
+ "agent": {
+  "ok": false,
+  "reason": "patch application failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 69-72, similarity 0.60):\n61 |           }\n62 |         })\n63 |       }\n64 |     },\n65 |   }\n66 | }\n67 | \n68 | const processedRules = new WeakSet<Rule>()\n69 | \n70 | function processRule(id: string, rule: Rule) {\n71 |   if (\n72 |     processedRules.has(rule) ||\n73 |     (rule.parent &&\n74 |       rule.parent.type === 'atrule' &&\n75 |       /-?keyframes$/.test((rule.parent as AtRule).name))\n76 |   ) {\n77 |     return\n78 |   }\n79 |   processedRules.add(rule)\n80 |   let deep = false",
+  "files": [
+   "packages/runtime-dom/src/jsx.ts",
+   "packages/runtime-core/src/compat/compatConfig.ts",
+   "packages/shared/src/patchFlags.ts",
+   "packages/compiler-core/src/options.ts",
+   "packages/compiler-sfc/src/style/pluginScoped.ts"
+  ],
+  "localize_ms": 3046,
+  "backend": "hybrid-rrf-hash-cpu",
+  "red_rel": "packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts",
+  "debate": {
+   "rounds_used": 2,
+   "converged": false,
+   "score": 0.5,
+   "duration_ms": 182101
+  }
+ },
  "usage": {
-  "prompt_tokens": 0,
-  "completion_tokens": 0,
-  "total_tokens": 0,
-  "per_call": []
+  "prompt_tokens": 115604,
+  "completion_tokens": 82576,
+  "total_tokens": 198180,
+  "per_call": [
+   {
+    "role": "SparkRedSynthesis",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 10638,
+    "completion_tokens": 6695,
+    "total_tokens": 17333,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 4004,
+    "completion_tokens": 1452,
+    "total_tokens": 5456,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 16806,
+    "completion_tokens": 651,
+    "total_tokens": 17457,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 379,
+    "completion_tokens": 836,
+    "total_tokens": 1215,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 371,
+    "completion_tokens": 811,
+    "total_tokens": 1182,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 799,
+    "completion_tokens": 1066,
+    "total_tokens": 1865,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 660,
+    "completion_tokens": 1560,
+    "total_tokens": 2220,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 4554,
+    "completion_tokens": 1986,
+    "total_tokens": 6540,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 17356,
+    "completion_tokens": 544,
+    "total_tokens": 17900,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 929,
+    "completion_tokens": 500,
+    "total_tokens": 1429,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 921,
+    "completion_tokens": 392,
+    "total_tokens": 1313,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1349,
+    "completion_tokens": 1038,
+    "total_tokens": 2387,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1234,
+    "completion_tokens": 1109,
+    "total_tokens": 2343,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "PatchSynthesis",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 673,
+    "completion_tokens": 19697,
+    "total_tokens": 20370,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 16806,
+    "completion_tokens": 651,
+    "total_tokens": 17457,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 799,
+    "completion_tokens": 1066,
+    "total_tokens": 1865,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 17356,
+    "completion_tokens": 544,
+    "total_tokens": 17900,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1349,
+    "completion_tokens": 1038,
+    "total_tokens": 2387,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 673,
+    "completion_tokens": 19697,
+    "total_tokens": 20370,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 17948,
+    "completion_tokens": 21243,
+    "total_tokens": 39191,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": true
+ },
+ "status": "failed",
+ "reason": "patch application failed: vuejs__core-11899: routed patch rejected: packages/compiler-sfc/src/style/pluginScoped.ts: block 0: SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 69-72, similarity 0.60):\n61 |           }\n62 |         })\n63 |       }\n64 |     },\n65 |   }\n66 | }\n67 | \n68 | const processedRules = new WeakSet<Rule>()\n69 | \n70 | function processRule(id: string, rule: Rule) {\n71 |   if (\n72 |     processedRules.has(rule) ||\n73 |     (rule.parent &&\n74 |       rule.parent.type === 'atrule' &&\n75 |       /-?keyframes$/.test((rule.parent as AtRule).name))\n76 |   ) {\n77 |     return\n78 |   }\n79 |   processedRules.add(rule)\n80 |   let deep = false",
+ "done": true,
+ "red": {
+  "rel": "packages/compiler-sfc/__tests__/repro-ea4ea8c4e300.test.ts",
+  "sha256": "5fe73d13eea3ca4af2784c287b3330bed027984b23a4a455f2e86d6bafc9bc3c",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 1057,
+  "junit_sha256": "3cc42a0a77610db211dfa1b1576478c4bb48be86bf6fb20bbbade8ca11a31cd9"
  }
 }

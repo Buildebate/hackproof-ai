@@ -2,14 +2,43 @@
  "task": "vuejs__core-11899",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T06:05:27.558884+00:00",
- "status": "failed",
- "done": true,
- "reason": "unmeasurable: unresolved test IDs: packages/compiler-sfc/__tests__/compileStyle.spec.ts > SFC scoped CSS > deprecated syntax > >>> (deprecated syntax)",
+ "ts": "2026-10-31T09:53:03.138059+00:00",
+ "base_ref": "706d4ac1d0210b2d9134b3228280187fe02fc971",
+ "agent": {
+  "ok": false,
+  "reason": "no complete SEARCH/REPLACE blocks",
+  "files": [
+   "packages/runtime-dom/src/jsx.ts",
+   "packages/runtime-core/src/compat/compatConfig.ts",
+   "packages/shared/src/patchFlags.ts",
+   "packages/compiler-core/src/options.ts",
+   "packages/compiler-sfc/src/style/pluginScoped.ts"
+  ],
+  "localize_ms": 3624,
+  "backend": "hybrid-rrf-hash-cpu"
+ },
  "usage": {
-  "prompt_tokens": 0,
-  "completion_tokens": 0,
-  "total_tokens": 0,
-  "per_call": []
- }
+  "prompt_tokens": 16605,
+  "completion_tokens": 3516,
+  "total_tokens": 20121,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 16605,
+    "completion_tokens": 3516,
+    "total_tokens": 20121,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
+ "status": "failed",
+ "reason": "no complete SEARCH/REPLACE blocks",
+ "done": true
 }

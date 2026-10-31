@@ -1,16 +1,157 @@
+changelog/10142.bugfix.rst
 <<<<<<< SEARCH
-    def teardown(self) -> None:
-        if self._explicit_tearDown is not None:
-            self._explicit_tearDown()
-            self._explicit_tearDown = None
-        self._testcase = None
-        self._obj = None
 =======
-    def teardown(self) -> None:
-        if self._explicit_tearDown is not None:
-            if not _is_skipped(getattr(self.parent, "obj", None)):
-                self._explicit_tearDown()
-            self._explicit_tearDown = None
-        self._testcase = None
-        self._obj = None
+Fixed ``--pdb`` running ``setUp``/``tearDown`` and test methods of ``unittest.TestCase`` classes skipped at class level with ``@unittest.skip``/``@unittest.skipIf``/``@unittest.skipUnless`` instead of reporting them as skipped.
+>>>>>>> REPLACE
+
+src/_pytest/unittest.py
+<<<<<<< SEARCH
+            # pdb will be called for an exception in the test method.
+            testcase = self._testcase
+            assert testcase is not None
+            if self.config.getoption("usepdb") and not _is_skipped(self.obj):
+                testcase.debug()
+            else:
+                testcase(result=self)  # type: ignore[arg-type]
+=======
+            # pdb will be called for an exception in the test method.
+            testcase = self._testcase
+            assert testcase is not None
+            # testcase.debug() ignores __unittest_skip__ entirely, so do not
+            # use it for skipped cases. _is_skipped() checks the flag itself,
+            # not __unittest_skip_why__, covering class-level skips with
+            # reasons such as None, "" or any other value, as set on the
+            # TestCase instance via its class by skip/skipIf/skipUnless.
+            if (
+                self.config.getoption("usepdb")
+                and not _is_skipped(self.obj)
+                and not _is_skipped(testcase)
+            ):
+                testcase.debug()
+            else:
+                testcase(result=self)  # type: ignore[arg-type]
+>>>>>>> REPLACE
+
+testing/test_unittest_pdb_skip.py
+<<<<<<< SEARCH
+=======
+import pytest
+
+
+@pytest.mark.parametrize(
+    "decorator",
+    [
+        "@unittest.skip(None)",
+        '@unittest.skip("")',
+        '@unittest.skip("héllo ☃ \\x00")',
+        '@unittest.skipIf("truthy-string", "reason")',
+    ],
+)
+def test_pdb_class_skip_suppresses_setup_teardown(pytester, decorator):
+    pytester.makepyfile(
+        f"""
+        import unittest
+
+        calls = []
+
+        {decorator}
+        class TestSkipped(unittest.TestCase):
+            def setUp(self):
+                calls.append("setUp")
+                raise AssertionError("setUp must not run for skipped class")
+
+            def tearDown(self):
+                calls.append("tearDown")
+                raise AssertionError("tearDown must not run for skipped class")
+
+            def test_one(self):
+                calls.append("test_one")
+
+            def test_two(self):
+                calls.append("test_two")
+
+        def test_no_calls():
+            assert calls == []
+        """
+    )
+    result = pytester.runpytest_inprocess("--pdb")
+    result.assert_outcomes(passed=1, skipped=2)
+
+
+def test_pdb_class_skip_teardown_count_one_and_two_tests(pytester):
+    pytester.makepyfile(
+        """
+        import unittest
+
+        calls = []
+
+        @unittest.skip("skipped")
+        class TestOne(unittest.TestCase):
+            def tearDown(self):
+                calls.append("one")
+
+            def test_a(self):
+                pass
+
+        @unittest.skip("skipped")
+        class TestTwo(unittest.TestCase):
+            def tearDown(self):
+                calls.append("two")
+
+            def test_a(self):
+                pass
+
+            def test_b(self):
+                pass
+
+        def test_no_teardown_calls():
+            assert calls == []
+        """
+    )
+    result = pytester.runpytest_inprocess("--pdb")
+    result.assert_outcomes(passed=1, skipped=3)
+
+
+def test_pdb_class_skip_does_not_mutate_shared_state(pytester):
+    pytester.makepyfile(
+        """
+        import os
+        import unittest
+
+        calls = []
+
+        @unittest.skip("skipped")
+        class TestMutating(unittest.TestCase):
+            def tearDown(self):
+                calls.append("tearDown")
+                with open("mutated.txt", "w") as f:
+                    f.write("mutated")
+
+            def test_one(self):
+                pass
+
+        def test_state_unchanged():
+            assert calls == []
+            assert not os.path.exists("mutated.txt")
+        """
+    )
+    result = pytester.runpytest_inprocess("--pdb")
+    result.assert_outcomes(passed=1, skipped=1)
+
+
+def test_pdb_skipped_empty_testcase(pytester):
+    pytester.makepyfile(
+        """
+        import unittest
+
+        @unittest.skip("skipped")
+        class TestEmpty(unittest.TestCase):
+            pass
+
+        def test_ok():
+            assert True
+        """
+    )
+    result = pytester.runpytest_inprocess("--pdb")
+    result.assert_outcomes(passed=1)
 >>>>>>> REPLACE

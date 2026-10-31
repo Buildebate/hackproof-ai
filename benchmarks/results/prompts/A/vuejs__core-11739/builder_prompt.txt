@@ -1,4 +1,4 @@
-You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences. Prefix each block with its repo-relative target file path on its own line. Copy every SEARCH block byte-for-byte from the shown CODE CONTEXT (exact indentation and punctuation); never reconstruct code from memory. After the blocks, end your verdict with exactly one marker word on its own final line: APPROVE if the patch is complete, or REVISE if the context is insufficient to write one.
 BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
 
 ISSUE:
@@ -96,393 +96,1768 @@ _No response_
 Essentially, the problem occurs when you use `v-bind` in a parent component (which under the hood inlines CSS custom properties on the root of the child component) and then you ALSO have bound dynamic styles to the root element internally.
 
 CODE CONTEXT:
-packages/compiler-ssr/__tests__/ssrSuspense.spec.ts:
-import { compile } from '../src'
+TOP-1 FULL FILE packages/runtime-core/src/apiSetupHelpers.ts:
+import {
+  type IfAny,
+  type LooseRequired,
+  type Prettify,
+  type UnionToIntersection,
+  extend,
+  isArray,
+  isFunction,
+  isPromise,
+} from '@vue/shared'
+import {
+  type SetupContext,
+  createSetupContext,
+  getCurrentInstance,
+  setCurrentInstance,
+  unsetCurrentInstance,
+} from './component'
+import type { EmitFn, EmitsOptions, ObjectEmitsOptions } from './componentEmits'
+import type {
+  ComponentOptionsBase,
+  ComponentOptionsMixin,
+  ComputedOptions,
+  MethodOptions,
+} from './componentOptions'
+import type {
+  ComponentObjectPropsOptions,
+  ComponentPropsOptions,
+  ExtractPropTypes,
+  PropOptions,
+} from './componentProps'
+import { warn } from './warning'
+import type { SlotsType, StrictUnwrapSlotsType } from './componentSlots'
+import type { Ref } from '@vue/reactivity'
 
-describe('ssr compile: suspense', () => {
-  test('implicit default', () => {
-    expect(compile(`<suspense><foo/></suspense>`).code).toMatchInlineSnapshot(`
-      "const { resolveComponent: _resolveComponent, withCtx: _withCtx } = require("vue")
-      const { ssrRenderComponent: _ssrRenderComponent, ssrRenderSuspense: _ssrRenderSuspense } = require("vue/server-renderer")
+// dev only
+const warnRuntimeUsage = (method: string) =>
+  warn(
+    `${method}() is a compiler-hint helper that is only usable inside ` +
+      `<script setup> of a single file component. Its arguments should be ` +
+      `compiled away and passing it at runtime has no effect.`,
+  )
 
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _component_foo = _resolveComponent("foo")
-
-        _ssrRenderSuspense(_push, {
-          default: () => {
-            _push(_ssrRenderComponent(_component_foo, null, null, _parent))
-          },
-          _: 1 /* STABLE */
-        })
-      }"
-    `)
-  })
-
-  test('explicit slots', () => {
-    expect(
-      compile(`<suspense>
-      <template #default>
-        <foo/>
-      </template>
-      <template #fallback>
-        loading...
-      </template>
-    </suspense>`).code,
-    ).toMatchInlineSnapshot(`
-      "const { resolveComponent: _resolveComponent, withCtx: _withCtx } = require("vue")
-      const { ssrRenderComponent: _ssrRenderComponent, ssrRenderSuspense: _ssrRenderSuspense } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _component_foo = _resolveComponent("foo")
-
-        _ssrRenderSuspense(_push, {
-          default: () => {
-            _push(_ssrRenderComponent(_component_foo, null, null, _parent))
-          },
-          fallback: () => {
-            _push(\` loading... \`)
-          },
-          _: 1 /* STABLE */
-        })
-      }"
-    `)
-  })
-})
-
-
-packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts:
-import { BindingTypes } from '@vue/compiler-dom'
-import { compile } from '../src'
-
-describe('ssr: inject <style vars>', () => {
-  test('basic', () => {
-    expect(
-      compile(`<div/>`, {
-        ssrCssVars: `{ color }`,
-      }).code,
-    ).toMatchInlineSnapshot(`
-      "const { mergeProps: _mergeProps } = require("vue")
-      const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _cssVars = { style: { color: _ctx.color }}
-        _push(\`<div\${_ssrRenderAttrs(_mergeProps(_attrs, _cssVars))}></div>\`)
-      }"
-    `)
-  })
-
-  test('fragment', () => {
-    expect(
-      compile(`<div/><div/>`, {
-        ssrCssVars: `{ color }`,
-      }).code,
-    ).toMatchInlineSnapshot(`
-      "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _cssVars = { style: { color: _ctx.color }}
-        _push(\`<!--[--><div\${
-          _ssrRenderAttrs(_cssVars)
-        }></div><div\${
-          _ssrRenderAttrs(_cssVars)
-        }></div><!--]-->\`)
-      }"
-    `)
-  })
-
-  test('passing on to components', () => {
-    expect(
-      compile(`<div/><foo/>`, {
-        ssrCssVars: `{ color }`,
-      }).code,
-    ).toMatchInlineSnapshot(`
-      "const { resolveComponent: _resolveComponent } = require("vue")
-      const { ssrRenderAttrs: _ssrRenderAttrs, ssrRenderComponent: _ssrRenderComponent } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _component_foo = _resolveComponent("foo")
-
-        const _cssVars = { style: { color: _ctx.color }}
-        _push(\`<!--[--><div\${_ssrRenderAttrs(_cssVars)}></div>\`)
-        _push(_ssrRenderComponent(_component_foo, _cssVars, null, _parent))
-        _push(\`<!--]-->\`)
-      }"
-    `)
-  })
-
-  test('v-if branches', () => {
-    expect(
-      compile(`<div v-if="ok"/><template v-else><div/><div/></template>`, {
-        ssrCssVars: `{ color }`,
-      }).code,
-    ).toMatchInlineSnapshot(`
-      "const { mergeProps: _mergeProps } = require("vue")
-      const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _cssVars = { style: { color: _ctx.color }}
-        if (_ctx.ok) {
-          _push(\`<div\${_ssrRenderAttrs(_mergeProps(_attrs, _cssVars))}></div>\`)
-        } else {
-          _push(\`<!--[--><div\${
-            _ssrRenderAttrs(_cssVars)
-          }></div><div\${
-            _ssrRenderAttrs(_cssVars)
-          }></div><!--]-->\`)
-        }
-      }"
-    `)
-  })
-
-  test('w/ suspense', () => {
-    expect(
-      compile(
-        `<Suspense>
-          <div>ok</div>
-          <template #fallback>
-            <div>fallback</div>
-          </template>
-        </Suspense>`,
-        {
-          ssrCssVars: `{ color }`,
-        },
-      ).code,
-    ).toMatchInlineSnapshot(`
-      "const { withCtx: _withCtx } = require("vue")
-      const { ssrRenderAttrs: _ssrRenderAttrs, ssrRenderSuspense: _ssrRenderSuspense } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        const _cssVars = { style: { color: _ctx.color }}
-        _ssrRenderSuspense(_push, {
-          fallback: () => {
-            _push(\`<div\${_ssrRenderAttrs(_cssVars)}>fallback</div>\`)
-          },
-          default: () => {
-            _push(\`<div\${_ssrRenderAttrs(_cssVars)}>ok</div>\`)
-          },
-          _: 1 /* STABLE */
-        })
-      }"
-    `)
-  })
-
-  test('inject helpers', () => {
-    const result = compile(`<div/>`, {
-      inline: true,
-      bindingMetadata: { dynamic: BindingTypes.SETUP_MAYBE_REF },
-      ssrCssVars: '{ "--hash": (dynamic) }',
-    })
-
-    expect(result.code).toMatchInlineSnapshot(`
-      "(_ctx, _push, _parent, _attrs) => {
-        const _cssVars = { style: { "--hash": (_unref(dynamic)) }}
-        _push(\`<div\${_ssrRenderAttrs(_mergeProps(_attrs, _cssVars))}></div>\`)
-      }"
-    `)
-    expect(result.ast.helpers).toMatchInlineSnapshot(`
-      Set {
-        Symbol(mergeProps),
-        Symbol(unref),
-      }
-    `)
-  })
-})
-
-
-packages/compiler-ssr/__tests__/ssrVIf.spec.ts:
-import { compile } from '../src'
-
-describe('ssr: v-if', () => {
-  test('basic', () => {
-    expect(compile(`<div v-if="foo"></div>`).code).toMatchInlineSnapshot(`
-      "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        if (_ctx.foo) {
-          _push(\`<div\${_ssrRenderAttrs(_attrs)}></div>\`)
-        } else {
-          _push(\`<!---->\`)
-        }
-      }"
-    `)
-  })
-
-  test('with nested content', () => {
-    expect(compile(`<div v-if="foo">hello<span>ok</span></div>`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-        return function ssrRender(_ctx, _push, _parent, _attrs) {
-          if (_ctx.foo) {
-            _push(\`<div\${_ssrRenderAttrs(_attrs)}>hello<span>ok</span></div>\`)
-          } else {
-            _push(\`<!---->\`)
-          }
-        }"
-      `)
-  })
-
-  test('v-if + v-else', () => {
-    expect(compile(`<div v-if="foo"/><span v-else/>`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-        return function ssrRender(_ctx, _push, _parent, _attrs) {
-          if (_ctx.foo) {
-            _push(\`<div\${_ssrRenderAttrs(_attrs)}></div>\`)
-          } else {
-            _push(\`<span\${_ssrRenderAttrs(_attrs)}></span>\`)
-          }
-        }"
-      `)
-  })
-
-  test('v-if + v-else-if', () => {
-    expect(compile(`<div v-if="foo"/><span v-else-if="bar"/>`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-        return function ssrRender(_ctx, _push, _parent, _attrs) {
-          if (_ctx.foo) {
-            _push(\`<div\${_ssrRenderAttrs(_attrs)}></div>\`)
-          } else if (_ctx.bar) {
-            _push(\`<span\${_ssrRenderAttrs(_attrs)}></span>\`)
-          } else {
-            _push(\`<!---->\`)
-          }
-        }"
-      `)
-  })
-
-  test('v-if + v-else-if + v-else', () => {
-    expect(compile(`<div v-if="foo"/><span v-else-if="bar"/><p v-else/>`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-        return function ssrRender(_ctx, _push, _parent, _attrs) {
-          if (_ctx.foo) {
-            _push(\`<div\${_ssrRenderAttrs(_attrs)}></div>\`)
-          } else if (_ctx.bar) {
-            _push(\`<span\${_ssrRenderAttrs(_attrs)}></span>\`)
-          } else {
-            _push(\`<p\${_ssrRenderAttrs(_attrs)}></p>\`)
-          }
-        }"
-      `)
-  })
-
-  test('<template v-if> (text)', () => {
-    expect(compile(`<template v-if="foo">hello</template>`).code)
-      .toMatchInlineSnapshot(`
-      "
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        if (_ctx.foo) {
-          _push(\`<!--[-->hello<!--]-->\`)
-        } else {
-          _push(\`<!---->\`)
-        }
-      }"
-    `)
-  })
-
-  test('<template v-if> (single element)', () => {
-    // single element should not wrap with fragment
-    expect(compile(`<template v-if="foo"><div>hi</div></template>`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-        return function ssrRender(_ctx, _push, _parent, _attrs) {
-          if (_ctx.foo) {
-            _push(\`<div\${_ssrRenderAttrs(_attrs)}>hi</div>\`)
-          } else {
-            _push(\`<!---->\`)
-          }
-        }"
-      `)
-  })
-
-  test('<template v-if> (multiple element)', () => {
-    expect(
-      compile(`<template v-if="foo"><div>hi</div><div>ho</div></template>`)
-        .code,
-    ).toMatchInlineSnapshot(`
-      "
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        if (_ctx.foo) {
-          _push(\`<!--[--><div>hi</div><div>ho</div><!--]-->\`)
-        } else {
-          _push(\`<!---->\`)
-        }
-      }"
-    `)
-  })
-
-  test('<template v-if> (with v-for inside)', () => {
-    expect(
-      compile(`<template v-if="foo"><div v-for="i in list"/></template>`).code,
-    ).toMatchInlineSnapshot(`
-      "const { ssrRenderList: _ssrRenderList } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        if (_ctx.foo) {
-          _push(\`<!--[-->\`)
-          _ssrRenderList(_ctx.list, (i) => {
-            _push(\`<div></div>\`)
-          })
-          _push(\`<!--]-->\`)
-        } else {
-          _push(\`<!---->\`)
-        }
-      }"
-    `)
-  })
-
-  test('<template v-if> + normal v-else', () => {
-    expect(
-      compile(
-        `<template v-if="foo"><div>hi</div><div>ho</div></template><div v-else/>`,
-      ).code,
-    ).toMatchInlineSnapshot(`
-      "const { ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
-
-      return function ssrRender(_ctx, _push, _parent, _attrs) {
-        if (_ctx.foo) {
-          _push(\`<!--[--><div>hi</div><div>ho</div><!--]-->\`)
-        } else {
-          _push(\`<div\${_ssrRenderAttrs(_attrs)}></div>\`)
-        }
-      }"
-    `)
-  })
-})
-
-
-packages/compiler-ssr/__tests__/ssrVModel.spec.ts:
-import { compile } from '../src'
-
-function compileWithWrapper(src: string) {
-  return compile(`<div>${src}</div>`)
+/**
+ * Vue `<script setup>` compiler macro for declaring component props. The
+ * expected argument is the same as the component `props` option.
+ *
+ * Example runtime declaration:
+ * ```js
+ * // using Array syntax
+ * const props = defineProps(['foo', 'bar'])
+ * // using Object syntax
+ * const props = defineProps({
+ *   foo: String,
+ *   bar: {
+ *     type: Number,
+ *     required: true
+ *   }
+ * })
+ * ```
+ *
+ * Equivalent type-based declaration:
+ * ```ts
+ * // will be compiled into equivalent runtime declarations
+ * const props = defineProps<{
+ *   foo?: string
+ *   bar: number
+ * }>()
+ * ```
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits}
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the
+ * output and should **not** be actually called at runtime.
+ */
+// overload 1: runtime props w/ array
+export function defineProps<PropNames extends string = string>(
+  props: PropNames[],
+): Prettify<Readonly<{ [key in PropNames]?: any }>>
+// overload 2: runtime props w/ object
+export function defineProps<
+  PP extends ComponentObjectPropsOptions = ComponentObjectPropsOptions,
+>(props: PP): Prettify<Readonly<ExtractPropTypes<PP>>>
+// overload 3: typed-based declaration
+export function defineProps<TypeProps>(): DefineProps<
+  LooseRequired<TypeProps>,
+  BooleanKey<TypeProps>
+>
+// implementation
+export function defineProps() {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineProps`)
+  }
+  return null as any
 }
 
-describe('ssr: v-model', () => {
-  test('<input> (text types)', () => {
-    expect(compileWithWrapper(`<input v-model="bar">`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttr: _ssrRenderAttr, ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
+export type DefineProps<T, BKeys extends keyof T> = Readonly<T> & {
+  readonly [K in BKeys]-?: boolean
+}
 
-        return function ssrRender(_ctx, _push, _parent, _attrs) {
-          _push(\`<div\${
-            _ssrRenderAttrs(_attrs)
-          }><input\${
-            _ssrRenderAttr("value", _ctx.bar)
-          }></div>\`)
-        }"
-      `)
+type BooleanKey<T, K extends keyof T = keyof T> = K extends any
+  ? [T[K]] extends [boolean | undefined]
+    ? K
+    : never
+  : never
 
-    expect(compileWithWrapper(`<input type="email" v-model="bar">`).code)
-      .toMatchInlineSnapshot(`
-        "const { ssrRenderAttr: _ssrRenderAttr, ssrRenderAttrs: _ssrRenderAttrs } = require("vue/server-renderer")
+/**
+ * Vue `<script setup>` compiler macro for declaring a component's emitted
+ * events. The expected argument is the same as the component `emits` option.
+ *
+ * Example runtime declaration:
+ * ```js
+ * const emit = defineEmits(['change', 'update'])
+ * ```
+ *
+ * Example type-based declaration:
+ * ```ts
+ * const emit = defineEmits<{
+ *   // <eventName>: <expected arguments>
+ *   change: []
+ *   update: [value: number] // named tuple syntax
+ * }>()
+ *
+ * emit('change')
+ * emit('update', 1)
+ * ```
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the
+ * output and should **not** be actually called at runtime.
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits}
+ */
+// overload 1: runtime emits w/ array
+export function defineEmits<EE extends string = string>(
+  emitOptions: EE[],
+): EmitFn<EE[]>
+export function defineEmits<E extends EmitsOptions = EmitsOptions>(
+  emitOptions: E,
+): EmitFn<E>
+export function defineEmits<T extends ComponentTypeEmits>(): T extends (
+  ...args: any[]
+) => any
+  ? T
+  : ShortEmits<T>
+// implementation
+export function defineEmits() {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineEmits`)
+  }
+  return null as any
+}
 
-        return function ssrRender(_ctx, _push, _parent, _
+export type ComponentTypeEmits =
+  | ((...args: any[]) => any)
+  | Record<string, any[]>
+
+type RecordToUnion<T extends Record<string, any>> = T[keyof T]
+
+type ShortEmits<T extends Record<string, any>> = UnionToIntersection<
+  RecordToUnion<{
+    [K in keyof T]: (evt: K, ...args: T[K]) => void
+  }>
+>
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a component's exposed
+ * instance properties when it is accessed by a parent component via template
+ * refs.
+ *
+ * `<script setup>` components are closed by default - i.e. variables inside
+ * the `<script setup>` scope is not exposed to parent unless explicitly exposed
+ * via `defineExpose`.
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the
+ * output and should **not** be actually called at runtime.
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineexpose}
+ */
+export function defineExpose<
+  Exposed extends Record<string, any> = Record<string, any>,
+>(exposed?: Exposed): void {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineExpose`)
+  }
+}
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a component's additional
+ * options. This should be used only for options that cannot be expressed via
+ * Composition API - e.g. `inheritAttrs`.
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineoptions}
+ */
+export function defineOptions<
+  RawBindings = {},
+  D = {},
+  C extends ComputedOptions = {},
+  M extends MethodOptions = {},
+  Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
+  Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
+>(
+  options?: ComponentOptionsBase<
+    {},
+    RawBindings,
+    D,
+    C,
+    M,
+    Mixin,
+    Extends,
+    {}
+  > & {
+    /**
+     * props should be defined via defineProps().
+     */
+    props?: never
+    /**
+     * emits should be defined via defineEmits().
+     */
+    emits?: never
+    /**
+     * expose should be defined via defineExpose().
+     */
+    expose?: never
+    /**
+     * slots should be defined via defineSlots().
+     */
+    slots?: never
+  },
+): void {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineOptions`)
+  }
+}
+
+export function defineSlots<
+  S extends Record<string, any> = Record<string, any>,
+>(): StrictUnwrapSlotsType<SlotsType<S>> {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineSlots`)
+  }
+  return null as any
+}
+
+export type ModelRef<T, M extends PropertyKey = string> = Ref<T> &
+  [ModelRef<T, M>, Record<M, true | undefined>]
+
+export type DefineModelOptions<T = any> = {
+  get?: (v: T) => any
+  set?: (v: T) => any
+}
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a
+ * two-way binding prop that can be consumed via `v-model` from the parent
+ * component. This will declare a prop with the same name and a corresponding
+ * `update:propName` event.
+ *
+ * If the first argument is a string, it will be used as the prop name;
+ * Otherwise the prop name will default to "modelValue". In both cases, you
+ * can also pass an additional object which will be used as the prop's options.
+ *
+ * The returned ref behaves differently depending on whether the parent
+ * provided the corresponding v-model props or not:
+ * - If yes, the returned ref's value will always be in sync with the parent
+ *   prop.
+ * - If not, the returned ref will behave like a normal local ref.
+ *
+ * @example
+ * ```ts
+ * // default model (consumed via `v-model`)
+ * const modelValue = defineModel<string>()
+ * modelValue.value = "hello"
+ *
+ * // default model with options
+ * const modelValue = defineModel<string>({ required: true })
+ *
+ * // with specified name (consumed via `v-model:count`)
+ * const count = defineModel<number>('count')
+ * count.value++
+ *
+ * // with specified name and default value
+ * const count = defineModel<number>('count', { default: 0 })
+ * ```
+ */
+export function defineModel<T, M extends PropertyKey = string>(
+  options: { required: true } & PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T, M>
+export function defineModel<T, M extends PropertyKey = string>(
+  options: { default: any } & PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T, M>
+export function defineModel<T, M extends PropertyKey = string>(
+  options?: PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T | undefined, M>
+export function defineModel<T, M extends PropertyKey = string>(
+  name: string,
+  options: { required: true } & PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T, M>
+export function defineModel<T, M extends PropertyKey = string>(
+  name: string,
+  options: { default: any } & PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T, M>
+export function defineModel<T, M extends PropertyKey = string>(
+  name: string,
+  options?: PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T | undefined, M>
+export function defineModel(): any {
+  if (__DEV__) {
+    warnRuntimeUsage('defineModel')
+  }
+}
+
+type NotUndefined<T> = T extends undefined ? never : T
+type MappedOmit<T, K extends keyof any> = {
+  [P in keyof T as P extends K ? never : P]: T[P]
+}
+
+type InferDefaults<T> = {
+  [K in keyof T]?: InferDefault<T, T[K]>
+}
+
+type NativeType = null | number | string | boolean | symbol | Function
+
+type InferDefault<P, T> =
+  | ((props: P) => T & {})
+  | (T extends NativeType ? T : never)
+
+type PropsWithDefaults<
+  T,
+  Defaults extends InferDefaults<T>,
+  BKeys extends keyof T,
+> = Readonly<MappedOmit<T, keyof Defaults>> & {
+  readonly [K in keyof Defaults as K extends keyof T
+    ? K
+    : never]-?: K extends keyof T
+    ? Defaults[K] extends undefined
+      ? IfAny<Defaults[K], NotUndefined<T[K]>, T[K]>
+      : NotUndefined<T[K]>
+    : never
+} & {
+  readonly [K in BKeys]-?: K extends keyof Defaults
+    ? Defaults[K] extends undefined
+      ? boolean | undefined
+      : boolean
+    : boolean
+}
+
+/**
+ * Vue `<script setup>` compiler macro for providing props default values when
+ * using type-based `defineProps` declaration.
+ *
+ * Example usage:
+ * ```ts
+ * withDefaults(defineProps<{
+ *   size?: number
+ *   labels?: string[]
+ * }>(), {
+ *   size: 3,
+ *   labels: () => ['default label']
+ * })
+ * ```
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the output
+ * and should **not** be actually called at runtime.
+ *
+ * @see {@link https://vuejs.org/guide/typescript/composition-api.html#typing-component-props}
+ */
+export function withDefaults<
+  T,
+  BKeys extends keyof T,
+  Defaults extends InferDefaults<T>,
+>(
+  props: DefineProps<T, BKeys>,
+  defaults: Defaults,
+): PropsWithDefaults<T, Defaults, BKeys> {
+  if (__DEV__) {
+    warnRuntimeUsage(`withDefaults`)
+  }
+  return null as any
+}
+
+export function useSlots(): SetupContext['slots'] {
+  return getContext().slots
+}
+
+export function useAttrs(): SetupContext['attrs'] {
+  return getContext().attrs
+}
+
+function getContext(): SetupContext {
+  const i = getCurrentInstance()!
+  if (__DEV__ && !i) {
+    warn(`useContext() called without active instance.`)
+  }
+  return i.setupContext || (i.setupContext = createSetupContext(i))
+}
+
+/**
+ * @internal
+ */
+export function normalizePropsOrEmits(
+  props: ComponentPropsOptions | EmitsOptions,
+): ComponentObjectPropsOptions | ObjectEmitsOptions {
+  return isArray(props)
+    ? props.reduce(
+        (normalized, p) => ((normalized[p] = null), normalized),
+        {} as ComponentObjectPropsOptions | ObjectEmitsOptions,
+      )
+    : props
+}
+
+/**
+ * Runtime helper for merging default declarations. Imported by compiled code
+ * only.
+ * @internal
+ */
+export function mergeDefaults(
+  raw: ComponentPropsOptions,
+  defaults: Record<string, any>,
+): ComponentObjectPropsOptions {
+  const props = normalizePropsOrEmits(raw)
+  for (const key in defaults) {
+    if (key.startsWith('__skip')) continue
+    let opt = props[key]
+    if (opt) {
+      if (isArray(opt) || isFunction(opt)) {
+        opt = props[key] = { type: opt, default: defaults[key] }
+      } else {
+        opt.default = defaults[key]
+      }
+    } else if (opt === null) {
+      opt = props[key] = { default: defaults[key] }
+    } else if (__DEV__) {
+      warn(`props default key "${key}" has no corresponding declaration.`)
+    }
+    if (opt && defaults[`__skip_${key}`]) {
+      opt.skipFactory = true
+    }
+  }
+  return props
+}
+
+/**
+ * Runtime helper for merging model declarations.
+ * Imported by compiled code only.
+ * @internal
+ */
+export function mergeModels(
+  a: ComponentPropsOptions | EmitsOptions,
+  b: ComponentPropsOptions | EmitsOptions,
+): ComponentPropsOptions | EmitsOptions {
+  if (!a || !b) return a || b
+  if (isArray(a) && isArray(b)) return a.concat(b)
+  return extend({}, normalizePropsOrEmits(a), normalizePropsOrEmits(b))
+}
+
+/**
+ * Used to create a proxy for the rest element when destructuring props with
+ * defineProps().
+ * @internal
+ */
+export function createPropsRestProxy(
+  props: any,
+  excludedKeys: string[],
+): Record<string, any> {
+  const ret: Record<string, any> = {}
+  for (const key in props) {
+    if (!excludedKeys.includes(key)) {
+      Object.defineProperty(ret, key, {
+        enumerable: true,
+        get: () => props[key],
+      })
+    }
+  }
+  return ret
+}
+
+/**
+ * `<script setup>` helper for persisting the current instance context over
+ * async/await flows.
+ *
+ * `@vue/compiler-sfc` converts the following:
+ *
+ * ```ts
+ * const x = await foo()
+ * ```
+ *
+ * into:
+ *
+ * ```ts
+ * let __temp, __restore
+ * const x = (([__temp, __restore] = withAsyncContext(() => foo())),__temp=await __temp,__restore(),__temp)
+ * ```
+ * @internal
+ */
+export function withAsyncContext(getAwaitable: () => any): [any, () => void] {
+  const ctx = getCurrentInstance()!
+  if (__DEV__ && !ctx) {
+    warn(
+      `withAsyncContext called without active current instance. ` +
+        `This is likely a bug.`,
+    )
+  }
+  let awaitable = getAwaitable()
+  unsetCurrentInstance()
+  if (isPromise(awaitable)) {
+    awaitable = awaitable.catch(e => {
+      setCurrentInstance(ctx)
+      throw e
+    })
+  }
+  return [awaitable, () => setCurrentInstance(ctx)]
+}
+
+
+packages/runtime-core/src/apiSetupHelpers.ts:
+import {
+  type IfAny,
+  type LooseRequired,
+  type Prettify,
+  type UnionToIntersection,
+  extend,
+  isArray,
+  isFunction,
+  isPromise,
+} from '@vue/shared'
+import {
+  type SetupContext,
+  createSetupContext,
+  getCurrentInstance,
+  setCurrentInstance,
+  unsetCurrentInstance,
+} from './component'
+import type { EmitFn, EmitsOptions, ObjectEmitsOptions } from './componentEmits'
+import type {
+  ComponentOptionsBase,
+  ComponentOptionsMixin,
+  ComputedOptions,
+  MethodOptions,
+} from './componentOptions'
+import type {
+  ComponentObjectPropsOptions,
+  ComponentPropsOptions,
+  ExtractPropTypes,
+  PropOptions,
+} from './componentProps'
+import { warn } from './warning'
+import type { SlotsType, StrictUnwrapSlotsType } from './componentSlots'
+import type { Ref } from '@vue/reactivity'
+
+// dev only
+const warnRuntimeUsage = (method: string) =>
+  warn(
+    `${method}() is a compiler-hint helper that is only usable inside ` +
+      `<script setup> of a single file component. Its arguments should be ` +
+      `compiled away and passing it at runtime has no effect.`,
+  )
+
+/**
+ * Vue `<script setup>` compiler macro for declaring component props. The
+ * expected argument is the same as the component `props` option.
+ *
+ * Example runtime declaration:
+ * ```js
+ * // using Array syntax
+ * const props = defineProps(['foo', 'bar'])
+ * // using Object syntax
+ * const props = defineProps({
+ *   foo: String,
+ *   bar: {
+ *     type: Number,
+ *     required: true
+ *   }
+ * })
+ * ```
+ *
+ * Equivalent type-based declaration:
+ * ```ts
+ * // will be compiled into equivalent runtime declarations
+ * const props = defineProps<{
+ *   foo?: string
+ *   bar: number
+ * }>()
+ * ```
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits}
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the
+ * output and should **not** be actually called at runtime.
+ */
+// overload 1: runtime props w/ array
+export function defineProps<PropNames extends string = string>(
+  props: PropNames[],
+): Prettify<Readonly<{ [key in PropNames]?: any }>>
+// overload 2: runtime props w/ object
+export function defineProps<
+  PP extends ComponentObjectPropsOptions = ComponentObjectPropsOptions,
+>(props: PP): Prettify<Readonly<ExtractPropTypes<PP>>>
+// overload 3: typed-based declaration
+export function defineProps<TypeProps>(): DefineProps<
+  LooseRequired<TypeProps>,
+  BooleanKey<TypeProps>
+>
+// implementation
+export function defineProps() {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineProps`)
+  }
+  return null as any
+}
+
+export type DefineProps<T, BKeys extends keyof T> = Readonly<T> & {
+  readonly [K in BKeys]-?: boolean
+}
+
+type BooleanKey<T, K extends keyof T = keyof T> = K extends any
+  ? [T[K]] extends [boolean | undefined]
+    ? K
+    : never
+  : never
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a component's emitted
+ * events. The expected argument is the same as the component `emits` option.
+ *
+ * Example runtime declaration:
+ * ```js
+ * const emit = defineEmits(['change', 'update'])
+ * ```
+ *
+ * Example type-based declaration:
+ * ```ts
+ * const emit = defineEmits<{
+ *   // <eventName>: <expected arguments>
+ *   change: []
+ *   update: [value: number] // named tuple syntax
+ * }>()
+ *
+ * emit('change')
+ * emit('update', 1)
+ * ```
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the
+ * output and should **not** be actually called at runtime.
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineprops-defineemits}
+ */
+// overload 1: runtime emits w/ array
+export function defineEmits<EE extends string = string>(
+  emitOptions: EE[],
+): EmitFn<EE[]>
+export function defineEmits<E extends EmitsOptions = EmitsOptions>(
+  emitOptions: E,
+): EmitFn<E>
+export function defineEmits<T extends ComponentTypeEmits>(): T extends (
+  ...args: any[]
+) => any
+  ? T
+  : ShortEmits<T>
+// implementation
+export function defineEmits() {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineEmits`)
+  }
+  return null as any
+}
+
+export type ComponentTypeEmits =
+  | ((...args: any[]) => any)
+  | Record<string, any[]>
+
+type RecordToUnion<T extends Record<string, any>> = T[keyof T]
+
+type ShortEmits<T extends Record<string, any>> = UnionToIntersection<
+  RecordToUnion<{
+    [K in keyof T]: (evt: K, ...args: T[K]) => void
+  }>
+>
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a component's exposed
+ * instance properties when it is accessed by a parent component via template
+ * refs.
+ *
+ * `<script setup>` components are closed by default - i.e. variables inside
+ * the `<script setup>` scope is not exposed to parent unless explicitly exposed
+ * via `defineExpose`.
+ *
+ * This is only usable inside `<script setup>`, is compiled away in the
+ * output and should **not** be actually called at runtime.
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineexpose}
+ */
+export function defineExpose<
+  Exposed extends Record<string, any> = Record<string, any>,
+>(exposed?: Exposed): void {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineExpose`)
+  }
+}
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a component's additional
+ * options. This should be used only for options that cannot be expressed via
+ * Composition API - e.g. `inheritAttrs`.
+ *
+ * @see {@link https://vuejs.org/api/sfc-script-setup.html#defineoptions}
+ */
+export function defineOptions<
+  RawBindings = {},
+  D = {},
+  C extends ComputedOptions = {},
+  M extends MethodOptions = {},
+  Mixin extends ComponentOptionsMixin = ComponentOptionsMixin,
+  Extends extends ComponentOptionsMixin = ComponentOptionsMixin,
+>(
+  options?: ComponentOptionsBase<
+    {},
+    RawBindings,
+    D,
+    C,
+    M,
+    Mixin,
+    Extends,
+    {}
+  > & {
+    /**
+     * props should be defined via defineProps().
+     */
+    props?: never
+    /**
+     * emits should be defined via defineEmits().
+     */
+    emits?: never
+    /**
+     * expose should be defined via defineExpose().
+     */
+    expose?: never
+    /**
+     * slots should be defined via defineSlots().
+     */
+    slots?: never
+  },
+): void {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineOptions`)
+  }
+}
+
+export function defineSlots<
+  S extends Record<string, any> = Record<string, any>,
+>(): StrictUnwrapSlotsType<SlotsType<S>> {
+  if (__DEV__) {
+    warnRuntimeUsage(`defineSlots`)
+  }
+  return null as any
+}
+
+export type ModelRef<T, M extends PropertyKey = string> = Ref<T> &
+  [ModelRef<T, M>, Record<M, true | undefined>]
+
+export type DefineModelOptions<T = any> = {
+  get?: (v: T) => any
+  set?: (v: T) => any
+}
+
+/**
+ * Vue `<script setup>` compiler macro for declaring a
+ * two-way binding prop that can be consumed via `v-model` from the parent
+ * component. This will declare a prop with the same name and a corresponding
+ * `update:propName` event.
+ *
+ * If the first argument is a string, it will be used as the prop name;
+ * Otherwise the prop name will default to "modelValue". In both cases, you
+ * can also pass an additional object which will be used as the prop's options.
+ *
+ * The returned ref behaves differently depending on whether the parent
+ * provided the corresponding v-model props or not:
+ * - If yes, the returned ref's value will always be in sync with the parent
+ *   prop.
+ * - If not, the returned ref will behave like a normal local ref.
+ *
+ * @example
+ * ```ts
+ * // default model (consumed via `v-model`)
+ * const modelValue = defineModel<string>()
+ * modelValue.value = "hello"
+ *
+ * // default model with options
+ * const modelValue = defineModel<string>({ required: true })
+ *
+ * // with specified name (consumed via `v-model:count`)
+ * const count = defineModel<number>('count')
+ * count.value++
+ *
+ * // with specified name and default value
+ * const count = defineModel<number>('count', { default: 0 })
+ * ```
+ */
+export function defineModel<T, M extends PropertyKey = string>(
+  options: { required: true } & PropOptions<T> & DefineModelOptions<T>,
+): ModelRef<T, M>
+export function defineModel<T, M extends PropertyKey = string>(
+  
+
+packages/runtime-dom/src/jsx.ts:
+// Note: this file is auto concatenated to the end of the bundled d.ts during
+// build.
+
+// This code is based on react definition in DefinitelyTyped published under the MIT license.
+//      Repository: https://github.com/DefinitelyTyped/DefinitelyTyped
+//      Path in the repository: types/react/index.d.ts
+//
+// Copyrights of original definition are:
+//      AssureSign <http://www.assuresign.com>
+//      Microsoft <https://microsoft.com>
+//                 John Reilly <https://github.com/johnnyreilly>
+//      Benoit Benezech <https://github.com/bbenezech>
+//      Patricio Zavolinsky <https://github.com/pzavolinsky>
+//      Digiguru <https://github.com/digiguru>
+//      Eric Anderson <https://github.com/ericanderson>
+//      Dovydas Navickas <https://github.com/DovydasNavickas>
+//                 Josh Rutherford <https://github.com/theruther4d>
+//                 Guilherme Hübner <https://github.com/guilhermehubner>
+//                 Ferdy Budhidharma <https://github.com/ferdaber>
+//                 Johann Rakotoharisoa <https://github.com/jrakotoharisoa>
+//                 Olivier Pascal <https://github.com/pascaloliv>
+//                 Martin Hochel <https://github.com/hotell>
+//                 Frank Li <https://github.com/franklixuefei>
+//                 Jessica Franco <https://github.com/Jessidhia>
+//                 Saransh Kataria <https://github.com/saranshkataria>
+//                 Kanitkorn Sujautra <https://github.com/lukyth>
+//                 Sebastian Silbermann <https://github.com/eps1lon>
+
+import type * as CSS from 'csstype'
+
+export interface CSSProperties
+  extends CSS.Properties<string | number>,
+    CSS.PropertiesHyphen<string | number> {
+  /**
+   * The index signature was removed to enable closed typing for style
+   * using CSSType. You're able to use type assertion or module augmentation
+   * to add properties or an index signature of your own.
+   *
+   * For examples and more information, visit:
+   * https://github.com/frenic/csstype#what-should-i-do-when-i-get-type-errors
+   */
+  [v: `--${string}`]: string | number | undefined
+}
+
+type Booleanish = boolean | 'true' | 'false'
+type Numberish = number | string
+
+// All the WAI-ARIA 1.1 attributes from https://www.w3.org/TR/wai-aria-1.1/
+export interface AriaAttributes {
+  /** Identifies the currently active element when DOM focus is on a composite widget, textbox, group, or application. */
+  'aria-activedescendant'?: string
+  /** Indicates whether assistive technologies will present all, or only parts of, the changed region based on the change notifications defined by the aria-relevant attribute. */
+  'aria-atomic'?: Booleanish
+  /**
+   * Indicates whether inputting text could trigger display of one or more predictions of the user's intended value for an input and specifies how predictions would be
+   * presented if they are made.
+   */
+  'aria-autocomplete'?: 'none' | 'inline' | 'list' | 'both'
+  /** Indicates an element is being modified and that assistive technologies MAY want to wait until the modifications are complete before exposing them to the user. */
+  'aria-busy'?: Booleanish
+  /**
+   * Indicates the current "checked" state of checkboxes, radio buttons, and other widgets.
+   * @see aria-pressed @see aria-selected.
+   */
+  'aria-checked'?: Booleanish | 'mixed'
+  /**
+   * Defines the total number of columns in a table, grid, or treegrid.
+   * @see aria-colindex.
+   */
+  'aria-colcount'?: Numberish
+  /**
+   * Defines an element's column index or position with respect to the total number of columns within a table, grid, or treegrid.
+   * @see aria-colcount @see aria-colspan.
+   */
+  'aria-colindex'?: Numberish
+  /**
+   * Defines the number of columns spanned by a cell or gridcell within a table, grid, or treegrid.
+   * @see aria-colindex @see aria-rowspan.
+   */
+  'aria-colspan'?: Numberish
+  /**
+   * Identifies the element (or elements) whose contents or presence are controlled by the current element.
+   * @see aria-owns.
+   */
+  'aria-controls'?: string
+  /** Indicates the element that represents the current item within a container or set of related elements. */
+  'aria-current'?: Booleanish | 'page' | 'step' | 'location' | 'date' | 'time'
+  /**
+   * Identifies the element (or elements) that describes the object.
+   * @see aria-labelledby
+   */
+  'aria-describedby'?: string
+  /**
+   * Identifies the element that provides a detailed, extended description for the object.
+   * @see aria-describedby.
+   */
+  'aria-details'?: string
+  /**
+   * Indicates that the element is perceivable but disabled, so it is not editable or otherwise operable.
+   * @see aria-hidden @see aria-readonly.
+   */
+  'aria-disabled'?: Booleanish
+  /**
+   * Indicates what functions can be performed when a dragged object is released on the drop target.
+   * @deprecated in ARIA 1.1
+   */
+  'aria-dropeffect'?: 'none' | 'copy' | 'execute' | 'link' | 'move' | 'popup'
+  /**
+   * Identifies the element that provides an error message for the object.
+   * @see aria-invalid @see aria-describedby.
+   */
+  'aria-errormessage'?: string
+  /** Indicates whether the element, or another grouping element it controls, is currently expanded or collapsed. */
+  'aria-expanded'?: Booleanish
+  /**
+   * Identifies the next element (or elements) in an alternate reading order of content which, at the user's discretion,
+   * allows assistive technology to override the general default of reading in document source order.
+   */
+  'aria-flowto'?: string
+  /**
+   * Indicates an element's "grabbed" state in a drag-and-drop operation.
+   * @deprecated in ARIA 1.1
+   */
+  'aria-grabbed'?: Booleanish
+  /** Indicates the availability and type of interactive popup element, such as menu or dialog, that can be triggered by an element. */
+  'aria-haspopup'?: Booleanish | 'menu' | 'listbox' | 'tree' | 'grid' | 'dialog'
+  /**
+   * Indicates whether the element is exposed to an accessibility API.
+   * @see aria-disabled.
+   */
+  'aria-hidden'?: Booleanish
+  /**
+   * Indicates the entered value does not conform to the format expected by the application.
+   * @see aria-errormessage.
+   */
+  'aria-invalid'?: Booleanish | 'grammar' | 'spelling'
+  /** Indicates keyboard shortcuts that an author has implemented to activate or give focus to an element. */
+  'aria-keyshortcuts'?: string
+  /**
+   * Defines a string value that labels the current element.
+   * @see aria-labelledby.
+   */
+  'aria-label'?: string
+  /**
+   * Identifies the element (or elements) that labels the current element.
+   * @see aria-describedby.
+   */
+  'aria-labelledby'?: string
+  /** Defines the hierarchical level of an element within a structure. */
+  'aria-level'?: Numberish
+  /** Indicates that an element will be updated, and describes the types of updates the user agents, assistive technologies, and user can expect from the live region. */
+  'aria-live'?: 'off' | 'assertive' | 'polite'
+  /** Indicates whether an element is modal when displayed. */
+  'aria-modal'?: Booleanish
+  /** Indicates whether a text box accepts multiple lines of input or only a single line. */
+  'aria-multiline'?: Booleanish
+  /** Indicates that the user may select more than one item from the current selectable descendants. */
+  'aria-multiselectable'?: Booleanish
+  /** Indicates whether the element's orientation is horizontal, vertical, or unknown/ambiguous. */
+  'aria-orientation'?: 'horizontal' | 'vertical'
+  /**
+   * Identifies an element (or elements) in order to define a visual, functional, or contextual parent/child relationship
+   * between DOM elements where the DOM hierarchy cannot be used to represent the relationship.
+   * @see aria-controls.
+   */
+  'aria-owns'?: string
+  /**
+   * Defines a short hint (a word or short phrase) intended to aid the user with data entry when the control has no value.
+   * A hint could be a sample value or a brief description of the expected format.
+   */
+  'aria-placeholder'?: string
+  /**
+   * Defines an element's number or position in the current set of listi
+
+packages/compiler-core/src/options.ts:
+import type {
+  ElementNode,
+  Namespace,
+  Namespaces,
+  ParentNode,
+  TemplateChildNode,
+} from './ast'
+import type { CompilerError } from './errors'
+import type {
+  DirectiveTransform,
+  NodeTransform,
+  TransformContext,
+} from './transform'
+import type { CompilerCompatOptions } from './compat/compatConfig'
+import type { ParserPlugin } from '@babel/parser'
+
+export interface ErrorHandlingOptions {
+  onWarn?: (warning: CompilerError) => void
+  onError?: (error: CompilerError) => void
+}
+
+export interface ParserOptions
+  extends ErrorHandlingOptions,
+    CompilerCompatOptions {
+  /**
+   * Base mode is platform agnostic and only parses HTML-like template syntax,
+   * treating all tags the same way. Specific tag parsing behavior can be
+   * configured by higher-level compilers.
+   *
+   * HTML mode adds additional logic for handling special parsing behavior in
+   * `<script>`, `<style>`,`<title>` and `<textarea>`.
+   * The logic is handled inside compiler-core for efficiency.
+   *
+   * SFC mode treats content of all root-level tags except `<template>` as plain
+   * text.
+   */
+  parseMode?: 'base' | 'html' | 'sfc'
+  /**
+   * Specify the root namespace to use when parsing a template.
+   * Defaults to `Namespaces.HTML` (0).
+   */
+  ns?: Namespaces
+  /**
+   * e.g. platform native elements, e.g. `<div>` for browsers
+   */
+  isNativeTag?: (tag: string) => boolean
+  /**
+   * e.g. native elements that can self-close, e.g. `<img>`, `<br>`, `<hr>`
+   */
+  isVoidTag?: (tag: string) => boolean
+  /**
+   * e.g. elements that should preserve whitespace inside, e.g. `<pre>`
+   */
+  isPreTag?: (tag: string) => boolean
+  /**
+   * Platform-specific built-in components e.g. `<Transition>`
+   */
+  isBuiltInComponent?: (tag: string) => symbol | void
+  /**
+   * Separate option for end users to extend the native elements list
+   */
+  isCustomElement?: (tag: string) => boolean | void
+  /**
+   * Get tag namespace
+   */
+  getNamespace?: (
+    tag: string,
+    parent: ElementNode | undefined,
+    rootNamespace: Namespace,
+  ) => Namespace
+  /**
+   * @default ['{{', '}}']
+   */
+  delimiters?: [string, string]
+  /**
+   * Whitespace handling strategy
+   * @default 'condense'
+   */
+  whitespace?: 'preserve' | 'condense'
+  /**
+   * Only used for DOM compilers that runs in the browser.
+   * In non-browser builds, this option is ignored.
+   */
+  decodeEntities?: (rawText: string, asAttr: boolean) => string
+  /**
+   * Whether to keep comments in the templates AST.
+   * This defaults to `true` in development and `false` in production builds.
+   */
+  comments?: boolean
+  /**
+   * Parse JavaScript expressions with Babel.
+   * @default false
+   */
+  prefixIdentifiers?: boolean
+  /**
+   * A list of parser plugins to enable for `@babel/parser`, which is used to
+   * parse expressions in bindings and interpolations.
+   * https://babeljs.io/docs/en/next/babel-parser#plugins
+   */
+  expressionPlugins?: ParserPlugin[]
+}
+
+export type HoistTransform = (
+  children: TemplateChildNode[],
+  context: TransformContext,
+  parent: ParentNode,
+) => void
+
+export enum BindingTypes {
+  /**
+   * returned from data()
+   */
+  DATA = 'data',
+  /**
+   * declared as a prop
+   */
+  PROPS = 'props',
+  /**
+   * a local alias of a `<script setup>` destructured prop.
+   * the original is stored in __propsAliases of the bindingMetadata object.
+   */
+  PROPS_ALIASED = 'props-aliased',
+  /**
+   * a let binding (may or may not be a ref)
+   */
+  SETUP_LET = 'setup-let',
+  /**
+   * a const binding that can never be a ref.
+   * these bindings don't need `unref()` calls when processed in inlined
+   * template expressions.
+   */
+  SETUP_CONST = 'setup-const',
+  /**
+   * a const binding that does not need `unref()`, but may be mutated.
+   */
+  SETUP_REACTIVE_CONST = 'setup-reactive-const',
+  /**
+   * a const binding that may be a ref.
+   */
+  SETUP_MAYBE_REF = 'setup-maybe-ref',
+  /**
+   * bindings that are guaranteed to be refs
+   */
+  SETUP_REF = 'setup-ref',
+  /**
+   * declared by other options, e.g. computed, inject
+   */
+  OPTIONS = 'options',
+  /**
+   * a literal constant, e.g. 'foo', 1, true
+   */
+  LITERAL_CONST = 'literal-const',
+}
+
+export type BindingMetadata = {
+  [key: string]: BindingTypes | undefined
+} & {
+  __isScriptSetup?: boolean
+  __propsAliases?: Record<string, string>
+}
+
+interface SharedTransformCodegenOptions {
+  /**
+   * Transform expressions like {{ foo }} to `_ctx.foo`.
+   * If this option is false, the generated code will be wrapped in a
+   * `with (this) { ... }` block.
+   * - This is force-enabled in module mode, since modules are by default strict
+   * and cannot use `with`
+   * @default mode === 'module'
+   */
+  prefixIdentifiers?: boolean
+  /**
+   * Control whether generate SSR-optimized render functions instead.
+   * The resulting function must be attached to the component via the
+   * `ssrRender` option instead of `render`.
+   *
+   * When compiler generates code for SSR's fallback branch, we need to set it to false:
+   *  - context.ssr = false
+   *
+   * see `subTransform` in `ssrTransformComponent.ts`
+   */
+  ssr?: boolean
+  /**
+   * Indicates whether the compiler generates code for SSR,
+   * it is always true when generating code for SSR,
+   * regardless of whether we are generating code for SSR's fallback branch,
+   * this means that when the compiler generates code for SSR's fallback branch:
+   *  - context.ssr = false
+   *  - context.inSSR = true
+   */
+  inSSR?: boolean
+  /**
+   * Optional binding metadata analyzed from script - used to optimize
+   * binding access when `prefixIdentifiers` is enabled.
+   */
+  bindingMetadata?: BindingMetadata
+  /**
+   * Compile the function for inlining inside setup().
+   * This allows the function to directly access setup() local bindings.
+   */
+  inline?: boolean
+  /**
+   * Indicates that transforms and codegen should try to output valid TS code
+   */
+  isTS?: boolean
+  /**
+   * Filename for source map generation.
+   * Also used for self-recursive reference in templates
+   * @default 'template.vue.html'
+   */
+  filename?: string
+}
+
+export interface TransformOptions
+  extends SharedTransformCodegenOptions,
+    ErrorHandlingOptions,
+    CompilerCompatOptions {
+  /**
+   * An array of node transforms to be applied to every AST node.
+   */
+  nodeTransforms?: NodeTransform[]
+  /**
+   * An object of { name: transform } to be applied to every directive attribute
+   * node found on element nodes.
+   */
+  directiveTransforms?: Record<string, DirectiveTransform | undefined>
+  /**
+   * An optional hook to transform a node being hoisted.
+   * used by compiler-dom to turn hoisted nodes into stringified HTML vnodes.
+   * @default null
+   */
+  transformHoist?: HoistTransform | null
+  /**
+   * If the pairing runtime provides additional built-in elements, use this to
+   * mark them as built-in so the compiler will generate component vnodes
+   * for them.
+   */
+  isBuiltInComponent?: (tag: string) => symbol | void
+  /**
+   * Used by some transforms that expects only native elements
+   */
+  isCustomElement?: (tag: string) => boolean | void
+  /**
+   * Transform expressions like {{ foo }} to `_ctx.foo`.
+   * If this option is false, the generated code will be wrapped in a
+   * `with (this) { ... }` block.
+   * - This is force-enabled in module mode, since modules are by default strict
+   * and cannot use `with`
+   * @default mode === 'module'
+   */
+  prefixIdentifiers?: boolean
+  /**
+   * Cache static VNodes and props objects to `_hoisted_x` constants
+   * @default false
+   */
+  hoistStatic?: boolean
+  /**
+   * Cache v-on handlers to avoid creating new inline functions on each render,
+   * also avoids the need for dynamically patching the handlers by wrapping it.
+   * e.g `@click="foo"` by default is compiled to `{ onClick: foo }`. With this
+   * option it's compiled to:
+   * ```js
+   * { onClick: _cache[0] || (_cache[0] = e => _ctx.foo(e)) }
+   * ```
+   * - Requires "prefixIdentifiers" to be enabled because it relies on scope
+   * analysis to determine if a handler is safe to c
+
+packages/compiler-ssr/src/transforms/ssrTransformComponent.ts:
+import {
+  CREATE_VNODE,
+  type CallExpression,
+  type CompilerOptions,
+  type ComponentNode,
+  DOMDirectiveTransforms,
+  DOMNodeTransforms,
+  type DirectiveNode,
+  ElementTypes,
+  type ExpressionNode,
+  type FunctionExpression,
+  type JSChildNode,
+  Namespaces,
+  type NodeTransform,
+  NodeTypes,
+  RESOLVE_DYNAMIC_COMPONENT,
+  type ReturnStatement,
+  type RootNode,
+  SUSPENSE,
+  type SlotFnBuilder,
+  TELEPORT,
+  TRANSITION,
+  TRANSITION_GROUP,
+  type TemplateChildNode,
+  type TemplateNode,
+  type TransformContext,
+  type TransformOptions,
+  buildProps,
+  buildSlots,
+  createCallExpression,
+  createFunctionExpression,
+  createIfStatement,
+  createReturnStatement,
+  createRoot,
+  createSimpleExpression,
+  createTransformContext,
+  getBaseTransformPreset,
+  locStub,
+  resolveComponentType,
+  stringifyExpression,
+  traverseNode,
+} from '@vue/compiler-dom'
+import { SSR_RENDER_COMPONENT, SSR_RENDER_VNODE } from '../runtimeHelpers'
+import {
+  type SSRTransformContext,
+  processChildren,
+  processChildrenAsStatement,
+} from '../ssrCodegenTransform'
+import { ssrProcessTeleport } from './ssrTransformTeleport'
+import {
+  ssrProcessSuspense,
+  ssrTransformSuspense,
+} from './ssrTransformSuspense'
+import {
+  ssrProcessTransitionGroup,
+  ssrTransformTransitionGroup,
+} from './ssrTransformTransitionGroup'
+import { extend, isArray, isObject, isPlainObject, isSymbol } from '@vue/shared'
+import { buildSSRProps } from './ssrTransformElement'
+import {
+  ssrProcessTransition,
+  ssrTransformTransition,
+} from './ssrTransformTransition'
+
+// We need to construct the slot functions in the 1st pass to ensure proper
+// scope tracking, but the children of each slot cannot be processed until
+// the 2nd pass, so we store the WIP slot functions in a weakMap during the 1st
+// pass and complete them in the 2nd pass.
+const wipMap = new WeakMap<ComponentNode, WIPSlotEntry[]>()
+
+const WIP_SLOT = Symbol()
+
+interface WIPSlotEntry {
+  type: typeof WIP_SLOT
+  fn: FunctionExpression
+  children: TemplateChildNode[]
+  vnodeBranch: ReturnStatement
+}
+
+const componentTypeMap = new WeakMap<
+  ComponentNode,
+  string | symbol | CallExpression
+>()
+
+// ssr component transform is done in two phases:
+// In phase 1. we use `buildSlot` to analyze the children of the component into
+// WIP slot functions (it must be done in phase 1 because `buildSlot` relies on
+// the core transform context).
+// In phase 2. we convert the WIP slots from phase 1 into ssr-specific codegen
+// nodes.
+export const ssrTransformComponent: NodeTransform = (node, context) => {
+  if (
+    node.type !== NodeTypes.ELEMENT ||
+    node.tagType !== ElementTypes.COMPONENT
+  ) {
+    return
+  }
+
+  const component = resolveComponentType(node, context, true /* ssr */)
+  const isDynamicComponent =
+    isObject(component) && component.callee === RESOLVE_DYNAMIC_COMPONENT
+  componentTypeMap.set(node, component)
+
+  if (isSymbol(component)) {
+    if (component === SUSPENSE) {
+      return ssrTransformSuspense(node, context)
+    } else if (component === TRANSITION_GROUP) {
+      return ssrTransformTransitionGroup(node, context)
+    } else if (component === TRANSITION) {
+      return ssrTransformTransition(node, context)
+    }
+    return // other built-in components: fallthrough
+  }
+
+  // Build the fallback vnode-based branch for the component's slots.
+  // We need to clone the node into a fresh copy and use the buildSlots' logic
+  // to get access to the children of each slot. We then compile them with
+  // a child transform pipeline using vnode-based transforms (instead of ssr-
+  // based ones), and save the result branch (a ReturnStatement) in an array.
+  // The branch is retrieved when processing slots again in ssr mode.
+  const vnodeBranches: ReturnStatement[] = []
+  const clonedNode = clone(node)
+
+  return function ssrPostTransformComponent() {
+    // Using the cloned node, build the normal VNode-based branches (for
+    // fallback in case the child is render-fn based). Store them in an array
+    // for later use.
+    if (clonedNode.children.length) {
+      buildSlots(clonedNode, context, (props, vFor, children) => {
+        vnodeBranches.push(
+          createVNodeSlotBranch(props, vFor, children, context),
+        )
+        return createFunctionExpression(undefined)
+      })
+    }
+
+    let propsExp: string | JSChildNode = `null`
+    if (node.props.length) {
+      // note we are not passing ssr: true here because for components, v-on
+      // handlers should still be passed
+      const { props, directives } = buildProps(
+        node,
+        context,
+        undefined,
+        true,
+        isDynamicComponent,
+      )
+      if (props || directives.length) {
+        propsExp = buildSSRProps(props, directives, context)
+      }
+    }
+
+    const wipEntries: WIPSlotEntry[] = []
+    wipMap.set(node, wipEntries)
+
+    const buildSSRSlotFn: SlotFnBuilder = (props, _vForExp, children, loc) => {
+      const param0 = (props && stringifyExpression(props)) || `_`
+      const fn = createFunctionExpression(
+        [param0, `_push`, `_parent`, `_scopeId`],
+        undefined, // no return, assign body later
+        true, // newline
+        true, // isSlot
+        loc,
+      )
+      wipEntries.push({
+        type: WIP_SLOT,
+        fn,
+        children,
+        // also collect the corresponding vnode branch built earlier
+        vnodeBranch: vnodeBranches[wipEntries.length],
+      })
+      return fn
+    }
+
+    const slots = node.children.length
+      ? buildSlots(node, context, buildSSRSlotFn).slots
+      : `null`
+
+    if (typeof component !== 'string') {
+      // dynamic component that resolved to a `resolveDynamicComponent` call
+      // expression - since the resolved result may be a plain element (string)
+      // or a VNode, handle it with `renderVNode`.
+      node.ssrCodegenNode = createCallExpression(
+        context.helper(SSR_RENDER_VNODE),
+        [
+          `_push`,
+          createCallExpression(context.helper(CREATE_VNODE), [
+            component,
+            propsExp,
+            slots,
+          ]),
+          `_parent`,
+        ],
+      )
+    } else {
+      node.ssrCodegenNode = createCallExpression(
+        context.helper(SSR_RENDER_COMPONENT),
+        [component, propsExp, slots, `_parent`],
+      )
+    }
+  }
+}
+
+export function ssrProcessComponent(
+  node: ComponentNode,
+  context: SSRTransformContext,
+  parent: { children: TemplateChildNode[] },
+): void {
+  const component = componentTypeMap.get(node)!
+  if (!node.ssrCodegenNode) {
+    // this is a built-in component that fell-through.
+    if (component === TELEPORT) {
+      return ssrProcessTeleport(node, context)
+    } else if (component === SUSPENSE) {
+      return ssrProcessSuspense(node, context)
+    } else if (component === TRANSITION_GROUP) {
+      return ssrProcessTransitionGroup(node, context)
+    } else {
+      // real fall-through: Transition / KeepAlive
+      // just render its children.
+      // #5352: if is at root level of a slot, push an empty string.
+      // this does not affect the final output, but avoids all-comment slot
+      // content of being treated as empty by ssrRenderSlot().
+      if ((parent as WIPSlotEntry).type === WIP_SLOT) {
+        context.pushStringPart(``)
+      }
+      if (component === TRANSITION) {
+        return ssrProcessTransition(node, context)
+      }
+      processChildren(node, context)
+    }
+  } else {
+    // finish up slot function expressions from the 1st pass.
+    const wipEntries = wipMap.get(node) || []
+    for (let i = 0; i < wipEntries.length; i++) {
+      const { fn, vnodeBranch } = wipEntries[i]
+      // For each slot, we generate two branches: one SSR-optimized branch and
+      // one normal vnode-based branch. The branches are taken based on the
+      // presence of the 2nd `_push` argument (which is only present if the slot
+      // is called by `_ssrRenderSlot`.
+      fn.body = createIfStatement(
+        createSimpleExpression(`_push`, false),
+        processChildrenAsStatement(
+          wipEntries[i],
+          context,
+     
+
+packages/compiler-sfc/src/compileScript.ts:
+import {
+  BindingTypes,
+  UNREF,
+  isFunctionType,
+  unwrapTSNode,
+  walkIdentifiers,
+} from '@vue/compiler-dom'
+import {
+  DEFAULT_FILENAME,
+  type SFCDescriptor,
+  type SFCScriptBlock,
+} from './parse'
+import type { ParserPlugin } from '@babel/parser'
+import { generateCodeFrame } from '@vue/shared'
+import type {
+  ArrayPattern,
+  CallExpression,
+  Declaration,
+  ExportSpecifier,
+  Identifier,
+  Node,
+  ObjectPattern,
+  Statement,
+} from '@babel/types'
+import { walk } from 'estree-walker'
+import type { RawSourceMap } from 'source-map-js'
+import {
+  normalScriptDefaultVar,
+  processNormalScript,
+} from './script/normalScript'
+import { CSS_VARS_HELPER, genCssVarsCode } from './style/cssVars'
+import {
+  type SFCTemplateCompileOptions,
+  compileTemplate,
+} from './compileTemplate'
+import { warnOnce } from './warn'
+import { transformDestructuredProps } from './script/definePropsDestructure'
+import { ScriptCompileContext } from './script/context'
+import {
+  DEFINE_PROPS,
+  WITH_DEFAULTS,
+  genRuntimeProps,
+  processDefineProps,
+} from './script/defineProps'
+import {
+  DEFINE_EMITS,
+  genRuntimeEmits,
+  processDefineEmits,
+} from './script/defineEmits'
+import { DEFINE_EXPOSE, processDefineExpose } from './script/defineExpose'
+import { DEFINE_OPTIONS, processDefineOptions } from './script/defineOptions'
+import { DEFINE_SLOTS, processDefineSlots } from './script/defineSlots'
+import { DEFINE_MODEL, processDefineModel } from './script/defineModel'
+import { getImportedName, isCallOf, isLiteralNode } from './script/utils'
+import { analyzeScriptBindings } from './script/analyzeScriptBindings'
+import { isImportUsed } from './script/importUsageCheck'
+import { processAwait } from './script/topLevelAwait'
+
+export interface SFCScriptCompileOptions {
+  /**
+   * Scope ID for prefixing injected CSS variables.
+   * This must be consistent with the `id` passed to `compileStyle`.
+   */
+  id: string
+  /**
+   * Production mode. Used to determine whether to generate hashed CSS variables
+   */
+  isProd?: boolean
+  /**
+   * Enable/disable source map. Defaults to true.
+   */
+  sourceMap?: boolean
+  /**
+   * https://babeljs.io/docs/en/babel-parser#plugins
+   */
+  babelParserPlugins?: ParserPlugin[]
+  /**
+   * A list of files to parse for global types to be made available for type
+   * resolving in SFC macros. The list must be fully resolved file system paths.
+   */
+  globalTypeFiles?: string[]
+  /**
+   * Compile the template and inline the resulting render function
+   * directly inside setup().
+   * - Only affects `<script setup>`
+   * - This should only be used in production because it prevents the template
+   * from being hot-reloaded separately from component state.
+   */
+  inlineTemplate?: boolean
+  /**
+   * Generate the final component as a variable instead of default export.
+   * This is useful in e.g. @vitejs/plugin-vue where the script needs to be
+   * placed inside the main module.
+   */
+  genDefaultAs?: string
+  /**
+   * Options for template compilation when inlining. Note these are options that
+   * would normally be passed to `compiler-sfc`'s own `compileTemplate()`, not
+   * options passed to `compiler-dom`.
+   */
+  templateOptions?: Partial<SFCTemplateCompileOptions>
+  /**
+   * Hoist <script setup> static constants.
+   * - Only enables when one `<script setup>` exists.
+   * @default true
+   */
+  hoistStatic?: boolean
+  /**
+   * Set to `false` to disable reactive destructure for `defineProps` (pre-3.5
+   * behavior), or set to `'error'` to throw hard error on props destructures.
+   * @default true
+   */
+  propsDestructure?: boolean | 'error'
+  /**
+   * File system access methods to be used when resolving types
+   * imported in SFC macros. Defaults to ts.sys in Node.js, can be overwritten
+   * to use a virtual file system for use in browsers (e.g. in REPLs)
+   */
+  fs?: {
+    fileExists(file: string): boolean
+    readFile(file: string): string | undefined
+    realpath?(file: string): string
+  }
+  /**
+   * Transform Vue SFCs into custom elements.
+   */
+  customElement?: boolean | ((filename: string) => boolean)
+}
+
+export interface ImportBinding {
+  isType: boolean
+  imported: string
+  local: string
+  source: string
+  isFromSetup: boolean
+  isUsedInTemplate: boolean
+}
+
+const MACROS = [
+  DEFINE_PROPS,
+  DEFINE_EMITS,
+  DEFINE_EXPOSE,
+  DEFINE_OPTIONS,
+  DEFINE_SLOTS,
+  DEFINE_MODEL,
+  WITH_DEFAULTS,
+]
+
+/**
+ * Compile `<script setup>`
+ * It requires the whole SFC descriptor because we need to handle and merge
+ * normal `<script>` + `<script setup>` if both are present.
+ */
+export function compileScript(
+  sfc: SFCDescriptor,
+  options: SFCScriptCompileOptions,
+): SFCScriptBlock {
+  if (!options.id) {
+    warnOnce(
+      `compileScript now requires passing the \`id\` option.\n` +
+        `Upgrade your vite or vue-loader version for compatibility with ` +
+        `the latest experimental proposals.`,
+    )
+  }
+
+  const ctx = new ScriptCompileContext(sfc, options)
+  const { script, scriptSetup, source, filename } = sfc
+  const hoistStatic = options.hoistStatic !== false && !script
+  const scopeId = options.id ? options.id.replace(/^data-v-/, '') : ''
+  const scriptLang = script && script.lang
+  const scriptSetupLang = scriptSetup && scriptSetup.lang
+
+  let refBindings: string[] | undefined
+
+  if (!scriptSetup) {
+    if (!script) {
+      throw new Error(`[@vue/compiler-sfc] SFC contains no <script> tags.`)
+    }
+    // normal <script> only
+    return processNormalScript(ctx, scopeId)
+  }
+
+  if (script && scriptLang !== scriptSetupLang) {
+    throw new Error(
+      `[@vue/compiler-sfc] <script> and <script setup> must have the same ` +
+        `language type.`,
+    )
+  }
+
+  if (scriptSetupLang && !ctx.isJS && !ctx.isTS) {
+    // do not process non js/ts script blocks
+    return scriptSetup
+  }
+
+  // metadata that needs to be returned
+  // const ctx.bindingMetadata: BindingMetadata = {}
+  const scriptBindings: Record<string, BindingTypes> = Object.create(null)
+  const setupBindings: Record<string, BindingTypes> = Object.create(null)
+
+  let defaultExport: Node | undefined
+  let hasAwait = false
+  let hasInlinedSsrRenderFn = false
+
+  // string offsets
+  const startOffset = ctx.startOffset!
+  const endOffset = ctx.endOffset!
+  const scriptStartOffset = script && script.loc.start.offset
+  const scriptEndOffset = script && script.loc.end.offset
+
+  function hoistNode(node: Statement) {
+    const start = node.start! + startOffset
+    let end = node.end! + startOffset
+    // locate comment
+    if (node.trailingComments && node.trailingComments.length > 0) {
+      const lastCommentNode =
+        node.trailingComments[node.trailingComments.length - 1]
+      end = lastCommentNode.end! + startOffset
+    }
+    // locate the end of whitespace between this statement and the next
+    while (end <= source.length) {
+      if (!/\s/.test(source.charAt(end))) {
+        break
+      }
+      end++
+    }
+    ctx.s.move(start, end, 0)
+  }
+
+  function registerUserImport(
+    source: string,
+    local: string,
+    imported: string,
+    isType: boolean,
+    isFromSetup: boolean,
+    needTemplateUsageCheck: boolean,
+  ) {
+    // template usage check is only needed in non-inline mode, so we can skip
+    // the work if inlineTemplate is true.
+    let isUsedInTemplate = needTemplateUsageCheck
+    if (
+      needTemplateUsageCheck &&
+      ctx.isTS &&
+      sfc.template &&
+      !sfc.template.src &&
+      !sfc.template.lang
+    ) {
+      isUsedInTemplate = isImportUsed(local, sfc)
+    }
+
+    ctx.userImports[local] = {
+      isType,
+      imported,
+      local,
+      source,
+      isFromSetup,
+      isUsedInTemplate,
+    }
+  }
+
+  function checkInvalidScopeReference(node: Node | undefined, method: string) {
+    if (!node) return
+    walkIdentifiers(node, id => {
+      const binding = setupBindings[id.name]
+      if (binding && binding !== BindingTypes.LITERAL_CONST) {
+        ctx.error(
+          `\`${method}()\` in <script setup> cannot reference locally ` +
+            `declared variables because it will be
 
 ROUND: 1

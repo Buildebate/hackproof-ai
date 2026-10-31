@@ -1,0 +1,12 @@
+{
+ "files": [
+  "doc/en/example/py2py3/test_py3.py",
+  "doc/en/example/py2py3/test_py2.py",
+  "testing/io/test_saferepr.py",
+  "testing/python/raises.py",
+  "testing/test_session.py"
+ ],
+ "elapsed_ms": 220813,
+ "backend": "contriever-transformer-cpu",
+ "issue_sha256": "388fac0a164b2121f6a6053a7ba17291d85ae3f027b83a605f6d6ce715fcb4e0"
+}

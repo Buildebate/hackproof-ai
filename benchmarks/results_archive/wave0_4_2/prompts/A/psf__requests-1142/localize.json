@@ -1,0 +1,12 @@
+{
+ "files": [
+  "requests/models.py",
+  "requests/cookies.py",
+  "requests/api.py",
+  "requests/packages/urllib3/request.py",
+  "requests/utils.py"
+ ],
+ "elapsed_ms": 89040,
+ "backend": "contriever-transformer-cpu",
+ "issue_sha256": "7636e87075303040a565ea7a336f46deb43ef2b515343b04b28793d4b18f1bc2"
+}

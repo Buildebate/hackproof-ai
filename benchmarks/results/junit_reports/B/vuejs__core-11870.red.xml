@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="2.541">
+    <testsuite name="packages/runtime-core/__tests__/helpers/repro-f4ca0f99ac09.test.ts" timestamp="2026-10-31T09:21:59.648Z" hostname="6b58d2cf745f" tests="1" failures="1" errors="0" skipped="0" time="0.044">
+        <testcase classname="packages/runtime-core/__tests__/helpers/repro-f4ca0f99ac09.test.ts" name="shallowReactive v-for regression &gt; v-for over shallowReactive array should not unwrap refs" time="0.043">
+            <failure message="expected &apos;string&apos; to be &apos;object&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected &apos;string&apos; to be &apos;object&apos; // Object.is equality
+
+Expected: &quot;object&quot;
+Received: &quot;string&quot;
+
+ ❯ packages/runtime-core/__tests__/helpers/repro-f4ca0f99ac09.test.ts:22:15
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.248" timestamp="2026-10-31T08:14:40.741788+00:00" hostname="3f5533a13cfe"><testcase classname="test_repro_ca1831d0715b" name="test_put_binary_payload_preserved" time="0.006"><failure message="AssertionError: binary data raised UnicodeDecodeError('ascii', b'\xc3\xb6\xc3\xb6\xc3\xb6', 0, 1, 'ordinal not in range(128)')&#10;assert False">def test_put_binary_payload_preserved():
+        data = u"ööö".encode("utf-8")
+        try:
+&gt;           prep = Request('PUT', 'http://example.com/put', data=data).prepare()
+
+test_repro_ca1831d0715b.py:6: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/models.py:239: in prepare
+    p.prepare(
+requests/models.py:296: in prepare
+    self.prepare_body(data, files, json)
+requests/models.py:447: in prepare_body
+    body = self._encode_params(data)
+requests/models.py:84: in _encode_params
+    return to_native_string(data)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+string = b'\xc3\xb6\xc3\xb6\xc3\xb6', encoding = 'ascii'
+
+    def to_native_string(string, encoding='ascii'):
+        """
+        Given a string object, regardless of type, returns a representation of that
+        string in the native string type, encoding and decoding where necessary.
+        This assumes ASCII unless told otherwise.
+        """
+        out = None
+    
+        if isinstance(string, builtin_str):
+            out = string
+        else:
+            if is_py2:
+                out = string.encode(encoding)
+            else:
+&gt;               out = string.decode(encoding)
+E               UnicodeDecodeError: 'ascii' codec can't decode byte 0xc3 in position 0: ordinal not in range(128)
+
+requests/utils.py:700: UnicodeDecodeError
+
+During handling of the above exception, another exception occurred:
+
+    def test_put_binary_payload_preserved():
+        data = u"ööö".encode("utf-8")
+        try:
+            prep = Request('PUT', 'http://example.com/put', data=data).prepare()
+        except Exception as exc:
+&gt;           assert False, "binary data raised %r" % (exc,)
+E           AssertionError: binary data raised UnicodeDecodeError('ascii', b'\xc3\xb6\xc3\xb6\xc3\xb6', 0, 1, 'ordinal not in range(128)')
+E           assert False
+
+test_repro_ca1831d0715b.py:8: AssertionError</failure></testcase></testsuite></testsuites>

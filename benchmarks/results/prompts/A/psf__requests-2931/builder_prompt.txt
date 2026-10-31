@@ -1,0 +1,966 @@
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences. Prefix each block with its repo-relative target file path on its own line. Copy every SEARCH block byte-for-byte from the shown CODE CONTEXT (exact indentation and punctuation); never reconstruct code from memory. After the blocks, end your verdict with exactly one marker word on its own final line: APPROVE if the patch is complete, or REVISE if the context is insufficient to write one.
+BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
+
+ISSUE:
+Request with binary payload fails due to calling to_native_string
+Introduced with https://github.com/kennethreitz/requests/issues/2844
+
+```
+import requests
+requests.put("http://httpbin.org/put", data=u"ööö".encode("utf-8"))
+```
+
+This works with 2.8.1, but not with 2.9.
+
+CODE CONTEXT:
+TOP-1 FULL FILE requests/__init__.py:
+# -*- coding: utf-8 -*-
+
+#   __
+#  /__)  _  _     _   _ _/   _
+# / (   (- (/ (/ (- _)  /  _)
+#          /
+
+"""
+Requests HTTP library
+~~~~~~~~~~~~~~~~~~~~~
+
+Requests is an HTTP library, written in Python, for human beings. Basic GET
+usage:
+
+   >>> import requests
+   >>> r = requests.get('https://www.python.org')
+   >>> r.status_code
+   200
+   >>> 'Python is a programming language' in r.content
+   True
+
+... or POST:
+
+   >>> payload = dict(key1='value1', key2='value2')
+   >>> r = requests.post('http://httpbin.org/post', data=payload)
+   >>> print(r.text)
+   {
+     ...
+     "form": {
+       "key2": "value2",
+       "key1": "value1"
+     },
+     ...
+   }
+
+The other HTTP methods are supported - see `requests.api`. Full documentation
+is at <http://python-requests.org>.
+
+:copyright: (c) 2015 by Kenneth Reitz.
+:license: Apache 2.0, see LICENSE for more details.
+
+"""
+
+__title__ = 'requests'
+__version__ = '2.9.0'
+__build__ = 0x020900
+__author__ = 'Kenneth Reitz'
+__license__ = 'Apache 2.0'
+__copyright__ = 'Copyright 2015 Kenneth Reitz'
+
+# Attempt to enable urllib3's SNI support, if possible
+try:
+    from .packages.urllib3.contrib import pyopenssl
+    pyopenssl.inject_into_urllib3()
+except ImportError:
+    pass
+
+from . import utils
+from .models import Request, Response, PreparedRequest
+from .api import request, get, head, post, patch, put, delete, options
+from .sessions import session, Session
+from .status_codes import codes
+from .exceptions import (
+    RequestException, Timeout, URLRequired,
+    TooManyRedirects, HTTPError, ConnectionError,
+    FileModeWarning,
+)
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+try:  # Python 2.7+
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
+logging.getLogger(__name__).addHandler(NullHandler())
+
+import warnings
+
+# FileModeWarnings go off per the default.
+warnings.simplefilter('default', FileModeWarning, append=True)
+
+
+requests/__init__.py:
+# -*- coding: utf-8 -*-
+
+#   __
+#  /__)  _  _     _   _ _/   _
+# / (   (- (/ (/ (- _)  /  _)
+#          /
+
+"""
+Requests HTTP library
+~~~~~~~~~~~~~~~~~~~~~
+
+Requests is an HTTP library, written in Python, for human beings. Basic GET
+usage:
+
+   >>> import requests
+   >>> r = requests.get('https://www.python.org')
+   >>> r.status_code
+   200
+   >>> 'Python is a programming language' in r.content
+   True
+
+... or POST:
+
+   >>> payload = dict(key1='value1', key2='value2')
+   >>> r = requests.post('http://httpbin.org/post', data=payload)
+   >>> print(r.text)
+   {
+     ...
+     "form": {
+       "key2": "value2",
+       "key1": "value1"
+     },
+     ...
+   }
+
+The other HTTP methods are supported - see `requests.api`. Full documentation
+is at <http://python-requests.org>.
+
+:copyright: (c) 2015 by Kenneth Reitz.
+:license: Apache 2.0, see LICENSE for more details.
+
+"""
+
+__title__ = 'requests'
+__version__ = '2.9.0'
+__build__ = 0x020900
+__author__ = 'Kenneth Reitz'
+__license__ = 'Apache 2.0'
+__copyright__ = 'Copyright 2015 Kenneth Reitz'
+
+# Attempt to enable urllib3's SNI support, if possible
+try:
+    from .packages.urllib3.contrib import pyopenssl
+    pyopenssl.inject_into_urllib3()
+except ImportError:
+    pass
+
+from . import utils
+from .models import Request, Response, PreparedRequest
+from .api import request, get, head, post, patch, put, delete, options
+from .sessions import session, Session
+from .status_codes import codes
+from .exceptions import (
+    RequestException, Timeout, URLRequired,
+    TooManyRedirects, HTTPError, ConnectionError,
+    FileModeWarning,
+)
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+try:  # Python 2.7+
+    from logging import NullHandler
+except ImportError:
+    class NullHandler(logging.Handler):
+        def emit(self, record):
+            pass
+
+logging.getLogger(__name__).addHandler(NullHandler())
+
+import warnings
+
+# FileModeWarnings go off per the default.
+warnings.simplefilter('default', FileModeWarning, append=True)
+
+
+requests/sessions.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.session
+~~~~~~~~~~~~~~~~
+
+This module provides a Session object to manage and persist settings across
+requests (cookies, auth, proxies).
+
+"""
+import os
+from collections import Mapping
+from datetime import datetime
+
+from .auth import _basic_auth_str
+from .compat import cookielib, OrderedDict, urljoin, urlparse
+from .cookies import (
+    cookiejar_from_dict, extract_cookies_to_jar, RequestsCookieJar, merge_cookies)
+from .models import Request, PreparedRequest, DEFAULT_REDIRECT_LIMIT
+from .hooks import default_hooks, dispatch_hook
+from .utils import to_key_val_list, default_headers, to_native_string
+from .exceptions import (
+    TooManyRedirects, InvalidSchema, ChunkedEncodingError, ContentDecodingError)
+from .packages.urllib3._collections import RecentlyUsedContainer
+from .structures import CaseInsensitiveDict
+
+from .adapters import HTTPAdapter
+
+from .utils import (
+    requote_uri, get_environ_proxies, get_netrc_auth, should_bypass_proxies,
+    get_auth_from_url
+)
+
+from .status_codes import codes
+
+# formerly defined here, reexposed here for backward compatibility
+from .models import REDIRECT_STATI
+
+REDIRECT_CACHE_SIZE = 1000
+
+
+def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+    """
+    Determines appropriate setting for a given request, taking into account the
+    explicit setting on that request, and the setting in the session. If a
+    setting is a dictionary, they will be merged together using `dict_class`
+    """
+
+    if session_setting is None:
+        return request_setting
+
+    if request_setting is None:
+        return session_setting
+
+    # Bypass if not a dictionary (e.g. verify)
+    if not (
+            isinstance(session_setting, Mapping) and
+            isinstance(request_setting, Mapping)
+    ):
+        return request_setting
+
+    merged_setting = dict_class(to_key_val_list(session_setting))
+    merged_setting.update(to_key_val_list(request_setting))
+
+    # Remove keys that are set to None. Extract keys first to avoid altering
+    # the dictionary during iteration.
+    none_keys = [k for (k, v) in merged_setting.items() if v is None]
+    for key in none_keys:
+        del merged_setting[key]
+
+    return merged_setting
+
+
+def merge_hooks(request_hooks, session_hooks, dict_class=OrderedDict):
+    """
+    Properly merges both requests and session hooks.
+
+    This is necessary because when request_hooks == {'response': []}, the
+    merge breaks Session hooks entirely.
+    """
+    if session_hooks is None or session_hooks.get('response') == []:
+        return request_hooks
+
+    if request_hooks is None or request_hooks.get('response') == []:
+        return session_hooks
+
+    return merge_setting(request_hooks, session_hooks, dict_class)
+
+
+class SessionRedirectMixin(object):
+    def resolve_redirects(self, resp, req, stream=False, timeout=None,
+                          verify=True, cert=None, proxies=None, **adapter_kwargs):
+        """Receives a Response. Returns a generator of Responses."""
+
+        i = 0
+        hist = [] # keep track of history
+
+        while resp.is_redirect:
+            prepared_request = req.copy()
+
+            if i > 0:
+                # Update history and keep track of redirects.
+                hist.append(resp)
+                new_hist = list(hist)
+                resp.history = new_hist
+
+            try:
+                resp.content  # Consume socket so it can be released
+            except (ChunkedEncodingError, ContentDecodingError, RuntimeError):
+                resp.raw.read(decode_content=False)
+
+            if i >= self.max_redirects:
+                raise TooManyRedirects('Exceeded %s redirects.' % self.max_redirects)
+
+            # Release the connection back into the pool.
+            resp.close()
+
+            url = resp.headers['location']
+            method = req.method
+
+            # Handle redirection without scheme (see: RFC 1808 Section 4)
+            if url.startswith('//'):
+                parsed_rurl = urlparse(resp.url)
+                url = '%s:%s' % (parsed_rurl.scheme, url)
+
+            # The scheme should be lower case...
+            parsed = urlparse(url)
+            url = parsed.geturl()
+
+            # Facilitate relative 'location' headers, as allowed by RFC 7231.
+            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')
+            # Compliant with RFC3986, we percent encode the url.
+            if not parsed.netloc:
+                url = urljoin(resp.url, requote_uri(url))
+            else:
+                url = requote_uri(url)
+
+            prepared_request.url = to_native_string(url)
+            # Cache the url, unless it redirects to itself.
+            if resp.is_permanent_redirect and req.url != prepared_request.url:
+                self.redirect_cache[req.url] = prepared_request.url
+
+            # http://tools.ietf.org/html/rfc7231#section-6.4.4
+            if (resp.status_code == codes.see_other and
+                    method != 'HEAD'):
+                method = 'GET'
+
+            # Do what the browsers do, despite standards...
+            # First, turn 302s into GETs.
+            if resp.status_code == codes.found and method != 'HEAD':
+                method = 'GET'
+
+            # Second, if a POST is responded to with a 301, turn it into a GET.
+            # This bizarre behaviour is explained in Issue 1704.
+            if resp.status_code == codes.moved and method == 'POST':
+                method = 'GET'
+
+            prepared_request.method = method
+
+            # https://github.com/kennethreitz/requests/issues/1084
+            if resp.status_code not in (codes.temporary_redirect, codes.permanent_redirect):
+                if 'Content-Length' in prepared_request.headers:
+                    del prepared_request.headers['Content-Length']
+
+                prepared_request.body = None
+
+            headers = prepared_request.headers
+            try:
+                del headers['Cookie']
+            except KeyError:
+                pass
+
+            # Extract any cookies sent on the response to the cookiejar
+            # in the new request. Because we've mutated our copied prepared
+            # request, use the old one that we haven't yet touched.
+            extract_cookies_to_jar(prepared_request._cookies, req, resp.raw)
+            prepared_request._cookies.update(self.cookies)
+            prepared_request.prepare_cookies(prepared_request._cookies)
+
+            # Rebuild auth and proxy information.
+            proxies = self.rebuild_proxies(prepared_request, proxies)
+            self.rebuild_auth(prepared_request, resp)
+
+            # Override the original request.
+            req = prepared_request
+
+            resp = self.send(
+                req,
+                stream=stream,
+                timeout=timeout,
+                verify=verify,
+                cert=cert,
+                proxies=proxies,
+                allow_redirects=False,
+                **adapter_kwargs
+            )
+
+            extract_cookies_to_jar(self.cookies, prepared_request, resp.raw)
+
+            i += 1
+            yield resp
+
+    def rebuild_auth(self, prepared_request, response):
+        """
+        When being redirected we may want to strip authentication from the
+        request to avoid leaking credentials. This method intelligently removes
+        and reapplies authentication where possible to avoid credential loss.
+        """
+        headers = prepared_request.headers
+        url = prepared_request.url
+
+        if 'Authorization' in headers:
+            # If we get redirected to a new host, we should strip out any
+            # authentication headers.
+            original_parsed = urlparse(response.request.url)
+            redirect_parsed = urlparse(url)
+
+            if (original_parsed.hostname != redirect_parsed.hostname):
+                del headers['Authorization']
+
+        # .netrc might have more auth for us on our new host.
+        new_auth = get_netrc_auth(url) if self.trust_env else 
+
+requests/models.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.models
+~~~~~~~~~~~~~~~
+
+This module contains the primary objects that power Requests.
+"""
+
+import collections
+import datetime
+
+from io import BytesIO, UnsupportedOperation
+from .hooks import default_hooks
+from .structures import CaseInsensitiveDict
+
+from .auth import HTTPBasicAuth
+from .cookies import cookiejar_from_dict, get_cookie_header, _copy_cookie_jar
+from .packages.urllib3.fields import RequestField
+from .packages.urllib3.filepost import encode_multipart_formdata
+from .packages.urllib3.util import parse_url
+from .packages.urllib3.exceptions import (
+    DecodeError, ReadTimeoutError, ProtocolError, LocationParseError)
+from .exceptions import (
+    HTTPError, MissingSchema, InvalidURL, ChunkedEncodingError,
+    ContentDecodingError, ConnectionError, StreamConsumedError)
+from .utils import (
+    guess_filename, get_auth_from_url, requote_uri,
+    stream_decode_response_unicode, to_key_val_list, parse_header_links,
+    iter_slices, guess_json_utf, super_len, to_native_string)
+from .compat import (
+    cookielib, urlunparse, urlsplit, urlencode, str, bytes, StringIO,
+    is_py2, chardet, builtin_str, basestring)
+from .compat import json as complexjson
+from .status_codes import codes
+
+#: The set of HTTP status codes that indicate an automatically
+#: processable redirect.
+REDIRECT_STATI = (
+    codes.moved,              # 301
+    codes.found,              # 302
+    codes.other,              # 303
+    codes.temporary_redirect, # 307
+    codes.permanent_redirect, # 308
+)
+
+DEFAULT_REDIRECT_LIMIT = 30
+CONTENT_CHUNK_SIZE = 10 * 1024
+ITER_CHUNK_SIZE = 512
+
+
+class RequestEncodingMixin(object):
+    @property
+    def path_url(self):
+        """Build the path URL to use."""
+
+        url = []
+
+        p = urlsplit(self.url)
+
+        path = p.path
+        if not path:
+            path = '/'
+
+        url.append(path)
+
+        query = p.query
+        if query:
+            url.append('?')
+            url.append(query)
+
+        return ''.join(url)
+
+    @staticmethod
+    def _encode_params(data):
+        """Encode parameters in a piece of data.
+
+        Will successfully encode parameters when passed as a dict or a list of
+        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary
+        if parameters are supplied as a dict.
+        """
+
+        if isinstance(data, (str, bytes)):
+            return to_native_string(data)
+        elif hasattr(data, 'read'):
+            return data
+        elif hasattr(data, '__iter__'):
+            result = []
+            for k, vs in to_key_val_list(data):
+                if isinstance(vs, basestring) or not hasattr(vs, '__iter__'):
+                    vs = [vs]
+                for v in vs:
+                    if v is not None:
+                        result.append(
+                            (k.encode('utf-8') if isinstance(k, str) else k,
+                             v.encode('utf-8') if isinstance(v, str) else v))
+            return urlencode(result, doseq=True)
+        else:
+            return data
+
+    @staticmethod
+    def _encode_files(files, data):
+        """Build the body for a multipart/form-data request.
+
+        Will successfully encode files when passed as a dict or a list of
+        2-tuples. Order is retained if data is a list of 2-tuples but arbitrary
+        if parameters are supplied as a dict.
+
+        """
+        if (not files):
+            raise ValueError("Files must be provided.")
+        elif isinstance(data, basestring):
+            raise ValueError("Data must not be a string.")
+
+        new_fields = []
+        fields = to_key_val_list(data or {})
+        files = to_key_val_list(files or {})
+
+        for field, val in fields:
+            if isinstance(val, basestring) or not hasattr(val, '__iter__'):
+                val = [val]
+            for v in val:
+                if v is not None:
+                    # Don't call str() on bytestrings: in Py3 it all goes wrong.
+                    if not isinstance(v, bytes):
+                        v = str(v)
+
+                    new_fields.append(
+                        (field.decode('utf-8') if isinstance(field, bytes) else field,
+                         v.encode('utf-8') if isinstance(v, str) else v))
+
+        for (k, v) in files:
+            # support for explicit filename
+            ft = None
+            fh = None
+            if isinstance(v, (tuple, list)):
+                if len(v) == 2:
+                    fn, fp = v
+                elif len(v) == 3:
+                    fn, fp, ft = v
+                else:
+                    fn, fp, ft, fh = v
+            else:
+                fn = guess_filename(v) or k
+                fp = v
+
+            if isinstance(fp, (str, bytes, bytearray)):
+                fdata = fp
+            else:
+                fdata = fp.read()
+
+            rf = RequestField(name=k, data=fdata, filename=fn, headers=fh)
+            rf.make_multipart(content_type=ft)
+            new_fields.append(rf)
+
+        body, content_type = encode_multipart_formdata(new_fields)
+
+        return body, content_type
+
+
+class RequestHooksMixin(object):
+    def register_hook(self, event, hook):
+        """Properly register a hook."""
+
+        if event not in self.hooks:
+            raise ValueError('Unsupported event specified, with event name "%s"' % (event))
+
+        if isinstance(hook, collections.Callable):
+            self.hooks[event].append(hook)
+        elif hasattr(hook, '__iter__'):
+            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
+
+    def deregister_hook(self, event, hook):
+        """Deregister a previously registered hook.
+        Returns True if the hook existed, False if not.
+        """
+
+        try:
+            self.hooks[event].remove(hook)
+            return True
+        except ValueError:
+            return False
+
+
+class Request(RequestHooksMixin):
+    """A user-created :class:`Request <Request>` object.
+
+    Used to prepare a :class:`PreparedRequest <PreparedRequest>`, which is sent to the server.
+
+    :param method: HTTP method to use.
+    :param url: URL to send.
+    :param headers: dictionary of headers to send.
+    :param files: dictionary of {filename: fileobject} files to multipart upload.
+    :param data: the body to attach to the request. If a dictionary is provided, form-encoding will take place.
+    :param json: json for the body to attach to the request (if files or data is not specified).
+    :param params: dictionary of URL parameters to append to the URL.
+    :param auth: Auth handler or (user, pass) tuple.
+    :param cookies: dictionary or CookieJar of cookies to attach to this request.
+    :param hooks: dictionary of callback hooks, for internal usage.
+
+    Usage::
+
+      >>> import requests
+      >>> req = requests.Request('GET', 'http://httpbin.org/get')
+      >>> req.prepare()
+      <PreparedRequest [GET]>
+
+    """
+    def __init__(self, method=None, url=None, headers=None, files=None,
+        data=None, params=None, auth=None, cookies=None, hooks=None, json=None):
+
+        # Default empty dicts for dict params.
+        data = [] if data is None else data
+        files = [] if files is None else files
+        headers = {} if headers is None else headers
+        params = {} if params is None else params
+        hooks = {} if hooks is None else hooks
+
+        self.hooks = default_hooks()
+        for (k, v) in list(hooks.items()):
+            self.register_hook(event=k, hook=v)
+
+        self.method = method
+        self.url = url
+        self.headers = headers
+        self.files = files
+        self.data = data
+        self.json = json
+        self.params = params
+        self.auth = auth
+        self.cookies = cookies
+
+    def __repr__(self):
+        return '<Request [%s]>' % (self.method)
+
+    def prepare(self):
+        """Constructs a :class:`PreparedRequest <PreparedRequest>` for transmission and returns it."""
+        p = PreparedRequest()
+        p.prepare(
+            method=self.method,
+            url=self.url
+
+requests/packages/__init__.py:
+'''
+Debian and other distributions "unbundle" requests' vendored dependencies, and
+rewrite all imports to use the global versions of ``urllib3`` and ``chardet``.
+The problem with this is that not only requests itself imports those
+dependencies, but third-party code outside of the distros' control too.
+
+In reaction to these problems, the distro maintainers replaced
+``requests.packages`` with a magical "stub module" that imports the correct
+modules. The implementations were varying in quality and all had severe
+problems. For example, a symlink (or hardlink) that links the correct modules
+into place introduces problems regarding object identity, since you now have
+two modules in `sys.modules` with the same API, but different identities::
+
+    requests.packages.urllib3 is not urllib3
+
+With version ``2.5.2``, requests started to maintain its own stub, so that
+distro-specific breakage would be reduced to a minimum, even though the whole
+issue is not requests' fault in the first place. See
+https://github.com/kennethreitz/requests/pull/2375 for the corresponding pull
+request.
+'''
+
+from __future__ import absolute_import
+import sys
+
+try:
+    from . import urllib3
+except ImportError:
+    import urllib3
+    sys.modules['%s.urllib3' % __name__] = urllib3
+
+try:
+    from . import chardet
+except ImportError:
+    import chardet
+    sys.modules['%s.chardet' % __name__] = chardet
+
+
+requests/utils.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.utils
+~~~~~~~~~~~~~~
+
+This module provides utility functions that are used within Requests
+that are also useful for external consumption.
+
+"""
+
+import cgi
+import codecs
+import collections
+import io
+import os
+import platform
+import re
+import sys
+import socket
+import struct
+import warnings
+
+from . import __version__
+from . import certs
+from .compat import parse_http_list as _parse_list_header
+from .compat import (quote, urlparse, bytes, str, OrderedDict, unquote, is_py2,
+                     builtin_str, getproxies, proxy_bypass, urlunparse,
+                     basestring)
+from .cookies import RequestsCookieJar, cookiejar_from_dict
+from .structures import CaseInsensitiveDict
+from .exceptions import InvalidURL, FileModeWarning
+
+_hush_pyflakes = (RequestsCookieJar,)
+
+NETRC_FILES = ('.netrc', '_netrc')
+
+DEFAULT_CA_BUNDLE_PATH = certs.where()
+
+
+def dict_to_sequence(d):
+    """Returns an internal sequence dictionary update."""
+
+    if hasattr(d, 'items'):
+        d = d.items()
+
+    return d
+
+
+def super_len(o):
+    total_length = 0
+    current_position = 0
+
+    if hasattr(o, '__len__'):
+        total_length = len(o)
+
+    elif hasattr(o, 'len'):
+        total_length = o.len
+
+    elif hasattr(o, 'getvalue'):
+        # e.g. BytesIO, cStringIO.StringIO
+        total_length = len(o.getvalue())
+
+    elif hasattr(o, 'fileno'):
+        try:
+            fileno = o.fileno()
+        except io.UnsupportedOperation:
+            pass
+        else:
+            total_length = os.fstat(fileno).st_size
+
+            # Having used fstat to determine the file length, we need to
+            # confirm that this file was opened up in binary mode.
+            if 'b' not in o.mode:
+                warnings.warn((
+                    "Requests has determined the content-length for this "
+                    "request using the binary size of the file: however, the "
+                    "file has been opened in text mode (i.e. without the 'b' "
+                    "flag in the mode). This may lead to an incorrect "
+                    "content-length. In Requests 3.0, support will be removed "
+                    "for files in text mode."),
+                    FileModeWarning
+                )
+
+    if hasattr(o, 'tell'):
+        current_position = o.tell()
+
+    return max(0, total_length - current_position)
+
+
+def get_netrc_auth(url, raise_errors=False):
+    """Returns the Requests tuple auth for a given url from netrc."""
+
+    try:
+        from netrc import netrc, NetrcParseError
+
+        netrc_path = None
+
+        for f in NETRC_FILES:
+            try:
+                loc = os.path.expanduser('~/{0}'.format(f))
+            except KeyError:
+                # os.path.expanduser can fail when $HOME is undefined and
+                # getpwuid fails. See http://bugs.python.org/issue20164 &
+                # https://github.com/kennethreitz/requests/issues/1846
+                return
+
+            if os.path.exists(loc):
+                netrc_path = loc
+                break
+
+        # Abort early if there isn't one.
+        if netrc_path is None:
+            return
+
+        ri = urlparse(url)
+
+        # Strip port numbers from netloc
+        host = ri.netloc.split(':')[0]
+
+        try:
+            _netrc = netrc(netrc_path).authenticators(host)
+            if _netrc:
+                # Return with login / password
+                login_i = (0 if _netrc[0] else 1)
+                return (_netrc[login_i], _netrc[2])
+        except (NetrcParseError, IOError):
+            # If there was a parsing error or a permissions issue reading the file,
+            # we'll just skip netrc auth unless explicitly asked to raise errors.
+            if raise_errors:
+                raise
+
+    # AppEngine hackiness.
+    except (ImportError, AttributeError):
+        pass
+
+
+def guess_filename(obj):
+    """Tries to guess the filename of the given object."""
+    name = getattr(obj, 'name', None)
+    if (name and isinstance(name, basestring) and name[0] != '<' and
+            name[-1] != '>'):
+        return os.path.basename(name)
+
+
+def from_key_val_list(value):
+    """Take an object and test to see if it can be represented as a
+    dictionary. Unless it can not be represented as such, return an
+    OrderedDict, e.g.,
+
+    ::
+
+        >>> from_key_val_list([('key', 'val')])
+        OrderedDict([('key', 'val')])
+        >>> from_key_val_list('string')
+        ValueError: need more than 1 value to unpack
+        >>> from_key_val_list({'key': 'val'})
+        OrderedDict([('key', 'val')])
+    """
+    if value is None:
+        return None
+
+    if isinstance(value, (str, bytes, bool, int)):
+        raise ValueError('cannot encode objects that are not 2-tuples')
+
+    return OrderedDict(value)
+
+
+def to_key_val_list(value):
+    """Take an object and test to see if it can be represented as a
+    dictionary. If it can be, return a list of tuples, e.g.,
+
+    ::
+
+        >>> to_key_val_list([('key', 'val')])
+        [('key', 'val')]
+        >>> to_key_val_list({'key': 'val'})
+        [('key', 'val')]
+        >>> to_key_val_list('string')
+        ValueError: cannot encode objects that are not 2-tuples.
+    """
+    if value is None:
+        return None
+
+    if isinstance(value, (str, bytes, bool, int)):
+        raise ValueError('cannot encode objects that are not 2-tuples')
+
+    if isinstance(value, collections.Mapping):
+        value = value.items()
+
+    return list(value)
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def parse_list_header(value):
+    """Parse lists as described by RFC 2068 Section 2.
+
+    In particular, parse comma-separated lists where the elements of
+    the list may include quoted-strings.  A quoted-string could
+    contain a comma.  A non-quoted string could have quotes in the
+    middle.  Quotes are removed automatically after parsing.
+
+    It basically works like :func:`parse_set_header` just that items
+    may appear multiple times and case sensitivity is preserved.
+
+    The return value is a standard :class:`list`:
+
+    >>> parse_list_header('token, "quoted value"')
+    ['token', 'quoted value']
+
+    To create a header from the :class:`list` again, use the
+    :func:`dump_header` function.
+
+    :param value: a string with a list header.
+    :return: :class:`list`
+    """
+    result = []
+    for item in _parse_list_header(value):
+        if item[:1] == item[-1:] == '"':
+            item = unquote_header_value(item[1:-1])
+        result.append(item)
+    return result
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def parse_dict_header(value):
+    """Parse lists of key, value pairs as described by RFC 2068 Section 2 and
+    convert them into a python dict:
+
+    >>> d = parse_dict_header('foo="is a fish", bar="as well"')
+    >>> type(d) is dict
+    True
+    >>> sorted(d.items())
+    [('bar', 'as well'), ('foo', 'is a fish')]
+
+    If there is no value for a key it will be `None`:
+
+    >>> parse_dict_header('key_without_value')
+    {'key_without_value': None}
+
+    To create a header from the :class:`dict` again, use the
+    :func:`dump_header` function.
+
+    :param value: a string with a dict header.
+    :return: :class:`dict`
+    """
+    result = {}
+    for item in _parse_list_header(value):
+        if '=' not in item:
+            result[item] = None
+            continue
+        name, value = item.split('=', 1)
+        if value[:1] == value[-1:] == '"':
+            value = unquote_header_value(value[1:-1])
+        result[name] = value
+    return result
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def unquote_header_value(value, is_filename=False):
+    r"""Unquotes a header value.  (Reversal of :func:`quote_header_value`).
+    This does not use the real unquoting but what browsers are actually
+    using for quoting.
+
+    :param value: the header value to unquote.
+    """
+    if value and value[0] == value[-1] == '"':
+        # this is not the real unquoting, but fixing this so that the
+        # RFC is met will result in bugs with internet explorer and
+ 
+
+ROUND: 1

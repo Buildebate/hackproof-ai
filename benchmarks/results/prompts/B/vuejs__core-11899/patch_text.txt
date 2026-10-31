@@ -1,0 +1,151 @@
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
+function processRule(id: string, rule: Rule) {
+  if (!(rule.selector && !rule.selector.startsWith('%'))) {
+    return
+  }
+=======
+function processRule(id: string, rule: Rule) {
+  if (!(rule.selector && !rule.selector.startsWith('%'))) {
+    return
+  }
+  // Nested rules are processed regardless of parent type (rule or
+  // at-rules such as @media/@container/@supports/@layer/@starting-style).
+  // Skip empty and string-only selectors (e.g. `""` inside @media):
+  // there is no element to scope and injecting would produce invalid CSS.
+  const trimmedSelector = rule.selector.trim()
+  if (
+    !trimmedSelector ||
+    trimmedSelector === '""' ||
+    trimmedSelector === "''"
+  ) {
+    return
+  }
+>>>>>>> REPLACE
+packages/compiler-sfc/src/style/pluginScoped.ts
+<<<<<<< SEARCH
+    selector.first.spaces.before = ''
+=======
+    if (selector.first) selector.first.spaces.before = ''
+>>>>>>> REPLACE
+packages/compiler-sfc/__tests__/compileStyle.spec.ts
+<<<<<<< SEARCH
+describe('SFC scoped CSS', () => {
+=======
+describe('SFC scoped CSS', () => {
+  test('nested @media with no outer declarations or nested selectors', () => {
+    const { code } = compileStyle({
+      source: `.foo { @media (max-width:800px) { background:green } }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    })
+    expect(code).toContain('.foo[data-v-test]')
+    expect(code).toContain('@media (max-width:800px)')
+    expect(code).toContain('background:green')
+  })
+
+  test('nested @media equivalence with empty nested rule', () => {
+    const withEmptyBar = compileStyle({
+      source: `.foo { color:red; .bar{}; @media{color:green} }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    }).code
+    const withoutEmptyBar = compileStyle({
+      source: `.foo { color:red; @media{color:green} }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    }).code
+    for (const code of [withEmptyBar, withoutEmptyBar]) {
+      expect(code).toContain('.foo[data-v-test]')
+      expect(code).toContain('color:red')
+      expect(code).toContain('@media')
+      expect(code).toContain('color:green')
+    }
+    expect(withEmptyBar).toContain('.bar[data-v-test]')
+  })
+
+  test('nested @container/@supports/@layer/@starting-style with direct declarations', () => {
+    for (const atRule of [
+      '@container (min-width:100px)',
+      '@supports (display:grid)',
+      '@layer',
+      '@starting-style',
+    ]) {
+      const { code } = compileStyle({
+        source: `.foo { color:red; ${atRule}{color:green} }`,
+        filename: 'test.css',
+        id: 'data-v-test',
+        scoped: true,
+      })
+      expect(code).toContain('.foo[data-v-test]')
+      expect(code).toContain(atRule.split(' ')[0])
+      expect(code).toContain('color:red')
+      expect(code).toContain('color:green')
+    }
+  })
+
+  test('doubly nested scoped rules via nested rule and via @media', () => {
+    const viaRule = compileStyle({
+      source: `.foo { .bar { @media{color:blue} } }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    }).code
+    const viaMedia = compileStyle({
+      source: `.foo { @media{ .bar{color:blue} } }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    }).code
+    for (const code of [viaRule, viaMedia]) {
+      expect(code).toContain('.foo[data-v-test]')
+      expect(code).toContain('.bar[data-v-test]')
+      expect(code).toContain('@media')
+      expect(code).toContain('color:blue')
+    }
+  })
+
+  test('empty @media in scoped mode', () => {
+    const { code } = compileStyle({
+      source: `.foo { color:red; @media {} }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    })
+    expect(code).toContain('.foo[data-v-test]')
+    expect(code).toContain('@media')
+    const empty = compileStyle({
+      source: `@media only screen and (max-width:800px) { }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    }).code
+    expect(empty).toContain('@media only screen and (max-width:800px)')
+    expect(empty).not.toContain('[data-v-test]')
+  })
+
+  test('nested @media with unicode class and empty-string selector', () => {
+    const { code } = compileStyle({
+      source: `.föö-😀 { @media{color:red} }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    })
+    expect(code).toContain('.föö-😀[data-v-test]')
+    expect(code).toContain('color:red')
+    const nested = compileStyle({
+      source: `.foo { @media { [data-empty=""] { color:red } "" { color:red } } }`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    }).code
+    expect(nested).toContain('.foo[data-v-test]')
+    expect(nested).toContain('[data-empty=""]')
+    expect(nested).toContain('[data-v-test]')
+    expect(nested).toContain('""')
+    expect(nested).toContain('color:red')
+  })
+>>>>>>> REPLACE

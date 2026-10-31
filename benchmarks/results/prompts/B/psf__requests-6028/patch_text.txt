@@ -1,0 +1,106 @@
+requests/utils.py
+<<<<<<< SEARCH
+def prepend_scheme_if_needed(url, new_scheme):
+    """Given a URL that may or may not have a scheme, prepend the given scheme.
+    Does not replace a present scheme with the one provided as an argument.
+
+    :rtype: str
+    """
+    parsed = parse_url(url)
+    scheme, auth, host, port, path, query, fragment = parsed
+
+    # A defect in urlparse determines that there isn't a netloc present in some
+    # urls. We previously assumed parsing was overly cautious, and swapped the
+    # netloc and path. Due to a lack of tests on the original defect, this is
+    # maintained with parse_url for backwards compatibility.
+    netloc = parsed.netloc
+    if not netloc:
+        netloc, path = path, netloc
+
+    if scheme is None:
+        scheme = new_scheme
+    if path is None:
+        path = ''
+
+    return urlunparse((scheme, netloc, path, '', query, fragment))
+=======
+def prepend_scheme_if_needed(url, new_scheme):
+    """Given a URL that may or may not have a scheme, prepend the given scheme.
+    Does not replace a present scheme with the one provided as an argument.
+
+    :rtype: str
+    """
+    if isinstance(url, bytes):
+        url = url.decode('utf-8')
+    if isinstance(new_scheme, bytes):
+        new_scheme = new_scheme.decode('utf-8')
+    if not url:
+        return url
+    if url.startswith('//'):
+        if not new_scheme:
+            return url
+        url = '{}:{}'.format(new_scheme, url)
+    elif re.match(r'^[A-Za-z][A-Za-z0-9+.-]*://', url):
+        pass
+    elif re.match(r'^(?:https?|ftp|socks4a?|socks5h?):/[^/]', url, re.IGNORECASE):
+        scheme, rest = url.split(':', 1)
+        url = '{}://{}'.format(scheme, rest.lstrip('/'))
+    else:
+        if not new_scheme:
+            return url
+        url = '{}://{}'.format(new_scheme, url)
+
+    parsed = parse_url(url)
+    scheme, auth, host, port, path, query, fragment = parsed
+
+    # A defect in urlparse determines that there isn't a netloc present in some
+    # urls. We previously assumed parsing was overly cautious, and swapped the
+    # netloc and path. Due to a lack of tests on the original defect, this is
+    # maintained with parse_url for backwards compatibility.
+    netloc = parsed.netloc
+    if not netloc:
+        netloc, path = path, netloc
+
+    if scheme is None:
+        scheme = new_scheme
+    if path is None:
+        path = ''
+
+    return urlunparse((scheme, netloc, path, '', query, fragment))
+>>>>>>> REPLACE
+requests/utils.py
+<<<<<<< SEARCH
+def get_auth_from_url(url):
+    """Given a url with authentication components, extract them into a tuple of
+    username,password.
+
+    :rtype: (str,str)
+    """
+    parsed = urlparse(url)
+
+    try:
+        auth = (unquote(parsed.username), unquote(parsed.password))
+    except (AttributeError, TypeError):
+        auth = ('', '')
+
+    return auth
+=======
+def get_auth_from_url(url):
+    """Given a url with authentication components, extract them into a tuple of
+    username,password.
+
+    :rtype: (str,str)
+    """
+    try:
+        if isinstance(url, bytes):
+            url = url.decode('utf-8')
+        parsed = urlparse(url)
+        auth = (
+            unquote(parsed.username) if parsed.username is not None else '',
+            unquote(parsed.password) if parsed.password is not None else '',
+        )
+    except (AttributeError, TypeError, UnicodeDecodeError):
+        auth = ('', '')
+
+    return auth
+>>>>>>> REPLACE

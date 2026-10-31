@@ -1,0 +1,7 @@
+packages/reactivity/src/dep.ts
+<<<<<<< SEARCH
+      for (let link = this.subsHead; link; link = link.nextSub) {
+=======
+      for (let link = this.subs; link; link = link.prevSub) {
+>>>>>>> REPLACE
+APPROVE

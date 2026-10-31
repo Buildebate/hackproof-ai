@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="8" failures="1" errors="0" time="1.228">
-    <testsuite name="packages/runtime-core/__tests__/helpers/renderList.spec.ts" timestamp="2026-10-30T05:57:45.144Z" hostname="58ed305f9885" tests="8" failures="1" errors="0" skipped="0" time="0.018">
+<testsuites name="vitest tests" tests="8" failures="1" errors="0" time="1.236">
+    <testsuite name="packages/runtime-core/__tests__/helpers/renderList.spec.ts" timestamp="2026-10-31T09:20:54.827Z" hostname="1b15b3c7045a" tests="8" failures="1" errors="0" skipped="0" time="0.017">
         <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render items in an array" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render characters of a string" time="0">
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render characters of a string" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render integers 1 through N when given a number N" time="0.001">
         </testcase>
@@ -15,7 +15,7 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should return empty array when source is undefined" time="0">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render items in a reactive array correctly" time="0.009">
+        <testcase classname="packages/runtime-core/__tests__/helpers/renderList.spec.ts" name="renderList &gt; should render items in a reactive array correctly" time="0.01">
             <failure message="expected [ true ] to deeply equal [ false ]" type="AssertionError">
 AssertionError: expected [ true ] to deeply equal [ false ]
 

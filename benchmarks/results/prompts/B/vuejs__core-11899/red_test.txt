@@ -1,0 +1,16 @@
+import { describe, it, expect } from 'vitest'
+import { compileStyle } from '@vue/compiler-sfc'
+
+describe('scoped nested @media regression', () => {
+  it('adds nesting scoping inside @media nested in rule', () => {
+    const { code } = compileStyle({
+      source: `.foo {\n  background-color: red;\n  .bar {}\n  @media only screen and (max-width: 800px) {\n    background-color: green;\n  }\n}`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    })
+    expect(code).toContain('@media')
+    const mediaPart = code.slice(code.indexOf('@media'))
+    expect(mediaPart).toContain('[data-v-test]')
+  })
+})

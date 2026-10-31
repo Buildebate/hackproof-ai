@@ -1,0 +1,1088 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="3" skipped="0" tests="85" time="0.760" timestamp="2026-10-31T08:16:52.276587+00:00" hostname="7abdfab01722"><testcase classname="test_requests.TestRequests" name="test_binary_put" time="0.006" /><testcase classname="test_requests.TestRequests" name="test_entry_points" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_invalid_url" time="0.004" /><testcase classname="test_requests.TestRequests" name="test_basic_building" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_path_is_not_double_encoded" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_params_are_added_before_fragment" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_params_original_order_is_preserved_by_default" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_params_bytes_are_encoded" time="0.001"><failure message="TypeError: Cannot mix str and non-str arguments">self = &lt;test_requests.TestRequests object at 0xe27361b9bbb0&gt;
+
+    def test_params_bytes_are_encoded(self):
+&gt;       request = requests.Request('GET', 'http://example.com',
+                                   params=b'test=foo').prepare()
+
+test_requests.py:156: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/models.py:239: in prepare
+    p.prepare(
+requests/models.py:293: in prepare
+    self.prepare_url(url, params)
+requests/models.py:395: in prepare_url
+    url = requote_uri(urlunparse([scheme, netloc, path, None, query, fragment]))
+/usr/local/lib/python3.8/urllib/parse.py:502: in urlunparse
+    _coerce_args(*components))
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+args = ('http', 'example.com', '/', None, b'test=foo', None), str_input = True
+arg = b'test=foo'
+
+    def _coerce_args(*args):
+        # Invokes decode if necessary to create str args
+        # and returns the coerced inputs along with
+        # an appropriate result coercion function
+        #   - noop for str inputs
+        #   - encoding function otherwise
+        str_input = isinstance(args[0], str)
+        for arg in args[1:]:
+            # We special-case the empty string to support the
+            # "scheme=''" default argument to some functions
+            if arg and isinstance(arg, str) != str_input:
+&gt;               raise TypeError("Cannot mix str and non-str arguments")
+E               TypeError: Cannot mix str and non-str arguments
+
+/usr/local/lib/python3.8/urllib/parse.py:132: TypeError</failure></testcase><testcase classname="test_requests.TestRequests" name="test_connection_error_invalid_domain" time="0.002" /><testcase classname="test_requests.TestRequests" name="test_connection_error_invalid_port" time="0.002" /><testcase classname="test_requests.TestRequests" name="test_LocationParseError" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_links" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_cookie_parameters" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_cookie_as_dict_keeps_len" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_cookie_as_dict_keeps_items" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_cookie_as_dict_keys" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_cookie_as_dict_values" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_cookie_as_dict_items" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_response_is_iterable" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_response_decode_unicode" time="0.002" /><testcase classname="test_requests.TestRequests" name="test_get_auth_from_url" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_get_auth_from_url_encoded_spaces" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_get_auth_from_url_not_encoded_spaces" time="0.000" /><testcase classname="test_requests.TestRequests" name="test_get_auth_from_url_percent_chars" time="0.000" /><testcase classname="test_requests.TestRequests" name="test_get_auth_from_url_encoded_hashes" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_http_error" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_transport_adapter_ordering" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_long_authinfo_in_url" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_nonhttp_schemes_dont_check_URLs" time="0.001" /><testcase classname="test_requests.TestRequests" name="test_basic_auth_str_is_always_native" time="0.001" /><testcase classname="test_requests.TestContentEncodingDetection" name="test_html4_pragma" time="0.001" /><testcase classname="test_requests.TestContentEncodingDetection" name="test_html_charset" time="0.001" /><testcase classname="test_requests.TestContentEncodingDetection" name="test_none" time="0.001" /><testcase classname="test_requests.TestContentEncodingDetection" name="test_precedence" time="0.001" /><testcase classname="test_requests.TestContentEncodingDetection" name="test_xhtml_pragma" time="0.001" /><testcase classname="test_requests.TestContentEncodingDetection" name="test_xml" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_contains" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_copy" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_delitem" time="0.000" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_docstring_example" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_equality" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_fixes_649" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_get" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_getitem" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_iter" time="0.000" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_iterable_init" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_kwargs_init" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_len" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_lower_items" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_mapping_init" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_preserve_key_case" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_preserve_last_key_case" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_setdefault" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_update" time="0.001" /><testcase classname="test_requests.TestCaseInsensitiveDict" name="test_update_retains_unchanged" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_address_in_network" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_dotted_netmask" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_get_auth_from_url" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_get_environ_proxies" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_get_environ_proxies_ip_ranges" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_guess_filename_when_filename_is_an_int" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_guess_filename_when_int" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_guess_filename_with_file_like_obj" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_guess_filename_with_unicode_name" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_is_ipv4_address" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_is_valid_cidr" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_requote_uri_properly_requotes" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_requote_uri_with_unquoted_percents" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_select_proxies" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_super_len_correctly_calculates_len_of_partially_read_file" time="0.001" /><testcase classname="test_requests.UtilsTestCase" name="test_super_len_io_streams" time="0.001" /><testcase classname="test_requests.TestMorselToCookieExpires" name="test_expires_invalid_int" time="0.005" /><testcase classname="test_requests.TestMorselToCookieExpires" name="test_expires_invalid_str" time="0.001" /><testcase classname="test_requests.TestMorselToCookieExpires" name="test_expires_none" time="0.001" /><testcase classname="test_requests.TestMorselToCookieExpires" name="test_expires_valid_str" time="0.001" /><testcase classname="test_requests.TestMorselToCookieMaxAge" name="test_max_age_invalid_str" time="0.001" /><testcase classname="test_requests.TestMorselToCookieMaxAge" name="test_max_age_valid_int" time="0.001" /><testcase classname="test_requests.TestTimeout" name="test_connect_timeout" time="0.002"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;
+
+    def _new_conn(self):
+        """ Establish a socket connection and set nodelay settings on it.
+    
+        :return: New socket connection.
+        """
+        extra_kw = {}
+        if self.source_address:
+            extra_kw['source_address'] = self.source_address
+    
+        if self.socket_options:
+            extra_kw['socket_options'] = self.socket_options
+    
+        try:
+&gt;           conn = connection.create_connection(
+                (self.host, self.port), self.timeout, **extra_kw)
+
+requests/packages/urllib3/connection.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/packages/urllib3/util/connection.py:91: in create_connection
+    raise err
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+address = ('10.255.255.1', 80), timeout = 0.1, source_address = None
+socket_options = [(6, 1, 1)]
+
+    def create_connection(address, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                          source_address=None, socket_options=None):
+        """Connect to *address* and return the socket object.
+    
+        Convenience function.  Connect to *address* (a 2-tuple ``(host,
+        port)``) and return the socket object.  Passing the optional
+        *timeout* parameter will set the timeout on the socket instance
+        before attempting to connect.  If no *timeout* is supplied, the
+        global default timeout setting returned by :func:`getdefaulttimeout`
+        is used.  If *source_address* is set it must be a tuple of (host, port)
+        for the socket to bind as a source address before making the connection.
+        An host of '' or port 0 tells the OS to use the default.
+        """
+    
+        host, port = address
+        if host.startswith('['):
+            host = host.strip('[]')
+        err = None
+        for res in socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM):
+            af, socktype, proto, canonname, sa = res
+            sock = None
+            try:
+                sock = socket.socket(af, socktype, proto)
+    
+                # If provided, set socket level options before connecting.
+                # This is the only addition urllib3 makes to this function.
+                _set_socket_options(sock, socket_options)
+    
+                if timeout is not socket._GLOBAL_DEFAULT_TIMEOUT:
+                    sock.settimeout(timeout)
+                if source_address:
+                    sock.bind(source_address)
+&gt;               sock.connect(sa)
+E               OSError: [Errno 101] Network is unreachable
+
+requests/packages/urllib3/util/connection.py:81: OSError
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;requests.packages.urllib3.connectionpool.HTTPConnectionPool object at 0xe27361ba61f0&gt;
+method = 'GET', url = '/', body = None
+headers = {'User-Agent': 'python-requests/2.9.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
+retries = Retry(total=0, connect=None, read=False, redirect=None)
+redirect = False, assert_same_host = False
+timeout = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361ba60d0&gt;
+pool_timeout = None, release_conn = True
+response_kw = {'decode_content': False, 'preload_content': False}, conn = None
+err = None
+timeout_obj = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361c89940&gt;
+is_new_proxy_conn = False
+
+    def urlopen(self, method, url, body=None, headers=None, retries=None,
+                redirect=True, assert_same_host=True, timeout=_Default,
+                pool_timeout=None, release_conn=None, **response_kw):
+        """
+        Get a connection from the pool and perform an HTTP request. This is the
+        lowest level call for making a request, so you'll need to specify all
+        the raw details.
+    
+        .. note::
+    
+           More commonly, it's appropriate to use a convenience method provided
+           by :class:`.RequestMethods`, such as :meth:`request`.
+    
+        .. note::
+    
+           `release_conn` will only behave as expected if
+           `preload_content=False` because we want to make
+           `preload_content=False` the default behaviour someday soon without
+           breaking backwards compatibility.
+    
+        :param method:
+            HTTP request method (such as GET, POST, PUT, etc.)
+    
+        :param body:
+            Data to send in the request body (useful for creating
+            POST requests, see HTTPConnectionPool.post_url for
+            more convenience).
+    
+        :param headers:
+            Dictionary of custom headers to send, such as User-Agent,
+            If-None-Match, etc. If None, pool headers are used. If provided,
+            these headers completely replace any pool-specific headers.
+    
+        :param retries:
+            Configure the number of retries to allow before raising a
+            :class:`~urllib3.exceptions.MaxRetryError` exception.
+    
+            Pass ``None`` to retry until you receive a response. Pass a
+            :class:`~urllib3.util.retry.Retry` object for fine-grained control
+            over different types of retries.
+            Pass an integer number to retry connection errors that many times,
+            but no other types of errors. Pass zero to never retry.
+    
+            If ``False``, then retries are disabled and any exception is raised
+            immediately. Also, instead of raising a MaxRetryError on redirects,
+            the redirect response will be returned.
+    
+        :type retries: :class:`~urllib3.util.retry.Retry`, False, or an int.
+    
+        :param redirect:
+            If True, automatically handle redirects (status codes 301, 302,
+            303, 307, 308). Each redirect counts as a retry. Disabling retries
+            will disable redirect, too.
+    
+        :param assert_same_host:
+            If ``True``, will make sure that the host of the pool requests is
+            consistent else will raise HostChangedError. When False, you can
+            use the pool on an HTTP proxy and request foreign hosts.
+    
+        :param timeout:
+            If specified, overrides the default timeout for this one
+            request. It may be a float (in seconds) or an instance of
+            :class:`urllib3.util.Timeout`.
+    
+        :param pool_timeout:
+            If set and the pool is set to block=True, then this method will
+            block for ``pool_timeout`` seconds and raise EmptyPoolError if no
+            connection is available within the time period.
+    
+        :param release_conn:
+            If False, then the urlopen call will not release the connection
+            back into the pool once a response is received (but will release if
+            you read the entire contents of the response such as when
+            `preload_content=True`). This is useful if you're not preloading
+            the response's content immediately. You will need to call
+            ``r.release_conn()`` on the response ``r`` to return the connection
+            back into the pool. If None, it takes the value of
+            ``response_kw.get('preload_content', True)``.
+    
+        :param \**response_kw:
+            Additional parameters are passed to
+            :meth:`urllib3.response.HTTPResponse.from_httplib`
+        """
+        if headers is None:
+            headers = self.headers
+    
+        if not isinstance(retries, Retry):
+            retries = Retry.from_int(retries, redirect=redirect, default=self.retries)
+    
+        if release_conn is None:
+            release_conn = response_kw.get('preload_content', True)
+    
+        # Check host
+        if assert_same_host and not self.is_same_host(url):
+            raise HostChangedError(self, url, retries)
+    
+        conn = None
+    
+        # Merge the proxy headers. Only do this in HTTP. We have to copy the
+        # headers dict so we can safely change it without those changes being
+        # reflected in anyone else's copy.
+        if self.scheme == 'http':
+            headers = headers.copy()
+            headers.update(self.proxy_headers)
+    
+        # Must keep the exception bound to a separate variable or else Python 3
+        # complains about UnboundLocalError.
+        err = None
+    
+        try:
+            # Request a connection from the queue.
+            timeout_obj = self._get_timeout(timeout)
+            conn = self._get_conn(timeout=pool_timeout)
+    
+            conn.timeout = timeout_obj.connect_timeout
+    
+            is_new_proxy_conn = self.proxy is not None and not getattr(conn, 'sock', None)
+            if is_new_proxy_conn:
+                self._prepare_proxy(conn)
+    
+            # Make the request on the httplib connection object.
+&gt;           httplib_response = self._make_request(conn, method, url,
+                                                  timeout=timeout_obj,
+                                                  body=body, headers=headers)
+
+requests/packages/urllib3/connectionpool.py:557: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/packages/urllib3/connectionpool.py:353: in _make_request
+    conn.request(method, url, **httplib_request_kw)
+/usr/local/lib/python3.8/http/client.py:1256: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+/usr/local/lib/python3.8/http/client.py:1302: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+/usr/local/lib/python3.8/http/client.py:1251: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+/usr/local/lib/python3.8/http/client.py:1011: in _send_output
+    self.send(msg)
+/usr/local/lib/python3.8/http/client.py:951: in send
+    self.connect()
+requests/packages/urllib3/connection.py:162: in connect
+    conn = self._new_conn()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;
+
+    def _new_conn(self):
+        """ Establish a socket connection and set nodelay settings on it.
+    
+        :return: New socket connection.
+        """
+        extra_kw = {}
+        if self.source_address:
+            extra_kw['source_address'] = self.source_address
+    
+        if self.socket_options:
+            extra_kw['socket_options'] = self.socket_options
+    
+        try:
+            conn = connection.create_connection(
+                (self.host, self.port), self.timeout, **extra_kw)
+    
+        except SocketTimeout as e:
+            raise ConnectTimeoutError(
+                self, "Connection to %s timed out. (connect timeout=%s)" %
+                (self.host, self.timeout))
+    
+        except SocketError as e:
+&gt;           raise NewConnectionError(
+                self, "Failed to establish a new connection: %s" % e)
+E           requests.packages.urllib3.exceptions.NewConnectionError: &lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
+
+requests/packages/urllib3/connection.py:145: NewConnectionError
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;requests.adapters.HTTPAdapter object at 0xe27361ba66d0&gt;
+request = &lt;PreparedRequest [GET]&gt;, stream = False
+timeout = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361ba60d0&gt;
+verify = True, cert = None
+proxies = OrderedDict([('no', '192.168.0.0/24,127.0.0.1,localhost.localdomain,172.16.1.1')])
+
+    def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        """Sends PreparedRequest object. Returns Response object.
+    
+        :param request: The :class:`PreparedRequest &lt;PreparedRequest&gt;` being sent.
+        :param stream: (optional) Whether to stream the request content.
+        :param timeout: (optional) How long to wait for the server to send
+            data before giving up, as a float, or a :ref:`(connect timeout,
+            read timeout) &lt;timeouts&gt;` tuple.
+        :type timeout: float or tuple
+        :param verify: (optional) Whether to verify SSL certificates.
+        :param cert: (optional) Any user-provided SSL certificate to be trusted.
+        :param proxies: (optional) The proxies dictionary to apply to the request.
+        """
+    
+        conn = self.get_connection(request.url, proxies)
+    
+        self.cert_verify(conn, request.url, verify, cert)
+        url = self.request_url(request, proxies)
+        self.add_headers(request)
+    
+        chunked = not (request.body is None or 'Content-Length' in request.headers)
+    
+        if isinstance(timeout, tuple):
+            try:
+                connect, read = timeout
+                timeout = TimeoutSauce(connect=connect, read=read)
+            except ValueError as e:
+                # this may raise a string formatting error.
+                err = ("Invalid timeout {0}. Pass a (connect, read) "
+                       "timeout tuple, or a single float to set "
+                       "both timeouts to the same value".format(timeout))
+                raise ValueError(err)
+        else:
+            timeout = TimeoutSauce(connect=timeout, read=timeout)
+    
+        try:
+            if not chunked:
+&gt;               resp = conn.urlopen(
+                    method=request.method,
+                    url=url,
+                    body=request.body,
+                    headers=request.headers,
+                    redirect=False,
+                    assert_same_host=False,
+                    preload_content=False,
+                    decode_content=False,
+                    retries=self.max_retries,
+                    timeout=timeout
+                )
+
+requests/adapters.py:366: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/packages/urllib3/connectionpool.py:608: in urlopen
+    retries = retries.increment(method, url, error=e, _pool=self,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Retry(total=0, connect=None, read=False, redirect=None), method = 'GET'
+url = '/', response = None
+error = NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
+_pool = &lt;requests.packages.urllib3.connectionpool.HTTPConnectionPool object at 0xe27361ba61f0&gt;
+_stacktrace = &lt;traceback object at 0xe27361c22980&gt;
+
+    def increment(self, method=None, url=None, response=None, error=None,
+                  _pool=None, _stacktrace=None):
+        """ Return a new Retry object with incremented retry counters.
+    
+        :param response: A response object, or None, if the server did not
+            return a response.
+        :type response: :class:`~urllib3.response.HTTPResponse`
+        :param Exception error: An error encountered during the request, or
+            None if the response was received successfully.
+    
+        :return: A new ``Retry`` object.
+        """
+        if self.total is False and error:
+            # Disabled, indicate to re-raise the error.
+            raise six.reraise(type(error), error, _stacktrace)
+    
+        total = self.total
+        if total is not None:
+            total -= 1
+    
+        _observed_errors = self._observed_errors
+        connect = self.connect
+        read = self.read
+        redirect = self.redirect
+        cause = 'unknown'
+    
+        if error and self._is_connection_error(error):
+            # Connect retry?
+            if connect is False:
+                raise six.reraise(type(error), error, _stacktrace)
+            elif connect is not None:
+                connect -= 1
+            _observed_errors += 1
+    
+        elif error and self._is_read_error(error):
+            # Read retry?
+            if read is False:
+                raise six.reraise(type(error), error, _stacktrace)
+            elif read is not None:
+                read -= 1
+            _observed_errors += 1
+    
+        elif response and response.get_redirect_location():
+            # Redirect retry?
+            if redirect is not None:
+                redirect -= 1
+            cause = 'too many redirects'
+    
+        else:
+            # Incrementing because of a server error like a 500 in
+            # status_forcelist and a the given method is in the whitelist
+            _observed_errors += 1
+            cause = ResponseError.GENERIC_ERROR
+            if response and response.status:
+                cause = ResponseError.SPECIFIC_ERROR.format(
+                    status_code=response.status)
+    
+        new_retry = self.new(
+            total=total,
+            connect=connect, read=read, redirect=redirect,
+            _observed_errors=_observed_errors)
+    
+        if new_retry.is_exhausted():
+&gt;           raise MaxRetryError(_pool, url, error or ResponseError(cause))
+E           requests.packages.urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+requests/packages/urllib3/util/retry.py:273: MaxRetryError
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;test_requests.TestTimeout object at 0xe273618fb340&gt;
+
+    def test_connect_timeout(self):
+        try:
+&gt;           requests.get(TARPIT, timeout=(0.1, None))
+
+test_requests.py:1570: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/api.py:67: in get
+    return request('get', url, params=params, **kwargs)
+requests/api.py:53: in request
+    return session.request(method=method, url=url, **kwargs)
+requests/sessions.py:468: in request
+    resp = self.send(prep, **send_kwargs)
+requests/sessions.py:576: in send
+    r = adapter.send(request, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;requests.adapters.HTTPAdapter object at 0xe27361ba66d0&gt;
+request = &lt;PreparedRequest [GET]&gt;, stream = False
+timeout = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361ba60d0&gt;
+verify = True, cert = None
+proxies = OrderedDict([('no', '192.168.0.0/24,127.0.0.1,localhost.localdomain,172.16.1.1')])
+
+    def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        """Sends PreparedRequest object. Returns Response object.
+    
+        :param request: The :class:`PreparedRequest &lt;PreparedRequest&gt;` being sent.
+        :param stream: (optional) Whether to stream the request content.
+        :param timeout: (optional) How long to wait for the server to send
+            data before giving up, as a float, or a :ref:`(connect timeout,
+            read timeout) &lt;timeouts&gt;` tuple.
+        :type timeout: float or tuple
+        :param verify: (optional) Whether to verify SSL certificates.
+        :param cert: (optional) Any user-provided SSL certificate to be trusted.
+        :param proxies: (optional) The proxies dictionary to apply to the request.
+        """
+    
+        conn = self.get_connection(request.url, proxies)
+    
+        self.cert_verify(conn, request.url, verify, cert)
+        url = self.request_url(request, proxies)
+        self.add_headers(request)
+    
+        chunked = not (request.body is None or 'Content-Length' in request.headers)
+    
+        if isinstance(timeout, tuple):
+            try:
+                connect, read = timeout
+                timeout = TimeoutSauce(connect=connect, read=read)
+            except ValueError as e:
+                # this may raise a string formatting error.
+                err = ("Invalid timeout {0}. Pass a (connect, read) "
+                       "timeout tuple, or a single float to set "
+                       "both timeouts to the same value".format(timeout))
+                raise ValueError(err)
+        else:
+            timeout = TimeoutSauce(connect=timeout, read=timeout)
+    
+        try:
+            if not chunked:
+                resp = conn.urlopen(
+                    method=request.method,
+                    url=url,
+                    body=request.body,
+                    headers=request.headers,
+                    redirect=False,
+                    assert_same_host=False,
+                    preload_content=False,
+                    decode_content=False,
+                    retries=self.max_retries,
+                    timeout=timeout
+                )
+    
+            # Send the request.
+            else:
+                if hasattr(conn, 'proxy_pool'):
+                    conn = conn.proxy_pool
+    
+                low_conn = conn._get_conn(timeout=DEFAULT_POOL_TIMEOUT)
+    
+                try:
+                    low_conn.putrequest(request.method,
+                                        url,
+                                        skip_accept_encoding=True)
+    
+                    for header, value in request.headers.items():
+                        low_conn.putheader(header, value)
+    
+                    low_conn.endheaders()
+    
+                    for i in request.body:
+                        low_conn.send(hex(len(i))[2:].encode('utf-8'))
+                        low_conn.send(b'\r\n')
+                        low_conn.send(i)
+                        low_conn.send(b'\r\n')
+                    low_conn.send(b'0\r\n\r\n')
+    
+                    # Receive the response from the server
+                    try:
+                        # For Python 2.7+ versions, use buffering of HTTP
+                        # responses
+                        r = low_conn.getresponse(buffering=True)
+                    except TypeError:
+                        # For compatibility with Python 2.6 versions and back
+                        r = low_conn.getresponse()
+    
+                    resp = HTTPResponse.from_httplib(
+                        r,
+                        pool=conn,
+                        connection=low_conn,
+                        preload_content=False,
+                        decode_content=False
+                    )
+                except:
+                    # If we hit any problems here, clean up the connection.
+                    # Then, reraise so that we can handle the actual exception.
+                    low_conn.close()
+                    raise
+    
+        except (ProtocolError, socket.error) as err:
+            raise ConnectionError(err, request=request)
+    
+        except MaxRetryError as e:
+            if isinstance(e.reason, ConnectTimeoutError):
+                # TODO: Remove this in 3.0.0: see #2811
+                if not isinstance(e.reason, NewConnectionError):
+                    raise ConnectTimeout(e, request=request)
+    
+            if isinstance(e.reason, ResponseError):
+                raise RetryError(e, request=request)
+    
+&gt;           raise ConnectionError(e, request=request)
+E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361c891c0&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+requests/adapters.py:437: ConnectionError</failure></testcase><testcase classname="test_requests.TestTimeout" name="test_total_timeout_connect" time="0.002"><failure message="requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))">self = &lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;
+
+    def _new_conn(self):
+        """ Establish a socket connection and set nodelay settings on it.
+    
+        :return: New socket connection.
+        """
+        extra_kw = {}
+        if self.source_address:
+            extra_kw['source_address'] = self.source_address
+    
+        if self.socket_options:
+            extra_kw['socket_options'] = self.socket_options
+    
+        try:
+&gt;           conn = connection.create_connection(
+                (self.host, self.port), self.timeout, **extra_kw)
+
+requests/packages/urllib3/connection.py:136: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/packages/urllib3/util/connection.py:91: in create_connection
+    raise err
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+address = ('10.255.255.1', 80), timeout = 0.1, source_address = None
+socket_options = [(6, 1, 1)]
+
+    def create_connection(address, timeout=socket._GLOBAL_DEFAULT_TIMEOUT,
+                          source_address=None, socket_options=None):
+        """Connect to *address* and return the socket object.
+    
+        Convenience function.  Connect to *address* (a 2-tuple ``(host,
+        port)``) and return the socket object.  Passing the optional
+        *timeout* parameter will set the timeout on the socket instance
+        before attempting to connect.  If no *timeout* is supplied, the
+        global default timeout setting returned by :func:`getdefaulttimeout`
+        is used.  If *source_address* is set it must be a tuple of (host, port)
+        for the socket to bind as a source address before making the connection.
+        An host of '' or port 0 tells the OS to use the default.
+        """
+    
+        host, port = address
+        if host.startswith('['):
+            host = host.strip('[]')
+        err = None
+        for res in socket.getaddrinfo(host, port, 0, socket.SOCK_STREAM):
+            af, socktype, proto, canonname, sa = res
+            sock = None
+            try:
+                sock = socket.socket(af, socktype, proto)
+    
+                # If provided, set socket level options before connecting.
+                # This is the only addition urllib3 makes to this function.
+                _set_socket_options(sock, socket_options)
+    
+                if timeout is not socket._GLOBAL_DEFAULT_TIMEOUT:
+                    sock.settimeout(timeout)
+                if source_address:
+                    sock.bind(source_address)
+&gt;               sock.connect(sa)
+E               OSError: [Errno 101] Network is unreachable
+
+requests/packages/urllib3/util/connection.py:81: OSError
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;requests.packages.urllib3.connectionpool.HTTPConnectionPool object at 0xe27361427ee0&gt;
+method = 'GET', url = '/', body = None
+headers = {'User-Agent': 'python-requests/2.9.0', 'Accept-Encoding': 'gzip, deflate', 'Accept': '*/*', 'Connection': 'keep-alive'}
+retries = Retry(total=0, connect=None, read=False, redirect=None)
+redirect = False, assert_same_host = False
+timeout = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361427f10&gt;
+pool_timeout = None, release_conn = True
+response_kw = {'decode_content': False, 'preload_content': False}, conn = None
+err = None
+timeout_obj = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361427c40&gt;
+is_new_proxy_conn = False
+
+    def urlopen(self, method, url, body=None, headers=None, retries=None,
+                redirect=True, assert_same_host=True, timeout=_Default,
+                pool_timeout=None, release_conn=None, **response_kw):
+        """
+        Get a connection from the pool and perform an HTTP request. This is the
+        lowest level call for making a request, so you'll need to specify all
+        the raw details.
+    
+        .. note::
+    
+           More commonly, it's appropriate to use a convenience method provided
+           by :class:`.RequestMethods`, such as :meth:`request`.
+    
+        .. note::
+    
+           `release_conn` will only behave as expected if
+           `preload_content=False` because we want to make
+           `preload_content=False` the default behaviour someday soon without
+           breaking backwards compatibility.
+    
+        :param method:
+            HTTP request method (such as GET, POST, PUT, etc.)
+    
+        :param body:
+            Data to send in the request body (useful for creating
+            POST requests, see HTTPConnectionPool.post_url for
+            more convenience).
+    
+        :param headers:
+            Dictionary of custom headers to send, such as User-Agent,
+            If-None-Match, etc. If None, pool headers are used. If provided,
+            these headers completely replace any pool-specific headers.
+    
+        :param retries:
+            Configure the number of retries to allow before raising a
+            :class:`~urllib3.exceptions.MaxRetryError` exception.
+    
+            Pass ``None`` to retry until you receive a response. Pass a
+            :class:`~urllib3.util.retry.Retry` object for fine-grained control
+            over different types of retries.
+            Pass an integer number to retry connection errors that many times,
+            but no other types of errors. Pass zero to never retry.
+    
+            If ``False``, then retries are disabled and any exception is raised
+            immediately. Also, instead of raising a MaxRetryError on redirects,
+            the redirect response will be returned.
+    
+        :type retries: :class:`~urllib3.util.retry.Retry`, False, or an int.
+    
+        :param redirect:
+            If True, automatically handle redirects (status codes 301, 302,
+            303, 307, 308). Each redirect counts as a retry. Disabling retries
+            will disable redirect, too.
+    
+        :param assert_same_host:
+            If ``True``, will make sure that the host of the pool requests is
+            consistent else will raise HostChangedError. When False, you can
+            use the pool on an HTTP proxy and request foreign hosts.
+    
+        :param timeout:
+            If specified, overrides the default timeout for this one
+            request. It may be a float (in seconds) or an instance of
+            :class:`urllib3.util.Timeout`.
+    
+        :param pool_timeout:
+            If set and the pool is set to block=True, then this method will
+            block for ``pool_timeout`` seconds and raise EmptyPoolError if no
+            connection is available within the time period.
+    
+        :param release_conn:
+            If False, then the urlopen call will not release the connection
+            back into the pool once a response is received (but will release if
+            you read the entire contents of the response such as when
+            `preload_content=True`). This is useful if you're not preloading
+            the response's content immediately. You will need to call
+            ``r.release_conn()`` on the response ``r`` to return the connection
+            back into the pool. If None, it takes the value of
+            ``response_kw.get('preload_content', True)``.
+    
+        :param \**response_kw:
+            Additional parameters are passed to
+            :meth:`urllib3.response.HTTPResponse.from_httplib`
+        """
+        if headers is None:
+            headers = self.headers
+    
+        if not isinstance(retries, Retry):
+            retries = Retry.from_int(retries, redirect=redirect, default=self.retries)
+    
+        if release_conn is None:
+            release_conn = response_kw.get('preload_content', True)
+    
+        # Check host
+        if assert_same_host and not self.is_same_host(url):
+            raise HostChangedError(self, url, retries)
+    
+        conn = None
+    
+        # Merge the proxy headers. Only do this in HTTP. We have to copy the
+        # headers dict so we can safely change it without those changes being
+        # reflected in anyone else's copy.
+        if self.scheme == 'http':
+            headers = headers.copy()
+            headers.update(self.proxy_headers)
+    
+        # Must keep the exception bound to a separate variable or else Python 3
+        # complains about UnboundLocalError.
+        err = None
+    
+        try:
+            # Request a connection from the queue.
+            timeout_obj = self._get_timeout(timeout)
+            conn = self._get_conn(timeout=pool_timeout)
+    
+            conn.timeout = timeout_obj.connect_timeout
+    
+            is_new_proxy_conn = self.proxy is not None and not getattr(conn, 'sock', None)
+            if is_new_proxy_conn:
+                self._prepare_proxy(conn)
+    
+            # Make the request on the httplib connection object.
+&gt;           httplib_response = self._make_request(conn, method, url,
+                                                  timeout=timeout_obj,
+                                                  body=body, headers=headers)
+
+requests/packages/urllib3/connectionpool.py:557: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/packages/urllib3/connectionpool.py:353: in _make_request
+    conn.request(method, url, **httplib_request_kw)
+/usr/local/lib/python3.8/http/client.py:1256: in request
+    self._send_request(method, url, body, headers, encode_chunked)
+/usr/local/lib/python3.8/http/client.py:1302: in _send_request
+    self.endheaders(body, encode_chunked=encode_chunked)
+/usr/local/lib/python3.8/http/client.py:1251: in endheaders
+    self._send_output(message_body, encode_chunked=encode_chunked)
+/usr/local/lib/python3.8/http/client.py:1011: in _send_output
+    self.send(msg)
+/usr/local/lib/python3.8/http/client.py:951: in send
+    self.connect()
+requests/packages/urllib3/connection.py:162: in connect
+    conn = self._new_conn()
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;
+
+    def _new_conn(self):
+        """ Establish a socket connection and set nodelay settings on it.
+    
+        :return: New socket connection.
+        """
+        extra_kw = {}
+        if self.source_address:
+            extra_kw['source_address'] = self.source_address
+    
+        if self.socket_options:
+            extra_kw['socket_options'] = self.socket_options
+    
+        try:
+            conn = connection.create_connection(
+                (self.host, self.port), self.timeout, **extra_kw)
+    
+        except SocketTimeout as e:
+            raise ConnectTimeoutError(
+                self, "Connection to %s timed out. (connect timeout=%s)" %
+                (self.host, self.timeout))
+    
+        except SocketError as e:
+&gt;           raise NewConnectionError(
+                self, "Failed to establish a new connection: %s" % e)
+E           requests.packages.urllib3.exceptions.NewConnectionError: &lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable
+
+requests/packages/urllib3/connection.py:145: NewConnectionError
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;requests.adapters.HTTPAdapter object at 0xe27361427400&gt;
+request = &lt;PreparedRequest [GET]&gt;, stream = False
+timeout = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361427f10&gt;
+verify = True, cert = None
+proxies = OrderedDict([('no', '192.168.0.0/24,127.0.0.1,localhost.localdomain,172.16.1.1')])
+
+    def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        """Sends PreparedRequest object. Returns Response object.
+    
+        :param request: The :class:`PreparedRequest &lt;PreparedRequest&gt;` being sent.
+        :param stream: (optional) Whether to stream the request content.
+        :param timeout: (optional) How long to wait for the server to send
+            data before giving up, as a float, or a :ref:`(connect timeout,
+            read timeout) &lt;timeouts&gt;` tuple.
+        :type timeout: float or tuple
+        :param verify: (optional) Whether to verify SSL certificates.
+        :param cert: (optional) Any user-provided SSL certificate to be trusted.
+        :param proxies: (optional) The proxies dictionary to apply to the request.
+        """
+    
+        conn = self.get_connection(request.url, proxies)
+    
+        self.cert_verify(conn, request.url, verify, cert)
+        url = self.request_url(request, proxies)
+        self.add_headers(request)
+    
+        chunked = not (request.body is None or 'Content-Length' in request.headers)
+    
+        if isinstance(timeout, tuple):
+            try:
+                connect, read = timeout
+                timeout = TimeoutSauce(connect=connect, read=read)
+            except ValueError as e:
+                # this may raise a string formatting error.
+                err = ("Invalid timeout {0}. Pass a (connect, read) "
+                       "timeout tuple, or a single float to set "
+                       "both timeouts to the same value".format(timeout))
+                raise ValueError(err)
+        else:
+            timeout = TimeoutSauce(connect=timeout, read=timeout)
+    
+        try:
+            if not chunked:
+&gt;               resp = conn.urlopen(
+                    method=request.method,
+                    url=url,
+                    body=request.body,
+                    headers=request.headers,
+                    redirect=False,
+                    assert_same_host=False,
+                    preload_content=False,
+                    decode_content=False,
+                    retries=self.max_retries,
+                    timeout=timeout
+                )
+
+requests/adapters.py:366: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/packages/urllib3/connectionpool.py:608: in urlopen
+    retries = retries.increment(method, url, error=e, _pool=self,
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = Retry(total=0, connect=None, read=False, redirect=None), method = 'GET'
+url = '/', response = None
+error = NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable')
+_pool = &lt;requests.packages.urllib3.connectionpool.HTTPConnectionPool object at 0xe27361427ee0&gt;
+_stacktrace = &lt;traceback object at 0xe27361429080&gt;
+
+    def increment(self, method=None, url=None, response=None, error=None,
+                  _pool=None, _stacktrace=None):
+        """ Return a new Retry object with incremented retry counters.
+    
+        :param response: A response object, or None, if the server did not
+            return a response.
+        :type response: :class:`~urllib3.response.HTTPResponse`
+        :param Exception error: An error encountered during the request, or
+            None if the response was received successfully.
+    
+        :return: A new ``Retry`` object.
+        """
+        if self.total is False and error:
+            # Disabled, indicate to re-raise the error.
+            raise six.reraise(type(error), error, _stacktrace)
+    
+        total = self.total
+        if total is not None:
+            total -= 1
+    
+        _observed_errors = self._observed_errors
+        connect = self.connect
+        read = self.read
+        redirect = self.redirect
+        cause = 'unknown'
+    
+        if error and self._is_connection_error(error):
+            # Connect retry?
+            if connect is False:
+                raise six.reraise(type(error), error, _stacktrace)
+            elif connect is not None:
+                connect -= 1
+            _observed_errors += 1
+    
+        elif error and self._is_read_error(error):
+            # Read retry?
+            if read is False:
+                raise six.reraise(type(error), error, _stacktrace)
+            elif read is not None:
+                read -= 1
+            _observed_errors += 1
+    
+        elif response and response.get_redirect_location():
+            # Redirect retry?
+            if redirect is not None:
+                redirect -= 1
+            cause = 'too many redirects'
+    
+        else:
+            # Incrementing because of a server error like a 500 in
+            # status_forcelist and a the given method is in the whitelist
+            _observed_errors += 1
+            cause = ResponseError.GENERIC_ERROR
+            if response and response.status:
+                cause = ResponseError.SPECIFIC_ERROR.format(
+                    status_code=response.status)
+    
+        new_retry = self.new(
+            total=total,
+            connect=connect, read=read, redirect=redirect,
+            _observed_errors=_observed_errors)
+    
+        if new_retry.is_exhausted():
+&gt;           raise MaxRetryError(_pool, url, error or ResponseError(cause))
+E           requests.packages.urllib3.exceptions.MaxRetryError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+requests/packages/urllib3/util/retry.py:273: MaxRetryError
+
+During handling of the above exception, another exception occurred:
+
+self = &lt;test_requests.TestTimeout object at 0xe273618fb4c0&gt;
+
+    def test_total_timeout_connect(self):
+        try:
+&gt;           requests.get(TARPIT, timeout=(0.1, 0.1))
+
+test_requests.py:1578: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+requests/api.py:67: in get
+    return request('get', url, params=params, **kwargs)
+requests/api.py:53: in request
+    return session.request(method=method, url=url, **kwargs)
+requests/sessions.py:468: in request
+    resp = self.send(prep, **send_kwargs)
+requests/sessions.py:576: in send
+    r = adapter.send(request, **kwargs)
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+
+self = &lt;requests.adapters.HTTPAdapter object at 0xe27361427400&gt;
+request = &lt;PreparedRequest [GET]&gt;, stream = False
+timeout = &lt;requests.packages.urllib3.util.timeout.Timeout object at 0xe27361427f10&gt;
+verify = True, cert = None
+proxies = OrderedDict([('no', '192.168.0.0/24,127.0.0.1,localhost.localdomain,172.16.1.1')])
+
+    def send(self, request, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        """Sends PreparedRequest object. Returns Response object.
+    
+        :param request: The :class:`PreparedRequest &lt;PreparedRequest&gt;` being sent.
+        :param stream: (optional) Whether to stream the request content.
+        :param timeout: (optional) How long to wait for the server to send
+            data before giving up, as a float, or a :ref:`(connect timeout,
+            read timeout) &lt;timeouts&gt;` tuple.
+        :type timeout: float or tuple
+        :param verify: (optional) Whether to verify SSL certificates.
+        :param cert: (optional) Any user-provided SSL certificate to be trusted.
+        :param proxies: (optional) The proxies dictionary to apply to the request.
+        """
+    
+        conn = self.get_connection(request.url, proxies)
+    
+        self.cert_verify(conn, request.url, verify, cert)
+        url = self.request_url(request, proxies)
+        self.add_headers(request)
+    
+        chunked = not (request.body is None or 'Content-Length' in request.headers)
+    
+        if isinstance(timeout, tuple):
+            try:
+                connect, read = timeout
+                timeout = TimeoutSauce(connect=connect, read=read)
+            except ValueError as e:
+                # this may raise a string formatting error.
+                err = ("Invalid timeout {0}. Pass a (connect, read) "
+                       "timeout tuple, or a single float to set "
+                       "both timeouts to the same value".format(timeout))
+                raise ValueError(err)
+        else:
+            timeout = TimeoutSauce(connect=timeout, read=timeout)
+    
+        try:
+            if not chunked:
+                resp = conn.urlopen(
+                    method=request.method,
+                    url=url,
+                    body=request.body,
+                    headers=request.headers,
+                    redirect=False,
+                    assert_same_host=False,
+                    preload_content=False,
+                    decode_content=False,
+                    retries=self.max_retries,
+                    timeout=timeout
+                )
+    
+            # Send the request.
+            else:
+                if hasattr(conn, 'proxy_pool'):
+                    conn = conn.proxy_pool
+    
+                low_conn = conn._get_conn(timeout=DEFAULT_POOL_TIMEOUT)
+    
+                try:
+                    low_conn.putrequest(request.method,
+                                        url,
+                                        skip_accept_encoding=True)
+    
+                    for header, value in request.headers.items():
+                        low_conn.putheader(header, value)
+    
+                    low_conn.endheaders()
+    
+                    for i in request.body:
+                        low_conn.send(hex(len(i))[2:].encode('utf-8'))
+                        low_conn.send(b'\r\n')
+                        low_conn.send(i)
+                        low_conn.send(b'\r\n')
+                    low_conn.send(b'0\r\n\r\n')
+    
+                    # Receive the response from the server
+                    try:
+                        # For Python 2.7+ versions, use buffering of HTTP
+                        # responses
+                        r = low_conn.getresponse(buffering=True)
+                    except TypeError:
+                        # For compatibility with Python 2.6 versions and back
+                        r = low_conn.getresponse()
+    
+                    resp = HTTPResponse.from_httplib(
+                        r,
+                        pool=conn,
+                        connection=low_conn,
+                        preload_content=False,
+                        decode_content=False
+                    )
+                except:
+                    # If we hit any problems here, clean up the connection.
+                    # Then, reraise so that we can handle the actual exception.
+                    low_conn.close()
+                    raise
+    
+        except (ProtocolError, socket.error) as err:
+            raise ConnectionError(err, request=request)
+    
+        except MaxRetryError as e:
+            if isinstance(e.reason, ConnectTimeoutError):
+                # TODO: Remove this in 3.0.0: see #2811
+                if not isinstance(e.reason, NewConnectionError):
+                    raise ConnectTimeout(e, request=request)
+    
+            if isinstance(e.reason, ResponseError):
+                raise RetryError(e, request=request)
+    
+&gt;           raise ConnectionError(e, request=request)
+E           requests.exceptions.ConnectionError: HTTPConnectionPool(host='10.255.255.1', port=80): Max retries exceeded with url: / (Caused by NewConnectionError('&lt;requests.packages.urllib3.connection.HTTPConnection object at 0xe27361427730&gt;: Failed to establish a new connection: [Errno 101] Network is unreachable'))
+
+requests/adapters.py:437: ConnectionError</failure></testcase><testcase classname="test_requests" name="test_data_argument_accepts_tuples" time="0.001" /><testcase classname="test_requests" name="test_prepared_request_empty_copy" time="0.000" /><testcase classname="test_requests" name="test_prepared_request_no_cookies_copy" time="0.001" /><testcase classname="test_requests" name="test_prepared_request_complete_copy" time="0.001" /><testcase classname="test_requests" name="test_prepare_unicode_url" time="0.001" /><testcase classname="test_requests" name="test_vendor_aliases" time="0.001" /></testsuite></testsuites>

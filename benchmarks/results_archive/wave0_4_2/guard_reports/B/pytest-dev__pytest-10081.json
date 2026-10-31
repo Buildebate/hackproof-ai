@@ -1,0 +1,8 @@
+{
+ "task": "pytest-dev__pytest-10081",
+ "mode": "B",
+ "binding": true,
+ "verdict": "not-applicable",
+ "violations": [],
+ "note": "no agent patch evaluated (failed: red-rejected: red run exited 0 (test passed on unpatched base))"
+}

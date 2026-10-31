@@ -1,12 +1,12 @@
 {
  "files": [
-  "src/_pytest/unittest.py",
-  "testing/python/integration.py",
-  "src/_pytest/nose.py",
-  "doc/en/example/multipython.py",
-  "testing/acceptance_test.py"
+  "testing/test_debugging.py",
+  "testing/test_unittest.py",
+  "src/_pytest/capture.py",
+  "testing/python/raises.py",
+  "src/_pytest/_argcomplete.py"
  ],
- "elapsed_ms": 170732,
- "backend": "contriever-transformer-cpu",
+ "elapsed_ms": 1489,
+ "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "382bda7dbd1505b4427c91fd603cdff58328f4acc4a44e010a068ca1000319aa"
 }

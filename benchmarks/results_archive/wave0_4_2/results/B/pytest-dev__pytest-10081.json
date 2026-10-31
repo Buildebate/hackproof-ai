@@ -1,0 +1,165 @@
+{
+ "task": "pytest-dev__pytest-10081",
+ "mode": "B",
+ "tier": "oci",
+ "ts": "2026-10-30T13:25:32.828679+00:00",
+ "base_ref": "da9a2b584eb7a6c7e924b2621ed0ddaeca0a7bea",
+ "agent": {
+  "ok": true,
+  "reason": "",
+  "files": [
+   "src/_pytest/unittest.py",
+   "testing/python/integration.py",
+   "src/_pytest/nose.py",
+   "doc/en/example/multipython.py",
+   "testing/acceptance_test.py"
+  ],
+  "localize_ms": 170732,
+  "backend": "contriever-transformer-cpu",
+  "blocks": 1,
+  "applied_file": "src/_pytest/unittest.py",
+  "red_rel": "testing/test_repro_eba6c0c721f7.py",
+  "local_violations": [],
+  "debate": {
+   "rounds_used": 2,
+   "converged": false,
+   "score": 0.5,
+   "duration_ms": 573084
+  }
+ },
+ "usage": {
+  "prompt_tokens": 37420,
+  "completion_tokens": 85695,
+  "total_tokens": 123115,
+  "per_call": [
+   {
+    "role": "SparkRedSynthesis",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 7267,
+    "completion_tokens": 3674,
+    "total_tokens": 10941,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 3445,
+    "completion_tokens": 966,
+    "total_tokens": 4411,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 3644,
+    "completion_tokens": 19443,
+    "total_tokens": 23087,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1175,
+    "completion_tokens": 5845,
+    "total_tokens": 7020,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1258,
+    "completion_tokens": 5083,
+    "total_tokens": 6341,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 1636,
+    "completion_tokens": 12412,
+    "total_tokens": 14048,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1212,
+    "completion_tokens": 1810,
+    "total_tokens": 3022,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "EdgeScout",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 4548,
+    "completion_tokens": 670,
+    "total_tokens": 5218,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ArchitecturalBuilder",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 4745,
+    "completion_tokens": 7409,
+    "total_tokens": 12154,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "OccamsRazorCritic",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1784,
+    "completion_tokens": 9923,
+    "total_tokens": 11707,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "SignatureFactChecker",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1806,
+    "completion_tokens": 954,
+    "total_tokens": 2760,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "FormalAdversaryCritic",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 2182,
+    "completion_tokens": 13768,
+    "total_tokens": 15950,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "ConsensusJudge",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 1922,
+    "completion_tokens": 1293,
+    "total_tokens": 3215,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "PatchSynthesis",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 796,
+    "completion_tokens": 2445,
+    "total_tokens": 3241,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "diff_sha256": "82515cff45cc104e2114298d2096b1f7ded1aa41e4dbad63b2a852529ac1ea31",
+ "red": {
+  "rel": "testing/test_repro_eba6c0c721f7.py",
+  "sha256": "655885b76aca147b27dff41bbfaa2aba18cf12e0bf2c697da9ebe829351a51bd",
+  "exit_code": 0,
+  "timed_out": false,
+  "accepted": false,
+  "reason": "red run exited 0 (test passed on unpatched base)",
+  "failures": 0,
+  "errors": 0,
+  "junit_bytes": 485,
+  "junit_sha256": "cac4fb8efd5896c555e1167dc3e9e7aec834002a45df5901199eedf1d5a72f18"
+ },
+ "status": "failed",
+ "reason": "red-rejected: red run exited 0 (test passed on unpatched base)",
+ "done": true
+}

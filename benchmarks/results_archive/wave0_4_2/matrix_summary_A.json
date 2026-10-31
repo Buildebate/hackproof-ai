@@ -1,0 +1,15 @@
+{
+ "mode": "A",
+ "tier": "oci",
+ "ts": "2026-10-30T06:06:44.857467+00:00",
+ "runs": [
+  {
+   "task": "vuejs__core-11589",
+   "mode": "A",
+   "tier": "oci",
+   "status": "failed",
+   "reason": "unmeasurable: unresolved test IDs: packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>",
+   "done": true
+  }
+ ]
+}

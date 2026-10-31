@@ -1,0 +1,552 @@
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
+
+ISSUE:
+exception serialization should include chained exceptions
+given some simple tests:
+```
+def test_chained_exception_with_from():
+    try:
+        try:
+            raise ValueError(11)
+        except Exception as e1:
+            raise ValueError(12) from e1
+    except Exception as e2:
+        raise ValueError(13) from e2
+
+
+def test_chained_exception_without_from():
+    try:
+        try:
+            raise ValueError(21)
+        except Exception:
+            raise ValueError(22)
+    except Exception:
+        raise ValueError(23)
+```
+when run without xdist it displays whole exception trace nicely :
+```
+================ FAILURES ==========================
+__________________________ test_chained_exception_with_from _______________________
+
+    def test_chained_exception_with_from():
+        try:
+            try:
+>               raise ValueError(11)
+E               ValueError: 11
+
+basic/test_basic.py:80: ValueError
+
+The above exception was the direct cause of the following exception:
+
+    def test_chained_exception_with_from():
+        try:
+            try:
+                raise ValueError(11)
+            except Exception as e1:
+>               raise ValueError(12) from e1
+E               ValueError: 12
+
+basic/test_basic.py:82: ValueError
+
+The above exception was the direct cause of the following exception:
+
+    def test_chained_exception_with_from():
+        try:
+            try:
+                raise ValueError(11)
+            except Exception as e1:
+                raise ValueError(12) from e1
+        except Exception as e2:
+>           raise ValueError(13) from e2
+E           ValueError: 13
+
+basic/test_basic.py:84: ValueError
+
+
+_____________________ test_chained_exception_without_from ____________________________
+
+    def test_chained_exception_without_from():
+        try:
+            try:
+>               raise ValueError(21)
+E               ValueError: 21
+
+basic/test_basic.py:90: ValueError
+
+During handling of the above exception, another exception occurred:
+
+    def test_chained_exception_without_from():
+        try:
+            try:
+                raise ValueError(21)
+            except Exception:
+>               raise ValueError(22)
+E               ValueError: 22
+
+basic/test_basic.py:92: ValueError
+
+During handling of the above exception, another exception occurred:
+
+    def test_chained_exception_without_from():
+        try:
+            try:
+                raise ValueError(21)
+            except Exception:
+                raise ValueError(22)
+        except Exception:
+>           raise ValueError(23)
+E           ValueError: 23
+
+basic/test_basic.py:94: ValueError
+
+```
+
+but when run with xdist (`-n auto`), it just displays the last one:
+```
+============ FAILURES ================
+_____________ test_chained_exception_with_from _______________________________
+[gw0] linux -- Python 3.6.7 /home/mulawa/developement/omcp/has/test/py/.tox/sct/bin/python3.6
+
+    def test_chained_exception_with_from():
+        try:
+            try:
+                raise ValueError(11)
+            except Exception as e1:
+                raise ValueError(12) from e1
+        except Exception as e2:
+>           raise ValueError(13) from e2
+E           ValueError: 13
+
+basic/test_basic.py:84: ValueError
+
+____________ test_chained_exception_without_from ____________
+[gw1] linux -- Python 3.6.7 /home/mulawa/developement/omcp/has/test/py/.tox/sct/bin/python3.6
+
+    def test_chained_exception_without_from():
+        try:
+            try:
+                raise ValueError(21)
+            except Exception:
+                raise ValueError(22)
+        except Exception:
+>           raise ValueError(23)
+E           ValueError: 23
+
+basic/test_basic.py:94: ValueError
+
+```
+
+my setup:
+```
+pytest           4.0.2       
+pytest-xdist     1.25.0
+```
+
+
+currently exception serialization is best described as limited and simplicistic,
+thats the main issue there
+
+CODE CONTEXT:
+doc/en/example/py2py3/test_py3.py:
+def test_exception_syntax():
+    try:
+        0 / 0
+    except ZeroDivisionError as e:
+        assert e
+
+
+doc/en/example/py2py3/test_py2.py:
+def test_exception_syntax():
+    try:
+        0 / 0
+    except ZeroDivisionError, e:
+        assert e
+
+
+testing/io/test_saferepr.py:
+from _pytest._io.saferepr import saferepr
+
+
+def test_simple_repr():
+    assert saferepr(1) == "1"
+    assert saferepr(None) == "None"
+
+
+def test_maxsize():
+    s = saferepr("x" * 50, maxsize=25)
+    assert len(s) == 25
+    expected = repr("x" * 10 + "..." + "x" * 10)
+    assert s == expected
+
+
+def test_maxsize_error_on_instance():
+    class A:
+        def __repr__(self):
+            raise ValueError("...")
+
+    s = saferepr(("*" * 50, A()), maxsize=25)
+    assert len(s) == 25
+    assert s[0] == "(" and s[-1] == ")"
+
+
+def test_exceptions():
+    class BrokenRepr:
+        def __init__(self, ex):
+            self.ex = ex
+
+        def __repr__(self):
+            raise self.ex
+
+    class BrokenReprException(Exception):
+        __str__ = None
+        __repr__ = None
+
+    assert "Exception" in saferepr(BrokenRepr(Exception("broken")))
+    s = saferepr(BrokenReprException("really broken"))
+    assert "TypeError" in s
+    assert "TypeError" in saferepr(BrokenRepr("string"))
+
+    s2 = saferepr(BrokenRepr(BrokenReprException("omg even worse")))
+    assert "NameError" not in s2
+    assert "unknown" in s2
+
+
+def test_buggy_builtin_repr():
+    # Simulate a case where a repr for a builtin raises.
+    # reprlib dispatches by type name, so use "int".
+
+    class int:
+        def __repr__(self):
+            raise ValueError("Buggy repr!")
+
+    assert "Buggy" in saferepr(int())
+
+
+def test_big_repr():
+    from _pytest._io.saferepr import SafeRepr
+
+    assert len(saferepr(range(1000))) <= len("[" + SafeRepr(0).maxlist * "1000" + "]")
+
+
+def test_repr_on_newstyle():
+    class Function:
+        def __repr__(self):
+            return "<%s>" % (self.name)
+
+    assert saferepr(Function())
+
+
+def test_unicode():
+    val = "£€"
+    reprval = "'£€'"
+    assert saferepr(val) == reprval
+
+
+testing/python/raises.py:
+import sys
+
+import pytest
+from _pytest.outcomes import Failed
+
+
+class TestRaises:
+    def test_check_callable(self):
+        with pytest.raises(TypeError, match=r".* must be callable"):
+            pytest.raises(RuntimeError, "int('qwe')")
+
+    def test_raises(self):
+        excinfo = pytest.raises(ValueError, int, "qwe")
+        assert "invalid literal" in str(excinfo.value)
+
+    def test_raises_function(self):
+        excinfo = pytest.raises(ValueError, int, "hello")
+        assert "invalid literal" in str(excinfo.value)
+
+    def test_raises_callable_no_exception(self):
+        class A:
+            def __call__(self):
+                pass
+
+        try:
+            pytest.raises(ValueError, A())
+        except pytest.raises.Exception:
+            pass
+
+    def test_raises_falsey_type_error(self):
+        with pytest.raises(TypeError):
+            with pytest.raises(AssertionError, match=0):
+                raise AssertionError("ohai")
+
+    def test_raises_repr_inflight(self):
+        """Ensure repr() on an exception info inside a pytest.raises with block works (#4386)"""
+
+        class E(Exception):
+            pass
+
+        with pytest.raises(E) as excinfo:
+            # this test prints the inflight uninitialized object
+            # using repr and str as well as pprint to demonstrate
+            # it works
+            print(str(excinfo))
+            print(repr(excinfo))
+            import pprint
+
+            pprint.pprint(excinfo)
+            raise E()
+
+    def test_raises_as_contextmanager(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+            import _pytest._code
+
+            def test_simple():
+                with pytest.raises(ZeroDivisionError) as excinfo:
+                    assert isinstance(excinfo, _pytest._code.ExceptionInfo)
+                    1/0
+                print(excinfo)
+                assert excinfo.type == ZeroDivisionError
+                assert isinstance(excinfo.value, ZeroDivisionError)
+
+            def test_noraise():
+                with pytest.raises(pytest.raises.Exception):
+                    with pytest.raises(ValueError):
+                           int()
+
+            def test_raise_wrong_exception_passes_by():
+                with pytest.raises(ZeroDivisionError):
+                    with pytest.raises(ValueError):
+                           1/0
+        """
+        )
+        result = testdir.runpytest()
+        result.stdout.fnmatch_lines(["*3 passed*"])
+
+    def test_does_not_raise(self, testdir):
+        testdir.makepyfile(
+            """
+            from contextlib import contextmanager
+            import pytest
+
+            @contextmanager
+            def does_not_raise():
+                yield
+
+            @pytest.mark.parametrize('example_input,expectation', [
+                (3, does_not_raise()),
+                (2, does_not_raise()),
+                (1, does_not_raise()),
+                (0, pytest.raises(ZeroDivisionError)),
+            ])
+            def test_division(example_input, expectation):
+                '''Test how much I know division.'''
+                with expectation:
+                    assert (6 / example_input) is not None
+        """
+        )
+        result = testdir.runpytest()
+        result.stdout.fnmatch_lines(["*4 passed*"])
+
+    def test_does_not_raise_does_raise(self, testdir):
+        testdir.makepyfile(
+            """
+            from contextlib import contextmanager
+            import pytest
+
+            @contextmanager
+            def does_not_raise():
+                yield
+
+            @pytest.mark.parametrize('example_input,expectation', [
+                (0, does_not_raise()),
+                (1, pytest.raises(ZeroDivisionError)),
+            ])
+            def test_division(example_input, expectation):
+                '''Test how much I know division.'''
+                with expectation:
+                    assert (6 / example_input) is not None
+        """
+        )
+        result = testdir.runpytest()
+        result.stdout.fnmatch_lines(["*2 failed*"])
+
+    def test_noclass(self):
+        with pytest.raises(TypeError):
+            pytest.raises("wrong", lambda: None)
+
+    def test_invalid_arguments_to_raises(self):
+        with pytest.raises(TypeError, match="unknown"):
+            with pytest.raises(TypeError, unknown="bogus"):
+                raise ValueError()
+
+    def test_tuple(self):
+        with pytest.raises((KeyError, ValueError)):
+            raise KeyError("oops")
+
+    def test_no_raise_message(self):
+        try:
+            pytest.raises(ValueError, int, "0")
+        except pytest.raises.Exception as e:
+            assert e.msg == "DID NOT RAISE {}".format(repr(ValueError))
+        else:
+            assert False, "Expected pytest.raises.Exception"
+
+        try:
+            with pytest.raises(ValueError):
+                pass
+        except pytest.raises.Exception as e:
+            assert e.msg == "DID NOT RAISE {}".format(repr(ValueError))
+        else:
+            assert False, "Expected pytest.raises.Exception"
+
+    @pytest.mark.parametrize("method", ["function", "with"])
+    def test_raises_cyclic_reference(self, method):
+        """
+        Ensure pytest.raises does not leave a reference cycle (#1965).
+        """
+        import gc
+
+        class T:
+            def __call__(self):
+                # Early versions of Python 3.5 have some bug causing the
+                # __call__ frame to still refer to t even after everything
+                # is done. This makes the test pass for them.
+                if sys.version_info < (3, 5, 2):  # pragma: no cover
+                    del self
+                raise ValueError
+
+        t = T()
+        refcount = len(gc.get_referrers(t))
+
+        if method == "function":
+            pytest.raises(ValueError, t)
+        else:
+            with pytest.raises(ValueError):
+                t()
+
+        # ensure both forms of pytest.raises don't leave exceptions in sys.exc_info()
+        assert sys.exc_info() == (None, None, None)
+
+        assert refcount == len(gc.get_referrers(t))
+
+    def test_raises_match(self):
+        msg = r"with base \d+"
+        with pytest.raises(ValueError, match=msg):
+            int("asdf")
+
+        msg = "with base 10"
+        with pytest.raises(ValueError, match=msg):
+            int("asdf")
+
+        msg = "with base 16"
+        expr = r"Pattern '{}' not found in \"invalid literal for int\(\) with base 10: 'asdf'\"".format(
+            msg
+        )
+        with pytest.raises(AssertionError, match=expr):
+            with pytest.raises(ValueError, match=msg):
+                int("asdf", base=10)
+
+    def test_match_failure_string_quoting(self):
+        with pytest.raises(AssertionError) as excinfo:
+            with pytest.raises(AssertionError, match="'foo"):
+                raise AssertionError("'bar")
+        msg, = excinfo.value.args
+        assert msg == 'Pattern "\'foo" not found in "\'bar"'
+
+    def test_raises_match_wrong_type(self):
+        """Raising an exception with the wrong type and match= given.
+
+        pytest should throw the unexpected exception - the pattern match is not
+        really relevant if we got a different exception.
+        """
+        with pytest.raises(ValueError):
+            with pytest.raises(IndexError, match="nomatch"):
+                int("asdf")
+
+    def test_raises_exception_looks_iterable(self):
+        class Meta(type):
+            def __getitem__(self, item):
+                return 1 / 0
+
+            def __len__(self):
+                return 1
+
+        class ClassLooksIterableException(Exception, metaclass=Meta):
+            pass
+
+        with pytest.raises(
+            Failed,
+            match=r"DID NOT RAISE <class 'raises(\..*)*ClassLooksIterableException'>",
+        ):
+            pytest.raises(ClassLooksIterableException, lambda: None)
+
+    def test_raises_with_raising_dunder_class(self):
+        """Test current behavior with regard to exceptions via __class__ (#4284)."""
+
+        class CrappyCla
+
+testing/test_session.py:
+import pytest
+from _pytest.main import ExitCode
+
+
+class SessionTests:
+    def test_basic_testitem_events(self, testdir):
+        tfile = testdir.makepyfile(
+            """
+            def test_one():
+                pass
+            def test_one_one():
+                assert 0
+            def test_other():
+                raise ValueError(23)
+            class TestClass(object):
+                def test_two(self, someargs):
+                    pass
+        """
+        )
+        reprec = testdir.inline_run(tfile)
+        passed, skipped, failed = reprec.listoutcomes()
+        assert len(skipped) == 0
+        assert len(passed) == 1
+        assert len(failed) == 3
+
+        def end(x):
+            return x.nodeid.split("::")[-1]
+
+        assert end(failed[0]) == "test_one_one"
+        assert end(failed[1]) == "test_other"
+        itemstarted = reprec.getcalls("pytest_itemcollected")
+        assert len(itemstarted) == 4
+        # XXX check for failing funcarg setup
+        # colreports = reprec.getcalls("pytest_collectreport")
+        # assert len(colreports) == 4
+        # assert colreports[1].report.failed
+
+    def test_nested_import_error(self, testdir):
+        tfile = testdir.makepyfile(
+            """
+            import import_fails
+            def test_this():
+                assert import_fails.a == 1
+        """,
+            import_fails="""
+            import does_not_work
+            a = 1
+        """,
+        )
+        reprec = testdir.inline_run(tfile)
+        values = reprec.getfailedcollections()
+        assert len(values) == 1
+        out = str(values[0].longrepr)
+        assert out.find("does_not_work") != -1
+
+    def test_raises_output(self, testdir):
+        reprec = testdir.inline_runsource(
+            """
+            import pytest
+            def test_raises_doesnt():
+                pytest.raises(Value
+
+ROUND: 1

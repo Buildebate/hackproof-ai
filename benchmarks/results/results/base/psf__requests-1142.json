@@ -2,7 +2,7 @@
  "task": "psf__requests-1142",
  "mode": "base",
  "done": true,
- "ts": "2026-10-30T05:19:09.806421+00:00",
+ "ts": "2026-10-31T08:07:17.783655+00:00",
  "base_ref": "22623bd8c265b78b161542663ee980738441c307",
  "tier": "oci",
  "base_index": {
@@ -34,41 +34,19 @@
   ]
  },
  "unresolved_ids": [],
- "junit_sha256": "b0bf3b965a78a2a5b26196e8d7647d32eec3fa3e4b7c5cedb9c6f348af97ff05",
- "superseded_4_2": {
-  "base_index": {
-   "test_requests.py::RequestsTestCase::test_no_content_length": "missing",
-   "test_requests.py::RequestsTestCase::test_basic_building": "missing",
-   "test_requests.py::RequestsTestCase::test_entry_points": "missing",
-   "test_requests.py::RequestsTestCase::test_invalid_url": "missing",
-   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": "missing",
-   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": "missing"
-  },
-  "id_resolution": {
-   "test_requests.py::RequestsTestCase::test_no_content_length": [
-    "test_requests.py::RequestsTestCase::test_no_content_length"
-   ],
-   "test_requests.py::RequestsTestCase::test_basic_building": [
-    "test_requests.py::RequestsTestCase::test_basic_building"
-   ],
-   "test_requests.py::RequestsTestCase::test_entry_points": [
-    "test_requests.py::RequestsTestCase::test_entry_points"
-   ],
-   "test_requests.py::RequestsTestCase::test_invalid_url": [
-    "test_requests.py::RequestsTestCase::test_invalid_url"
-   ],
-   "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment": [
-    "test_requests.py::RequestsTestCase::test_params_are_added_before_fragment"
-   ],
-   "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded": [
-    "test_requests.py::RequestsTestCase::test_path_is_not_double_encoded"
-   ]
-  },
-  "unresolved_ids": [],
-  "ts": "2026-10-30T05:19:09.806421+00:00"
+ "junit_sha256": "407dd13e188837eb0e2138da4acab3c64505f876ef1b5919bd6c4f9efdea4071",
+ "collect": {
+  "image": "python:3.8-slim",
+  "exit_code": 0,
+  "n_ids": 27,
+  "stdout_tail": "s/packages/urllib3/poolmanager.py:28: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"\n\nrequests/packages/urllib3/_collections.py:7\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/packages/urllib3/_collections.py:7: DeprecationWarning: Using or importing the ABCs from 'collections' instead of from 'collections.abc' is deprecated since Python 3.3, and in 3.10 it will stop working\n    from collections import MutableMapping\n\nrequests/models.py:607\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/models.py:607: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Returns the json-encoded content of a response, if any.\n\nrequests/models.py:560\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/models.py:560: SyntaxWarning: \"is\" with a literal. Did you mean \"==\"?\n    if self.status_code is 0:\n\nrequests/api.py:48\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:48: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a GET request. Returns :class:`Response` object.\n\nrequests/api.py:59\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:59: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\nrequests/api.py:70\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:70: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\nrequests/api.py:80\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:80: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a POST request. Returns :class:`Response` object.\n\nrequests/api.py:91\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:91: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PUT request. Returns :class:`Response` object.\n\nrequests/api.py:102\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:102: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\nrequests/api.py:113\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/api.py:113: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\nrequests/sessions.py:301\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:301: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a GET request. Returns :class:`Response` object.\n\nrequests/sessions.py:311\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:311: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a OPTIONS request. Returns :class:`Response` object.\n\nrequests/sessions.py:321\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:321: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a HEAD request. Returns :class:`Response` object.\n\nrequests/sessions.py:331\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:331: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a POST request. Returns :class:`Response` object.\n\nrequests/sessions.py:341\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:341: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PUT request. Returns :class:`Response` object.\n\nrequests/sessions.py:351\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:351: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a PATCH request. Returns :class:`Response` object.\n\nrequests/sessions.py:361\n  /home/ubuntu/hackproof-bench/runs/psf__requests-1142/base/requests/sessions.py:361: DeprecationWarning: invalid escape sequence \\*\n    \"\"\"Sends a DELETE request. Returns :class:`Response` object.\n\n-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html\n27 tests collected in 0.15s\n",
+  "stderr_tail": "",
+  "fallback": null
  },
- "rescore": {
-  "tool": "benchmarks/rescore_4_2.py",
-  "ts": "2026-10-30T16:30:15.466716+00:00"
+ "evidence": {
+  "language": "python",
+  "collect": true,
+  "freeze": true,
+  "debate_prompts": false
  }
 }

@@ -1,0 +1,8 @@
+{
+ "task": "pytest-dev__pytest-8399",
+ "mode": "B",
+ "binding": true,
+ "verdict": "not-applicable",
+ "violations": [],
+ "note": "no agent patch evaluated (failed: patch application failed: pytest-dev__pytest-8399: patch matches no localized file exactly once: src/_pytest/unittest.py)"
+}

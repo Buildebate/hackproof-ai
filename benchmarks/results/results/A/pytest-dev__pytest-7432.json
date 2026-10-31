@@ -2,37 +2,544 @@
  "task": "pytest-dev__pytest-7432",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T04:47:15.036170+00:00",
+ "ts": "2026-10-31T09:46:41.113626+00:00",
  "base_ref": "e6e300e729dd33956e5448d8be9a0b1540b4e53a",
  "agent": {
-  "ok": false,
-  "reason": "patch application failed: pytest-dev__pytest-7432: patch matches no localized file exactly once: src/_pytest/skipping.py: block 0: SEARCH not found (0 matches); testing/test_helpconfig.py: block 0: SEARCH not found (0 matches); doc/en/example/xfail_demo.py: block 0: SEARCH not found (0 matches)",
+  "ok": true,
+  "reason": "",
   "files": [
    "src/_pytest/skipping.py",
-   "testing/test_helpconfig.py",
-   "doc/en/example/xfail_demo.py",
-   "bench/skip.py",
-   "testing/test_faulthandler.py"
+   "testing/test_skipping.py",
+   "scripts/release-on-comment.py",
+   "src/_pytest/deprecated.py",
+   "src/_pytest/assertion/__init__.py"
   ],
-  "localize_ms": 248686,
-  "backend": "contriever-transformer-cpu"
+  "localize_ms": 1872,
+  "backend": "hybrid-rrf-hash-cpu",
+  "blocks": 1,
+  "applied_file": "src/_pytest/skipping.py",
+  "applied_files": [
+   "src/_pytest/skipping.py"
+  ]
  },
  "usage": {
-  "prompt_tokens": 3212,
-  "completion_tokens": 5921,
-  "total_tokens": 9133,
+  "prompt_tokens": 10508,
+  "completion_tokens": 841,
+  "total_tokens": 11349,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 3212,
-    "completion_tokens": 5921,
-    "total_tokens": 9133,
+    "prompt_tokens": 10508,
+    "completion_tokens": 841,
+    "total_tokens": 11349,
     "finish_reason": "stop"
    }
   ]
  },
- "status": "failed",
- "reason": "patch application failed: pytest-dev__pytest-7432: patch matches no localized file exactly once: src/_pytest/skipping.py: block 0: SEARCH not found (0 matches); testing/test_helpconfig.py: block 0: SEARCH not found (0 matches); doc/en/example/xfail_demo.py: block 0: SEARCH not found (0 matches)",
+ "evidence": {
+  "language": "python",
+  "collect": true,
+  "freeze": true,
+  "debate_prompts": false
+ },
+ "diff_sha256": "cd10496af362f1baed8536e0966efeaa7959cacd9e6d9e0cbf36fa4f4a4473f9",
+ "guard": {
+  "task": "pytest-dev__pytest-7432",
+  "mode": "A",
+  "binding": false,
+  "verdict": "clean",
+  "violations": [],
+  "note": "post-hoc measurement; does not gate Mode A"
+ },
+ "junit_sha256": "bfd92b3b93973defc612096bd6a4503e196296d3d689da449b7926577a887ac3",
+ "eval_exit": 0,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "testing/test_skipping.py::TestXFail::test_xfail_run_with_skip_mark[test_input1-expected1]": {
+    "base": "failed",
+    "agent": "passed"
+   }
+  },
+  "p2p": {
+   "testing/test_skipping.py::test_importorskip": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_no_marker": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_xfail_no_args": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_skipif_no_args": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg_with_reason": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg_twice": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg_twice2": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_skipif_with_boolean_without_reason": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_marked_skipif_with_invalid_boolean": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestEvaluation::test_skipif_class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_simple[True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_simple[False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_xpassed": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_using_platform": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_xpassed_strict": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_run_anyway": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_run_with_skip_mark[test_input0-expected0]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_evalfalse_but_fails": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_not_report_default": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_not_run_xfail_reporting": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_not_run_no_setup_run": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_xpass": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_imperative": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_imperative_in_setup_function": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_dynamic_xfail_no_run": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_dynamic_xfail_set_during_funcarg_setup": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_raises[TypeError-TypeError-*1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_raises[(AttributeError,": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_raises[TypeError-IndexError-*1": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_sanity": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_xfail[True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_xfail[False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_condition[True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_condition[False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_condition_keyword[True]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_xfail_condition_keyword[False]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_default_from_file[true]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_default_from_file[false]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFailwithSetupTeardown::test_failing_setup_issue9": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestXFailwithSetupTeardown::test_failing_teardown_issue9": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_skip_class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_skips_on_false_string": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_arg_as_reason": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_skip_no_reason": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_skip_with_reason": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_only_skips_marked_test": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkip::test_strict_and_skip": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkipif::test_skipif_conditional": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting[\"hasattr(sys,": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting[True,": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkipif::test_skipif_using_platform": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting_multiple[skipif-SKIP-skipped]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting_multiple[xfail-XPASS-xpassed]": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_skip_not_report_default": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_skipif_class": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_skipped_reasons_functional": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_skipped_folding": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_reportchars": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_reportchars_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_reportchars_all": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_reportchars_all_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_errors_in_xfail_skip_expressions": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_xfail_skipif_with_globals": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_default_markers": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_xfail_test_setup_exception": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_imperativeskip_on_xfail_test": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestBooleanCondition::test_skipif": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestBooleanCondition::test_skipif_noreason": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::TestBooleanCondition::test_xfail": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_xfail_item": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_module_level_skip_error": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_module_level_skip_with_allow_module_level": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_invalid_skip_keyword_parameter": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_mark_xfail_item": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_summary_list_after_errors": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "testing/test_skipping.py::test_relpath_rootdir": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [
+   "testing/test_skipping.py::TestXFail::test_xfail_run_with_skip_mark[test_input1-expected1]"
+  ],
+  "f2p_not_fixed": [],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "testing/test_skipping.py::test_importorskip",
+   "testing/test_skipping.py::TestEvaluation::test_no_marker",
+   "testing/test_skipping.py::TestEvaluation::test_marked_xfail_no_args",
+   "testing/test_skipping.py::TestEvaluation::test_marked_skipif_no_args",
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg",
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg_with_reason",
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg_twice",
+   "testing/test_skipping.py::TestEvaluation::test_marked_one_arg_twice2",
+   "testing/test_skipping.py::TestEvaluation::test_marked_skipif_with_boolean_without_reason",
+   "testing/test_skipping.py::TestEvaluation::test_marked_skipif_with_invalid_boolean",
+   "testing/test_skipping.py::TestEvaluation::test_skipif_class",
+   "testing/test_skipping.py::TestXFail::test_xfail_simple[True]",
+   "testing/test_skipping.py::TestXFail::test_xfail_simple[False]",
+   "testing/test_skipping.py::TestXFail::test_xfail_xpassed",
+   "testing/test_skipping.py::TestXFail::test_xfail_using_platform",
+   "testing/test_skipping.py::TestXFail::test_xfail_xpassed_strict",
+   "testing/test_skipping.py::TestXFail::test_xfail_run_anyway",
+   "testing/test_skipping.py::TestXFail::test_xfail_run_with_skip_mark[test_input0-expected0]",
+   "testing/test_skipping.py::TestXFail::test_xfail_evalfalse_but_fails",
+   "testing/test_skipping.py::TestXFail::test_xfail_not_report_default",
+   "testing/test_skipping.py::TestXFail::test_xfail_not_run_xfail_reporting",
+   "testing/test_skipping.py::TestXFail::test_xfail_not_run_no_setup_run",
+   "testing/test_skipping.py::TestXFail::test_xfail_xpass",
+   "testing/test_skipping.py::TestXFail::test_xfail_imperative",
+   "testing/test_skipping.py::TestXFail::test_xfail_imperative_in_setup_function",
+   "testing/test_skipping.py::TestXFail::test_dynamic_xfail_no_run",
+   "testing/test_skipping.py::TestXFail::test_dynamic_xfail_set_during_funcarg_setup",
+   "testing/test_skipping.py::TestXFail::test_xfail_raises[TypeError-TypeError-*1",
+   "testing/test_skipping.py::TestXFail::test_xfail_raises[(AttributeError,",
+   "testing/test_skipping.py::TestXFail::test_xfail_raises[TypeError-IndexError-*1",
+   "testing/test_skipping.py::TestXFail::test_strict_sanity",
+   "testing/test_skipping.py::TestXFail::test_strict_xfail[True]",
+   "testing/test_skipping.py::TestXFail::test_strict_xfail[False]",
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_condition[True]",
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_condition[False]",
+   "testing/test_skipping.py::TestXFail::test_xfail_condition_keyword[True]",
+   "testing/test_skipping.py::TestXFail::test_xfail_condition_keyword[False]",
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_default_from_file[true]",
+   "testing/test_skipping.py::TestXFail::test_strict_xfail_default_from_file[false]",
+   "testing/test_skipping.py::TestXFailwithSetupTeardown::test_failing_setup_issue9",
+   "testing/test_skipping.py::TestXFailwithSetupTeardown::test_failing_teardown_issue9",
+   "testing/test_skipping.py::TestSkip::test_skip_class",
+   "testing/test_skipping.py::TestSkip::test_skips_on_false_string",
+   "testing/test_skipping.py::TestSkip::test_arg_as_reason",
+   "testing/test_skipping.py::TestSkip::test_skip_no_reason",
+   "testing/test_skipping.py::TestSkip::test_skip_with_reason",
+   "testing/test_skipping.py::TestSkip::test_only_skips_marked_test",
+   "testing/test_skipping.py::TestSkip::test_strict_and_skip",
+   "testing/test_skipping.py::TestSkipif::test_skipif_conditional",
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting[\"hasattr(sys,",
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting[True,",
+   "testing/test_skipping.py::TestSkipif::test_skipif_using_platform",
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting_multiple[skipif-SKIP-skipped]",
+   "testing/test_skipping.py::TestSkipif::test_skipif_reporting_multiple[xfail-XPASS-xpassed]",
+   "testing/test_skipping.py::test_skip_not_report_default",
+   "testing/test_skipping.py::test_skipif_class",
+   "testing/test_skipping.py::test_skipped_reasons_functional",
+   "testing/test_skipping.py::test_skipped_folding",
+   "testing/test_skipping.py::test_reportchars",
+   "testing/test_skipping.py::test_reportchars_error",
+   "testing/test_skipping.py::test_reportchars_all",
+   "testing/test_skipping.py::test_reportchars_all_error",
+   "testing/test_skipping.py::test_errors_in_xfail_skip_expressions",
+   "testing/test_skipping.py::test_xfail_skipif_with_globals",
+   "testing/test_skipping.py::test_default_markers",
+   "testing/test_skipping.py::test_xfail_test_setup_exception",
+   "testing/test_skipping.py::test_imperativeskip_on_xfail_test",
+   "testing/test_skipping.py::TestBooleanCondition::test_skipif",
+   "testing/test_skipping.py::TestBooleanCondition::test_skipif_noreason",
+   "testing/test_skipping.py::TestBooleanCondition::test_xfail",
+   "testing/test_skipping.py::test_xfail_item",
+   "testing/test_skipping.py::test_module_level_skip_error",
+   "testing/test_skipping.py::test_module_level_skip_with_allow_module_level",
+   "testing/test_skipping.py::test_invalid_skip_keyword_parameter",
+   "testing/test_skipping.py::test_mark_xfail_item",
+   "testing/test_skipping.py::test_summary_list_after_errors",
+   "testing/test_skipping.py::test_relpath_rootdir"
+  ],
+  "resolved_functional": true,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "status": "resolved",
+ "reason": "",
  "done": true
 }

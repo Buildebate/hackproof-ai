@@ -1,1 +1,39 @@
-<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="0" skipped="1" tests="1" time="0.055" timestamp="2026-10-30T13:25:38.994213" hostname="bdb4202e04b0"><testcase classname="testing.test_repro_eba6c0c721f7.MyTestCase" name="test_one" time="0.001"><skipped type="pytest.skip" message="hello">/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-10081/B/testing/test_repro_eba6c0c721f7.py:7: hello</skipped></testcase></testsuite></testsuites>
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.135" timestamp="2026-10-31T08:39:49.174407" hostname="87966b81ca82"><testcase classname="testing.test_repro_f0a6566d9af1" name="test_pdb_skipped_class_teardown_not_executed" time="0.112"><failure message="AssertionError: tearDown executed for skipped class: self = &lt;test_pdb_skipped_class_teardown_not_executed.MyTestCase testMethod=test_one&gt;&#10;  &#10;      def tearDown(self):&#10;  &gt;       raise AssertionError(&quot;tearDown must not run for skipped class&quot;)&#10;  E       AssertionError: tearDown must not run for skipped class&#10;  &#10;  test_pdb_skipped_class_teardown_not_executed.py:9: AssertionError&#10;assert (False or False)&#10; +  where False = &lt;TestReport 'test_pdb_skipped_class_teardown_not_executed.py::MyTestCase::test_one' when='teardown' outcome='failed'&gt;.passed&#10; +  and   False = &lt;TestReport 'test_pdb_skipped_class_teardown_not_executed.py::MyTestCase::test_one' when='teardown' outcome='failed'&gt;.skipped">pytester = &lt;Pytester PosixPath('/tmp/pytest-of-root/pytest-0/test_pdb_skipped_class_teardown_not_executed0')&gt;
+monkeypatch = &lt;_pytest.monkeypatch.MonkeyPatch object at 0xecb902b0e150&gt;
+
+    def test_pdb_skipped_class_teardown_not_executed(pytester, monkeypatch):
+        pdb_calls = []
+    
+        def fake_post_mortem(*args, **kwargs):
+            pdb_calls.append(args)
+    
+        monkeypatch.setattr(_pytest.debugging, "post_mortem", fake_post_mortem)
+        p = pytester.makepyfile(
+            """
+            import unittest
+    
+            @unittest.skip("hello")
+            class MyTestCase(unittest.TestCase):
+                def test_one(self):
+                    pass
+    
+                def tearDown(self):
+                    raise AssertionError("tearDown must not run for skipped class")
+            """
+        )
+        result = pytester.runpytest_inprocess("--pdb", p)
+        reports = result.reprec.getreports("pytest_runtest_logreport")
+        teardown = [r for r in reports if r.when == "teardown"][0]
+&gt;       assert teardown.passed or teardown.skipped, f"tearDown executed for skipped class: {teardown.longrepr}"
+E       AssertionError: tearDown executed for skipped class: self = &lt;test_pdb_skipped_class_teardown_not_executed.MyTestCase testMethod=test_one&gt;
+E         
+E             def tearDown(self):
+E         &gt;       raise AssertionError("tearDown must not run for skipped class")
+E         E       AssertionError: tearDown must not run for skipped class
+E         
+E         test_pdb_skipped_class_teardown_not_executed.py:9: AssertionError
+E       assert (False or False)
+E        +  where False = &lt;TestReport 'test_pdb_skipped_class_teardown_not_executed.py::MyTestCase::test_one' when='teardown' outcome='failed'&gt;.passed
+E        +  and   False = &lt;TestReport 'test_pdb_skipped_class_teardown_not_executed.py::MyTestCase::test_one' when='teardown' outcome='failed'&gt;.skipped
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-10081/B/testing/test_repro_f0a6566d9af1.py:27: AssertionError</failure></testcase></testsuite></testsuites>

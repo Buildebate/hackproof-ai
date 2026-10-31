@@ -1,4 +1,4 @@
-You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output ONLY exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences.
+You are ArchitecturalBuilder, a System Two patch synthesizer in Active Focus mode. Output exact SEARCH/REPLACE blocks (<<<<<<< SEARCH ... ======= ... >>>>>>> REPLACE), one per hunk, no line numbers, no prose, no markdown fences. Prefix each block with its repo-relative target file path on its own line. Copy every SEARCH block byte-for-byte from the shown CODE CONTEXT (exact indentation and punctuation); never reconstruct code from memory. After the blocks, end your verdict with exactly one marker word on its own final line: APPROVE if the patch is complete, or REVISE if the context is insufficient to write one.
 BUDGET: fit the ENTIRE response in 700 tokens; if several hunks are needed, output the most critical first.
 
 ISSUE:
@@ -135,268 +135,1160 @@ I frankly forgot about this, but I'll get to it tonight or tomorrow I hope.
 I'm going to go ahead and give this a shot; sigmavirus24 is going to take #1133 in the meantime.
 
 CODE CONTEXT:
-requests/models.py:
+TOP-1 FULL FILE requests/packages/charade/hebrewprober.py:
+######################## BEGIN LICENSE BLOCK ########################
+# The Original Code is Mozilla Universal charset detector code.
+#
+# The Initial Developer of the Original Code is
+#          Shy Shalom
+# Portions created by the Initial Developer are Copyright (C) 2005
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#   Mark Pilgrim - port to Python
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301  USA
+######################### END LICENSE BLOCK #########################
+
+from .charsetprober import CharSetProber
+from .constants import eNotMe, eDetecting
+from .compat import wrap_ord
+
+# This prober doesn't actually recognize a language or a charset.
+# It is a helper prober for the use of the Hebrew model probers
+
+### General ideas of the Hebrew charset recognition ###
+#
+# Four main charsets exist in Hebrew:
+# "ISO-8859-8" - Visual Hebrew
+# "windows-1255" - Logical Hebrew
+# "ISO-8859-8-I" - Logical Hebrew
+# "x-mac-hebrew" - ?? Logical Hebrew ??
+#
+# Both "ISO" charsets use a completely identical set of code points, whereas
+# "windows-1255" and "x-mac-hebrew" are two different proper supersets of
+# these code points. windows-1255 defines additional characters in the range
+# 0x80-0x9F as some misc punctuation marks as well as some Hebrew-specific
+# diacritics and additional 'Yiddish' ligature letters in the range 0xc0-0xd6.
+# x-mac-hebrew defines similar additional code points but with a different
+# mapping.
+#
+# As far as an average Hebrew text with no diacritics is concerned, all four
+# charsets are identical with respect to code points. Meaning that for the
+# main Hebrew alphabet, all four map the same values to all 27 Hebrew letters
+# (including final letters).
+#
+# The dominant difference between these charsets is their directionality.
+# "Visual" directionality means that the text is ordered as if the renderer is
+# not aware of a BIDI rendering algorithm. The renderer sees the text and
+# draws it from left to right. The text itself when ordered naturally is read
+# backwards. A buffer of Visual Hebrew generally looks like so:
+# "[last word of first line spelled backwards] [whole line ordered backwards
+# and spelled backwards] [first word of first line spelled backwards]
+# [end of line] [last word of second line] ... etc' "
+# adding punctuation marks, numbers and English text to visual text is
+# naturally also "visual" and from left to right.
+#
+# "Logical" directionality means the text is ordered "naturally" according to
+# the order it is read. It is the responsibility of the renderer to display
+# the text from right to left. A BIDI algorithm is used to place general
+# punctuation marks, numbers and English text in the text.
+#
+# Texts in x-mac-hebrew are almost impossible to find on the Internet. From
+# what little evidence I could find, it seems that its general directionality
+# is Logical.
+#
+# To sum up all of the above, the Hebrew probing mechanism knows about two
+# charsets:
+# Visual Hebrew - "ISO-8859-8" - backwards text - Words and sentences are
+#    backwards while line order is natural. For charset recognition purposes
+#    the line order is unimportant (In fact, for this implementation, even
+#    word order is unimportant).
+# Logical Hebrew - "windows-1255" - normal, naturally ordered text.
+#
+# "ISO-8859-8-I" is a subset of windows-1255 and doesn't need to be
+#    specifically identified.
+# "x-mac-hebrew" is also identified as windows-1255. A text in x-mac-hebrew
+#    that contain special punctuation marks or diacritics is displayed with
+#    some unconverted characters showing as question marks. This problem might
+#    be corrected using another model prober for x-mac-hebrew. Due to the fact
+#    that x-mac-hebrew texts are so rare, writing another model prober isn't
+#    worth the effort and performance hit.
+#
+#### The Prober ####
+#
+# The prober is divided between two SBCharSetProbers and a HebrewProber,
+# all of which are managed, created, fed data, inquired and deleted by the
+# SBCSGroupProber. The two SBCharSetProbers identify that the text is in
+# fact some kind of Hebrew, Logical or Visual. The final decision about which
+# one is it is made by the HebrewProber by combining final-letter scores
+# with the scores of the two SBCharSetProbers to produce a final answer.
+#
+# The SBCSGroupProber is responsible for stripping the original text of HTML
+# tags, English characters, numbers, low-ASCII punctuation characters, spaces
+# and new lines. It reduces any sequence of such characters to a single space.
+# The buffer fed to each prober in the SBCS group prober is pure text in
+# high-ASCII.
+# The two SBCharSetProbers (model probers) share the same language model:
+# Win1255Model.
+# The first SBCharSetProber uses the model normally as any other
+# SBCharSetProber does, to recognize windows-1255, upon which this model was
+# built. The second SBCharSetProber is told to make the pair-of-letter
+# lookup in the language model backwards. This in practice exactly simulates
+# a visual Hebrew model using the windows-1255 logical Hebrew model.
+#
+# The HebrewProber is not using any language model. All it does is look for
+# final-letter evidence suggesting the text is either logical Hebrew or visual
+# Hebrew. Disjointed from the model probers, the results of the HebrewProber
+# alone are meaningless. HebrewProber always returns 0.00 as confidence
+# since it never identifies a charset by itself. Instead, the pointer to the
+# HebrewProber is passed to the model probers as a helper "Name Prober".
+# When the Group prober receives a positive identification from any prober,
+# it asks for the name of the charset identified. If the prober queried is a
+# Hebrew model prober, the model prober forwards the call to the
+# HebrewProber to make the final decision. In the HebrewProber, the
+# decision is made according to the final-letters scores maintained and Both
+# model probers scores. The answer is returned in the form of the name of the
+# charset identified, either "windows-1255" or "ISO-8859-8".
+
+# windows-1255 / ISO-8859-8 code points of interest
+FINAL_KAF = 0xea
+NORMAL_KAF = 0xeb
+FINAL_MEM = 0xed
+NORMAL_MEM = 0xee
+FINAL_NUN = 0xef
+NORMAL_NUN = 0xf0
+FINAL_PE = 0xf3
+NORMAL_PE = 0xf4
+FINAL_TSADI = 0xf5
+NORMAL_TSADI = 0xf6
+
+# Minimum Visual vs Logical final letter score difference.
+# If the difference is below this, don't rely solely on the final letter score
+# distance.
+MIN_FINAL_CHAR_DISTANCE = 5
+
+# Minimum Visual vs Logical model score difference.
+# If the difference is below this, don't rely at all on the model score
+# distance.
+MIN_MODEL_DISTANCE = 0.01
+
+VISUAL_HEBREW_NAME = "ISO-8859-8"
+LOGICAL_HEBREW_NAME = "windows-1255"
+
+
+class HebrewProber(CharSetProber):
+    def __init__(self):
+        CharSetProber.__init__(self)
+        self._mLogicalProber = None
+        self._mVisualProber = None
+        self.reset()
+
+    def reset(self):
+        self._mFinalCharLogicalScore = 0
+        self._mFinalCharVisualScore = 0
+        # The two last characters seen in the previous buffer,
+        # mPrev and mBeforePrev are initialized to space in order to simulate
+        # a word delimiter at the beginning of the data
+        self._mPrev = ' '
+        self._mBeforePrev = ' '
+        # These probers are owned by the group prober.
+
+    def set_model_probers(self, logicalProber, visualProber):
+        self._mLogicalProber = logicalProber
+        self._mVisualProber = visualProber
+
+    def is_final(self, c):
+        return wrap_ord(c) in [FINAL_KAF, FINAL_MEM, FINAL_NUN, FINAL_PE,
+                               FINAL_TSADI]
+
+    def is_non_final(self, c):
+        # The normal Tsadi is not a good Non-Final letter due to words like
+        # 'lechotet' (to chat) containing an apostrophe after the tsadi. This
+        # apostrophe is converted to a space in FilterWithoutEnglishLetters
+        # causing the Non-Final tsadi to appear at an end of a word even
+        # though this is not the case in the original text.
+        # The letters Pe and Kaf rarely display a related behavior of not being
+        # a good Non-Final letter. Words like 'Pop', 'Winamp' and 'Mubarak'
+        # for example legally end with a Non-Final Pe or Kaf. However, the
+        # benefit of these letters as Non-Final letters outweighs the damage
+        # since these words are quite rare.
+        return wrap_ord(c) in [NORMAL_KAF, NORMAL_MEM, NORMAL_NUN, NORMAL_PE]
+
+    def feed(self, aBuf):
+        # Final letter analysis for logical-visual decision.
+        # Look for evidence that the received buffer is either logical Hebrew
+        # or visual Hebrew.
+        # The following cases are checked:
+        # 1) A word longer than 1 letter, ending with a final letter. This is
+        #    an indication that the text is laid out "naturally" since the
+        #    final letter really appears at the end. +1 for logical score.
+        # 2) A word longer than 1 letter, ending with a Non-Final letter. In
+        #    normal Hebrew, words ending with Kaf, Mem, Nun, Pe or Tsadi,
+        #    should not end with the Non-Final form of that letter. Exceptions
+        #    to this rule are mentioned above in isNonFinal(). This is an
+        #    indication that the text is laid out backwards. +1 for visual
+        #    score
+        # 3) A word longer than 1 letter, starting with a final letter. Final
+        #    letters should not appear at the beginning of a word. This is an
+        #    indication that the text is laid out backwards. +1 for visual
+        #    score.
+        #
+        # The visual score and logical score are accumulated throughout the
+        # text and are finally checked against each other in GetCharSetName().
+        # No checking for final letters in the middle of words is done since
+        # that case is not an indication for either Logical or Visual text.
+        #
+        # We automatically filter out all 7-bit characters (replace them with
+        # spaces) so the word boundary detection works properly. [MAP]
+
+        if self.get_state() == eNotMe:
+            # Both model probers say it's not them. No reason to continue.
+            return eNotMe
+
+        aBuf = self.filter_high_bit_only(aBuf)
+
+        for cur in aBuf:
+            if cur == ' ':
+                # We stand on a space - a word just ended
+                if self._mBeforePrev != ' ':
+                    # next-to-last char was not a space so self._mPrev is not a
+                    # 1 letter word
+                    if self.is_final(self._mPrev):
+                        # case (1) [-2:not space][-1:final letter][cur:space]
+                        self._mFinalCharLogicalScore += 1
+                    elif self.is_non_final(self._mPrev):
+                        # case (2) [-2:not space][-1:Non-Final letter][
+                        #  cur:space]
+                        self._mFinalCharVisualScore += 1
+            else:
+                # Not standing on a space
+                if ((self._mBeforePrev == ' ') and
+                        (self.is_final(self._mPrev)) and (cur != ' ')):
+                    # case (3) [-2:space][-1:final letter][cur:not space]
+                    self._mFinalCharVisualScore += 1
+            self._mBeforePrev = self._mPrev
+            self._mPrev = cur
+
+        # Forever detecting, till the end or until both model probers return
+        # eNotMe (handled above)
+        return eDetecting
+
+    def get_charset_name(self):
+        # Make the decision: is it Logical or Visual?
+        # If the final letter score distance is dominant enough, rely on it.
+        finalsub = self._mFinalCharLogicalScore - self._mFinalCharVisualScore
+        if finalsub >= MIN_FINAL_CHAR_DISTANCE:
+            return LOGICAL_HEBREW_NAME
+        if finalsub <= -MIN_FINAL_CHAR_DISTANCE:
+            return VISUAL_HEBREW_NAME
+
+        # It's not dominant enough, try to rely on the model scores instead.
+        modelsub = (self._mLogicalProber.get_confidence()
+                    - self._mVisualProber.get_confidence())
+        if modelsub > MIN_MODEL_DISTANCE:
+            return LOGICAL_HEBREW_NAME
+        if modelsub < -MIN_MODEL_DISTANCE:
+            return VISUAL_HEBREW_NAME
+
+        # Still no good, back to final letter distance, maybe it'll save the
+        # day.
+        if finalsub < 0.0:
+            return VISUAL_HEBREW_NAME
+
+        # (finalsub > 0 - Logical) or (don't know what to do) default to
+        # Logical.
+        return LOGICAL_HEBREW_NAME
+
+    def get_state(self):
+        # Remain active as long as any of the model probers are active.
+        if (self._mLogicalProber.get_state() == eNotMe) and \
+           (self._mVisualProber.get_state() == eNotMe):
+            return eNotMe
+        return eDetecting
+
+
+requests/packages/charade/hebrewprober.py:
+######################## BEGIN LICENSE BLOCK ########################
+# The Original Code is Mozilla Universal charset detector code.
+#
+# The Initial Developer of the Original Code is
+#          Shy Shalom
+# Portions created by the Initial Developer are Copyright (C) 2005
+# the Initial Developer. All Rights Reserved.
+#
+# Contributor(s):
+#   Mark Pilgrim - port to Python
+#
+# This library is free software; you can redistribute it and/or
+# modify it under the terms of the GNU Lesser General Public
+# License as published by the Free Software Foundation; either
+# version 2.1 of the License, or (at your option) any later version.
+#
+# This library is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+# Lesser General Public License for more details.
+#
+# You should have received a copy of the GNU Lesser General Public
+# License along with this library; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
+# 02110-1301  USA
+######################### END LICENSE BLOCK #########################
+
+from .charsetprober import CharSetProber
+from .constants import eNotMe, eDetecting
+from .compat import wrap_ord
+
+# This prober doesn't actually recognize a language or a charset.
+# It is a helper prober for the use of the Hebrew model probers
+
+### General ideas of the Hebrew charset recognition ###
+#
+# Four main charsets exist in Hebrew:
+# "ISO-8859-8" - Visual Hebrew
+# "windows-1255" - Logical Hebrew
+# "ISO-8859-8-I" - Logical Hebrew
+# "x-mac-hebrew" - ?? Logical Hebrew ??
+#
+# Both "ISO" charsets use a completely identical set of code points, whereas
+# "windows-1255" and "x-mac-hebrew" are two different proper supersets of
+# these code points. windows-1255 defines additional characters in the range
+# 0x80-0x9F as some misc punctuation marks as well as some Hebrew-specific
+# diacritics and additional 'Yiddish' ligature letters in the range 0xc0-0xd6.
+# x-mac-hebrew defines similar additional code points but with a different
+# mapping.
+#
+# As far as an average Hebrew text with no diacritics is concerned, all four
+# charsets are identical with respect to code points. Meaning that for the
+# main Hebrew alphabet, all four map the same values to all 27 Hebrew letters
+# (including final letters).
+#
+# The dominant difference between these charsets is their directionality.
+# "Visual" directionality means that the text is ordered as if the renderer is
+# not aware of a BIDI rendering algorithm. The renderer sees the text and
+# draws it from left to right. The text itself when ordered naturally is read
+# backwards. A buffer of Visual Hebrew generally looks like so:
+# "[last word of first line spelled backwards] [whole line ordered backwards
+# and spelled backwards] [first word of first line spelled backwards]
+# [end of line] [last word of second line] ... etc' "
+# adding punctuation marks, numbers and English text to visual text is
+# naturally also "visual" and from left to right.
+#
+# "Logical" directionality means the text is ordered "naturally" according to
+# the order it is read. It is the responsibility of the renderer to display
+# the text from right to left. A BIDI algorithm is used to place general
+# punctuation marks, numbers and English text in the text.
+#
+# Texts in x-mac-hebrew are almost impossible to find on the Internet. From
+# what little evidence I could find, it seems that its general directionality
+# is Logical.
+#
+# To sum up all of the above, the Hebrew probing mechanism knows about two
+# charsets:
+# Visual Hebrew - "ISO-8859-8" - backwards text - Words and sentences are
+#    backwards while line order is natural. For charset recognition purposes
+#    the line order is unimportant (In fact, for this implementation, even
+#    word order is unimportant).
+# Logical Hebrew - "windows-1255" - normal, naturally ordered text.
+#
+# "ISO-8859-8-I" is a subset of windows-1255 and doesn't need to be
+#    specifically identified.
+# "x-mac-hebrew" is also identified as windows-1255. A text in x-mac-hebrew
+#    that contain special punctuation marks or diacritics is displayed with
+#    some unconverted characters showing as question marks. This problem might
+#    be corrected using another model prober for x-mac-hebrew. Due to the fact
+#    that x-mac-hebrew texts are so rare, writing another model prober isn't
+#    worth the effort and performance hit.
+#
+#### The Prober ####
+#
+# The prober is divided between two SBCharSetProbers and a HebrewProber,
+# all of which are managed, created, fed data, inquired and deleted by the
+# SBCSGroupProber. The two SBCharSetProbers identify that the text is in
+# fact some kind of Hebrew, Logical or Visual. The final decision about which
+# one is it is made by the HebrewProber by combining final-letter scores
+# with the scores of the two SBCharSetProbers to produce a final answer.
+#
+# The SBCSGroupProber is responsible for stripping the original text of HTML
+# tags, English characters, numbers, low-ASCII punctuation characters, spaces
+# and new lines. It reduces any sequence of such characters to a single space.
+# The buffer fed to each prober in the SBCS group prober is pure text in
+# high-ASCII.
+# The two SBCharSetProbers (model probers) share the same language model:
+# Win1255Model.
+# The first SBCharSetProber uses the model normally as any other
+# SBCharSetProber does, to recognize windows-1255, upon which this model was
+# built. The second SBCharSetProber is told to make the pair-of-letter
+# lookup in the language model backwards. This in practice exactly simulates
+# a visual Hebrew model using the windows-1255 logical Hebrew model.
+#
+# The HebrewProber is not using any language model. All it does is look for
+# final-letter evidence suggesting the text is either logical Hebrew or visual
+# Hebrew. Disjointed from the model probers, the results of the HebrewProber
+# alone are meaningless. HebrewProber always returns 0.00 as confidence
+# since it never identifies a charset by itself. Instead, the pointer to the
+# HebrewProber is passed to the model probers as a helper "Name Prober".
+# When the Group prober receives a positive identification from any prober,
+# it asks for the name of the charset identified. If the prober queried is a
+# Hebrew model prober, the model prober forwards the call to the
+# HebrewProber to make the final decision. In the HebrewProber, the
+# decision is made according to the final-letters scores maintained and Both
+# model probers scores. The answer is returned in the form of the name of the
+# charset identified, either "windows-1255" or "ISO-8859-8".
+
+# windows-1255 / ISO-8859-8 code points of interest
+FINAL_KAF = 0xea
+NORMAL_KAF = 0xeb
+FINAL_MEM = 0xed
+NORMAL_MEM = 0xee
+FINAL_NUN = 0xef
+NORMAL_NUN = 0xf0
+FINAL_PE = 0xf3
+NORMAL_PE = 0xf4
+FINAL_TSADI = 0xf5
+NORMAL_TSADI = 0xf6
+
+# Minimum Visual vs Logical final letter score difference.
+# If the difference is below this, don't rely solely on the final letter score
+# distance.
+MIN_FINAL_CHAR_DISTANCE = 5
+
+# Minimum Visual vs Logical model score difference.
+# If the difference is below this, don't rely at all on the model score
+# distance.
+MIN_MODEL_DISTANCE = 0.01
+
+VISUAL_HEBREW_NAME = "ISO-8859-8"
+LOGICAL_HEBREW_NAME = "windows-1255"
+
+
+class HebrewProber(CharSetProber):
+    def __init__(self):
+        CharSetProber.__init__(self)
+        self._mLogicalProber = None
+        self._mVisualProber = None
+        self.reset()
+
+    def reset(self):
+        self._mFinalCharLogicalScore = 0
+        self._mFinalCharVisualScore = 0
+        # The two last characters seen in the previous buffer,
+        # mPrev and mBeforePrev are initialized to space in order to simulate
+        # a word delimiter at the beginning of the data
+        self._mPrev = ' '
+        self._mBeforePrev = ' '
+        # These probers are owned by the group prober.
+
+    def set_model_probers(self, logicalProber, visualProber):
+        self
+
+requests/packages/urllib3/request.py:
+# urllib3/request.py
+# Copyright 2008-2012 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
+#
+# This module is part of urllib3 and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+from .filepost import encode_multipart_formdata
+
+
+__all__ = ['RequestMethods']
+
+
+class RequestMethods(object):
+    """
+    Convenience mixin for classes who implement a :meth:`urlopen` method, such
+    as :class:`~urllib3.connectionpool.HTTPConnectionPool` and
+    :class:`~urllib3.poolmanager.PoolManager`.
+
+    Provides behavior for making common types of HTTP request methods and
+    decides which type of request field encoding to use.
+
+    Specifically,
+
+    :meth:`.request_encode_url` is for sending requests whose fields are encoded
+    in the URL (such as GET, HEAD, DELETE).
+
+    :meth:`.request_encode_body` is for sending requests whose fields are
+    encoded in the *body* of the request using multipart or www-orm-urlencoded
+    (such as for POST, PUT, PATCH).
+
+    :meth:`.request` is for making any kind of request, it will look up the
+    appropriate encoding format and use one of the above two methods to make
+    the request.
+
+    Initializer parameters:
+
+    :param headers:
+        Headers to include with all requests, unless other headers are given
+        explicitly.
+    """
+
+    _encode_url_methods = set(['DELETE', 'GET', 'HEAD', 'OPTIONS'])
+    _encode_body_methods = set(['PATCH', 'POST', 'PUT', 'TRACE'])
+
+    def __init__(self, headers=None):
+        self.headers = headers or {}
+
+    def urlopen(self, method, url, body=None, headers=None,
+                encode_multipart=True, multipart_boundary=None,
+                **kw): # Abstract
+        raise NotImplemented("Classes extending RequestMethods must implement "
+                             "their own ``urlopen`` method.")
+
+    def request(self, method, url, fields=None, headers=None, **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the appropriate encoding of
+        ``fields`` based on the ``method`` used.
+
+        This is a convenience method that requires the least amount of manual
+        effort. It can be used in most situations, while still having the option
+        to drop down to more specific methods when necessary, such as
+        :meth:`request_encode_url`, :meth:`request_encode_body`,
+        or even the lowest level :meth:`urlopen`.
+        """
+        method = method.upper()
+
+        if method in self._encode_url_methods:
+            return self.request_encode_url(method, url, fields=fields,
+                                            headers=headers,
+                                            **urlopen_kw)
+        else:
+            return self.request_encode_body(method, url, fields=fields,
+                                             headers=headers,
+                                             **urlopen_kw)
+
+    def request_encode_url(self, method, url, fields=None, **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the ``fields`` encoded in
+        the url. This is useful for request methods like GET, HEAD, DELETE, etc.
+        """
+        if fields:
+            url += '?' + urlencode(fields)
+        return self.urlopen(method, url, **urlopen_kw)
+
+    def request_encode_body(self, method, url, fields=None, headers=None,
+                            encode_multipart=True, multipart_boundary=None,
+                            **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the ``fields`` encoded in
+        the body. This is useful for request methods like POST, PUT, PATCH, etc.
+
+        When ``encode_multipart=True`` (default), then
+        :meth:`urllib3.filepost.encode_multipart_formdata` is used to encode the
+        payload with the appropriate content type. Otherwise
+        :meth:`urllib.urlencode` is used with the
+        'application/x-www-form-urlencoded' content type.
+
+        Multipart encoding must be used when posting files, and it's reasonably
+        safe to use it in other times too. However, it may break request signing,
+        such as with OAuth.
+
+        Supports an optional ``fields`` parameter of key/value strings AND
+        key/filetuple. A filetuple is a (filename, data, MIME type) tuple where
+        the MIME type is optional. For example: ::
+
+            fields = {
+                'foo': 'bar',
+                'fakefile': ('foofile.txt', 'contents of foofile'),
+                'realfile': ('barfile.txt', open('realfile').read()),
+                'typedfile': ('bazfile.bin', open('bazfile').read(),
+                              'image/jpeg'),
+                'nonamefile': 'contents of nonamefile field',
+            }
+
+        When uploading a file, providing a filename (the first parameter of the
+        tuple) is optional but recommended to best mimick behavior of browsers.
+
+        Note that if ``headers`` are supplied, the 'Content-Type' header will be
+        overwritten because it depends on the dynamic random boundary string
+        which is used to compose the body of the request. The random boundary
+        string can be explicitly set with the ``multipart_boundary`` parameter.
+        """
+        if encode_multipart:
+            body, content_type = encode_multipart_formdata(fields or {},
+                                    boundary=multipart_boundary)
+        else:
+            body, content_type = (urlencode(fields or {}),
+                                    'application/x-www-form-urlencoded')
+
+        if headers is None:
+            headers = self.headers
+
+        headers_ = {'Content-Type': content_type}
+        headers_.update(headers)
+
+        return self.urlopen(method, url, body=body, headers=headers_,
+                            **urlopen_kw)
+
+
+requests/sessions.py:
 # -*- coding: utf-8 -*-
 
 """
-requests.models
-~~~~~~~~~~~~~~~
+requests.session
+~~~~~~~~~~~~~~~~
 
-This module contains the primary objects that power Requests.
+This module provides a Session object to manage and persist settings across
+requests (cookies, auth, proxies).
+
 """
+import os
 
-import collections
-import logging
+from .compat import cookielib
+from .cookies import cookiejar_from_dict
+from .models import Request
+from .hooks import default_hooks, dispatch_hook
+from .utils import from_key_val_list, default_headers
+from .exceptions import TooManyRedirects, InvalidSchema
 
-from io import BytesIO
-from .hooks import default_hooks
-from .structures import CaseInsensitiveDict
+from .compat import urlparse, urljoin
+from .adapters import HTTPAdapter
+
+from .utils import requote_uri, get_environ_proxies, get_netrc_auth
+
 from .status_codes import codes
-
-from .auth import HTTPBasicAuth
-from .cookies import cookiejar_from_dict, get_cookie_header
-from .packages.urllib3.filepost import encode_multipart_formdata
-from .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL
-from .utils import (
-    stream_untransfer, guess_filename, requote_uri,
-    stream_decode_response_unicode, to_key_val_list, parse_header_links,
-    iter_slices, guess_json_utf, super_len)
-from .compat import (
-    cookielib, urlparse, urlunparse, urlsplit, urlencode, str, bytes, StringIO,
-    is_py2, chardet, json, builtin_str, basestring)
-
 REDIRECT_STATI = (codes.moved, codes.found, codes.other, codes.temporary_moved)
-CONTENT_CHUNK_SIZE = 10 * 1024
-ITER_CHUNK_SIZE = 512
-
-log = logging.getLogger(__name__)
+DEFAULT_REDIRECT_LIMIT = 30
 
 
-class RequestEncodingMixin(object):
-    @property
-    def path_url(self):
-        """Build the path URL to use."""
+def merge_kwargs(local_kwarg, default_kwarg):
+    """Merges kwarg dictionaries.
 
-        url = []
-
-        p = urlsplit(self.url)
-
-        path = p.path
-        if not path:
-            path = '/'
-
-        url.append(path)
-
-        query = p.query
-        if query:
-            url.append('?')
-            url.append(query)
-
-        return ''.join(url)
-
-    @staticmethod
-    def _encode_params(data):
-        """Encode parameters in a piece of data.
-
-        Will successfully encode parameters when passed as a dict or a list of
-        2-tuples. Order is retained if data is a list of 2-tuples but abritrary
-        if parameters are supplied as a dict.
-        """
-
-        if isinstance(data, (str, bytes)):
-            return data
-        elif hasattr(data, 'read'):
-            return data
-        elif hasattr(data, '__iter__'):
-            result = []
-            for k, vs in to_key_val_list(data):
-                if isinstance(vs, basestring) or not hasattr(vs, '__iter__'):
-                    vs = [vs]
-                for v in vs:
-                    if v is not None:
-                        result.append(
-                            (k.encode('utf-8') if isinstance(k, str) else k,
-                             v.encode('utf-8') if isinstance(v, str) else v))
-            return urlencode(result, doseq=True)
-        else:
-            return data
-
-    @staticmethod
-    def _encode_files(files, data):
-        """Build the body for a multipart/form-data request.
-
-        Will successfully encode files when passed as a dict or a list of
-        2-tuples. Order is retained if data is a list of 2-tuples but abritrary
-        if parameters are supplied as a dict.
-
-        """
-        if (not files) or isinstance(data, str):
-            return None
-
-        new_fields = []
-        fields = to_key_val_list(data or {})
-        files = to_key_val_list(files or {})
-
-        for field, val in fields:
-            if isinstance(val, list):
-                for v in val:
-                    new_fields.append((field, builtin_str(v)))
-            else:
-                new_fields.append((field, builtin_str(val)))
-
-        for (k, v) in files:
-            # support for explicit filename
-            ft = None
-            if isinstance(v, (tuple, list)):
-                if len(v) == 2:
-                    fn, fp = v
-                else:
-                    fn, fp, ft = v
-            else:
-                fn = guess_filename(v) or k
-                fp = v
-            if isinstance(fp, str):
-                fp = StringIO(fp)
-            if isinstance(fp, bytes):
-                fp = BytesIO(fp)
-
-            if ft:
-                new_v = (fn, fp.read(), ft)
-            else:
-                new_v = (fn, fp.read())
-            new_fields.append((k, new_v))
-
-        body, content_type = encode_multipart_formdata(new_fields)
-
-        return body, content_type
-
-
-class RequestHooksMixin(object):
-    def register_hook(self, event, hook):
-        """Properly register a hook."""
-
-        if isinstance(hook, collections.Callable):
-            self.hooks[event].append(hook)
-        elif hasattr(hook, '__iter__'):
-            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
-
-    def deregister_hook(self, event, hook):
-        """Deregister a previously registered hook.
-        Returns True if the hook existed, False if not.
-        """
-
-        try:
-            self.hooks[event].remove(hook)
-            return True
-        except ValueError:
-            return False
-
-
-class Request(RequestHooksMixin):
-    """A user-created :class:`Request <Request>` object.
-
-    Used to prepare a :class:`PreparedRequest <PreparedRequest>`, which is sent to the server.
-
-    :param method: HTTP method to use.
-    :param url: URL to send.
-    :param headers: dictionary of headers to send.
-    :param files: dictionary of {filename: fileobject} files to multipart upload.
-    :param data: the body to attach the request. If a dictionary is provided, form-encoding will take place.
-    :param params: dictionary of URL parameters to append to the URL.
-    :param auth: Auth handler or (user, pass) tuple.
-    :param cookies: dictionary or CookieJar of cookies to attach to this request.
-    :param hooks: dictionary of callback hooks, for internal usage.
-
-    Usage::
-
-      >>> import requests
-      >>> req = requests.Request('GET', 'http://httpbin.org/get')
-      >>> req.prepare()
-      <PreparedRequest [GET]>
-
+    If a local key in the dictionary is set to None, it will be removed.
     """
-    def __init__(self,
-        method=None,
-        url=None,
-        headers=None,
-        files=None,
-        data=dict(),
-        params=dict(),
-        auth=None,
-        cookies=None,
-        hooks=None):
+
+    if default_kwarg is None:
+        return local_kwarg
+
+    if isinstance(local_kwarg, str):
+        return local_kwarg
+
+    if local_kwarg is None:
+        return default_kwarg
+
+    # Bypass if not a dictionary (e.g. timeout)
+    if not hasattr(default_kwarg, 'items'):
+        return local_kwarg
+
+    default_kwarg = from_key_val_list(default_kwarg)
+    local_kwarg = from_key_val_list(local_kwarg)
+
+    # Update new values in a case-insensitive way
+    def get_original_key(original_keys, new_key):
+        """
+        Finds the key from original_keys that case-insensitive matches new_key.
+        """
+        for original_key in original_keys:
+            if key.lower() == original_key.lower():
+                return original_key
+        return new_key
+
+    kwargs = default_kwarg.copy()
+    original_keys = kwargs.keys()
+    for key, value in local_kwarg.items():
+        kwargs[get_original_key(original_keys, key)] = value
+
+    # Remove keys that are set to None.
+    for (k, v) in local_kwarg.items():
+        if v is None:
+            del kwargs[k]
+
+    return kwargs
 
 
-        # Default empty dicts for dict params.
-        data = [] if data is None else data
-        files = [] if files is None else files
-        headers = {} if headers is None else headers
-        params = {} if params is None else params
-        hooks = {} if hooks is None else hooks
+class SessionRedirectMixin(object):
 
-        self.hooks = default_hooks()
-        for (k, v) in list(hooks.items()):
-            self.register_hook(event=k, hook=v)
+    def resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        """Receives a Response. Returns a generator of Responses."""
 
-        self.method = method
-        self.url = url
-        self.headers = headers
-        self.files = files
-        self.data = data
-        self.params = params
-        self.auth = auth
-        self.cookies = cookies
-        self.hooks = hooks
+        i = 0
 
-    def __repr__(self):
-        return '<Request [%s]>' % (self.method)
+        # ((resp.status_code is codes.see_other))
+        while (('location' in resp.headers and resp.status_code in REDIRECT_STATI)):
 
-    def prepare(self):
-        """Constructs a :class:`PreparedRequest <PreparedRequest>` for transmission and returns it."""
-        p = PreparedRequest()
+            resp.content  # Consume socket so it can be released
 
-        p.prepare_method(self.method)
-        p.prepare_url(self.url, self.params)
-        p.prepare_headers(self.headers)
-        p.prepare_cookies(self.cookies)
-        p.prepare_body(self.data, self.files)
-        # Note that prepare_auth must be last to enable authentication schemes
-        # such as OAuth to work on a fully prepared request.
-        p.prepare_auth(self.auth)
-        # This MUST go after prepare_auth. Authenticators could add a hook
-        p.prepare_hooks(self.hooks)
+            if i >= self.max_redirects:
+                raise TooManyRedirects('Exceeded %s redirects.' % self.max_redirects)
 
-        return p
+            # Release the connection back into the pool.
+            resp.close()
+
+            url = resp.headers['location']
+            method = req.method
+
+            # Handle redirection without scheme (see: RFC 1808 Section 4)
+            if url.startswith('//'):
+                parsed_rurl = urlparse(resp.url)
+                url = '%s:%s' % (parsed_rurl.scheme, url)
+
+            # Facilitate non-RFC2616-compliant 'location' headers
+            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')
+            if not urlparse(url).netloc:
+                # Compliant with RFC3986, we percent encode the url.
+                url = urljoin(resp.url, requote_uri(url))
+
+            # http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.4
+            if resp.status_code is codes.see_other and req.method != 'HEAD':
+                method = 'GET'
+
+            # Do what the browsers do, despite standards...
+            if resp.status_code in (codes.moved, codes.found) and req.method == 'POST':
+                method = 'GET'
+
+            # Remove the cookie headers that were sent.
+            headers = req.headers
+            try:
+                del headers['Cookie']
+            except KeyError:
+                pass
+
+            resp = self.request(
+                    url=url,
+                    method=method,
+                    headers=headers,
+                    auth=req.auth,
+                    cookies=req.cookies,
+                    allow_redirects=False,
+                    stream=stream,
+                    timeout=timeout,
+                    verify=verify,
+                    cert=cert,
+                    proxies=proxies,
+                    hooks=req.hooks,
+            )
+
+            i += 1
+            yield resp
 
 
-class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
-    """The fully mutable :class:`PreparedRequest <PreparedRequest>` object,
-    containing the exact bytes that will be sent to the server.
+class Session(SessionRedirectMixin):
+    """A Requests session.
 
-    Generated from either a :class:`Request <Request>` object or manually.
+    Provides cookie persistience, connection-pooling, and configuration.
 
-    Usage::
+    Basic Usage::
 
       >>> import requests
-      >>> req = requests.Request('GET', 'http://httpbin.org/get')
-      >>> r = req.prepare()
-      <PreparedRequest [GET]>
-
       >>> s = requests.Session()
-      >>> s.send(r)
-      <Response [200]>
-
+      >>> s.get('http://httpbin.org/get')
+      200
     """
 
     def __init__(self):
-        #: HTTP verb to send to the server.
-        self.method = None
-        #: HTTP URL to send the request to.
-        self.url = None
-        #: dictionary of HTTP headers.
-        self.headers = None
-        #: request body to send to the server.
-        self.body = 
+
+        #: A case-insensitive dictionary of headers to be sent on each
+        #: :class:`Request <Request>` sent from this
+        #: :class:`Session <Session>`.
+        self.headers = default_headers()
+
+        #: Default Authentication tuple or object to attach to
+        #: :class:`Request <Request>`.
+        self.auth = None
+
+        #: Dictionary mapping protocol to the URL of the proxy (e.g.
+        #: {'http': 'foo.bar:3128'}) to be used on each
+        #: :class:`Request <Request>`.
+        self.proxies = {}
+
+        #: Event-handling hooks.
+        self.hooks = default_hooks()
+
+        #: Dictionary of querystring data to attach to each
+        #: :class:`Request <Request>`. The dictionary values may be lists for
+        #: representing multivalued query parameters.
+        self.params = {}
+
+        #: Stream response content default.
+        self.stream = False
+
+        #: SSL Verification default.
+        self.verify = True
+
+        #: SSL certificate default.
+        self.cert = None
+
+        #: Maximum number of redirects to follow.
+        self.max_redirects = DEFAULT_REDIRECT_LIMIT
+
+        #: Should we trust the environment?
+        self.trust_env = True
+
+        # Set up a CookieJar to be used by default
+        self.cookies = cookiejar_from_dict({})
+
+        # Default connection adapters.
+        self.adapters = {}
+        self.mount('http://', HTTPAdapter())
+        self.mount('https://', HTTPAdapter())
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def request(self, method, url,
+        params=None,
+        data=None,
+        headers=None,
+        cookies=None,
+        files=None,
+        auth=None,
+        timeout=None,
+        allow_redirects=True,
+        proxies=None,
+        hooks=None,
+        stream=None,
+        verify=None,
+        cert=None):
+
+        cookies = cookies or {}
+        proxies = proxies or {}
+
+        # Bootstrap CookieJar.
+        if not isinstance(cookies, cookielib.CookieJar):
+            cookies = cookiejar_from_dict(cookies)
+
+        # Bubble down session cookies.
+        for cookie in self.cookies:
+            cookies.set_cookie(cookie)
+
+        # Gather clues from the surrounding environment.
+        if self.trust_env:
+            # Set environment's proxies.
+            env_proxies = get_environ_proxies(url) or {}
+            for (k, v) in env_proxies.items():
+                proxies.setdefault(k, v)
+
+            # Set environment's basic authentication.
+            if not auth:
+                auth = get_netrc_auth(url)
+
+            # Look for configuration.
+            if not verify and verify is not False:
+                verify = os.environ.get('REQUESTS_CA_BUNDLE')
+
+            # Curl compatibility.
+            if not verify and verify is not False:
+                verify = os.environ.get('CURL_CA_BUNDLE')
+
+
+        # Merge all the kwargs.
+        params = merge_kwargs(params, self.params)
+        headers = merge_kwargs(headers, self.headers)
+        auth = merge_kwargs(auth, self.auth)
+        proxies = merge_kwargs(proxies, self.proxies)
+        hooks = merge_kwargs(hooks, self.hooks)
+        stream = merge_kwargs(stream, self.stream)
+        verify = merge_kwargs(verify, self.verify)
+        cert = merge_kwargs(cert, self.cert)
+
+
+        # Create the Request.
+        req = Request()
+      
+
+requests/utils.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.utils
+~~~~~~~~~~~~~~
+
+This module provides utility functions that are used within Requests
+that are also useful for external consumption.
+
+"""
+
+import cgi
+import codecs
+import os
+import platform
+import re
+import sys
+import zlib
+from netrc import netrc, NetrcParseError
+
+from . import __version__
+from . import certs
+from .compat import parse_http_list as _parse_list_header
+from .compat import quote, urlparse, bytes, str, OrderedDict, urlunparse
+from .cookies import RequestsCookieJar, cookiejar_from_dict
+
+_hush_pyflakes = (RequestsCookieJar,)
+
+NETRC_FILES = ('.netrc', '_netrc')
+
+DEFAULT_CA_BUNDLE_PATH = certs.where()
+
+def dict_to_sequence(d):
+    """Returns an internal sequence dictionary update."""
+
+    if hasattr(d, 'items'):
+        d = d.items()
+
+    return d
+
+def super_len(o):
+    if hasattr(o, '__len__'):
+        return len(o)
+    if hasattr(o, 'len'):
+        return o.len
+    if hasattr(o, 'fileno'):
+        return os.fstat(o.fileno()).st_size
+
+def get_netrc_auth(url):
+    """Returns the Requests tuple auth for a given url from netrc."""
+
+    try:
+        locations = (os.path.expanduser('~/{0}'.format(f)) for f in NETRC_FILES)
+        netrc_path = None
+
+        for loc in locations:
+            if os.path.exists(loc) and not netrc_path:
+                netrc_path = loc
+
+        # Abort early if there isn't one.
+        if netrc_path is None:
+            return netrc_path
+
+        ri = urlparse(url)
+
+        # Strip port numbers from netloc
+        host = ri.netloc.split(':')[0]
+
+        try:
+            _netrc = netrc(netrc_path).authenticators(host)
+            if _netrc:
+                # Return with login / password
+                login_i = (0 if _netrc[0] else 1)
+                return (_netrc[login_i], _netrc[2])
+        except (NetrcParseError, IOError):
+            # If there was a parsing error or a permissions issue reading the file,
+            # we'll just skip netrc auth
+            pass
+
+    # AppEngine hackiness.
+    except (ImportError, AttributeError):
+        pass
+
+
+def guess_filename(obj):
+    """Tries to guess the filename of the given object."""
+    name = getattr(obj, 'name', None)
+    if name and name[0] != '<' and name[-1] != '>':
+        return name
+
+
+def from_key_val_list(value):
+    """Take an object and test to see if it can be represented as a
+    dictionary. Unless it can not be represented as such, return an
+    OrderedDict, e.g.,
+
+    ::
+
+        >>> from_key_val_list([('key', 'val')])
+        OrderedDict([('key', 'val')])
+        >>> from_key_val_list('string')
+        ValueError: need more than 1 value to unpack
+        >>> from_key_val_list({'key': 'val'})
+        OrderedDict([('key', 'val')])
+    """
+    if value is None:
+        return None
+
+    if isinstance(value, (str, bytes, bool, int)):
+        raise ValueError('cannot encode objects that are not 2-tuples')
+
+    return OrderedDict(value)
+
+
+def to_key_val_list(value):
+    """Take an object and test to see if it can be represented as a
+    dictionary. If it can be, return a list of tuples, e.g.,
+
+    ::
+
+        >>> to_key_val_list([('key', 'val')])
+        [('key', 'val')]
+        >>> to_key_val_list({'key': 'val'})
+        [('key', 'val')]
+        >>> to_key_val_list('string')
+        ValueError: cannot encode objects that are not 2-tuples.
+    """
+    if value is None:
+        return None
+
+    if isinstance(value, (str, bytes, bool, int)):
+        raise ValueError('cannot encode objects that are not 2-tuples')
+
+    if isinstance(value, dict):
+        value = value.items()
+
+    return list(value)
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def parse_list_header(value):
+    """Parse lists as described by RFC 2068 Section 2.
+
+    In particular, parse comma-separated lists where the elements of
+    the list may include quoted-strings.  A quoted-string could
+    contain a comma.  A non-quoted string could have quotes in the
+    middle.  Quotes are removed automatically after parsing.
+
+    It basically works like :func:`parse_set_header` just that items
+    may appear multiple times and case sensitivity is preserved.
+
+    The return value is a standard :class:`list`:
+
+    >>> parse_list_header('token, "quoted value"')
+    ['token', 'quoted value']
+
+    To create a header from the :class:`list` again, use the
+    :func:`dump_header` function.
+
+    :param value: a string with a list header.
+    :return: :class:`list`
+    """
+    result = []
+    for item in _parse_list_header(value):
+        if item[:1] == item[-1:] == '"':
+            item = unquote_header_value(item[1:-1])
+        result.append(item)
+    return result
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def parse_dict_header(value):
+    """Parse lists of key, value pairs as described by RFC 2068 Section 2 and
+    convert them into a python dict:
+
+    >>> d = parse_dict_header('foo="is a fish", bar="as well"')
+    >>> type(d) is dict
+    True
+    >>> sorted(d.items())
+    [('bar', 'as well'), ('foo', 'is a fish')]
+
+    If there is no value for a key it will be `None`:
+
+    >>> parse_dict_header('key_without_value')
+    {'key_without_value': None}
+
+    To create a header from the :class:`dict` again, use the
+    :func:`dump_header` function.
+
+    :param value: a string with a dict header.
+    :return: :class:`dict`
+    """
+    result = {}
+    for item in _parse_list_header(value):
+        if '=' not in item:
+            result[item] = None
+            continue
+        name, value = item.split('=', 1)
+        if value[:1] == value[-1:] == '"':
+            value = unquote_header_value(value[1:-1])
+        result[name] = value
+    return result
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def unquote_header_value(value, is_filename=False):
+    r"""Unquotes a header value.  (Reversal of :func:`quote_header_value`).
+    This does not use the real unquoting but what browsers are actually
+    using for quoting.
+
+    :param value: the header value to unquote.
+    """
+    if value and value[0] == value[-1] == '"':
+        # this is not the real unquoting, but fixing this so that the
+        # RFC is met will result in bugs with internet explorer and
+        # probably some other browsers as well.  IE for example is
+        # uploading files with "C:\foo\bar.txt" as filename
+        value = value[1:-1]
+
+        # if this is a filename and the starting characters look like
+        # a UNC path, then just return the value without quotes.  Using the
+        # replace sequence below on a UNC path has the effect of turning
+        # the leading double slash into a single slash and then
+        # _fix_ie_filename() doesn't work correctly.  See #458.
+        if not is_filename or value[:2] != '\\\\':
+            return value.replace('\\\\', '\\').replace('\\"', '"')
+    return value
+
+
+def dict_from_cookiejar(cj):
+    """Returns a key/value dictionary from a CookieJar.
+
+    :param cj: CookieJar object to extract cookies from.
+    """
+
+    cookie_dict = {}
+
+    for cookie in cj:
+        cookie_dict[cookie.name] = cookie.value
+
+    return cookie_dict
+
+
+def add_dict_to_cookiejar(cj, cookie_dict):
+    """Returns a CookieJar from a key/value dictionary.
+
+    :param cj: CookieJar to insert cookies into.
+    :param cookie_dict: Dict of key/values to insert into CookieJar.
+    """
+
+    cj2 = cookiejar_from_dict(cookie_dict)
+    for cookie in cj2:
+        cj.set_cookie(cookie)
+    return cj
+
+
+def get_encodings_from_content(content):
+    """Returns encodings from given content string.
+
+    :param content: bytestring to extract encodings from.
+    """
+
+    charset_re = re.compile(r'<meta.*?charset=["\']*(.+?)["\'>]', flags=re.I)
+
+    return charset_re.findall(content)
+
+
+def get_encoding_from_headers(headers):
+    """Returns encodings from given HTTP Header Dict.
+
+    :param headers: dictionary to extract encoding from.
+    """
+
+    content_type = headers.get('content-type')
+
+    if not content_type:
+        return None
+
+    content_type, params = cgi.parse_header(content_
 
 requests/cookies.py:
 # -*- coding: utf-8 -*-
@@ -526,6 +1418,109 @@ def remove_cookie_by_name(cookiejar, name, domain=None, path=None):
                     clearables.append((cookie.domain, cookie.path, cookie.name))
 
     for domain, path, name in clearables:
- 
+        cookiejar.clear(domain, path, name)
+
+
+class CookieConflictError(RuntimeError):
+    """There are two cookies that meet the criteria specified in the cookie jar.
+    Use .get and .set and include domain and path args in order to be more specific."""
+
+
+class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
+    """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+
+    This is the CookieJar we create by default for requests and sessions that
+    don't specify one, since some clients may expect response.cookies and
+    session.cookies to support dict operations.
+
+    Don't use the dict interface internally; it's just for compatibility with
+    with external client code. All `requests` code should work out of the box
+    with externally provided instances of CookieJar, e.g., LWPCookieJar and
+    FileCookieJar.
+
+    Caution: dictionary operations that are normally O(1) may be O(n).
+
+    Unlike a regular CookieJar, this class is pickleable.
+    """
+
+    def get(self, name, default=None, domain=None, path=None):
+        """Dict-like get() that also supports optional domain and path args in
+        order to resolve naming collisions from using one cookie jar over
+        multiple domains. Caution: operation is O(n), not O(1)."""
+        try:
+            return self._find_no_duplicates(name, domain, path)
+        except KeyError:
+            return default
+
+    def set(self, name, value, **kwargs):
+        """Dict-like set() that also supports optional domain and path args in
+        order to resolve naming collisions from using one cookie jar over
+        multiple domains."""
+        # support client code that unsets cookies by assignment of a None value:
+        if value is None:
+            remove_cookie_by_name(self, name, domain=kwargs.get('domain'), path=kwargs.get('path'))
+            return
+
+        if isinstance(value, Morsel):
+            c = morsel_to_cookie(value)
+        else:
+            c = create_cookie(name, value, **kwargs)
+        self.set_cookie(c)
+        return c
+
+    def keys(self):
+        """Dict-like keys() that returns a list of names of cookies from the jar.
+        See values() and items()."""
+        keys = []
+        for cookie in iter(self):
+            keys.append(cookie.name)
+        return keys
+
+    def values(self):
+        """Dict-like values() that returns a list of values of cookies from the jar.
+        See keys() and items()."""
+        values = []
+        for cookie in iter(self):
+            values.append(cookie.value)
+        return values
+
+    def items(self):
+        """Dict-like items() that returns a list of name-value tuples from the jar.
+        See keys() and values(). Allows client-code to call "dict(RequestsCookieJar)
+        and get a vanilla python dict of key value pairs."""
+        items = []
+        for cookie in iter(self):
+            items.append((cookie.name, cookie.value))
+        return items
+
+    def list_domains(self):
+        """Utility method to list all the domains in the jar."""
+        domains = []
+        for cookie in iter(self):
+            if cookie.domain not in domains:
+                domains.append(cookie.domain)
+        return domains
+
+    def list_paths(self):
+        """Utility method to list all the paths in the jar."""
+        paths = []
+        for cookie in iter(self):
+            if cookie.path not in paths:
+                paths.append(cookie.path)
+        return paths
+
+    def multiple_domains(self):
+        """Returns True if there are multiple domains in the jar.
+        Returns False otherwise."""
+        domains = []
+        for cookie in iter(self):
+            if cookie.domain is not None and cookie.domain in domains:
+                return True
+            domains.append(cookie.domain)
+        return False  # there is only one domain in jar
+
+    def get_dict(self, domain=None, path=None):
+        """Takes as an argument an optional domain and path and returns a plain old
+        Python dict of name-value pairs of cookies that meet the
 
 ROUND: 1

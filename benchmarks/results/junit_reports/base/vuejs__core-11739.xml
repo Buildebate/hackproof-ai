@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="90" failures="1" errors="0" time="3.185">
-    <testsuite name="packages/runtime-core/__tests__/hydration.spec.ts" timestamp="2026-10-30T05:48:43.917Z" hostname="94687b085e25" tests="90" failures="1" errors="0" skipped="0" time="0.446">
+<testsuites name="vitest tests" tests="90" failures="1" errors="0" time="3.211">
+    <testsuite name="packages/runtime-core/__tests__/hydration.spec.ts" timestamp="2026-10-31T09:07:57.420Z" hostname="4c1d40cc4fc6" tests="90" failures="1" errors="0" skipped="0" time="0.451">
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; text" time="0.016">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; empty text" time="0.005">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; empty text" time="0.006">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; comment" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; static" time="0.005">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; static (multiple elements)" time="0.004">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; static (multiple elements)" time="0.006">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; static (with text node as starting node)" time="0.003">
         </testcase>
@@ -17,19 +17,19 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; element with text children" time="0.005">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; element with multiple continuous text vnodes" time="0.004">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; element with multiple continuous text vnodes" time="0.005">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; element with elements children" time="0.012">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; element with elements children" time="0.013">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; element with ref" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Fragment" time="0.005">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Fragment" time="0.004">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Fragment (multiple continuous text vnodes)" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Fragment (multiple continuous text vnodes)" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport" time="0.007">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport (multiple + integration)" time="0.009">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport (multiple + integration)" time="0.01">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport (disabled)" time="0.006">
         </testcase>
@@ -41,29 +41,29 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport unmount (full integration)" time="0.026">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport unmount (mismatch + full integration)" time="0.008">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport unmount (mismatch + full integration)" time="0.009">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Teleport target change (mismatch + full integration)" time="0.009">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; full compiler integration" time="0.045">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; full compiler integration" time="0.043">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; handle click error in ssr mode" time="0.004">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; handle blur error in ssr mode" time="0.003">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; handle blur error in ssr mode" time="0.004">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Suspense" time="0.007">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Suspense" time="0.003">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Suspense + async component" time="0.004">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Suspense + async component" time="0.006">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Suspense (full integration)" time="0.052">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; Suspense (full integration)" time="0.056">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; async component" time="0.004">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; update async wrapper before resolve" time="0.005">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; update async wrapper before resolve" time="0.004">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; hydrate safely when property used by async setup changed before render" time="0.024">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; hydrate safely when property used by deep nested async setup changed before render" time="0.025">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; hydrate safely when property used by deep nested async setup changed before render" time="0.024">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; unmount async wrapper before load" time="0.002">
         </testcase>
@@ -75,9 +75,9 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; force hydrate prop with `.prop` modifier" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; force hydrate input v-model with non-string value bindings" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; force hydrate input v-model with non-string value bindings" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; force hydrate checkbox with indeterminate" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; force hydrate checkbox with indeterminate" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; force hydrate select option with non-string value bindings" time="0.003">
         </testcase>
@@ -85,9 +85,9 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; empty text node in slot" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; empty text node" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; empty text node" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; object style value tracking in prod" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; object style value tracking in prod" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; app.unmount()" time="0.002">
         </testcase>
@@ -105,15 +105,15 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; text node" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; element text content" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; element text content" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; not enough children" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; not enough children" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; too many children" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; complete mismatch" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; fragment mismatch removal" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; fragment mismatch removal" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; fragment not enough children" time="0.002">
         </testcase>
@@ -135,7 +135,7 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; attr mismatch" time="0.005">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; attr special case: textarea value" time="0.003">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; attr special case: textarea value" time="0.004">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; boolean attr handling" time="0.002">
         </testcase>
@@ -145,7 +145,7 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; should not warn on falsy bindings of non-property keys" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; should not warn on non-renderable option values" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; should not warn on non-renderable option values" time="0.002">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; should not warn css v-bind" time="0.004">
         </testcase>
@@ -153,9 +153,9 @@
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; css vars support fallthrough" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; should not warn for directives that mutate DOM in created" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; should not warn for directives that mutate DOM in created" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; escape css var name" time="0.013">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; mismatch handling &gt; escape css var name" time="0.012">
             <failure message="expected &quot;Hydration style mismatch&quot; not to have been warned." type="Error">
 Error: expected &quot;Hydration style mismatch&quot; not to have been warned.
  ❯ packages/runtime-core/__tests__/hydration.spec.ts:2042:46
@@ -163,9 +163,9 @@ Error: expected &quot;Hydration style mismatch&quot; not to have been warned.
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; element text content" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; not enough children" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; not enough children" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; too many children" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; too many children" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; complete mismatch" time="0.002">
         </testcase>
@@ -175,15 +175,15 @@ Error: expected &quot;Hydration style mismatch&quot; not to have been warned.
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; fragment too many children" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; comment mismatch (element)" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; comment mismatch (element)" time="0.002">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; comment mismatch (text)" time="0.002">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; comment mismatch (text)" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; class mismatch" time="0.001">
         </testcase>
         <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; style mismatch" time="0.001">
         </testcase>
-        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; attr mismatch" time="0.001">
+        <testcase classname="packages/runtime-core/__tests__/hydration.spec.ts" name="SSR hydration &gt; data-allow-mismatch &gt; attr mismatch" time="0.002">
         </testcase>
     </testsuite>
 </testsuites>

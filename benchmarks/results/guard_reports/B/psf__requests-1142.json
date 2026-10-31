@@ -4,5 +4,5 @@
  "binding": true,
  "verdict": "not-applicable",
  "violations": [],
- "note": "no agent patch evaluated (failed: patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0:)"
+ "note": "no agent patch evaluated (failed: debate produced no complete SEARCH/REPLACE blocks)"
 }

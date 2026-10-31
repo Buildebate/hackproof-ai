@@ -2,6 +2,5 @@ import requests
 
 
 def test_get_does_not_send_content_length():
-    req = requests.Request('GET', 'http://example.com')
-    prepared = req.prepare()
-    assert 'Content-Length' not in prepared.headers
+    req = requests.Request('GET', 'http://example.com/').prepare()
+    assert 'Content-Length' not in req.headers, "GET requests should not send Content-Length by default, got %r" % (req.headers.get('Content-Length'),)

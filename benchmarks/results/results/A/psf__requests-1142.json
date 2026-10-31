@@ -2,37 +2,43 @@
  "task": "psf__requests-1142",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T05:21:26.659904+00:00",
+ "ts": "2026-10-31T09:41:10.125337+00:00",
  "base_ref": "22623bd8c265b78b161542663ee980738441c307",
  "agent": {
   "ok": false,
-  "reason": "patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0: SEARCH not found (0 matches); requests/cookies.py: block 0: SEARCH not found (0 matches); requests/api.py: block 0: SEARCH not found (0 matches)",
+  "reason": "no complete SEARCH/REPLACE blocks",
   "files": [
-   "requests/models.py",
-   "requests/cookies.py",
-   "requests/api.py",
+   "requests/packages/charade/hebrewprober.py",
    "requests/packages/urllib3/request.py",
-   "requests/utils.py"
+   "requests/sessions.py",
+   "requests/utils.py",
+   "requests/cookies.py"
   ],
-  "localize_ms": 89040,
-  "backend": "contriever-transformer-cpu"
+  "localize_ms": 1403,
+  "backend": "hybrid-rrf-hash-cpu"
  },
  "usage": {
-  "prompt_tokens": 4249,
-  "completion_tokens": 2173,
-  "total_tokens": 6422,
+  "prompt_tokens": 13522,
+  "completion_tokens": 1081,
+  "total_tokens": 14603,
   "per_call": [
    {
     "role": "ArchitecturalBuilder-single",
     "model": "muse-wonder-1.0",
-    "prompt_tokens": 4249,
-    "completion_tokens": 2173,
-    "total_tokens": 6422,
+    "prompt_tokens": 13522,
+    "completion_tokens": 1081,
+    "total_tokens": 14603,
     "finish_reason": "stop"
    }
   ]
  },
+ "evidence": {
+  "language": "python",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
  "status": "failed",
- "reason": "patch application failed: psf__requests-1142: patch matches no localized file exactly once: requests/models.py: block 0: SEARCH not found (0 matches); requests/cookies.py: block 0: SEARCH not found (0 matches); requests/api.py: block 0: SEARCH not found (0 matches)",
+ "reason": "no complete SEARCH/REPLACE blocks",
  "done": true
 }

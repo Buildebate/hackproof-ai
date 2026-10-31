@@ -1,0 +1,51 @@
+diff --git a/requests/utils.py b/requests/utils.py
+index 1c2ae4e..203a351 100644
+--- a/requests/utils.py
++++ b/requests/utils.py
+@@ -963,6 +963,26 @@ def prepend_scheme_if_needed(url, new_scheme):
+ 
+     :rtype: str
+     """
++    if isinstance(url, bytes):
++        url = url.decode('utf-8')
++    if isinstance(new_scheme, bytes):
++        new_scheme = new_scheme.decode('utf-8')
++    if not url:
++        return url
++    if url.startswith('//'):
++        if not new_scheme:
++            return url
++        url = '{}:{}'.format(new_scheme, url)
++    elif re.match(r'^[A-Za-z][A-Za-z0-9+.-]*://', url):
++        pass
++    elif re.match(r'^(?:https?|ftp|socks4a?|socks5h?):/[^/]', url, re.IGNORECASE):
++        scheme, rest = url.split(':', 1)
++        url = '{}://{}'.format(scheme, rest.lstrip('/'))
++    else:
++        if not new_scheme:
++            return url
++        url = '{}://{}'.format(new_scheme, url)
++
+     parsed = parse_url(url)
+     scheme, auth, host, port, path, query, fragment = parsed
+ 
+@@ -988,11 +1008,15 @@ def get_auth_from_url(url):
+ 
+     :rtype: (str,str)
+     """
+-    parsed = urlparse(url)
+-
+     try:
+-        auth = (unquote(parsed.username), unquote(parsed.password))
+-    except (AttributeError, TypeError):
++        if isinstance(url, bytes):
++            url = url.decode('utf-8')
++        parsed = urlparse(url)
++        auth = (
++            unquote(parsed.username) if parsed.username is not None else '',
++            unquote(parsed.password) if parsed.password is not None else '',
++        )
++    except (AttributeError, TypeError, UnicodeDecodeError):
+         auth = ('', '')
+ 
+     return auth

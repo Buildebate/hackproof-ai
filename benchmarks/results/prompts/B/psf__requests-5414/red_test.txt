@@ -1,7 +1,13 @@
-import pytest
 import requests
 from requests.exceptions import InvalidURL
 
+
 def test_leading_dot_host_raises_invalid_url():
-    with pytest.raises(InvalidURL):
-        requests.Request("GET", "http://.example.com").prepare()
+    req = requests.PreparedRequest()
+    try:
+        req.prepare_url("http://.example.com", None)
+    except InvalidURL:
+        return
+    except UnicodeError as e:
+        assert False, f"expected InvalidURL, got UnicodeError: {e}"
+    assert False, "expected InvalidURL for http://.example.com, got no exception"

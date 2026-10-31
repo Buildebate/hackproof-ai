@@ -1,0 +1,10 @@
+from requests import Request
+
+def test_put_binary_payload_preserved():
+    data = u"ööö".encode("utf-8")
+    try:
+        prep = Request('PUT', 'http://example.com/put', data=data).prepare()
+    except Exception as exc:
+        assert False, "binary data raised %r" % (exc,)
+    assert prep.body == data, "binary body mangled: %r != %r" % (prep.body, data)
+    assert isinstance(prep.body, bytes), "binary body type changed: %r" % (type(prep.body),)

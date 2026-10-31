@@ -2,7 +2,6 @@
  "task": "psf__requests-2931",
  "mode": "B",
  "binding": true,
- "verdict": "not-applicable",
- "violations": [],
- "note": "no agent patch evaluated (failed: unmeasurable: unresolved test IDs: test_requests.py::TestRequests::test_binary_put, test_requests.py::TestRequests::test)"
+ "verdict": "clean",
+ "violations": []
 }

@@ -1,0 +1,12 @@
+{
+ "files": [
+  "packages/compiler-ssr/__tests__/ssrSuspense.spec.ts",
+  "packages/compiler-ssr/__tests__/ssrInjectCssVars.spec.ts",
+  "packages/compiler-ssr/__tests__/ssrVIf.spec.ts",
+  "packages/compiler-ssr/__tests__/ssrVModel.spec.ts",
+  "packages/compiler-ssr/__tests__/ssrVShow.spec.ts"
+ ],
+ "elapsed_ms": 199553,
+ "backend": "contriever-transformer-cpu",
+ "issue_sha256": "33a1a9860146d68172aa7d7bb00717d068ae2177d728e24a55beb6d390763091"
+}

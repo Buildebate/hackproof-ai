@@ -1,15 +1,142 @@
+packages/runtime-core/src/helpers/renderList.ts
 <<<<<<< SEARCH
-import { isReactive, reactiveReadArray, toReactive } from '@vue/reactivity'
+  if (isArray(source) || isString(source)) {
+    ret = new Array(source.length)
+    for (let i = 0, l = source.length; i < l; i++) {
+      ret[i] = renderItem(source[i], i, undefined, cached && cached[i])
+    }
 =======
-import {
-  isReactive,
-  isShallow,
-  reactiveReadArray,
-  toReactive,
-} from '@vue/reactivity'
+  if (isArray(source) || isString(source)) {
+    // snapshot array items so mutations during renderItem cannot shift indices
+    const snapshot = isArray(source) ? source.slice() : source
+    ret = new Array(snapshot.length)
+    for (let i = 0, l = snapshot.length; i < l; i++) {
+      ret[i] = renderItem(snapshot[i], i, undefined, cached && cached[i])
+    }
 >>>>>>> REPLACE
+
+packages/runtime-core/__tests__/helpers/renderListShallowReactive.spec.ts
 <<<<<<< SEARCH
-    const sourceIsReactiveArray = isReactive(source)
 =======
-    const sourceIsReactiveArray = isReactive(source) && !isShallow(source)
+import { isRef, reactive, ref, shallowReactive } from '@vue/reactivity'
+import { renderList } from '../../src/helpers/renderList'
+
+describe('renderList with shallowReactive source', () => {
+  test('1: zero-length array', () => {
+    const seen: any[] = []
+    const ret = renderList(shallowReactive([]), (item: any) => {
+      seen.push(item)
+      return null
+    })
+    expect(ret).toEqual([])
+    expect(seen).toEqual([])
+  })
+
+  test('2: null/undefined items', () => {
+    const seen: any[] = []
+    const ret = renderList(
+      shallowReactive([null, undefined, null]),
+      (item: any, index: number) => {
+        seen.push([item, index])
+        return null
+      },
+    )
+    expect(ret).toHaveLength(3)
+    expect(seen).toEqual([
+      [null, 0],
+      [undefined, 1],
+      [null, 2],
+    ])
+  })
+
+  test('3: refs in items are preserved with empty/unicode/zero values', () => {
+    const seen: any[] = []
+    renderList(
+      shallowReactive([
+        { aaa: ref('') },
+        { bbb: ref('😀🎉') },
+        { ccc: ref(0) },
+      ]),
+      (item: any) => {
+        seen.push(item)
+        return null
+      },
+    )
+    expect(isRef(seen[0].aaa)).toBe(true)
+    expect(seen[0].aaa.value).toBe('')
+    expect(seen[1].bbb.value).toBe('😀🎉')
+    expect(seen[2].ccc.value).toBe(0)
+  })
+
+  test('4: mixed primitive/ref/reactive items are preserved as-is', () => {
+    const reactiveItem = reactive({ x: 1 })
+    const refItem = ref({ y: 2 })
+    const seen: any[] = []
+    renderList(
+      shallowReactive([
+        { a: ref(1) },
+        123,
+        'str',
+        reactiveItem,
+        refItem,
+      ] as any[]),
+      (item: any) => {
+        seen.push(item)
+        return null
+      },
+    )
+    expect(seen[0].a.value).toBe(1)
+    expect(seen[1]).toBe(123)
+    expect(seen[2]).toBe('str')
+    expect(seen[3]).toBe(reactiveItem)
+    expect(isRef(seen[4])).toBe(true)
+    expect(seen[4].value).toEqual({ y: 2 })
+  })
+
+  test('5: push/pop/splice during renderList does not shift indices', () => {
+    const mutators = [
+      (s: any[]) => s.push({ id: 3 }),
+      (s: any[]) => s.pop(),
+      (s: any[]) => s.splice(0, 1),
+    ]
+    for (const mutate of mutators) {
+      const source = shallowReactive([{ id: 1 }, { id: 2 }])
+      const seen: any[] = []
+      renderList(source, (item: any, index: number) => {
+        seen.push([item?.id, index])
+        if (index === 0) {
+          mutate(source as any[])
+        }
+        return null
+      })
+      expect(seen).toEqual([
+        [1, 0],
+        [2, 1],
+      ])
+    }
+  })
+
+  test('6: async push and in-place replacement after render do not mutate result', async () => {
+    const source = shallowReactive([{ aaa: ref('x') }])
+    const seen: any[] = []
+    const ret = renderList(source, (item: any) => {
+      seen.push(item)
+      return null
+    })
+    source[0] = { aaa: ref('replaced') }
+    await Promise.resolve()
+    source.push({ aaa: ref('y') })
+    expect(ret).toHaveLength(1)
+    expect(seen[0].aaa.value).toBe('x')
+
+    const seenNext: any[] = []
+    renderList(source, (item: any) => {
+      seenNext.push(item)
+      return null
+    })
+    expect(seenNext).toHaveLength(2)
+    expect(seenNext[0].aaa.value).toBe('replaced')
+    expect(seenNext[1].aaa.value).toBe('y')
+  })
+})
 >>>>>>> REPLACE

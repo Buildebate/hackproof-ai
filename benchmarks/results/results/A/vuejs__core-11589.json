@@ -2,14 +2,43 @@
  "task": "vuejs__core-11589",
  "mode": "A",
  "tier": "oci",
- "ts": "2026-10-30T06:06:44.853237+00:00",
- "status": "failed",
- "done": true,
- "reason": "unmeasurable: unresolved test IDs: packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching sources: ref<any[]>",
+ "ts": "2026-10-31T09:48:18.572138+00:00",
+ "base_ref": "3653bc0f45d6fedf84e29b64ca52584359c383c0",
+ "agent": {
+  "ok": false,
+  "reason": "no complete SEARCH/REPLACE blocks",
+  "files": [
+   "packages/runtime-core/src/apiSetupHelpers.ts",
+   "packages/compiler-core/src/compat/compatConfig.ts",
+   "packages/runtime-dom/src/jsx.ts",
+   "packages/compiler-core/src/options.ts",
+   "packages/runtime-core/src/scheduler.ts"
+  ],
+  "localize_ms": 3125,
+  "backend": "hybrid-rrf-hash-cpu"
+ },
  "usage": {
-  "prompt_tokens": 0,
-  "completion_tokens": 0,
-  "total_tokens": 0,
-  "per_call": []
- }
+  "prompt_tokens": 14853,
+  "completion_tokens": 464,
+  "total_tokens": 15317,
+  "per_call": [
+   {
+    "role": "ArchitecturalBuilder-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 14853,
+    "completion_tokens": 464,
+    "total_tokens": 15317,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
+ "status": "failed",
+ "reason": "no complete SEARCH/REPLACE blocks",
+ "done": true
 }

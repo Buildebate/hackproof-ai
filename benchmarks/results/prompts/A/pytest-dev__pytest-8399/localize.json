@@ -1,12 +1,12 @@
 {
  "files": [
   "src/_pytest/unittest.py",
+  "testing/test_setupplan.py",
+  "src/_pytest/capture.py",
   "testing/example_scripts/unittest/test_parametrized_fixture_error_message.py",
-  "testing/python/show_fixtures_per_test.py",
-  "src/pytest/__init__.py",
-  "doc/en/example/fixtures/test_fixtures_order_scope.py"
+  "scripts/release-on-comment.py"
  ],
- "elapsed_ms": 230459,
- "backend": "contriever-transformer-cpu",
+ "elapsed_ms": 2271,
+ "backend": "hybrid-rrf-hash-cpu",
  "issue_sha256": "2849174195843c0ab7ec988bfe7bb92ed99dee4d8dbe7c59d0891df5e766019d"
 }

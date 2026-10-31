@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<testsuites name="vitest tests" tests="26" failures="1" errors="0" time="1.932">
-    <testsuite name="packages/compiler-sfc/__tests__/compileStyle.spec.ts" timestamp="2026-10-30T06:05:21.360Z" hostname="f9aff59dd9fa" tests="26" failures="1" errors="0" skipped="0" time="0.346">
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; simple selectors" time="0.01">
+<testsuites name="vitest tests" tests="26" failures="1" errors="0" time="1.885">
+    <testsuite name="packages/compiler-sfc/__tests__/compileStyle.spec.ts" timestamp="2026-10-31T09:33:09.725Z" hostname="4962e95aedc4" tests="26" failures="1" errors="0" skipped="0" time="0.343">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; simple selectors" time="0.011">
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; descendent selector" time="0.002">
         </testcase>
@@ -39,7 +39,7 @@ AssertionError: expected &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n}…&apos
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; pseudo class" time="0.001">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; pseudo element" time="0">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; pseudo element" time="0.001">
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; spaces before pseudo element" time="0.002">
         </testcase>
@@ -51,9 +51,9 @@ AssertionError: expected &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n}…&apos
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; :is() and :where() with multiple selectors" time="0.001">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; :is() and :where() in compound selectors" time="0.007">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; :is() and :where() in compound selectors" time="0.003">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; media query" time="0.001">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; media query" time="0.004">
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; supports query" time="0">
         </testcase>
@@ -63,19 +63,19 @@ AssertionError: expected &apos;h1 {\n&amp;[data-v-test] {\ncolor: red\n}…&apos
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; ::v-deep as combinator" time="0.002">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; &gt;&gt;&gt; (deprecated syntax)" time="0.001">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; &gt;&gt;&gt; (deprecated syntax)" time="0">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; /deep/ (deprecated syntax)" time="0.001">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC scoped CSS &gt; deprecated syntax &gt; /deep/ (deprecated syntax)" time="0">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC CSS modules &gt; should include resulting classes object in result" time="0.009">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC CSS modules &gt; should include resulting classes object in result" time="0.008">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC CSS modules &gt; postcss-modules options" time="0.007">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC CSS modules &gt; postcss-modules options" time="0.006">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss @import" time="0.249">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss @import" time="0.25">
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss respect user-defined string options.additionalData" time="0.009">
         </testcase>
-        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss respect user-defined function options.additionalData" time="0.003">
+        <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; scss respect user-defined function options.additionalData" time="0.004">
         </testcase>
         <testcase classname="packages/compiler-sfc/__tests__/compileStyle.spec.ts" name="SFC style preprocessors &gt; should mount scope on correct selector when have universal selector" time="0.002">
         </testcase>

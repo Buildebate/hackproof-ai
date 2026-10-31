@@ -1,7 +1,1 @@
-<<<<<<< SEARCH
-        else:
-            self.headers['Content-Length'] = '0'
-=======
-        elif (self.method or '').upper() not in ('GET', 'HEAD'):
-            self.headers['Content-Length'] = '0'
->>>>>>> REPLACE
+REVISE

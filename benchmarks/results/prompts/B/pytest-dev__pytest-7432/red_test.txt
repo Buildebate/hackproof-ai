@@ -1,4 +1,7 @@
-def test_runxfail_does_not_affect_skip_location(testdir):
+def test_skip_location_with_runxfail(testdir):
     testdir.makepyfile(test_it="import pytest\n@pytest.mark.skip\ndef test_skip_location():\n    assert 0\n")
     result = testdir.runpytest("-rs", "--runxfail")
-    result.stdout.fnmatch_lines(["SKIPPED [1] test_it.py:3: unconditional skip"])
+    result.assert_outcomes(skipped=1)
+    stdout = result.stdout.str()
+    assert "skipping.py" not in stdout
+    assert "test_it.py" in stdout
