@@ -113,7 +113,12 @@ def load_builder_turn(task_id: str) -> tuple[str, list[dict]]:
     unfaithful).
     """
     path = (
-        BENCH_DIR / "results" / "prompts" / "B" / task_id / "debate_prompts.json"
+        BENCH_DIR
+        / "results_archive"
+        / "wave1_prompts"
+        / "B"
+        / task_id
+        / "debate_prompts.json"
     )
     try:
         turns = json.loads(path.read_text(encoding="utf-8"))["turns"]

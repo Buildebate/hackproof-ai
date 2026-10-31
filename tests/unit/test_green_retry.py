@@ -22,6 +22,7 @@ from run_benchmark import (
     GREEN_RETRY_TOTAL_CHARS,
     condense_green_failures,
     green_retry_eligible,
+    retry_agent_index,
 )
 
 TASK_PY = {
@@ -244,3 +245,36 @@ def test_run_benchmark_exports_retry_helpers() -> None:
     assert callable(run_benchmark.run_green_revision)
     assert callable(run_benchmark.run_green_retry_oci)
     assert callable(run_benchmark.run_green_retry_local)
+    assert callable(retry_agent_index)
+
+
+# Step 12a.0: the retry-run JUnit index must be remapped with the FRESH
+# retry-run resolution. First-attempt keys carry the first run dir infix;
+# the retry dir infix differs, so the stale map mislabels env-dependent
+# (absolute-path param) IDs as missing (observed: 6028-B P2P).
+MID_PARAM = "tests/test_u.py::T::test_p[/f.py]"
+FIRST_COLLECTED = "tests/test_u.py::T::test_p[/runs/B/tests/f.py]"
+RETRY_COLLECTED = "tests/test_u.py::T::test_p[/runs/B-green-retry/tests/f.py]"
+
+
+def test_retry_remap_uses_fresh_resolution_for_python() -> None:
+    stale = {MID_PARAM: [FIRST_COLLECTED]}
+    fresh = {MID_PARAM: [RETRY_COLLECTED]}
+    full_index = {RETRY_COLLECTED: "passed"}
+    # The stale first-attempt map reproduces the live bug (missing).
+    assert retry_agent_index(
+        {"language": "python"}, stale, stale, full_index
+    )[MID_PARAM] == "missing"
+    # The fresh retry-run map resolves the same JUnit bytes to passed.
+    assert retry_agent_index(
+        {"language": "python"}, fresh, stale, full_index
+    )[MID_PARAM] == "passed"
+
+
+def test_retry_remap_keeps_first_attempt_map_for_typescript() -> None:
+    mid = "a.spec.ts > suite > case"
+    base = {mid: [mid]}
+    full_index = {mid: "passed"}
+    assert retry_agent_index(
+        {"language": "typescript"}, {}, base, full_index
+    )[mid] == "passed"

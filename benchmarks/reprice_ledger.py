@@ -28,7 +28,6 @@ from __future__ import annotations
 import argparse
 import json
 import re
-import sys
 from pathlib import Path
 
 BENCH_DIR = Path(__file__).resolve().parent

@@ -3508,6 +3508,26 @@ def condense_green_failures(
     return report
 
 
+def retry_agent_index(
+    task: dict,
+    resolution: dict[str, list[str]],
+    base_resolution: dict[str, list[str]],
+    full_index: dict[str, str],
+) -> dict[str, str]:
+    """Remap a retry-run JUnit index with the run's own resolution (12a.0).
+
+    Python retry evals run in a fresh dir whose absolute-path params
+    differ from the first attempt's; remapping with the stale map
+    mislabels env-dependent IDs as ``missing`` (observed: 6028-B P2P).
+    TypeScript keeps the first-attempt map (vitest IDs carry no env
+    paths and no fresh map is built for the retry tier).
+    """
+    retry_resolution = (
+        resolution if task["language"] == "python" else base_resolution
+    )
+    return remap_collected_index(retry_resolution, full_index)
+
+
 def run_green_revision(
     task: dict,
     agent: dict,
@@ -3683,7 +3703,10 @@ def run_green_retry_oci(
             "reason": f"retry eval produced no JUnit (exit={res.exit_code})",
         }
     full_index = index_results(task, junit2, tee, "green-retry")
-    agent_index = remap_collected_index(base_resolution, full_index)
+    # Fresh map exists only for python (TS builds none); the conditional
+    # keeps TS from touching the undefined name.
+    fresh = resolution if task["language"] == "python" else {}
+    agent_index = retry_agent_index(task, fresh, base_resolution, full_index)
     scoring2 = score_task(task, base_index, agent_index)
     return {
         "ok": True,
@@ -3805,7 +3828,10 @@ def run_green_retry_local(
             "reason": f"retry eval produced no JUnit (exit={res.exit_code})",
         }
     full_index = index_results(task, junit2, tee, "green-retry")
-    agent_index = remap_collected_index(base_resolution, full_index)
+    # Fresh map exists only for python (TS builds none); the conditional
+    # keeps TS from touching the undefined name.
+    fresh = resolution if task["language"] == "python" else {}
+    agent_index = retry_agent_index(task, fresh, base_resolution, full_index)
     scoring2 = score_task(task, base_index, agent_index)
     return {
         "ok": True,

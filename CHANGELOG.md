@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- R9 remap fix + 6028 rescore (Step 12a.0): retry-run JUnit is now
+  remapped with the retry run's own resolution (`retry_agent_index`;
+  TS keeps the first-attempt map); committed `rescore_wave2_6028.py`
+  flips 6028-B to resolved (F2P 2/2, P2P 185/185) with superseded
+  provenance and no offline receipt (4.3a precedent) — B stands at
+  8/12. Also repaired Wave 2 fallout: Wave 1 debate prompts extracted
+  byte-identical from history into `results_archive/wave1_prompts/`
+  as immutable ablation inputs.
 - Ledger correction to founder dashboard truth ($89.58 balance):
   -$5.07 priced reconciliation entry (upper-bound bias: unmeasured
   cache discounts + estimate rows), zero reprice drift; dossier and
