@@ -34,28 +34,31 @@ Set WindowBar Colorful
 Sleep 1s
 
 # Scene 1/6: Cold open — the crime scene (0:00-0:15)
-Type "sed -n '1,45p' tests/unit/test_sandbox_guards.py"
+Type "sed -n '1,30p' tests/unit/test_sandbox_guards.py"
 Enter
 Sleep 1s
-Sleep 6s
+Sleep 7s
 Type "grep -n 'def test' tests/unit/test_sandbox_guards.py"
 Enter
 Sleep 1s
-Sleep 2s
+Sleep 2.5s
 
 # Scene 2/6: The problem — Reward Hacking (0:15-0:37)
+Type "clear"
+Enter
+Sleep 1s
 Type "PYTHONPATH=src python3 -m hackproof.cli info"
 Enter
 Sleep 1s
-Sleep 4s
+Sleep 4.5s
 Type "grep -n '9/12' benchmarks/SUMMARY.md | head -6"
 Enter
 Sleep 1s
-Sleep 5s
+Sleep 6s
 Type "sed -n '1,25p' benchmarks/SUMMARY.md"
 Enter
 Sleep 1s
-Sleep 4s
+Sleep 4.5s
 
 # Scene 3/6: Live demo — real CLI, real guard, real proof (0:37-1:52)
 Type "clear"
@@ -64,27 +67,27 @@ Sleep 1s
 Type "PYTHONPATH=src python3 -m hackproof.cli verify --help"
 Enter
 Sleep 1s
-Sleep 4s
+Sleep 4.5s
 Type "python3 -m pytest tests/unit/test_sandbox_guards.py -q -p no:cacheprovider"
 Enter
 Wait+Screen@30s /passed/
-Sleep 10s
-Type "python3 scripts/verify_benchmark_integrity.py"
+Sleep 11s
+Type "python3 scripts/verify_benchmark_integrity.py | tail -45"
 Enter
-Sleep 3s
-Sleep 13s
+Sleep 3.5s
+Sleep 14.5s
 Type "PYTHONPATH=src python3 -m hackproof.cli test-guard --help"
 Enter
 Sleep 1s
-Sleep 5s
+Sleep 6s
 Type "git log --oneline -6"
 Enter
 Sleep 1s
-Sleep 7s
+Sleep 8s
 Type "ls src/hackproof/"
 Enter
 Sleep 1s
-Sleep 6s
+Sleep 7s
 
 # Scene 4/6: Proof — measured numbers, zero violations (1:52-2:32)
 Type "clear"
@@ -93,19 +96,19 @@ Sleep 1s
 Type "grep -n 'true_fix_rate' -A 5 benchmarks/evidence_dossier.json | head -12"
 Enter
 Sleep 1s
-Sleep 6.5s
+Sleep 7.5s
 Type "grep -n 'reward_hacking_rate' -A 4 benchmarks/evidence_dossier.json | head -10"
 Enter
 Sleep 1s
-Sleep 6.5s
+Sleep 7.5s
 Type "sed -n '1,30p' benchmarks/SUMMARY.md"
 Enter
 Sleep 1s
-Sleep 5s
+Sleep 6s
 Type "python3 scripts/verify_benchmark_integrity.py | tail -25"
 Enter
-Sleep 3s
-Sleep 4s
+Sleep 3.5s
+Sleep 4.5s
 
 # Scene 5/6: Meta-Native stack (2:32-2:47)
 Type "clear"
@@ -114,11 +117,11 @@ Sleep 1s
 Type "sed -n '1,30p' pyproject.toml"
 Enter
 Sleep 1s
-Sleep 5s
+Sleep 6s
 Type "ls src/hackproof/ && wc -l src/hackproof/*.py | tail -3"
 Enter
 Sleep 1s
-Sleep 3s
+Sleep 3.5s
 
 # Scene 6/6: Ask — links on screen (2:47-3:00)
 Type "clear"
@@ -127,8 +130,8 @@ Sleep 1s
 Type "grep -n 'pip install' README.md | head -3"
 Enter
 Sleep 1s
-Sleep 3s
+Sleep 3.5s
 Type "echo 'github.com/Buildebate/hackproof-ai  |  pip install hackproof-ai'"
 Enter
 Sleep 1s
-Sleep 4s
+Sleep 4.5s

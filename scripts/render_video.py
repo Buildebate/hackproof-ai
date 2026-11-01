@@ -23,7 +23,7 @@ happen only after the 3.4 package (green E2E).
 
 Environment:
     ELEVENLABS_API_KEY   required for TTS (never printed; --dry-run skips it)
-    ELEVENLABS_VOICE_ID  default Rachel 21m00Tcm4TlvDq8ikWAM
+    ELEVENLABS_VOICE_ID  default Alice Xb7hH8MSUJpSbSDYk0k2 (premade; Rachel is library-gated on free tier)
     ELEVENLABS_MODEL_ID  default eleven_multilingual_v2
     VHS_BIN              default /home/ubuntu/.local/bin/vhs, then PATH
     FFMPEG_BIN / FFPROBE_BIN, VIDEO_FONTFILE (drawtext font override)
@@ -81,7 +81,7 @@ ENDCARD_LINES = [
 ]
 
 DEFAULT_VHS = "/home/ubuntu/.local/bin/vhs"
-DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"  # Rachel; override via env
+DEFAULT_VOICE_ID = "Xb7hH8MSUJpSbSDYk0k2"  # Alice (Clear Educator); premade, free-tier API OK (Rachel is library-gated for free users)
 DEFAULT_MODEL_ID = "eleven_multilingual_v2"
 ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 ELEVENLABS_FORMAT = "mp3_44100_128"

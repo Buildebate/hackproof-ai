@@ -192,7 +192,12 @@ def test_tape_has_six_ordered_scenes_and_types() -> None:
 
 
 def test_tape_sleep_budget_near_180s() -> None:
-    """Static duration envelope: Σ Sleep + typing estimate ≈ 180s (±12s)."""
+    """Predicted vhs duration must land in the 172–182s window.
+
+    vhs 0.12.1 on OCI Ampere captures 720p at ~0.90 of nominal tape
+    time (measured: 178.0s nominal -> 160.4s video); the static
+    estimate is scaled by that ratio before the window check.
+    """
     text = TAPE.read_text(encoding="utf-8")
     sleep_total = 0.0
     for value, unit in re.findall(r"^Sleep\s+([\d.]+)(ms|s|m)?", text, flags=re.M):
@@ -202,9 +207,11 @@ def test_tape_sleep_budget_near_180s() -> None:
         len(m) for m in re.findall(r'^Type\s+"(.*)"\s*$', text, flags=re.M)
     )
     estimate = sleep_total + typed_chars * 0.04 + 20 * 0.5
-    assert 168.0 <= estimate <= 192.0, (
-        f"tape estimate {estimate:.1f}s (sleep {sleep_total:.1f}s, "
-        f"typed {typed_chars} chars) outside 168–192s envelope"
+    predicted = estimate * 0.90
+    assert 172.0 <= predicted <= 182.0, (
+        f"predicted vhs {predicted:.1f}s (nominal {estimate:.1f}s: "
+        f"sleep {sleep_total:.1f}s, typed {typed_chars} chars) "
+        f"outside 172–182s window"
     )
 
 
