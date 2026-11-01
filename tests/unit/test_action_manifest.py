@@ -130,12 +130,13 @@ def test_action_steps_in_order() -> None:
 
 
 def test_action_installs_runner_deps() -> None:
-    """Step 3.4: pytest + numpy ship with the package (lean invariant)."""
+    """Step 3.4: pytest + numpy + pyyaml ship with the package (lean)."""
     data = _load_action()
     steps = data.get("runs", {}).get("steps", [])
     install_run = str(steps[1].get("run", ""))
     assert "pytest" in install_run, "runner needs pytest for the suites"
     assert "numpy" in install_run, "runner needs numpy for retrieval"
+    assert "pyyaml" in install_run, "runner needs yaml for manifest tests"
 
     verify_run = str(steps[2].get("run", ""))
     assert "--post-comment" in verify_run, (

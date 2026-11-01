@@ -137,11 +137,26 @@ def test_unknown_subject_fails_loud() -> None:
 
 def test_load_dotenv_meta_imports_keys_without_logging(
     monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+    capsys: pytest.CaptureFixture,
 ) -> None:
+    import ablate_synthesis
+
     monkeypatch.delenv("META_API_KEY", raising=False)
     monkeypatch.delenv("META_BASE_URL", raising=False)
+    # Hermetic: the loader reads PKG_ROOT.parent.parent/.env, so point
+    # PKG_ROOT two levels below a tmp dir holding a fake .env (no real
+    # keys, no repo-root dependence, green in clean checkouts).
+    (tmp_path / ".env").write_text(
+        "META_API_KEY=fake-test-key-0123456789\n"
+        "META_BASE_URL=https://fake.local/v1\n",
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(ablate_synthesis, "PKG_ROOT", tmp_path / "pkg" / "sub")
     load_dotenv_meta()
     import os
 
-    assert len(os.environ.get("META_API_KEY", "")) > 10
-    assert os.environ.get("META_BASE_URL", "").startswith("http")
+    assert os.environ.get("META_API_KEY") == "fake-test-key-0123456789"
+    assert os.environ.get("META_BASE_URL") == "https://fake.local/v1"
+    captured = capsys.readouterr()
+    assert captured.out == "" and captured.err == ""

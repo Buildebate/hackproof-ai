@@ -5642,6 +5642,27 @@
           "finish_reason": "length"
         }
       ]
+    },
+    {
+      "ts": "2026-11-01T13:59:30.875644+00:00",
+      "issue": "analysis:gate3-e2e-probe-spark",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 170,
+      "completion_tokens": 1299,
+      "total_tokens": 1469,
+      "est_cost_usd": 0.0002768,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "MetaAPI-probe",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 170,
+          "completion_tokens": 1299,
+          "total_tokens": 1469,
+          "finish_reason": "stop"
+        }
+      ]
     }
   ],
   "pricing": {
