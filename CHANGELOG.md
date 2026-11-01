@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+- E2E green-check in lean runners: the action now installs `pyyaml`
+  (manifest tests need it; heavy backends still excluded) and the
+  dotenv test is hermetic (no repo-root `.env` dependence), so the
+  post-patch suite passes on clean checkouts.
+
 ### Added
 - Nothing yet.
 
