@@ -10,6 +10,7 @@ is injected (``issue_fetcher`` / ``client_factory`` / ``runner_override``).
 from __future__ import annotations
 
 import json
+import re
 import subprocess
 import sys
 import urllib.error
@@ -241,6 +242,7 @@ def test_argparse_verify_defaults(monkeypatch) -> None:
         "runner": "local",
         "language": "python",
         "ledger": "finops_ledger.json",
+        "post_comment": None,
     }
 
 
@@ -275,7 +277,22 @@ def test_argparse_verify_full_options(monkeypatch, tmp_path: Path) -> None:
         "runner": "oci",
         "language": "typescript",
         "ledger": ledger,
+        "post_comment": None,
     }
+
+
+def test_argparse_verify_post_comment_flags(monkeypatch) -> None:
+    seen: dict = {}
+
+    def fake_verify(**kwargs) -> int:
+        seen.update(kwargs)
+        return 0
+
+    monkeypatch.setattr(cli, "cmd_verify", fake_verify)
+    assert cli._argparse_main(["verify", "--issue", ISSUE_URL, "--post-comment"]) == 0
+    assert seen["post_comment"] is True
+    assert cli._argparse_main(["verify", "--issue", ISSUE_URL, "--no-post-comment"]) == 0
+    assert seen["post_comment"] is False
 
 
 def test_argparse_verify_propagates_exit_code(monkeypatch) -> None:
@@ -332,6 +349,7 @@ def test_argparse_verify_help_documents_options(capsys) -> None:
     assert "local" in out and "oci" in out
     assert "--repo" in out
     assert "--language" in out
+    assert "--post-comment" in out
 
 
 def test_argparse_test_guard_help_documents_baseline(capsys) -> None:
@@ -1017,3 +1035,273 @@ def test_verify_single_retry_applies_after_miss(
     assert retries[0]["total_tokens"] == 18
     assert entry["prompt_tokens"] == 11
     assert entry["total_tokens"] == 18
+
+
+# ---------------------------------------------------------------------------
+# Step 3.4: staged audit comments + verified-PR flow (offline, warn-only)
+# ---------------------------------------------------------------------------
+
+
+GH_SENTINEL = "GH_TOKEN_SENTINEL_3_4"
+
+
+class _RecordingAuditorTransport:
+    """Fake GitHub transport: find-by-marker misses, creates captured."""
+
+    def __init__(self) -> None:
+        self.calls: list[tuple[str, str]] = []
+        self.bodies: list[str] = []
+
+    def __call__(self, method: str, url: str, body, token: str):
+        assert token == GH_SENTINEL
+        assert GH_SENTINEL not in url
+        self.calls.append((method, url))
+        if method == "GET":
+            return 200, []
+        assert isinstance(body, dict) and isinstance(body.get("body"), str)
+        self.bodies.append(body["body"])
+        return 200, {
+            "id": len(self.bodies),
+            "html_url": "https://github.com/octocat/hello-world/issues/42#issuecomment-1",
+        }
+
+
+def _recording_pr_transport(captured: list):
+    def call(method: str, url: str, body, token: str):
+        assert token == GH_SENTINEL
+        assert GH_SENTINEL not in url
+        captured.append((method, url, body))
+        return 201, {"html_url": "https://github.com/octocat/hello-world/pull/43"}
+
+    return call
+
+
+def _add_bare_origin(repo: Path, tmp_path: Path) -> Path:
+    origin = tmp_path / "origin.git"
+    subprocess.run(
+        ["git", "init", "--bare", str(origin)],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    _git(repo, "remote", "add", "origin", str(origin))
+    return origin
+
+
+def test_verify_posts_five_stages_and_opens_pr(
+    fixture_repo: Path, tmp_path: Path, monkeypatch, capsys
+) -> None:
+    pytest.importorskip("numpy")
+    from hackproof.github.issue_auditor import IssueAuditor
+
+    monkeypatch.setenv("GITHUB_TOKEN", GH_SENTINEL)
+    origin = _add_bare_origin(fixture_repo, tmp_path)
+    rec = _RecordingAuditorTransport()
+    pr_calls: list = []
+    code = cli.cmd_verify(
+        issue=ISSUE_URL,
+        repo=str(fixture_repo),
+        ledger=str(tmp_path / "finops.json"),
+        issue_fetcher=_issue_fetcher(),
+        client_factory=_factory_for(_StubClient()),
+        runner_override=_StubRunner([(1, RED_XML), (0, GREEN_XML)]),
+        post_comment=True,
+        auditor=IssueAuditor(transport=rec),
+        pr_transport=_recording_pr_transport(pr_calls),
+    )
+    assert code == 0
+    # Five staged updates, each a find-by-marker GET + POST.
+    assert [m for m, _ in rec.calls] == ["GET", "POST"] * 5
+    assert len(rec.bodies) == 5
+    assert "foo.py" in rec.bodies[0]
+    assert "in progress" in rec.bodies[0]
+    assert re.search(r"baseline digest `[0-9a-f]{16}`", rec.bodies[1])
+    assert "`1` failure(s)" in rec.bodies[2]
+    assert "round(s)" in rec.bodies[3] and "measured" in rec.bodies[3]
+    assert "VERIFIED CLEAN" in rec.bodies[4]
+    receipt = re.search(r"[0-9a-f]{64}", rec.bodies[4])
+    assert receipt is not None
+    # Verified PR opened with the same receipt + passport.
+    assert len(pr_calls) == 1
+    method, url, payload = pr_calls[0]
+    assert method == "POST" and url.endswith("/repos/octocat/hello-world/pulls")
+    assert payload["head"] == "hackproof/issue-42"
+    assert payload["base"] == "main"
+    assert payload["title"].startswith("✅ HackProof verified fix for #42")
+    assert "Verification Passport" in payload["body"]
+    assert receipt.group(0) in payload["body"]
+    assert payload["maintainer_can_modify"] is True
+    # Branch really pushed to the offline origin, badge committed.
+    pushed = subprocess.run(
+        ["git", "--git-dir", str(origin), "ls-tree", "-r", "--name-only",
+         "hackproof/issue-42"],
+        capture_output=True,
+        text=True,
+    )
+    assert pushed.returncode == 0
+    assert "verified-by-hackproof.svg" in pushed.stdout.splitlines()
+    assert "foo.py" in pushed.stdout.splitlines()
+    out, err = capsys.readouterr().out, capsys.readouterr().err
+    assert "verified PR https://github.com/octocat/hello-world/pull/43" in out
+    assert GH_SENTINEL not in out and GH_SENTINEL not in err
+
+
+def test_verify_auto_post_stays_offline_without_token(
+    fixture_repo: Path, tmp_path: Path, monkeypatch, capsys
+) -> None:
+    pytest.importorskip("numpy")
+    from hackproof.github.issue_auditor import IssueAuditor
+
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+
+    def exploding_transport(method: str, url: str, body, token: str):
+        raise AssertionError("no GitHub call must happen without a token")
+
+    code = cli.cmd_verify(
+        issue=ISSUE_URL,
+        repo=str(fixture_repo),
+        ledger=str(tmp_path / "finops.json"),
+        issue_fetcher=_issue_fetcher(),
+        client_factory=_factory_for(_StubClient()),
+        runner_override=_StubRunner([(1, RED_XML), (0, GREEN_XML)]),
+        auditor=IssueAuditor(transport=exploding_transport),
+    )
+    assert code == 0
+    assert "verified clean" in capsys.readouterr().out
+
+
+def test_verify_no_post_comment_flag_disables_posting(
+    fixture_repo: Path, tmp_path: Path, monkeypatch
+) -> None:
+    pytest.importorskip("numpy")
+    from hackproof.github.issue_auditor import IssueAuditor
+
+    monkeypatch.setenv("GITHUB_TOKEN", GH_SENTINEL)
+    rec = _RecordingAuditorTransport()
+    code = cli.cmd_verify(
+        issue=ISSUE_URL,
+        repo=str(fixture_repo),
+        ledger=str(tmp_path / "finops.json"),
+        issue_fetcher=_issue_fetcher(),
+        client_factory=_factory_for(_StubClient()),
+        runner_override=_StubRunner([(1, RED_XML), (0, GREEN_XML)]),
+        post_comment=False,
+        auditor=IssueAuditor(transport=rec),
+    )
+    assert code == 0
+    assert rec.calls == []
+
+
+def test_verify_posting_and_pr_errors_warn_only(
+    fixture_repo: Path, tmp_path: Path, monkeypatch, capsys
+) -> None:
+    pytest.importorskip("numpy")
+    from hackproof.github.issue_auditor import IssueAuditor, IssueAuditorAPIError
+
+    monkeypatch.setenv("GITHUB_TOKEN", GH_SENTINEL)
+
+    def failing_transport(method: str, url: str, body, token: str):
+        raise IssueAuditorAPIError("boom", status=500)
+
+    # No origin remote: the push fails too — both stay warnings.
+    code = cli.cmd_verify(
+        issue=ISSUE_URL,
+        repo=str(fixture_repo),
+        ledger=str(tmp_path / "finops.json"),
+        issue_fetcher=_issue_fetcher(),
+        client_factory=_factory_for(_StubClient()),
+        runner_override=_StubRunner([(1, RED_XML), (0, GREEN_XML)]),
+        post_comment=True,
+        auditor=IssueAuditor(transport=failing_transport),
+    )
+    assert code == 0
+    out = capsys.readouterr().out
+    assert "warning: audit comment update failed" in out
+    assert "warning: verified-PR flow skipped" in out
+    assert "git push origin hackproof/issue-42 failed" in out
+
+
+def test_verify_failure_path_posts_partial_trace(
+    fixture_repo: Path, tmp_path: Path, monkeypatch
+) -> None:
+    from hackproof.github.issue_auditor import IssueAuditor
+
+    monkeypatch.setenv("GITHUB_TOKEN", GH_SENTINEL)
+    rec = _RecordingAuditorTransport()
+    code = cli.cmd_verify(
+        issue=ISSUE_URL,
+        repo=str(fixture_repo),
+        ledger=str(tmp_path / "ledger.json"),
+        issue_fetcher=_issue_fetcher(),
+        client_factory=_factory_for(_StubClient(patch_text="no blocks here")),
+        runner_override=_StubRunner([(1, RED_XML), (0, GREEN_XML)]),
+        post_comment=True,
+        auditor=IssueAuditor(transport=rec),
+    )
+    assert code == 1
+    # localize + guard + red + debate posted; green never reached.
+    assert len(rec.bodies) == 4
+    assert all("in progress" in body for body in rec.bodies)
+
+
+def test_push_branch_and_open_pr_offline(
+    fixture_repo: Path, tmp_path: Path, monkeypatch
+) -> None:
+    monkeypatch.setenv("GITHUB_TOKEN", GH_SENTINEL)
+    origin = _add_bare_origin(fixture_repo, tmp_path)
+    (fixture_repo / "foo.py").write_text(FOO_PY + "\n# dirty\n", encoding="utf-8")
+    pr_calls: list = []
+    info = cli._push_branch_and_open_pr(
+        worktree=fixture_repo,
+        owner="octocat",
+        repo_name="hello-world",
+        number=42,
+        issue_title="off-by-one in total",
+        receipt_sha256="ab" * 32,
+        guard_files_checked=1,
+        transport=_recording_pr_transport(pr_calls),
+    )
+    assert info["branch"] == "hackproof/issue-42"
+    assert info["pr_url"] == "https://github.com/octocat/hello-world/pull/43"
+    assert info["pre_commit"] != info["post_commit"]
+    log = subprocess.run(
+        ["git", "--git-dir", str(origin), "log", "--format=%s", "hackproof/issue-42"],
+        capture_output=True,
+        text=True,
+    )
+    assert "fix(issue-42): verified red-to-green patch" in log.stdout
+
+
+def test_push_branch_requires_token(fixture_repo: Path, monkeypatch) -> None:
+    monkeypatch.delenv("GITHUB_TOKEN", raising=False)
+    with pytest.raises(cli._GitHubFlowError, match="GITHUB_TOKEN is not set"):
+        cli._push_branch_and_open_pr(
+            worktree=fixture_repo,
+            owner="o",
+            repo_name="r",
+            number=7,
+            issue_title="t",
+            receipt_sha256="cd" * 32,
+            guard_files_checked=0,
+        )
+
+
+def test_default_base_branch_fallback_and_symbolic(
+    fixture_repo: Path, tmp_path: Path
+) -> None:
+    assert cli._default_base_branch(fixture_repo) == "main"
+    origin = tmp_path / "origin.git"
+    subprocess.run(
+        ["git", "init", "--bare", str(origin)],
+        check=True,
+        stdout=subprocess.PIPE,
+        stderr=subprocess.PIPE,
+    )
+    _git(fixture_repo, "remote", "add", "origin", str(origin))
+    _git(
+        fixture_repo,
+        "symbolic-ref",
+        "refs/remotes/origin/HEAD",
+        "refs/remotes/origin/develop",
+    )
+    assert cli._default_base_branch(fixture_repo) == "develop"

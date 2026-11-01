@@ -197,6 +197,25 @@ The suite verifies package import, version reporting, both CLI backends
 sandbox guards, debate, patching, and provenance — all offline via
 injected mocks except opt-in `--live` API smokes.
 
+## Demo video (Step 5.1)
+
+180-second technical screencast, 1920x1080@60, all terminal output real:
+
+- `media/demo.tape` — vhs capture script, 6 scenes per Script v2
+  (`voiceover_en.txt`, 1363/3000 ElevenLabs chars);
+- `media/voiceover_en.srt` — burned-in EN captions (+ sidecar);
+  `voiceover_ru.txt` — Founder-personal reference only;
+- `scripts/render_video.py` — vhs + 6 segmented TTS + watermark
+  («AI-PRODUCED VIDEO + VOICEOVER · TERMINAL OUTPUT REAL») + 3s end-card,
+  asserts final duration 175–185s.
+
+```bash
+# validate inputs anywhere (no binaries, no network):
+python3 scripts/render_video.py --dry-run
+# full render on OCI (vhs + ffmpeg + ELEVENLABS_API_KEY):
+python3 scripts/render_video.py   # -> media/hackproof-screencast-1080p.mp4
+```
+
 ## License
 
 Apache-2.0. See [LICENSE](LICENSE).

@@ -71,6 +71,17 @@ def test_action_inputs_contract() -> None:
     assert "description" in inputs["meta-api-key"]
 
 
+def test_action_github_token_input_contract() -> None:
+    """Step 3.4: github-token input flows from the Actions token."""
+    data = _load_action()
+    inputs = data.get("inputs", {})
+    assert "github-token" in inputs, "action.yml must declare github-token"
+    token_input = inputs["github-token"]
+    assert token_input.get("required") is not True
+    assert token_input.get("default") == "${{ github.token }}"
+    assert "description" in token_input
+
+
 def test_action_branding_present() -> None:
     data = _load_action()
     branding = data.get("branding")
@@ -115,6 +126,24 @@ def test_action_steps_in_order() -> None:
     env = verify.get("env", {})
     assert env.get("META_API_KEY") == "${{ inputs.meta-api-key }}", (
         "the secret must reach the CLI ONLY through env"
+    )
+
+
+def test_action_installs_runner_deps() -> None:
+    """Step 3.4: pytest + numpy ship with the package (lean invariant)."""
+    data = _load_action()
+    steps = data.get("runs", {}).get("steps", [])
+    install_run = str(steps[1].get("run", ""))
+    assert "pytest" in install_run, "runner needs pytest for the suites"
+    assert "numpy" in install_run, "runner needs numpy for retrieval"
+
+    verify_run = str(steps[2].get("run", ""))
+    assert "--post-comment" in verify_run, (
+        "the verify step must enable staged comments + verified PR"
+    )
+    env = steps[2].get("env", {})
+    assert env.get("GITHUB_TOKEN") == "${{ inputs.github-token }}", (
+        "the GitHub token must reach the CLI ONLY through env"
     )
 
 
@@ -163,6 +192,30 @@ def test_action_secret_refs_only_allowlisted() -> None:
         "meta-api-key may appear only in its declaration and ${{ inputs.meta-api-key }}"
     )
     assert allowlisted >= 1
+
+
+def test_action_github_token_hygiene() -> None:
+    """Step 3.4: github-token lives in declaration/env only, never shell."""
+    data = _load_action()
+    github_ref = re.compile(r"\$\{\{\s*inputs\.github-token\s*\}\}")
+    for step in data.get("runs", {}).get("steps", []):
+        run = str(step.get("run", ""))
+        lowered = run.lower()
+        if "echo" in lowered or "print" in lowered:
+            assert "github-token" not in lowered and "github_token" not in lowered, (
+                f"github token must never be printed: {run!r}"
+            )
+        assert not github_ref.search(run), (
+            "inputs.github-token must live in env, not shell"
+        )
+    raw = ACTION_PATH.read_text(encoding="utf-8")
+    occurrences = raw.count("github-token")
+    declarations = len(re.findall(r"(?m)^\s{2}github-token:", raw))
+    allowlisted = len(github_ref.findall(raw))
+    assert occurrences == declarations + allowlisted, (
+        "github-token may appear only in its declaration and ${{ inputs.github-token }}"
+    )
+    assert declarations == 1 and allowlisted == 1
 
 
 # ---------------------------------------------------------------------------
@@ -218,6 +271,15 @@ def test_workflow_secret_never_printed() -> None:
     assert occurrences == allowlisted >= 1, (
         "secrets.META_API_KEY may appear only as ${{ secrets.META_API_KEY }}"
     )
+
+
+def test_workflow_permissions_grant_posting_writes() -> None:
+    """Step 3.4: dogfood needs write grants for comments/branch/PR."""
+    data = _load_workflow()
+    permissions = data.get("permissions", {})
+    assert permissions.get("contents") == "write"
+    assert permissions.get("issues") == "write"
+    assert permissions.get("pull-requests") == "write"
 
 
 def test_manifests_deterministic_and_terminated() -> None:

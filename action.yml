@@ -17,6 +17,10 @@ inputs:
   issue-url:
     description: "GitHub issue URL, e.g. https://github.com/<owner>/<repo>/issues/42"
     required: true
+  github-token:
+    description: "GitHub token for audit comments, branch push and verified PR (Zero-Leak: env only)."
+    required: false
+    default: "${{ github.token }}"
   runner-mode:
     description: "Sandbox tier: 'local' (air-gapped subprocess) or 'oci' (gVisor over SSH)."
     required: false
@@ -37,11 +41,12 @@ runs:
     - name: "Install hackproof-ai"
       # Pinned minimum from this release; PROD final lands in Step 5.2.
       # No torch/contriever/faiss here: PR runners stay within 2vCPU/7GB.
-      run: pip install "hackproof-ai>=0.2.0rc1"
+      run: pip install "hackproof-ai>=0.2.0rc1" pytest numpy
       shell: bash
 
     - name: "Verify issue red-to-green"
-      run: hackproof verify --issue "${{ inputs.issue-url }}" --runner "${{ inputs.runner-mode }}"
+      run: hackproof verify --issue "${{ inputs.issue-url }}" --runner "${{ inputs.runner-mode }}" --post-comment
       shell: bash
       env:
         META_API_KEY: "${{ inputs.meta-api-key }}"
+        GITHUB_TOKEN: "${{ inputs.github-token }}"

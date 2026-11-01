@@ -27,9 +27,13 @@ import time
 import urllib.error
 import urllib.request
 from contextlib import contextmanager
+from dataclasses import replace
 from datetime import datetime, timezone
 from pathlib import Path, PurePosixPath
-from typing import Callable, Iterator, Optional, Sequence
+from typing import TYPE_CHECKING, Callable, Iterator, Optional, Sequence
+
+if TYPE_CHECKING:
+    from hackproof.github.issue_auditor import IssueAuditor
 
 try:
     from hackproof import __version__
@@ -607,12 +611,182 @@ def append_finops_entry(
 
 IssueFetcher = Callable[[str], tuple[str, str]]
 ClientFactory = Callable[[str], object]
+# (method, url, body, token) -> (status_code, parsed_json); the token
+# travels separately so it can never leak into logged URLs or bodies.
+PrTransport = Callable[[str, str, Optional[dict], str], tuple[int, object]]
 
 
 def _default_client_factory(model: str) -> object:
     from hackproof.llm.meta_client import MetaClient
 
     return MetaClient(model)
+
+
+class _GitHubFlowError(RuntimeError):
+    """Verified-PR flow failure (warn-only; never carries the token)."""
+
+
+def _github_transport(
+    method: str, url: str, body: Optional[dict], token: str
+) -> tuple[int, object]:
+    """Minimal GitHub REST transport for the PR-open call (stdlib)."""
+    payload = None
+    headers = {
+        "Accept": "application/vnd.github+json",
+        "User-Agent": "hackproof-ai",
+        "Authorization": f"Bearer {token}",
+    }
+    if body is not None:
+        payload = json.dumps(body).encode("utf-8")
+        headers["Content-Type"] = "application/json"
+    request = urllib.request.Request(
+        url, data=payload, headers=headers, method=method
+    )
+    try:
+        with urllib.request.urlopen(
+            request, timeout=_ISSUE_FETCH_TIMEOUT_SEC
+        ) as response:
+            raw = response.read().decode("utf-8")
+            return response.status, (json.loads(raw) if raw.strip() else {})
+    except urllib.error.HTTPError as exc:
+        try:
+            detail = exc.read().decode("utf-8", "replace")
+            message = str(json.loads(detail).get("message", detail))[:200]
+        except (ValueError, OSError):
+            message = f"HTTP {exc.code}"
+        raise _GitHubFlowError(f"GitHub API {method} failed: {message}") from exc
+    except (urllib.error.URLError, TimeoutError, OSError) as exc:
+        raise _GitHubFlowError(f"GitHub API unreachable: {exc}") from exc
+
+
+def _default_base_branch(worktree: Path) -> str:
+    """Resolve the origin/HEAD branch (fallback ``main``)."""
+    try:
+        proc = _git(["symbolic-ref", "refs/remotes/origin/HEAD"], worktree)
+    except subprocess.TimeoutExpired:
+        return "main"
+    if proc.returncode == 0:
+        ref = proc.stdout.decode("utf-8", "replace").strip()
+        prefix = "refs/remotes/origin/"
+        if ref.startswith(prefix) and len(ref) > len(prefix):
+            return ref[len(prefix):]
+    return "main"
+
+
+def _push_branch_and_open_pr(
+    *,
+    worktree: Path,
+    owner: str,
+    repo_name: str,
+    number: int,
+    issue_title: str,
+    receipt_sha256: str,
+    guard_files_checked: int,
+    transport: Optional[PrTransport] = None,
+) -> dict:
+    """Commit badge + patch, push the branch, open the verified PR.
+
+    Branch: ``hackproof/issue-<n>`` (re-runs need the remote branch
+    removed first — pushes never force). Token comes from
+    ``GITHUB_TOKEN`` only; push stderr is never printed because it may
+    echo credential-bearing remote URLs (Zero-Leak).
+
+    Raises:
+        _GitHubFlowError: Missing token, git failure, push rejection,
+            or PR-open failure. Warn-only at the call site.
+    """
+    from hackproof.github.pr_generator import (
+        PRGenerator,
+        VerificationPassport,
+    )
+
+    token = os.environ.get("GITHUB_TOKEN", "")
+    if not token:
+        raise _GitHubFlowError(
+            "GITHUB_TOKEN is not set; cannot push branch or open PR"
+        )
+    call = transport or _github_transport
+    branch = f"hackproof/issue-{number}"
+    try:
+        pre_commit = _worktree_head(worktree)
+        (worktree / "verified-by-hackproof.svg").write_text(
+            PRGenerator.build_badge_svg(), encoding="utf-8"
+        )
+        proc = _git(["checkout", "-b", branch], worktree)
+        if proc.returncode != 0:
+            raise _GitHubFlowError(
+                f"git checkout -b failed (exit {proc.returncode})"
+            )
+        dirty = _git(["status", "--porcelain"], worktree)
+        if dirty.returncode == 0 and dirty.stdout.strip():
+            proc = _git(["add", "-A"], worktree)
+            if proc.returncode != 0:
+                raise _GitHubFlowError(
+                    f"git add failed (exit {proc.returncode})"
+                )
+            proc = _git(
+                [
+                    "-c",
+                    "user.name=hackproof-ai",
+                    "-c",
+                    "user.email=hackproof-ai@buildebate.com",
+                    "commit",
+                    "-m",
+                    f"fix(issue-{number}): verified red-to-green "
+                    "patch (hackproof-ai)",
+                ],
+                worktree,
+            )
+            if proc.returncode != 0:
+                raise _GitHubFlowError(
+                    f"git commit failed (exit {proc.returncode})"
+                )
+        post_commit = _worktree_head(worktree)
+        pushed = _git(["push", "origin", branch], worktree)
+        if pushed.returncode != 0:
+            raise _GitHubFlowError(
+                f"git push origin {branch} failed (exit {pushed.returncode})"
+            )
+    except subprocess.TimeoutExpired as exc:
+        raise _GitHubFlowError(f"git command timed out: {exc.cmd[1]}") from exc
+    passport = VerificationPassport(
+        pre_patch_commit=pre_commit,
+        post_patch_commit=post_commit,
+        guard_ok=True,
+        guard_files_checked=guard_files_checked,
+        receipt_sha256=receipt_sha256,
+    )
+    first_line = issue_title.strip().splitlines()
+    short_title = first_line[0][:80] if first_line else f"issue #{number}"
+    status, parsed = call(
+        "POST",
+        f"https://api.github.com/repos/{owner}/{repo_name}/pulls",
+        {
+            "title": f"✅ HackProof verified fix for #{number}: {short_title}",
+            "head": branch,
+            "base": _default_base_branch(worktree),
+            "body": PRGenerator.build_pr_body(passport),
+            "maintainer_can_modify": True,
+        },
+        token,
+    )
+    if status in (401, 403):
+        raise _GitHubFlowError(
+            f"GitHub API denied access (HTTP {status}); "
+            "check GITHUB_TOKEN scopes"
+        )
+    if status >= 400 or not isinstance(parsed, dict):
+        raise _GitHubFlowError(f"GitHub PR open failed (HTTP {status})")
+    pr_url = parsed.get("html_url", "")
+    if not pr_url:
+        raise _GitHubFlowError("GitHub API returned a PR without html_url")
+    return {
+        "branch": branch,
+        "base": _default_base_branch(worktree),
+        "pr_url": pr_url,
+        "pre_commit": pre_commit,
+        "post_commit": post_commit,
+    }
 
 
 def cmd_verify(
@@ -624,6 +798,9 @@ def cmd_verify(
     issue_fetcher: Optional[IssueFetcher] = None,
     client_factory: Optional[ClientFactory] = None,
     runner_override: Optional[object] = None,
+    post_comment: Optional[bool] = None,
+    auditor: Optional[IssueAuditor] = None,
+    pr_transport: Optional[PrTransport] = None,
 ) -> int:
     """Run the full localize → red → debate → patch → green pipeline.
 
@@ -639,6 +816,15 @@ def cmd_verify(
         client_factory: Injectable model client factory (tests);
             live :class:`MetaClient` per model by default.
         runner_override: Injectable sandbox runner (tests).
+        post_comment: ``True`` forces staged audit comments + the
+            verified-PR flow, ``False`` disables both, ``None``
+            (default) auto-posts when ``GITHUB_TOKEN`` is present.
+            Posting/branch/PR failures only warn, never fail.
+        auditor: Injectable :class:`IssueAuditor` (tests); a live
+            auditor is constructed when posting is enabled.
+        pr_transport: Injectable ``(method, url, body, token)``
+            transport for the PR-open call (tests); stdlib urllib
+            by default.
 
     Returns:
         ``EXIT_OK`` on verified red-to-green, ``EXIT_USAGE`` for bad
@@ -649,6 +835,11 @@ def cmd_verify(
     from hackproof.debate.roles.architectural_builder import (
         extract_blocks,
         revise_patch,
+    )
+    from hackproof.github.issue_auditor import (
+        AuditTrace,
+        IssueAuditor,
+        IssueAuditorError,
     )
     from hackproof.patcher.workspace_patcher import (
         PatchApplicationError,
@@ -673,6 +864,27 @@ def cmd_verify(
     if language not in LANGUAGE_CHOICES:
         _err(f"invalid --language {language!r} (choose from: python, typescript)")
         return EXIT_USAGE
+
+    want_post = (
+        post_comment
+        if post_comment is not None
+        else bool(os.environ.get("GITHUB_TOKEN"))
+    )
+    live_auditor: Optional[IssueAuditor] = None
+    if want_post:
+        live_auditor = auditor if auditor is not None else IssueAuditor()
+    trace = AuditTrace(issue_url=issue)
+
+    def _post(updated: AuditTrace) -> None:
+        """Best-effort staged comment update (warn-only, never fatal)."""
+        nonlocal trace
+        trace = updated
+        if live_auditor is None:
+            return
+        try:
+            live_auditor.post_or_update_comment(owner, repo_name, number, trace)
+        except IssueAuditorError as exc:
+            print(f"verify: warning: audit comment update failed ({exc})")
 
     if runner_override is not None:
         sandbox_runner = runner_override
@@ -730,6 +942,13 @@ def cmd_verify(
                 f"verify: localized {len(files)} file(s) in {localize_ms} ms "
                 f"(top: {', '.join(files[:3])})"
             )
+            _post(
+                replace(
+                    trace,
+                    localization_files=tuple(files[:10]),
+                    localization_ms=localize_ms,
+                )
+            )
             code_context, builder_code_context = build_code_context(
                 repo_path, snippets, files
             )
@@ -753,6 +972,20 @@ def cmd_verify(
                     baseline = {}
                     print("verify: warning: no tests/ in worktree; guard degraded")
                 print(f"verify: guard locked ({len(baseline)} file(s))")
+                guard_digest = hashlib.sha256(
+                    ";".join(
+                        f"{key}={value}"
+                        for key, value in sorted(baseline.items())
+                    ).encode("utf-8")
+                ).hexdigest()[:16]
+                _post(
+                    replace(
+                        trace,
+                        guard_digest=guard_digest,
+                        guard_modified_lines=0,
+                        guard_files_checked=len(baseline),
+                    )
+                )
 
                 # 4. red baseline: synthesize the repro and prove it fails.
                 tests_out = worktree / "tests"
@@ -782,6 +1015,13 @@ def cmd_verify(
                     f"verify: red baseline accepted "
                     f"(failures={red.failures}, errors={red.errors})"
                 )
+                _post(
+                    replace(
+                        trace,
+                        red_failures=red.failures + red.errors,
+                        red_junit_ref=Path(red.junit_path).name,
+                    )
+                )
 
                 # 5. asymmetric debate.
                 orchestrator = DebateOrchestrator(
@@ -800,6 +1040,13 @@ def cmd_verify(
                     f"score={report.convergence_score:.2f} "
                     f"tokens={report.total_tokens} "
                     f"duration={report.duration_ms} ms"
+                )
+                _post(
+                    replace(
+                        trace,
+                        debate_rounds=report.rounds_used,
+                        debate_seconds=report.duration_ms / 1000.0,
+                    )
                 )
 
                 # 6. deterministic patch: first localized file matching
@@ -912,6 +1159,33 @@ def cmd_verify(
                     _err("red-to-green machine proof failed")
                     return EXIT_PIPELINE_FAILURE
                 print(f"verify: TGRES receipt {receipt['receipt_sha256']}")
+                _post(
+                    replace(
+                        trace,
+                        status="verified-clean",
+                        green_exit_code=green.exit_code,
+                        receipt_sha256=receipt["receipt_sha256"],
+                    )
+                )
+                if live_auditor is not None and not live_auditor.dry_run:
+                    try:
+                        pr_info = _push_branch_and_open_pr(
+                            worktree=worktree,
+                            owner=owner,
+                            repo_name=repo_name,
+                            number=number,
+                            issue_title=title,
+                            receipt_sha256=receipt["receipt_sha256"],
+                            guard_files_checked=len(baseline),
+                            transport=pr_transport,
+                        )
+                    except _GitHubFlowError as exc:
+                        print(f"verify: warning: verified-PR flow skipped ({exc})")
+                    else:
+                        print(
+                            f"verify: verified PR {pr_info['pr_url']} "
+                            f"(branch {pr_info['branch']})"
+                        )
 
                 ledger_per_call: list[dict[str, object]] = [
                     {
@@ -1019,6 +1293,14 @@ if _TYPER_AVAILABLE:
         ledger: str = typer.Option(
             "finops_ledger.json", "--ledger", help="FinOps ledger path."
         ),
+        post_comment: Optional[bool] = typer.Option(
+            None,
+            "--post-comment/--no-post-comment",
+            help=(
+                "Post staged audit comments + verified PR "
+                "(default: auto when GITHUB_TOKEN is present)."
+            ),
+        ),
     ) -> None:
         """Run the full red-to-green verify pipeline for a GitHub issue."""
         raise typer.Exit(
@@ -1028,6 +1310,7 @@ if _TYPER_AVAILABLE:
                 runner=runner,
                 language=language,
                 ledger=ledger,
+                post_comment=post_comment,
             )
         )
 
@@ -1086,6 +1369,15 @@ def _argparse_main(argv: Optional[Sequence[str]] = None) -> int:
     verify_parser.add_argument(
         "--ledger", default="finops_ledger.json", help="FinOps ledger path."
     )
+    verify_parser.add_argument(
+        "--post-comment",
+        action=argparse.BooleanOptionalAction,
+        default=None,
+        help=(
+            "Post staged audit comments + verified PR "
+            "(default: auto when GITHUB_TOKEN is present)."
+        ),
+    )
     guard_parser = subparsers.add_parser(
         "test-guard", help="Verify working-tree tests/ against a baseline ref."
     )
@@ -1110,6 +1402,7 @@ def _argparse_main(argv: Optional[Sequence[str]] = None) -> int:
             runner=args.runner,
             language=args.language,
             ledger=args.ledger,
+            post_comment=args.post_comment,
         )
     elif args.command == "test-guard":
         return cmd_test_guard(

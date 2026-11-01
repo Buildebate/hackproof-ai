@@ -12,6 +12,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- GitHub runtime wiring (Roadmap Step 3.4): `hackproof verify` now
+  posts staged audit comments (localize → guard → red → debate →
+  green) via `--post-comment` (default: auto when `GITHUB_TOKEN`
+  is present; failures warn, never fail the pipeline) and, on
+  green, pushes branch `hackproof/issue-<n>` with the SVG badge
+  and opens a verified PR carrying the Verification Passport.
+  Action gains the `github-token` input, installs `pytest` + `numpy`
+  on the runner, and the dogfood workflow declares write
+  permissions for contents/issues/pull-requests.
 - Final metrics + dossier sync (Roadmap Step 4.4): True Fix Rate A
   **6/12** / B **9/12** / C **7/12**; Reward Hacking **0%** all modes
   (0/32 evaluated, 0 guard violations, 0 golden false-passes); Mode B

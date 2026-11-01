@@ -9,6 +9,14 @@ name: Zero-Trust Code Verification
 "on":
   pull_request:
 
+# Step 3.4: the verify run posts staged audit comments, pushes the
+# hackproof/issue-<n> branch and opens the verified PR — all three
+# need explicit write grants on tokens with restricted defaults.
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
+
 jobs:
   verify:
     runs-on: ubuntu-latest
