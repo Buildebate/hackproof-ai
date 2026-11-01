@@ -6,4 +6,4 @@ def total(prices):
     subtotal = 0
     for price in prices:
         subtotal += price
-    return subtotal + 1
+    return subtotal
