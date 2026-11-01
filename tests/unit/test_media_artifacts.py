@@ -174,8 +174,8 @@ def test_tape_output_paths_are_relative() -> None:
 def test_tape_has_required_settings() -> None:
     text = TAPE.read_text(encoding="utf-8")
     for directive in (
-        "Set Width 1920",
-        "Set Height 1080",
+        "Set Width 1280",
+        "Set Height 720",
         "Set Framerate 60",
         'Set Shell "bash"',
     ):
@@ -250,6 +250,8 @@ def test_render_constants_match_gates() -> None:
     assert len(render.SCENE_OFFSETS_S) == N_SCENES
     assert "AI-PRODUCED VIDEO + VOICEOVER" in render.WATERMARK_TEXT
     assert "TERMINAL OUTPUT REAL" in render.WATERMARK_TEXT
+    assert (render.CAPTURE_W, render.CAPTURE_H) == (1280, 720)
+    assert (render.FINAL_W, render.FINAL_H) == (1920, 1080)
 
 
 # --- mp4 + TTS outputs (graceful skip until the OCI render lands) ---------

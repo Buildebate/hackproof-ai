@@ -3,12 +3,20 @@
 
 Pipeline (run on OCI from ``packages/hackproof-ai/``)::
 
-    1. vhs media/demo.tape              -> media/vhs_raw.mp4 (~180s, 1920x1080@60)
+    1. vhs media/demo.tape              -> media/vhs_raw.mp4 (~180s, 1280x720)
     2. ElevenLabs TTS x 6 paragraphs    -> media/tts/scene{N}.mp3 (cached)
     3. retime DRAFT srt by real TTS len -> media/voiceover_en.timed.srt
-    4. ffmpeg: burn srt + watermark + delayed/mixed voiceover -> main_av.mp4
+    4. ffmpeg: upscale 720p->1080p, burn srt + watermark at 1080p,
+       delayed/mixed voiceover          -> main_av.mp4
     5. ffmpeg: 3s end-card + concat     -> hackproof-screencast-1080p.mp4
     6. ffprobe asserts: 175-185s, 1920x1080, audio+video streams.
+
+Capture is 720p by hardware necessity: vhs 0.12.1 (Chromium software
+rasterizer) sustains realtime 25fps capture at 720p on OCI Ampere but
+only ~8fps at 1080p, which compresses a 178s tape into ~96s of video
+(measured 95.72s, 25fps output, Set Framerate ignored). Subtitles and
+the watermark render AFTER the lanczos upscale, so overlay text stays
+native-1080p crisp; terminal pixels are upscaled (disclosed).
 
 Stdlib-only (urllib for ElevenLabs; no new deps). Render + minting of Step 5.1
 happen only after the 3.4 package (green E2E).
@@ -54,6 +62,9 @@ DURATION_MIN_S = 175.0
 DURATION_MAX_S = 185.0
 TAPE_TARGET_S = 180.0
 ENDCARD_S = 3.0
+# vhs capture raster (720p, realtime on OCI) and final raster (1080p).
+CAPTURE_W, CAPTURE_H = 1280, 720
+FINAL_W, FINAL_H = 1920, 1080
 
 SCENE_NAMES = ["cold-open", "problem", "live-demo", "proof", "meta-stack", "ask"]
 # Audio placement = DRAFT srt scene starts (s); retime keeps these anchors.
@@ -72,7 +83,7 @@ ENDCARD_LINES = [
 DEFAULT_VHS = "/home/ubuntu/.local/bin/vhs"
 DEFAULT_VOICE_ID = "21m00Tcm4TlvDq8ikWAM"  # Rachel; override via env
 DEFAULT_MODEL_ID = "eleven_multilingual_v2"
-ELEVENLABS_URL = "https://api.elevenlabs.com/v1/text-to-speech/{voice_id}"
+ELEVENLABS_URL = "https://api.elevenlabs.io/v1/text-to-speech/{voice_id}"
 ELEVENLABS_FORMAT = "mp3_44100_128"
 
 FONT_CANDIDATES = [
@@ -223,7 +234,11 @@ def check_tape(path: Path = TAPE) -> float:
     ]:
         if out.startswith(("/", "~")) or re.match(r"[A-Za-z]:", out):
             raise RenderError(f"tape Output must be relative: {out}")
-    for directive in ("Set Width 1920", "Set Height 1080", "Set Framerate 60"):
+    for directive in (
+        f"Set Width {CAPTURE_W}",
+        f"Set Height {CAPTURE_H}",
+        "Set Framerate 60",
+    ):
         if directive not in text:
             raise RenderError(f"tape missing directive: {directive}")
     markers = re.findall(r"^#\s*Scene\s+(\d)/6", text, flags=re.M)
@@ -444,7 +459,8 @@ def cmd_render(args: argparse.Namespace) -> int:
         for n, off in enumerate(SCENE_OFFSETS_S, 1)
     )
     filt = (
-        f"[0:v]subtitles={burn_srt}:force_style='FontName={FONT_NAME},FontSize=20,"
+        f"[0:v]scale={FINAL_W}:{FINAL_H}:flags=lanczos[hd];"
+        f"[hd]subtitles={burn_srt}:force_style='FontName={FONT_NAME},FontSize=20,"
         "PrimaryColour=&H00FFFFFF,OutlineColour=&H80000000,BorderStyle=1,Outline=2,"
         "Shadow=0,MarginV=28'[sub];"
         f"[sub]drawtext=text='{WATERMARK_TEXT}':{font_args}:fontsize=22:"
@@ -475,7 +491,7 @@ def cmd_render(args: argparse.Namespace) -> int:
     started = time.time()
     proc = run(
         [ffmpeg, "-y",
-         "-f", "lavfi", "-i", f"color=c=0x0b0e14:s=1920x1080:r=60:d={ENDCARD_S:.0f}",
+         "-f", "lavfi", "-i", f"color=c=0x0b0e14:s={FINAL_W}x{FINAL_H}:r=60:d={ENDCARD_S:.0f}",
          "-f", "lavfi", "-i", f"anullsrc=r=44100:cl=stereo:d={ENDCARD_S:.0f}",
          "-vf", f"drawtext=textfile=endcard.txt:{font_args}:fontsize=44:"
                 "fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:line_spacing=18",
@@ -514,8 +530,8 @@ def cmd_render(args: argparse.Namespace) -> int:
     print(f"final: {final_dur:.1f}s, {width}x{height}, audio={'yes' if has_audio else 'NO'}")
     if not (DURATION_MIN_S <= final_dur <= DURATION_MAX_S):
         raise RenderError(f"duration {final_dur:.1f}s outside [{DURATION_MIN_S:.0f},{DURATION_MAX_S:.0f}]s")
-    if (width, height) != (1920, 1080):
-        raise RenderError(f"resolution {width}x{height} != 1920x1080")
+    if (width, height) != (FINAL_W, FINAL_H):
+        raise RenderError(f"resolution {width}x{height} != {FINAL_W}x{FINAL_H}")
     if not has_audio:
         raise RenderError("final mp4 has no audio stream")
 

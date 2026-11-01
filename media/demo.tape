@@ -1,6 +1,9 @@
 # HackProof AI — 180s technical screencast (Step 5.1, Script v2).
 # Render: run `vhs media/demo.tape` from packages/hackproof-ai/ on OCI
 # (see scripts/render_video.py — never hand-run with absolute Output paths).
+# Capture is 1280x720 (vhs realtime limit on OCI Ampere; 1080p capture
+# compresses time). render_video.py upscales to 1920x1080 with lanczos
+# BEFORE burning subtitles/watermark, so overlays stay native-1080p.
 # All terminal content is REAL command output; nothing is typed as fake
 # output. Voiceover: media/voiceover_en.txt (6 scenes, 1 paragraph each).
 #
@@ -20,8 +23,8 @@ Require python3
 
 Set Shell "bash"
 Set FontSize 22
-Set Width 1920
-Set Height 1080
+Set Width 1280
+Set Height 720
 Set Framerate 60
 Set TypingSpeed 40ms
 Set Theme "Catppuccin Frappe"
