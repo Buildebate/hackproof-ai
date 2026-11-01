@@ -68,7 +68,7 @@ Wait+Screen@30s /passed/
 Sleep 10s
 Type "python3 scripts/verify_benchmark_integrity.py"
 Enter
-Wait+Screen@20s /report_sha256/
+Sleep 3s
 Sleep 13s
 Type "PYTHONPATH=src python3 -m hackproof.cli test-guard --help"
 Enter
