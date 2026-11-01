@@ -41,7 +41,7 @@ runs:
     - name: "Install hackproof-ai"
       # Pinned minimum from this release; PROD final lands in Step 5.2.
       # No torch/contriever/faiss here: PR runners stay within 2vCPU/7GB.
-      run: pip install "hackproof-ai>=0.2.0rc1" pytest numpy
+      run: pip install "hackproof-ai>=1.0.0" pytest numpy
       shell: bash
 
     - name: "Verify issue red-to-green"

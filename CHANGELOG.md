@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Nothing yet.
+
+## [1.0.0] - 2026-11-01 (first stable PROD release)
+
+First public stable: `pip install hackproof-ai` ([PyPI 1.0.0](https://pypi.org/project/hackproof-ai/1.0.0/)).
+CLI/Action contracts frozen; verified by clean-venv install check.
+
+### Added
 - GitHub runtime wiring (Roadmap Step 3.4): `hackproof verify` now
   posts staged audit comments (localize → guard → red → debate →
   green) via `--post-comment` (default: auto when `GITHUB_TOKEN`
@@ -274,4 +282,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   F401); `ruff check` is clean across the whole package.
 
 [Unreleased]: https://github.com/Buildebate/hackproof-ai
+[1.0.0]: https://pypi.org/project/hackproof-ai/1.0.0/
 [0.2.0rc1]: https://test.pypi.org/project/hackproof-ai/0.2.0rc1/

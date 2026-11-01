@@ -1,13 +1,78 @@
 # HackProof AI
 
+[![PyPI](https://img.shields.io/pypi/v/hackproof-ai)](https://pypi.org/project/hackproof-ai/)
+[![License](https://img.shields.io/badge/license-Apache--2.0-blue)](LICENSE)
+[![Python](https://img.shields.io/badge/python-%3E%3D3.10-blue)](pyproject.toml)
+[![Reward Hacking](https://img.shields.io/badge/reward_hacking-0%2F32-green)](benchmarks/evidence_dossier.json)
+
 Autonomous Zero-Trust Adversarial Engineering Engine for the Meta Global AI
 Hackathon 2026.
 
-HackProof AI red-teams AI systems the way a paranoid security engineer would:
-every claim is untrusted until proven, every component is probed for failure,
-and every verdict is backed by reproducible evidence. This package is the
-engine's core scaffolding — packaging, CLI, and test harness — on top of
-which adversarial planners, executors, and judges will be built.
+HackProof AI forces AI coding agents to *prove* their fixes: every claim is
+untrusted until a Red-to-Green machine proof backs it. Existing tests are
+locked by an immutability guard, a regression test proves the baseline
+failure, an asymmetric debate (Muse Spark ↔ Muse Wonder) synthesizes the
+minimal patch, and the green suite plus a TGRES SHA-256 receipt seal a
+verified pull request.
+
+## Quickstart
+
+```bash
+pip install hackproof-ai
+hackproof verify --issue https://github.com/<owner>/<repo>/issues/42
+```
+
+Or add zero-trust verification to any repository with the GitHub Action
+(tag `v1` lands with the 5.3 release):
+
+```yaml
+- uses: Buildebate/hackproof-ai@v1
+  with:
+    meta-api-key: ${{ secrets.META_API_KEY }}
+    issue-url: https://github.com/${{ github.repository }}/issues/${{ github.event.pull_request.number }}
+```
+
+## Architecture
+
+```text
+GitHub issue
+    │  Contriever + Faiss (≤15 ms retrieval)
+    ▼
+┌──────────────┐  SHA-256 lock   ┌───────────────────────┐
+│  Localize    │ ───────────────▶ │ Immutable Guard       │
+│  top-k files │                  │ tests/ sealed         │
+└──────────────┘                  └───────────┬───────────┘
+                                              │ Spark red test
+                                              ▼ (must FAIL)
+┌──────────────────────┐  SEARCH/REPLACE  ┌───────────────────────┐
+│ Asymmetric Debate    │ ◀──────────────── │ Red Verification      │
+│ Spark ↔ Wonder ≤2 rd │                   │ JUnit proof of failure│
+└──────────┬───────────┘                   └───────────────────────┘
+           │ patch
+           ▼
+┌──────────────────────┐  suite green +   ┌───────────────────────┐
+│ Deterministic Patch  │  TGRES receipt   │ Verified PR           │
+│ exact-once apply     │ ───────────────▶ │ passport + SVG badge  │
+└──────────────────────┘                  └───────────────────────┘
+```
+
+## Benchmarks
+
+12 polyglot tasks (8 Python SWE-bench Verified + 4 TypeScript SWE-bench
+Multilingual), every figure re-derived from raw artifacts — see
+[benchmarks/SUMMARY.md](benchmarks/SUMMARY.md) and
+[benchmarks/evidence_dossier.json](benchmarks/evidence_dossier.json)
+(`metrics_4_4`):
+
+| Mode | True Fix Rate | Reward Hacking |
+| :--- | :---: | :---: |
+| Baseline agent (A) | 6/12 | 0/6 |
+| Single-shot (C) | 7/12 | 0/7 |
+| HackProof debate (B) | **9/12** | 0/9 |
+
+Guard hygiene: 0 test-tampering violations across 32 evaluated patches,
+0 golden false-passes. Integrity re-checks anytime via
+`python3 scripts/verify_benchmark_integrity.py` (exit 0, 5037 sub-checks).
 
 ## Installation
 
@@ -215,6 +280,11 @@ python3 scripts/render_video.py --dry-run
 # full render on OCI (vhs + ffmpeg + ELEVENLABS_API_KEY):
 python3 scripts/render_video.py   # -> media/hackproof-screencast-1080p.mp4
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) — setup, offline-test rules,
+Zero-Leak, and the lean-runner invariant.
 
 ## License
 
