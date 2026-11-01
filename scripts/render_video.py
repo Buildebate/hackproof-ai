@@ -82,6 +82,13 @@ ENDCARD_LINES = [
     "Voice: ElevenLabs AI \u00b7 Subtitles: burned-in EN + sidecar SRT",
     "github.com/Buildebate/hackproof-ai \u00b7 pip install hackproof-ai \u00b7 Apache-2.0",
 ]
+ENDCARD_FONTSIZE = 44
+ENDCARD_LINE_SPACING = 18
+
+
+def _escape_drawtext(text: str) -> str:
+    """Escape filter-special chars inside a drawtext value."""
+    return text.replace("\\", "\\\\").replace(":", "\\:").replace("'", "\\'")
 
 DEFAULT_VHS = "/home/ubuntu/.local/bin/vhs"
 DEFAULT_VOICE_ID = "Xb7hH8MSUJpSbSDYk0k2"  # Alice (Clear Educator); premade, free-tier API OK (Rachel is library-gated for free users)
@@ -490,14 +497,26 @@ def cmd_render(args: argparse.Namespace) -> int:
         raise RenderError(f"ffmpeg mux failed:\n{proc.stderr[-3000:]}")
     print(f"mux+burn+watermark done in {stages['mux_main']}s")
 
-    (MEDIA_DIR / "endcard.txt").write_text("\n".join(ENDCARD_LINES) + "\n", encoding="utf-8")
+    # One drawtext per line (NOT textfile): ffmpeg 8 drawtext renders
+    # textfile newlines as tofu boxes. Each line is individually centered.
+    block_h = (
+        len(ENDCARD_LINES) * ENDCARD_FONTSIZE
+        + (len(ENDCARD_LINES) - 1) * ENDCARD_LINE_SPACING
+    )
+    y_top = (FINAL_H - block_h) // 2
+    step = ENDCARD_FONTSIZE + ENDCARD_LINE_SPACING
+    endcard_vf = ",".join(
+        f"drawtext=text='{_escape_drawtext(line)}':{font_args}:"
+        f"fontsize={ENDCARD_FONTSIZE}:fontcolor=white:"
+        f"x=(w-text_w)/2:y={y_top + i * step}"
+        for i, line in enumerate(ENDCARD_LINES)
+    )
     started = time.time()
     proc = run(
         [ffmpeg, "-y",
          "-f", "lavfi", "-i", f"color=c=0x0b0e14:s={FINAL_W}x{FINAL_H}:r=60:d={ENDCARD_S:.0f}",
          "-f", "lavfi", "-i", f"anullsrc=r=44100:cl=stereo:d={ENDCARD_S:.0f}",
-         "-vf", f"drawtext=textfile=endcard.txt:{font_args}:fontsize=44:"
-                "fontcolor=white:x=(w-text_w)/2:y=(h-text_h)/2:line_spacing=18",
+         "-vf", endcard_vf,
          "-c:v", "libx264", "-pix_fmt", "yuv420p", "-r", "60",
          "-c:a", "aac", "-shortest", "endcard.mp4"],
         cwd=MEDIA_DIR,
