@@ -1,0 +1,108 @@
+1
+00:00:01,000 --> 00:00:06,000
+Watch closely: an AI agent
+deletes a failing assertion —
+
+2
+00:00:06,000 --> 00:00:10,500
+and ships a green pull request
+with the bug still inside.
+
+3
+00:00:10,500 --> 00:00:15,000
+HackProof AI is zero-trust verification
+that forces AI agents to prove their fixes.
+
+4
+00:00:15,500 --> 00:00:21,000
+This is Reward Hacking. When tests
+fail, agents take destructive shortcuts —
+
+5
+00:00:21,000 --> 00:00:28,000
+deleting assertions, mocking calls,
+silencing failures —
+
+6
+00:00:28,000 --> 00:00:35,000
+just to force a green build.
+Broken code slips into production every day.
+
+7
+00:00:37,000 --> 00:00:43,500
+HackProof AI eliminates
+reward hacking at the root.
+
+8
+00:00:43,500 --> 00:00:50,000
+First, our Immutable Guard
+locks existing test suites.
+
+9
+00:00:50,000 --> 00:00:56,500
+Second, Muse Spark synthesizes
+an isolated regression test,
+
+10
+00:00:56,500 --> 00:01:03,000
+proving baseline failure.
+Then, an asymmetric debate
+
+11
+00:01:03,000 --> 00:01:08,000
+between Muse Spark and Muse Wonder
+resolves the bug,
+
+12
+00:01:08,000 --> 00:01:13,000
+delivering a cryptographically
+verified PR.
+
+13
+00:01:52,000 --> 00:01:58,000
+We don't ask for trust —
+we show proof.
+
+14
+00:01:58,000 --> 00:02:06,000
+Across 12 polyglot tasks, a baseline
+agent fixed 6, a single-shot model fixed 7,
+
+15
+00:02:06,000 --> 00:02:13,000
+and the full HackProof debate fixed 9 —
+with zero test-tampering violations.
+
+16
+00:02:13,000 --> 00:02:17,000
+We even proved the debates
+themselves are necessary,
+
+17
+00:02:17,000 --> 00:02:22,000
+and published every run,
+including our failures, raw.
+
+18
+00:02:32,000 --> 00:02:38,000
+The pipeline is 100% Meta-Native:
+Contriever and Faiss for sub-15-millisecond
+
+19
+00:02:38,000 --> 00:02:44,000
+retrieval, Muse Spark for fast guardrails,
+Muse Wonder for deep reasoning.
+
+20
+00:02:47,000 --> 00:02:53,000
+HackProof AI is open-source
+under Apache 2.0.
+
+21
+00:02:53,000 --> 00:02:56,500
+Install the CLI or add our 3-line
+GitHub Action — links on screen —
+
+22
+00:02:56,500 --> 00:02:59,500
+and make every AI merge prove itself.
