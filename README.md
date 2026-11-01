@@ -264,7 +264,11 @@ injected mocks except opt-in `--live` API smokes.
 
 ## Demo video (Step 5.1)
 
-180-second technical screencast, 1920x1080@60, all terminal output real:
+[![HackProof AI — 3-minute technical screencast](https://img.youtube.com/vi/6u6ks0zCbx0/maxresdefault.jpg)](https://www.youtube.com/watch?v=6u6ks0zCbx0)
+
+Watch: [HackProof AI screencast on YouTube](https://www.youtube.com/watch?v=6u6ks0zCbx0) (183s, 1920x1080@60, EN voiceover + burned-in subtitles). In-repo copy: `media/hackproof-screencast-1080p.mp4`.
+
+180-second technical screencast, 1920x1080@60, all terminal output real — reproducible from:
 
 - `media/demo.tape` — vhs capture script, 6 scenes per Script v2
   (`voiceover_en.txt`, 1363/3000 ElevenLabs chars);
