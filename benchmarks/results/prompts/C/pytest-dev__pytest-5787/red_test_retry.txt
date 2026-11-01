@@ -1,0 +1,55 @@
+import pytest
+from _pytest.reports import TestReport
+
+
+def test_chained_exception_serialization_roundtrip():
+    inner_msg = "chain-" + "inner"
+    middle_msg = "chain-" + "middle"
+    outer_msg = "chain-" + "outer"
+
+    def raise_inner():
+        raise ValueError(inner_msg)
+
+    def raise_middle():
+        try:
+            raise_inner()
+        except Exception as exc:
+            raise ValueError(middle_msg) from exc
+
+    def raise_outer():
+        try:
+            raise_middle()
+        except Exception as exc:
+            raise ValueError(outer_msg) from exc
+
+    with pytest.raises(ValueError) as excinfo:
+        raise_outer()
+
+    longrepr = excinfo.getrepr(style="long")
+    original_text = str(longrepr)
+    assert "ValueError: " + inner_msg in original_text, original_text
+    assert "ValueError: " + middle_msg in original_text, original_text
+    assert "ValueError: " + outer_msg in original_text, original_text
+
+    report = TestReport(
+        nodeid="test_chained.py::test_chained",
+        location=("test_chained.py", 0, "test_chained"),
+        keywords={},
+        outcome="failed",
+        longrepr=longrepr,
+        when="call",
+    )
+    try:
+        restored = TestReport._from_json(report._to_json())
+        restored_text = str(restored.longrepr)
+    except Exception as exc:
+        restored = None
+        restored_text = "serialization failed: {!r}".format(exc)
+
+    assert restored is not None, restored_text
+    assert hasattr(restored.longrepr, "chain") or hasattr(
+        restored.longrepr, "reprtraceback"
+    ), restored_text
+    assert "ValueError: " + inner_msg in restored_text, restored_text
+    assert "ValueError: " + middle_msg in restored_text, restored_text
+    assert "ValueError: " + outer_msg in restored_text, restored_text

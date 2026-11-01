@@ -1,0 +1,1128 @@
+ISSUE:
+Proxy authentication bug
+<!-- Summary. -->
+
+When using proxies in python 3.8.12, I get an error 407. Using any other version of python works fine. I am assuming it could be to do with this https://docs.python.org/3/whatsnew/3.8.html#notable-changes-in-python-3-8-12.
+
+<!-- What you expected. -->
+
+I should get a status of 200.
+
+<!-- What happened instead. -->
+
+I get a status code of 407.
+
+```python
+import requests
+
+
+r = requests.get('https://example.org/', proxies=proxies) # You will need a proxy to test with, I am using a paid service.
+print(r.status_code)
+
+```
+
+## System Information
+
+```json
+{
+  "chardet": {
+    "version": null
+  },
+  "charset_normalizer": {
+    "version": "2.0.9"
+  },
+  "cryptography": {
+    "version": ""
+  },
+  "idna": {
+    "version": "3.3"
+  },
+  "implementation": {
+    "name": "CPython",
+    "version": "3.8.12"
+  },
+  "platform": {
+    "release": "5.13.0-7620-generic",
+    "system": "Linux"
+  },
+  "pyOpenSSL": {
+    "openssl_version": "",
+    "version": null
+  },
+  "requests": {
+    "version": "2.27.0"
+  },
+  "system_ssl": {
+    "version": "101010cf"
+  },
+  "urllib3": {
+    "version": "1.26.7"
+  },
+  "using_charset_normalizer": true,
+  "using_pyopenssl": false
+}
+```
+
+
+Hi @flameaway, it’s hard to tell what exactly is happening here without more info. Could you verify this issue occurs in both Requests 2.26.0 and urllib3 1.25.11?
+
+It could very well be related to the ipaddress change, I’d just like to rule out other potential factors before we start down that path.
+Requests 2.26.0 returns status 200. Either version of urllib (1.25.11, 1.26.7) work with it. Requests 2.27.0 returns the 407 error with either urllib version.
+Thanks for confirming that! It sounds like this may be localized to today's release (2.27.0) We made some minor refactorings to how we handle proxies on redirects in https://github.com/psf/requests/pull/5924. I'm not seeing anything off immediately, so this will need some digging. For the meantime, using 2.26.0 is likely the short term solution.
+
+I just want to clarify one more comment.
+
+> When using proxies in python 3.8.12, I get an error 407. Using any other version of python works fine.
+
+Does this mean 2.27.0 works on all other Python versions besides 3.8.12, or did you only test 2.27.0 with 3.8.12? I want to confirm we're not dealing with a requests release issue AND a python release issue.
+> Does this mean 2.27.0 works on all other Python versions besides 3.8.12, or did you only test 2.27.0 with 3.8.12? I want to confirm we're not dealing with a requests release issue AND a python release issue.
+
+It seems to only be having issues on 2.27.0. I didn't realize, but python 3.9.7 defaulted to installing requests 2.26.0. 
+Confirming that this error also occurs with requests 2.27.0 and Python 3.8.9
+To be clear, there is way too little information in here as it stands to be able to debug this from our end.
+Did a bisect and found: 
+```
+ef59aa0227bf463f0ed3d752b26db9b3acc64afb is the first bad commit
+commit ef59aa0227bf463f0ed3d752b26db9b3acc64afb
+Author: Nate Prewitt <Nate.Prewitt@gmail.com>
+Date:   Thu Aug 26 22:06:48 2021 -0700
+
+    Move from urlparse to parse_url for prepending schemes
+
+ requests/utils.py   | 21 +++++++++++++++------
+ tests/test_utils.py |  1 +
+ 2 files changed, 16 insertions(+), 6 deletions(-)
+```
+
+I'm using a proxy from QuotaGuard, so it has auth.
+So after doing some digging, in my case the params passed to `urlunparse` in `prepend_scheme_if_needed` went from:
+scheme: `http`
+netloc: `user:pwd@host:port`
+To:
+scheme: `http`
+netloc: `host:port`
+So the auth is lost from netloc here. The auth is still parsed and stored in the auth var, however.
+
+Adding this to `prepend_scheme_if_needed` resolves, but unaware of any other issues that might cause:
+```
+if auth:
+    netloc = '@'.join([auth, netloc])
+```
+Same issue here.
+Since 2.27.0 with Python 3.8
+
+I confirm @adamp01 investigation with mine. `user:pwd` seem to be lost during proxy parsing. I always get a 
+`Tunnel connection failed: 407 Proxy Authentication Required`
+Thanks for confirming @racam and @adamp01. We switched to using urllib3’s parser for proxies because of some recent changes to the standard lib `urlparse` around schemes. It looks like the two differ on their definition of `netloc`. I’m working on a patch to try to get this resolved.
+Thank you for helping debug this @racam and @adamp01
+
+CODE CONTEXT:
+TOP-1 FULL FILE requests/__init__.py:
+# -*- coding: utf-8 -*-
+
+#   __
+#  /__)  _  _     _   _ _/   _
+# / (   (- (/ (/ (- _)  /  _)
+#          /
+
+"""
+Requests HTTP Library
+~~~~~~~~~~~~~~~~~~~~~
+
+Requests is an HTTP library, written in Python, for human beings.
+Basic GET usage:
+
+   >>> import requests
+   >>> r = requests.get('https://www.python.org')
+   >>> r.status_code
+   200
+   >>> b'Python is a programming language' in r.content
+   True
+
+... or POST:
+
+   >>> payload = dict(key1='value1', key2='value2')
+   >>> r = requests.post('https://httpbin.org/post', data=payload)
+   >>> print(r.text)
+   {
+     ...
+     "form": {
+       "key1": "value1",
+       "key2": "value2"
+     },
+     ...
+   }
+
+The other HTTP methods are supported - see `requests.api`. Full documentation
+is at <https://requests.readthedocs.io>.
+
+:copyright: (c) 2017 by Kenneth Reitz.
+:license: Apache 2.0, see LICENSE for more details.
+"""
+
+import urllib3
+import warnings
+from .exceptions import RequestsDependencyWarning
+
+try:
+    from charset_normalizer import __version__ as charset_normalizer_version
+except ImportError:
+    charset_normalizer_version = None
+
+try:
+    from chardet import __version__ as chardet_version
+except ImportError:
+    chardet_version = None
+
+def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):
+    urllib3_version = urllib3_version.split('.')
+    assert urllib3_version != ['dev']  # Verify urllib3 isn't installed from git.
+
+    # Sometimes, urllib3 only reports its version as 16.1.
+    if len(urllib3_version) == 2:
+        urllib3_version.append('0')
+
+    # Check urllib3 for compatibility.
+    major, minor, patch = urllib3_version  # noqa: F811
+    major, minor, patch = int(major), int(minor), int(patch)
+    # urllib3 >= 1.21.1, <= 1.26
+    assert major == 1
+    assert minor >= 21
+    assert minor <= 26
+
+    # Check charset_normalizer for compatibility.
+    if chardet_version:
+        major, minor, patch = chardet_version.split('.')[:3]
+        major, minor, patch = int(major), int(minor), int(patch)
+        # chardet_version >= 3.0.2, < 5.0.0
+        assert (3, 0, 2) <= (major, minor, patch) < (5, 0, 0)
+    elif charset_normalizer_version:
+        major, minor, patch = charset_normalizer_version.split('.')[:3]
+        major, minor, patch = int(major), int(minor), int(patch)
+        # charset_normalizer >= 2.0.0 < 3.0.0
+        assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)
+    else:
+        raise Exception("You need either charset_normalizer or chardet installed")
+
+def _check_cryptography(cryptography_version):
+    # cryptography < 1.3.4
+    try:
+        cryptography_version = list(map(int, cryptography_version.split('.')))
+    except ValueError:
+        return
+
+    if cryptography_version < [1, 3, 4]:
+        warning = 'Old version of cryptography ({}) may cause slowdown.'.format(cryptography_version)
+        warnings.warn(warning, RequestsDependencyWarning)
+
+# Check imported dependencies for compatibility.
+try:
+    check_compatibility(urllib3.__version__, chardet_version, charset_normalizer_version)
+except (AssertionError, ValueError):
+    warnings.warn("urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported "
+                  "version!".format(urllib3.__version__, chardet_version, charset_normalizer_version),
+                  RequestsDependencyWarning)
+
+# Attempt to enable urllib3's fallback for SNI support
+# if the standard library doesn't support SNI or the
+# 'ssl' library isn't available.
+try:
+    try:
+        import ssl
+    except ImportError:
+        ssl = None
+
+    if not getattr(ssl, "HAS_SNI", False):
+        from urllib3.contrib import pyopenssl
+        pyopenssl.inject_into_urllib3()
+
+        # Check cryptography version
+        from cryptography import __version__ as cryptography_version
+        _check_cryptography(cryptography_version)
+except ImportError:
+    pass
+
+# urllib3's DependencyWarnings should be silenced.
+from urllib3.exceptions import DependencyWarning
+warnings.simplefilter('ignore', DependencyWarning)
+
+from .__version__ import __title__, __description__, __url__, __version__
+from .__version__ import __build__, __author__, __author_email__, __license__
+from .__version__ import __copyright__, __cake__
+
+from . import utils
+from . import packages
+from .models import Request, Response, PreparedRequest
+from .api import request, get, head, post, patch, put, delete, options
+from .sessions import session, Session
+from .status_codes import codes
+from .exceptions import (
+    RequestException, Timeout, URLRequired,
+    TooManyRedirects, HTTPError, ConnectionError,
+    FileModeWarning, ConnectTimeout, ReadTimeout, JSONDecodeError
+)
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+from logging import NullHandler
+
+logging.getLogger(__name__).addHandler(NullHandler())
+
+# FileModeWarnings go off per the default.
+warnings.simplefilter('default', FileModeWarning, append=True)
+
+
+requests/__init__.py:
+# -*- coding: utf-8 -*-
+
+#   __
+#  /__)  _  _     _   _ _/   _
+# / (   (- (/ (/ (- _)  /  _)
+#          /
+
+"""
+Requests HTTP Library
+~~~~~~~~~~~~~~~~~~~~~
+
+Requests is an HTTP library, written in Python, for human beings.
+Basic GET usage:
+
+   >>> import requests
+   >>> r = requests.get('https://www.python.org')
+   >>> r.status_code
+   200
+   >>> b'Python is a programming language' in r.content
+   True
+
+... or POST:
+
+   >>> payload = dict(key1='value1', key2='value2')
+   >>> r = requests.post('https://httpbin.org/post', data=payload)
+   >>> print(r.text)
+   {
+     ...
+     "form": {
+       "key1": "value1",
+       "key2": "value2"
+     },
+     ...
+   }
+
+The other HTTP methods are supported - see `requests.api`. Full documentation
+is at <https://requests.readthedocs.io>.
+
+:copyright: (c) 2017 by Kenneth Reitz.
+:license: Apache 2.0, see LICENSE for more details.
+"""
+
+import urllib3
+import warnings
+from .exceptions import RequestsDependencyWarning
+
+try:
+    from charset_normalizer import __version__ as charset_normalizer_version
+except ImportError:
+    charset_normalizer_version = None
+
+try:
+    from chardet import __version__ as chardet_version
+except ImportError:
+    chardet_version = None
+
+def check_compatibility(urllib3_version, chardet_version, charset_normalizer_version):
+    urllib3_version = urllib3_version.split('.')
+    assert urllib3_version != ['dev']  # Verify urllib3 isn't installed from git.
+
+    # Sometimes, urllib3 only reports its version as 16.1.
+    if len(urllib3_version) == 2:
+        urllib3_version.append('0')
+
+    # Check urllib3 for compatibility.
+    major, minor, patch = urllib3_version  # noqa: F811
+    major, minor, patch = int(major), int(minor), int(patch)
+    # urllib3 >= 1.21.1, <= 1.26
+    assert major == 1
+    assert minor >= 21
+    assert minor <= 26
+
+    # Check charset_normalizer for compatibility.
+    if chardet_version:
+        major, minor, patch = chardet_version.split('.')[:3]
+        major, minor, patch = int(major), int(minor), int(patch)
+        # chardet_version >= 3.0.2, < 5.0.0
+        assert (3, 0, 2) <= (major, minor, patch) < (5, 0, 0)
+    elif charset_normalizer_version:
+        major, minor, patch = charset_normalizer_version.split('.')[:3]
+        major, minor, patch = int(major), int(minor), int(patch)
+        # charset_normalizer >= 2.0.0 < 3.0.0
+        assert (2, 0, 0) <= (major, minor, patch) < (3, 0, 0)
+    else:
+        raise Exception("You need either charset_normalizer or chardet installed")
+
+def _check_cryptography(cryptography_version):
+    # cryptography < 1.3.4
+    try:
+        cryptography_version = list(map(int, cryptography_version.split('.')))
+    except ValueError:
+        return
+
+    if cryptography_version < [1, 3, 4]:
+        warning = 'Old version of cryptography ({}) may cause slowdown.'.format(cryptography_version)
+        warnings.warn(warning, RequestsDependencyWarning)
+
+# Check imported dependencies for compatibility.
+try:
+    check_compatibility(urllib3.__version__, chardet_version, charset_normalizer_version)
+except (AssertionError, ValueError):
+    warnings.warn("urllib3 ({}) or chardet ({})/charset_normalizer ({}) doesn't match a supported "
+                  "version!".format(urllib3.__version__, chardet_version, charset_normalizer_version),
+                  RequestsDependencyWarning)
+
+# Attempt to enable urllib3's fallback for SNI support
+# if the standard library doesn't support SNI or the
+# 'ssl' library isn't available.
+try:
+    try:
+        import ssl
+    except ImportError:
+        ssl = None
+
+    if not getattr(ssl, "HAS_SNI", False):
+        from urllib3.contrib import pyopenssl
+        pyopenssl.inject_into_urllib3()
+
+        # Check cryptography version
+        from cryptography import __version__ as cryptography_version
+        _check_cryptography(cryptography_version)
+except ImportError:
+    pass
+
+# urllib3's DependencyWarnings should be silenced.
+from urllib3.exceptions import DependencyWarning
+warnings.simplefilter('ignore', DependencyWarning)
+
+from .__version__ import __title__, __description__, __url__, __version__
+from .__version__ import __build__, __author__, __author_email__, __license__
+from .__version__ import __copyright__, __cake__
+
+from . import utils
+from . import packages
+from .models import Request, Response, PreparedRequest
+from .api import request, get, head, post, patch, put, delete, options
+from .sessions import session, Session
+from .status_codes import codes
+from .exceptions import (
+    RequestException, Timeout, URLRequired,
+    TooManyRedirects, HTTPError, ConnectionError,
+    FileModeWarning, ConnectTimeout, ReadTimeout, JSONDecodeError
+)
+
+# Set default logging handler to avoid "No handler found" warnings.
+import logging
+from logging import NullHandler
+
+logging.getLogger(__name__).addHandler(NullHandler())
+
+# FileModeWarnings go off per the default.
+warnings.simplefilter('default', FileModeWarning, append=True)
+
+
+requests/help.py:
+"""Module containing bug report helper(s)."""
+from __future__ import print_function
+
+import json
+import platform
+import sys
+import ssl
+
+import idna
+import urllib3
+
+from . import __version__ as requests_version
+
+try:
+    import charset_normalizer
+except ImportError:
+    charset_normalizer = None
+
+try:
+    import chardet
+except ImportError:
+    chardet = None
+
+try:
+    from urllib3.contrib import pyopenssl
+except ImportError:
+    pyopenssl = None
+    OpenSSL = None
+    cryptography = None
+else:
+    import OpenSSL
+    import cryptography
+
+
+def _implementation():
+    """Return a dict with the Python implementation and version.
+
+    Provide both the name and the version of the Python implementation
+    currently running. For example, on CPython 2.7.5 it will return
+    {'name': 'CPython', 'version': '2.7.5'}.
+
+    This function works best on CPython and PyPy: in particular, it probably
+    doesn't work for Jython or IronPython. Future investigation should be done
+    to work out the correct shape of the code for those platforms.
+    """
+    implementation = platform.python_implementation()
+
+    if implementation == 'CPython':
+        implementation_version = platform.python_version()
+    elif implementation == 'PyPy':
+        implementation_version = '%s.%s.%s' % (sys.pypy_version_info.major,
+                                               sys.pypy_version_info.minor,
+                                               sys.pypy_version_info.micro)
+        if sys.pypy_version_info.releaselevel != 'final':
+            implementation_version = ''.join([
+                implementation_version, sys.pypy_version_info.releaselevel
+            ])
+    elif implementation == 'Jython':
+        implementation_version = platform.python_version()  # Complete Guess
+    elif implementation == 'IronPython':
+        implementation_version = platform.python_version()  # Complete Guess
+    else:
+        implementation_version = 'Unknown'
+
+    return {'name': implementation, 'version': implementation_version}
+
+
+def info():
+    """Generate information for a bug report."""
+    try:
+        platform_info = {
+            'system': platform.system(),
+            'release': platform.release(),
+        }
+    except IOError:
+        platform_info = {
+            'system': 'Unknown',
+            'release': 'Unknown',
+        }
+
+    implementation_info = _implementation()
+    urllib3_info = {'version': urllib3.__version__}
+    charset_normalizer_info = {'version': None}
+    chardet_info = {'version': None}
+    if charset_normalizer:
+        charset_normalizer_info = {'version': charset_normalizer.__version__}
+    if chardet:
+        chardet_info = {'version': chardet.__version__}
+
+    pyopenssl_info = {
+        'version': None,
+        'openssl_version': '',
+    }
+    if OpenSSL:
+        pyopenssl_info = {
+            'version': OpenSSL.__version__,
+            'openssl_version': '%x' % OpenSSL.SSL.OPENSSL_VERSION_NUMBER,
+        }
+    cryptography_info = {
+        'version': getattr(cryptography, '__version__', ''),
+    }
+    idna_info = {
+        'version': getattr(idna, '__version__', ''),
+    }
+
+    system_ssl = ssl.OPENSSL_VERSION_NUMBER
+    system_ssl_info = {
+        'version': '%x' % system_ssl if system_ssl is not None else ''
+    }
+
+    return {
+        'platform': platform_info,
+        'implementation': implementation_info,
+        'system_ssl': system_ssl_info,
+        'using_pyopenssl': pyopenssl is not None,
+        'using_charset_normalizer': chardet is None,
+        'pyOpenSSL': pyopenssl_info,
+        'urllib3': urllib3_info,
+        'chardet': chardet_info,
+        'charset_normalizer': charset_normalizer_info,
+        'cryptography': cryptography_info,
+        'idna': idna_info,
+        'requests': {
+            'version': requests_version,
+        },
+    }
+
+
+def main():
+    """Pretty-print the bug information as JSON."""
+    print(json.dumps(info(), sort_keys=True, indent=2))
+
+
+if __name__ == '__main__':
+    main()
+
+
+requests/utils.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.utils
+~~~~~~~~~~~~~~
+
+This module provides utility functions that are used within Requests
+that are also useful for external consumption.
+"""
+
+import codecs
+import contextlib
+import io
+import os
+import re
+import socket
+import struct
+import sys
+import tempfile
+import warnings
+import zipfile
+from collections import OrderedDict
+from urllib3.util import make_headers
+from urllib3.util import parse_url
+
+from .__version__ import __version__
+from . import certs
+# to_native_string is unused here, but imported here for backwards compatibility
+from ._internal_utils import to_native_string
+from .compat import parse_http_list as _parse_list_header
+from .compat import (
+    quote, urlparse, bytes, str, unquote, getproxies,
+    proxy_bypass, urlunparse, basestring, integer_types, is_py3,
+    proxy_bypass_environment, getproxies_environment, Mapping)
+from .cookies import cookiejar_from_dict
+from .structures import CaseInsensitiveDict
+from .exceptions import (
+    InvalidURL, InvalidHeader, FileModeWarning, UnrewindableBodyError)
+
+NETRC_FILES = ('.netrc', '_netrc')
+
+DEFAULT_CA_BUNDLE_PATH = certs.where()
+
+DEFAULT_PORTS = {'http': 80, 'https': 443}
+
+# Ensure that ', ' is used to preserve previous delimiter behavior.
+DEFAULT_ACCEPT_ENCODING = ", ".join(
+    re.split(r",\s*", make_headers(accept_encoding=True)["accept-encoding"])
+)
+
+
+if sys.platform == 'win32':
+    # provide a proxy_bypass version on Windows without DNS lookups
+
+    def proxy_bypass_registry(host):
+        try:
+            if is_py3:
+                import winreg
+            else:
+                import _winreg as winreg
+        except ImportError:
+            return False
+
+        try:
+            internetSettings = winreg.OpenKey(winreg.HKEY_CURRENT_USER,
+                r'Software\Microsoft\Windows\CurrentVersion\Internet Settings')
+            # ProxyEnable could be REG_SZ or REG_DWORD, normalizing it
+            proxyEnable = int(winreg.QueryValueEx(internetSettings,
+                                              'ProxyEnable')[0])
+            # ProxyOverride is almost always a string
+            proxyOverride = winreg.QueryValueEx(internetSettings,
+                                                'ProxyOverride')[0]
+        except OSError:
+            return False
+        if not proxyEnable or not proxyOverride:
+            return False
+
+        # make a check value list from the registry entry: replace the
+        # '<local>' string by the localhost entry and the corresponding
+        # canonical entry.
+        proxyOverride = proxyOverride.split(';')
+        # now check if we match one of the registry values.
+        for test in proxyOverride:
+            if test == '<local>':
+                if '.' not in host:
+                    return True
+            test = test.replace(".", r"\.")     # mask dots
+            test = test.replace("*", r".*")     # change glob sequence
+            test = test.replace("?", r".")      # change glob char
+            if re.match(test, host, re.I):
+                return True
+        return False
+
+    def proxy_bypass(host):  # noqa
+        """Return True, if the host should be bypassed.
+
+        Checks proxy settings gathered from the environment, if specified,
+        or the registry.
+        """
+        if getproxies_environment():
+            return proxy_bypass_environment(host)
+        else:
+            return proxy_bypass_registry(host)
+
+
+def dict_to_sequence(d):
+    """Returns an internal sequence dictionary update."""
+
+    if hasattr(d, 'items'):
+        d = d.items()
+
+    return d
+
+
+def super_len(o):
+    total_length = None
+    current_position = 0
+
+    if hasattr(o, '__len__'):
+        total_length = len(o)
+
+    elif hasattr(o, 'len'):
+        total_length = o.len
+
+    elif hasattr(o, 'fileno'):
+        try:
+            fileno = o.fileno()
+        except (io.UnsupportedOperation, AttributeError):
+            # AttributeError is a surprising exception, seeing as how we've just checked
+            # that `hasattr(o, 'fileno')`.  It happens for objects obtained via
+            # `Tarfile.extractfile()`, per issue 5229.
+            pass
+        else:
+            total_length = os.fstat(fileno).st_size
+
+            # Having used fstat to determine the file length, we need to
+            # confirm that this file was opened up in binary mode.
+            if 'b' not in o.mode:
+                warnings.warn((
+                    "Requests has determined the content-length for this "
+                    "request using the binary size of the file: however, the "
+                    "file has been opened in text mode (i.e. without the 'b' "
+                    "flag in the mode). This may lead to an incorrect "
+                    "content-length. In Requests 3.0, support will be removed "
+                    "for files in text mode."),
+                    FileModeWarning
+                )
+
+    if hasattr(o, 'tell'):
+        try:
+            current_position = o.tell()
+        except (OSError, IOError):
+            # This can happen in some weird situations, such as when the file
+            # is actually a special file descriptor like stdin. In this
+            # instance, we don't know what the length is, so set it to zero and
+            # let requests chunk it instead.
+            if total_length is not None:
+                current_position = total_length
+        else:
+            if hasattr(o, 'seek') and total_length is None:
+                # StringIO and BytesIO have seek but no usable fileno
+                try:
+                    # seek to end of file
+                    o.seek(0, 2)
+                    total_length = o.tell()
+
+                    # seek back to current position to support
+                    # partially read file-like objects
+                    o.seek(current_position or 0)
+                except (OSError, IOError):
+                    total_length = 0
+
+    if total_length is None:
+        total_length = 0
+
+    return max(0, total_length - current_position)
+
+
+def get_netrc_auth(url, raise_errors=False):
+    """Returns the Requests tuple auth for a given url from netrc."""
+
+    netrc_file = os.environ.get('NETRC')
+    if netrc_file is not None:
+        netrc_locations = (netrc_file,)
+    else:
+        netrc_locations = ('~/{}'.format(f) for f in NETRC_FILES)
+
+    try:
+        from netrc import netrc, NetrcParseError
+
+        netrc_path = None
+
+        for f in netrc_locations:
+            try:
+                loc = os.path.expanduser(f)
+            except KeyError:
+                # os.path.expanduser can fail when $HOME is undefined and
+                # getpwuid fails. See https://bugs.python.org/issue20164 &
+                # https://github.com/psf/requests/issues/1846
+                return
+
+            if os.path.exists(loc):
+                netrc_path = loc
+                break
+
+        # Abort early if there isn't one.
+        if netrc_path is None:
+            return
+
+        ri = urlparse(url)
+
+        # Strip port numbers from netloc. This weird `if...encode`` dance is
+        # used for Python 3.2, which doesn't support unicode literals.
+        splitstr = b':'
+        if isinstance(url, str):
+            splitstr = splitstr.decode('ascii')
+        host = ri.netloc.split(splitstr)[0]
+
+        try:
+            _netrc = netrc(netrc_path).authenticators(host)
+            if _netrc:
+                # Return with login / password
+                login_i = (0 if _netrc[0] else 1)
+                return (_netrc[login_i], _netrc[2])
+        except (NetrcParseError, IOError):
+            # If there was a parsing error or a permissions issue reading the file,
+            # we'll just skip netrc auth unless explicitly asked to raise errors.
+            if raise_errors:
+                raise
+
+    # App Engine hackiness.
+    except (ImportError, AttributeError):
+        pass
+
+
+def guess_filename(obj):
+    """Tries to guess the filename of the given object."""
+    name = getattr(obj, 'name', None)
+  
+
+requests/sessions.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.sessions
+~~~~~~~~~~~~~~~~~
+
+This module provides a Session object to manage and persist settings across
+requests (cookies, auth, proxies).
+"""
+import os
+import sys
+import time
+from datetime import timedelta
+from collections import OrderedDict
+
+from .auth import _basic_auth_str
+from .compat import cookielib, is_py3, urljoin, urlparse, Mapping
+from .cookies import (
+    cookiejar_from_dict, extract_cookies_to_jar, RequestsCookieJar, merge_cookies)
+from .models import Request, PreparedRequest, DEFAULT_REDIRECT_LIMIT
+from .hooks import default_hooks, dispatch_hook
+from ._internal_utils import to_native_string
+from .utils import to_key_val_list, default_headers, DEFAULT_PORTS
+from .exceptions import (
+    TooManyRedirects, InvalidSchema, ChunkedEncodingError, ContentDecodingError)
+
+from .structures import CaseInsensitiveDict
+from .adapters import HTTPAdapter
+
+from .utils import (
+    requote_uri, get_environ_proxies, get_netrc_auth, should_bypass_proxies,
+    get_auth_from_url, rewind_body, resolve_proxies
+)
+
+from .status_codes import codes
+
+# formerly defined here, reexposed here for backward compatibility
+from .models import REDIRECT_STATI
+
+# Preferred clock, based on which one is more accurate on a given system.
+if sys.platform == 'win32':
+    try:  # Python 3.4+
+        preferred_clock = time.perf_counter
+    except AttributeError:  # Earlier than Python 3.
+        preferred_clock = time.clock
+else:
+    preferred_clock = time.time
+
+
+def merge_setting(request_setting, session_setting, dict_class=OrderedDict):
+    """Determines appropriate setting for a given request, taking into account
+    the explicit setting on that request, and the setting in the session. If a
+    setting is a dictionary, they will be merged together using `dict_class`
+    """
+
+    if session_setting is None:
+        return request_setting
+
+    if request_setting is None:
+        return session_setting
+
+    # Bypass if not a dictionary (e.g. verify)
+    if not (
+            isinstance(session_setting, Mapping) and
+            isinstance(request_setting, Mapping)
+    ):
+        return request_setting
+
+    merged_setting = dict_class(to_key_val_list(session_setting))
+    merged_setting.update(to_key_val_list(request_setting))
+
+    # Remove keys that are set to None. Extract keys first to avoid altering
+    # the dictionary during iteration.
+    none_keys = [k for (k, v) in merged_setting.items() if v is None]
+    for key in none_keys:
+        del merged_setting[key]
+
+    return merged_setting
+
+
+def merge_hooks(request_hooks, session_hooks, dict_class=OrderedDict):
+    """Properly merges both requests and session hooks.
+
+    This is necessary because when request_hooks == {'response': []}, the
+    merge breaks Session hooks entirely.
+    """
+    if session_hooks is None or session_hooks.get('response') == []:
+        return request_hooks
+
+    if request_hooks is None or request_hooks.get('response') == []:
+        return session_hooks
+
+    return merge_setting(request_hooks, session_hooks, dict_class)
+
+
+class SessionRedirectMixin(object):
+
+    def get_redirect_target(self, resp):
+        """Receives a Response. Returns a redirect URI or ``None``"""
+        # Due to the nature of how requests processes redirects this method will
+        # be called at least once upon the original response and at least twice
+        # on each subsequent redirect response (if any).
+        # If a custom mixin is used to handle this logic, it may be advantageous
+        # to cache the redirect location onto the response object as a private
+        # attribute.
+        if resp.is_redirect:
+            location = resp.headers['location']
+            # Currently the underlying http module on py3 decode headers
+            # in latin1, but empirical evidence suggests that latin1 is very
+            # rarely used with non-ASCII characters in HTTP headers.
+            # It is more likely to get UTF8 header rather than latin1.
+            # This causes incorrect handling of UTF8 encoded location headers.
+            # To solve this, we re-encode the location in latin1.
+            if is_py3:
+                location = location.encode('latin1')
+            return to_native_string(location, 'utf8')
+        return None
+
+    def should_strip_auth(self, old_url, new_url):
+        """Decide whether Authorization header should be removed when redirecting"""
+        old_parsed = urlparse(old_url)
+        new_parsed = urlparse(new_url)
+        if old_parsed.hostname != new_parsed.hostname:
+            return True
+        # Special case: allow http -> https redirect when using the standard
+        # ports. This isn't specified by RFC 7235, but is kept to avoid
+        # breaking backwards compatibility with older versions of requests
+        # that allowed any redirects on the same host.
+        if (old_parsed.scheme == 'http' and old_parsed.port in (80, None)
+                and new_parsed.scheme == 'https' and new_parsed.port in (443, None)):
+            return False
+
+        # Handle default port usage corresponding to scheme.
+        changed_port = old_parsed.port != new_parsed.port
+        changed_scheme = old_parsed.scheme != new_parsed.scheme
+        default_port = (DEFAULT_PORTS.get(old_parsed.scheme, None), None)
+        if (not changed_scheme and old_parsed.port in default_port
+                and new_parsed.port in default_port):
+            return False
+
+        # Standard case: root URI must match
+        return changed_port or changed_scheme
+
+    def resolve_redirects(self, resp, req, stream=False, timeout=None,
+                          verify=True, cert=None, proxies=None, yield_requests=False, **adapter_kwargs):
+        """Receives a Response. Returns a generator of Responses or Requests."""
+
+        hist = []  # keep track of history
+
+        url = self.get_redirect_target(resp)
+        previous_fragment = urlparse(req.url).fragment
+        while url:
+            prepared_request = req.copy()
+
+            # Update history and keep track of redirects.
+            # resp.history must ignore the original request in this loop
+            hist.append(resp)
+            resp.history = hist[1:]
+
+            try:
+                resp.content  # Consume socket so it can be released
+            except (ChunkedEncodingError, ContentDecodingError, RuntimeError):
+                resp.raw.read(decode_content=False)
+
+            if len(resp.history) >= self.max_redirects:
+                raise TooManyRedirects('Exceeded {} redirects.'.format(self.max_redirects), response=resp)
+
+            # Release the connection back into the pool.
+            resp.close()
+
+            # Handle redirection without scheme (see: RFC 1808 Section 4)
+            if url.startswith('//'):
+                parsed_rurl = urlparse(resp.url)
+                url = ':'.join([to_native_string(parsed_rurl.scheme), url])
+
+            # Normalize url case and attach previous fragment if needed (RFC 7231 7.1.2)
+            parsed = urlparse(url)
+            if parsed.fragment == '' and previous_fragment:
+                parsed = parsed._replace(fragment=previous_fragment)
+            elif parsed.fragment:
+                previous_fragment = parsed.fragment
+            url = parsed.geturl()
+
+            # Facilitate relative 'location' headers, as allowed by RFC 7231.
+            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')
+            # Compliant with RFC3986, we percent encode the url.
+            if not parsed.netloc:
+                url = urljoin(resp.url, requote_uri(url))
+            else:
+                url = requote_uri(url)
+
+            prepared_request.url = to_native_string(url)
+
+            self.rebuild_method(prepared_request, resp)
+
+            # https://github.com/psf/requests/issues/1084
+            if resp.status_code not in (codes.temporary_redirect, codes.permanent_redirect):
+                # https://github.com/psf/requests/issues/3490
+                purged_hea
+
+setup.py:
+#!/usr/bin/env python
+# Learn more: https://github.com/kennethreitz/setup.py
+import os
+import sys
+
+from codecs import open
+
+from setuptools import setup
+from setuptools.command.test import test as TestCommand
+
+here = os.path.abspath(os.path.dirname(__file__))
+
+class PyTest(TestCommand):
+    user_options = [('pytest-args=', 'a', "Arguments to pass into py.test")]
+
+    def initialize_options(self):
+        TestCommand.initialize_options(self)
+        try:
+            from multiprocessing import cpu_count
+            self.pytest_args = ['-n', str(cpu_count()), '--boxed']
+        except (ImportError, NotImplementedError):
+            self.pytest_args = ['-n', '1', '--boxed']
+
+    def finalize_options(self):
+        TestCommand.finalize_options(self)
+        self.test_args = []
+        self.test_suite = True
+
+    def run_tests(self):
+        import pytest
+
+        errno = pytest.main(self.pytest_args)
+        sys.exit(errno)
+
+# 'setup.py publish' shortcut.
+if sys.argv[-1] == 'publish':
+    os.system('python setup.py sdist bdist_wheel')
+    os.system('twine upload dist/*')
+    sys.exit()
+
+packages = ['requests']
+
+requires = [
+    'charset_normalizer~=2.0.0; python_version >= "3"',
+    'chardet>=3.0.2,<5; python_version < "3"',
+    'idna>=2.5,<3; python_version < "3"',
+    'idna>=2.5,<4; python_version >= "3"',
+    'urllib3>=1.21.1,<1.27',
+    'certifi>=2017.4.17'
+
+]
+test_requirements = [
+    'pytest-httpbin==0.0.7',
+    'pytest-cov',
+    'pytest-mock',
+    'pytest-xdist',
+    'PySocks>=1.5.6, !=1.5.7',
+    'pytest>=3'
+]
+
+about = {}
+with open(os.path.join(here, 'requests', '__version__.py'), 'r', 'utf-8') as f:
+    exec(f.read(), about)
+
+with open('README.md', 'r', 'utf-8') as f:
+    readme = f.read()
+
+setup(
+    name=about['__title__'],
+    version=about['__version__'],
+    description=about['__description__'],
+    long_description=readme,
+    long_description_content_type='text/markdown',
+    author=about['__author__'],
+    author_email=about['__author_email__'],
+    url=about['__url__'],
+    packages=packages,
+    package_data={'': ['LICENSE', 'NOTICE']},
+    package_dir={'requests': 'requests'},
+    include_package_data=True,
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*, !=3.5.*",
+    install_requires=requires,
+    license=about['__license__'],
+    zip_safe=False,
+    classifiers=[
+        'Development Status :: 5 - Production/Stable',
+        'Environment :: Web Environment',
+        'Intended Audience :: Developers',
+        'License :: OSI Approved :: Apache Software License',
+        'Natural Language :: English',
+        'Operating System :: OS Independent',
+        'Programming Language :: Python',
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
+        'Programming Language :: Python :: 3.7',
+        'Programming Language :: Python :: 3.8',
+        'Programming Language :: Python :: 3.9',
+        'Programming Language :: Python :: 3.10',
+        'Programming Language :: Python :: Implementation :: CPython',
+        'Programming Language :: Python :: Implementation :: PyPy',
+        'Topic :: Internet :: WWW/HTTP',
+        'Topic :: Software Development :: Libraries',
+    ],
+    cmdclass={'test': PyTest},
+    tests_require=test_requirements,
+    extras_require={
+        'security': [],
+        'socks': ['PySocks>=1.5.6, !=1.5.7'],
+        'socks:sys_platform == "win32" and python_version == "2.7"': ['win_inet_pton'],
+        'use_chardet_on_py3': ['chardet>=3.0.2,<5']
+    },
+    project_urls={
+        'Documentation': 'https://requests.readthedocs.io',
+        'Source': 'https://github.com/psf/requests',
+    },
+)

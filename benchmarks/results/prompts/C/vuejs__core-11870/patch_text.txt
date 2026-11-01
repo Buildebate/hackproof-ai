@@ -1,0 +1,36 @@
+packages/runtime-core/src/helpers/renderList.ts
+<<<<<<< SEARCH
+import { isReactive, shallowReadArray, toReactive } from '@vue/reactivity'
+=======
+import {
+  isReactive,
+  isShallow,
+  shallowReadArray,
+  toReactive,
+} from '@vue/reactivity'
+>>>>>>> REPLACE
+packages/runtime-core/src/helpers/renderList.ts
+<<<<<<< SEARCH
+  if (sourceIsArray || isString(source)) {
+    const sourceIsReactiveArray = sourceIsArray && isReactive(source)
+    if (sourceIsReactiveArray) {
+      source = shallowReadArray(source)
+    }
+    ret = new Array(source.length)
+    for (let i = 0, l = source.length; i < l; i++) {
+      ret[i] = renderItem(
+        sourceIsReactiveArray ? toReactive(source[i]) : source[i],
+=======
+  if (sourceIsArray || isString(source)) {
+    const sourceIsReactiveArray = sourceIsArray && isReactive(source)
+    const sourceIsShallow = isShallow(source)
+    if (sourceIsReactiveArray) {
+      source = shallowReadArray(source)
+    }
+    ret = new Array(source.length)
+    for (let i = 0, l = source.length; i < l; i++) {
+      ret[i] = renderItem(
+        sourceIsReactiveArray && !sourceIsShallow
+          ? toReactive(source[i])
+          : source[i],
+>>>>>>> REPLACE

@@ -1,0 +1,18 @@
+requests/models.py
+<<<<<<< SEARCH
+        if body:
+            length = super_len(body)
+
+        self.body = body
+        self.headers['Content-Length'] = str(length or 0)
+=======
+        if body:
+            length = super_len(body)
+
+        self.body = body
+
+        if length:
+            self.headers['Content-Length'] = str(length)
+        elif self.method not in ('GET', 'HEAD'):
+            self.headers['Content-Length'] = '0'
+>>>>>>> REPLACE

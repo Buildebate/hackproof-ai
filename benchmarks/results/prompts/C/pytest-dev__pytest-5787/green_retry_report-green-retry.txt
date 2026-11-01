@@ -1,0 +1,13 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [F2P] testing/test_reports.py::TestReportSerialization::test_chained_exceptions[TestReport] (base=failed agent=failed):
+  AssertionError: assert False  +  where False = isinstance(<<class '_pytest._code.code.ReprExceptionInfo'> instance at e260c620b460>, ExceptionChainRepr)
+- [F2P] testing/test_reports.py::TestReportSerialization::test_chained_exceptions[CollectReport] (base=failed agent=failed):
+  AssertionError: assert False  +  where False = isinstance(<<class '_pytest._code.code.ReprExceptionInfo'> instance at e260c618d7f0>, ExceptionChainRepr)
+- [P2P] testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr (base=passed agent=failed):
+  TypeError: line() missing 1 required positional argument: 'line'
+- [P2P] testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[cause-The (base=passed agent=failed):
+  TypeError: 'NoneType' object is not iterable
+- [P2P] testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_without_traceback[context-During (base=passed agent=failed):
+  TypeError: 'NoneType' object is not iterable
+- [P2P] testing/code/test_excinfo.py::TestFormattedExcinfo::test_exc_chain_repr_cycle (base=passed agent=failed):
+  TypeError: line() missing 1 required positional argument: 'line'

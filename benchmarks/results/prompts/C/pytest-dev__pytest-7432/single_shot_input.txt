@@ -1,0 +1,1436 @@
+ISSUE:
+skipping: --runxfail breaks pytest.mark.skip location reporting
+pytest versions: 5.4.x, current master
+
+When `@pytest.mark.skip`/`skipif` marks are used to skip a test, for example
+
+```py
+import pytest
+@pytest.mark.skip
+def test_skip_location() -> None:
+    assert 0
+```
+
+the expected skip location reported should point to the item itself, and this is indeed what happens when running with `pytest -rs`:
+
+```
+SKIPPED [1] test_it.py:3: unconditional skip
+```
+
+However, adding `pytest -rs --runxfail` breaks this:
+
+```
+SKIPPED [1] src/_pytest/skipping.py:238: unconditional skip
+```
+
+The `--runxfail` is only about xfail and should not affect this at all.
+
+---
+
+Hint: the bug is in `src/_pytest/skipping.py`, the `pytest_runtest_makereport` hook.
+
+
+Can I look into this one?
+@debugduck Sure!
+Awesome! I'll get started on it and open up a PR when I find it. I'm a bit new, so I'm still learning about the code base.
+
+CODE CONTEXT:
+TOP-1 FULL FILE src/_pytest/skipping.py:
+""" support for skip/xfail functions and markers. """
+import os
+import platform
+import sys
+import traceback
+from typing import Generator
+from typing import Optional
+from typing import Tuple
+
+import attr
+
+import _pytest._code
+from _pytest.compat import TYPE_CHECKING
+from _pytest.config import Config
+from _pytest.config import hookimpl
+from _pytest.config.argparsing import Parser
+from _pytest.mark.structures import Mark
+from _pytest.nodes import Item
+from _pytest.outcomes import fail
+from _pytest.outcomes import skip
+from _pytest.outcomes import xfail
+from _pytest.reports import BaseReport
+from _pytest.runner import CallInfo
+from _pytest.store import StoreKey
+
+if TYPE_CHECKING:
+    from typing import Type
+
+
+def pytest_addoption(parser: Parser) -> None:
+    group = parser.getgroup("general")
+    group.addoption(
+        "--runxfail",
+        action="store_true",
+        dest="runxfail",
+        default=False,
+        help="report the results of xfail tests as if they were not marked",
+    )
+
+    parser.addini(
+        "xfail_strict",
+        "default for the strict parameter of xfail "
+        "markers when not given explicitly (default: False)",
+        default=False,
+        type="bool",
+    )
+
+
+def pytest_configure(config: Config) -> None:
+    if config.option.runxfail:
+        # yay a hack
+        import pytest
+
+        old = pytest.xfail
+        config._cleanup.append(lambda: setattr(pytest, "xfail", old))
+
+        def nop(*args, **kwargs):
+            pass
+
+        nop.Exception = xfail.Exception  # type: ignore[attr-defined] # noqa: F821
+        setattr(pytest, "xfail", nop)
+
+    config.addinivalue_line(
+        "markers",
+        "skip(reason=None): skip the given test function with an optional reason. "
+        'Example: skip(reason="no way of currently testing this") skips the '
+        "test.",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif(condition, ..., *, reason=...): "
+        "skip the given test function if any of the conditions evaluate to True. "
+        "Example: skipif(sys.platform == 'win32') skips the test if we are on the win32 platform. "
+        "See https://docs.pytest.org/en/stable/reference.html#pytest-mark-skipif",
+    )
+    config.addinivalue_line(
+        "markers",
+        "xfail(condition, ..., *, reason=..., run=True, raises=None, strict=xfail_strict): "
+        "mark the test function as an expected failure if any of the conditions "
+        "evaluate to True. Optionally specify a reason for better reporting "
+        "and run=False if you don't even want to execute the test function. "
+        "If only specific exception(s) are expected, you can list them in "
+        "raises, and if the test fails in other ways, it will be reported as "
+        "a true failure. See https://docs.pytest.org/en/stable/reference.html#pytest-mark-xfail",
+    )
+
+
+def evaluate_condition(item: Item, mark: Mark, condition: object) -> Tuple[bool, str]:
+    """Evaluate a single skipif/xfail condition.
+
+    If an old-style string condition is given, it is eval()'d, otherwise the
+    condition is bool()'d. If this fails, an appropriately formatted pytest.fail
+    is raised.
+
+    Returns (result, reason). The reason is only relevant if the result is True.
+    """
+    # String condition.
+    if isinstance(condition, str):
+        globals_ = {
+            "os": os,
+            "sys": sys,
+            "platform": platform,
+            "config": item.config,
+        }
+        if hasattr(item, "obj"):
+            globals_.update(item.obj.__globals__)  # type: ignore[attr-defined]
+        try:
+            condition_code = _pytest._code.compile(condition, mode="eval")
+            result = eval(condition_code, globals_)
+        except SyntaxError as exc:
+            msglines = [
+                "Error evaluating %r condition" % mark.name,
+                "    " + condition,
+                "    " + " " * (exc.offset or 0) + "^",
+                "SyntaxError: invalid syntax",
+            ]
+            fail("\n".join(msglines), pytrace=False)
+        except Exception as exc:
+            msglines = [
+                "Error evaluating %r condition" % mark.name,
+                "    " + condition,
+                *traceback.format_exception_only(type(exc), exc),
+            ]
+            fail("\n".join(msglines), pytrace=False)
+
+    # Boolean condition.
+    else:
+        try:
+            result = bool(condition)
+        except Exception as exc:
+            msglines = [
+                "Error evaluating %r condition as a boolean" % mark.name,
+                *traceback.format_exception_only(type(exc), exc),
+            ]
+            fail("\n".join(msglines), pytrace=False)
+
+    reason = mark.kwargs.get("reason", None)
+    if reason is None:
+        if isinstance(condition, str):
+            reason = "condition: " + condition
+        else:
+            # XXX better be checked at collection time
+            msg = (
+                "Error evaluating %r: " % mark.name
+                + "you need to specify reason=STRING when using booleans as conditions."
+            )
+            fail(msg, pytrace=False)
+
+    return result, reason
+
+
+@attr.s(slots=True, frozen=True)
+class Skip:
+    """The result of evaluate_skip_marks()."""
+
+    reason = attr.ib(type=str)
+
+
+def evaluate_skip_marks(item: Item) -> Optional[Skip]:
+    """Evaluate skip and skipif marks on item, returning Skip if triggered."""
+    for mark in item.iter_markers(name="skipif"):
+        if "condition" not in mark.kwargs:
+            conditions = mark.args
+        else:
+            conditions = (mark.kwargs["condition"],)
+
+        # Unconditional.
+        if not conditions:
+            reason = mark.kwargs.get("reason", "")
+            return Skip(reason)
+
+        # If any of the conditions are true.
+        for condition in conditions:
+            result, reason = evaluate_condition(item, mark, condition)
+            if result:
+                return Skip(reason)
+
+    for mark in item.iter_markers(name="skip"):
+        if "reason" in mark.kwargs:
+            reason = mark.kwargs["reason"]
+        elif mark.args:
+            reason = mark.args[0]
+        else:
+            reason = "unconditional skip"
+        return Skip(reason)
+
+    return None
+
+
+@attr.s(slots=True, frozen=True)
+class Xfail:
+    """The result of evaluate_xfail_marks()."""
+
+    reason = attr.ib(type=str)
+    run = attr.ib(type=bool)
+    strict = attr.ib(type=bool)
+    raises = attr.ib(type=Optional[Tuple["Type[BaseException]", ...]])
+
+
+def evaluate_xfail_marks(item: Item) -> Optional[Xfail]:
+    """Evaluate xfail marks on item, returning Xfail if triggered."""
+    for mark in item.iter_markers(name="xfail"):
+        run = mark.kwargs.get("run", True)
+        strict = mark.kwargs.get("strict", item.config.getini("xfail_strict"))
+        raises = mark.kwargs.get("raises", None)
+        if "condition" not in mark.kwargs:
+            conditions = mark.args
+        else:
+            conditions = (mark.kwargs["condition"],)
+
+        # Unconditional.
+        if not conditions:
+            reason = mark.kwargs.get("reason", "")
+            return Xfail(reason, run, strict, raises)
+
+        # If any of the conditions are true.
+        for condition in conditions:
+            result, reason = evaluate_condition(item, mark, condition)
+            if result:
+                return Xfail(reason, run, strict, raises)
+
+    return None
+
+
+# Whether skipped due to skip or skipif marks.
+skipped_by_mark_key = StoreKey[bool]()
+# Saves the xfail mark evaluation. Can be refreshed during call if None.
+xfailed_key = StoreKey[Optional[Xfail]]()
+unexpectedsuccess_key = StoreKey[str]()
+
+
+@hookimpl(tryfirst=True)
+def pytest_runtest_setup(item: Item) -> None:
+    item._store[skipped_by_mark_key] = False
+
+    skipped = evaluate_skip_marks(item)
+    if skipped:
+        item._store[skipped_by_mark_key] = True
+        skip(skipped.reason)
+
+    if not item.config.option.runxfail:
+        item._store[xfailed_key] = xfailed = evaluate_xfail_marks(item)
+        if xfailed and not xfailed.run:
+            xfail("[NOTRUN] " + xfailed.reason)
+
+
+@hookimpl(hookwrapper=True)
+def pytest_runtest_call(item: Item) -> Generator[None, None, None]:
+    xfailed = item._store.get(xfailed_key, None)
+    if xfailed is None:
+        item._store[xfailed_key] = xfailed = evaluate_xfail_marks(item)
+
+    if not item.config.option.runxfail:
+        if xfailed and not xfailed.run:
+            xfail("[NOTRUN] " + xfailed.reason)
+
+    yield
+
+
+@hookimpl(hookwrapper=True)
+def pytest_runtest_makereport(item: Item, call: CallInfo[None]):
+    outcome = yield
+    rep = outcome.get_result()
+    xfailed = item._store.get(xfailed_key, None)
+    # unittest special case, see setting of unexpectedsuccess_key
+    if unexpectedsuccess_key in item._store and rep.when == "call":
+        reason = item._store[unexpectedsuccess_key]
+        if reason:
+            rep.longrepr = "Unexpected success: {}".format(reason)
+        else:
+            rep.longrepr = "Unexpected success"
+        rep.outcome = "failed"
+    elif item.config.option.runxfail:
+        pass  # don't interfere
+    elif call.excinfo and isinstance(call.excinfo.value, xfail.Exception):
+        assert call.excinfo.value.msg is not None
+        rep.wasxfail = "reason: " + call.excinfo.value.msg
+        rep.outcome = "skipped"
+    elif not rep.skipped and xfailed:
+        if call.excinfo:
+            raises = xfailed.raises
+            if raises is not None and not isinstance(call.excinfo.value, raises):
+                rep.outcome = "failed"
+            else:
+                rep.outcome = "skipped"
+                rep.wasxfail = xfailed.reason
+        elif call.when == "call":
+            if xfailed.strict:
+                rep.outcome = "failed"
+                rep.longrepr = "[XPASS(strict)] " + xfailed.reason
+            else:
+                rep.outcome = "passed"
+                rep.wasxfail = xfailed.reason
+    elif (
+        item._store.get(skipped_by_mark_key, True)
+        and rep.skipped
+        and type(rep.longrepr) is tuple
+    ):
+        # skipped by mark.skipif; change the location of the failure
+        # to point to the item definition, otherwise it will display
+        # the location of where the skip exception was raised within pytest
+        _, _, reason = rep.longrepr
+        filename, line = item.reportinfo()[:2]
+        assert line is not None
+        rep.longrepr = str(filename), line + 1, reason
+
+
+def pytest_report_teststatus(report: BaseReport) -> Optional[Tuple[str, str, str]]:
+    if hasattr(report, "wasxfail"):
+        if report.skipped:
+            return "xfailed", "x", "XFAIL"
+        elif report.passed:
+            return "xpassed", "X", "XPASS"
+    return None
+
+
+src/_pytest/skipping.py:
+""" support for skip/xfail functions and markers. """
+import os
+import platform
+import sys
+import traceback
+from typing import Generator
+from typing import Optional
+from typing import Tuple
+
+import attr
+
+import _pytest._code
+from _pytest.compat import TYPE_CHECKING
+from _pytest.config import Config
+from _pytest.config import hookimpl
+from _pytest.config.argparsing import Parser
+from _pytest.mark.structures import Mark
+from _pytest.nodes import Item
+from _pytest.outcomes import fail
+from _pytest.outcomes import skip
+from _pytest.outcomes import xfail
+from _pytest.reports import BaseReport
+from _pytest.runner import CallInfo
+from _pytest.store import StoreKey
+
+if TYPE_CHECKING:
+    from typing import Type
+
+
+def pytest_addoption(parser: Parser) -> None:
+    group = parser.getgroup("general")
+    group.addoption(
+        "--runxfail",
+        action="store_true",
+        dest="runxfail",
+        default=False,
+        help="report the results of xfail tests as if they were not marked",
+    )
+
+    parser.addini(
+        "xfail_strict",
+        "default for the strict parameter of xfail "
+        "markers when not given explicitly (default: False)",
+        default=False,
+        type="bool",
+    )
+
+
+def pytest_configure(config: Config) -> None:
+    if config.option.runxfail:
+        # yay a hack
+        import pytest
+
+        old = pytest.xfail
+        config._cleanup.append(lambda: setattr(pytest, "xfail", old))
+
+        def nop(*args, **kwargs):
+            pass
+
+        nop.Exception = xfail.Exception  # type: ignore[attr-defined] # noqa: F821
+        setattr(pytest, "xfail", nop)
+
+    config.addinivalue_line(
+        "markers",
+        "skip(reason=None): skip the given test function with an optional reason. "
+        'Example: skip(reason="no way of currently testing this") skips the '
+        "test.",
+    )
+    config.addinivalue_line(
+        "markers",
+        "skipif(condition, ..., *, reason=...): "
+        "skip the given test function if any of the conditions evaluate to True. "
+        "Example: skipif(sys.platform == 'win32') skips the test if we are on the win32 platform. "
+        "See https://docs.pytest.org/en/stable/reference.html#pytest-mark-skipif",
+    )
+    config.addinivalue_line(
+        "markers",
+        "xfail(condition, ..., *, reason=..., run=True, raises=None, strict=xfail_strict): "
+        "mark the test function as an expected failure if any of the conditions "
+        "evaluate to True. Optionally specify a reason for better reporting "
+        "and run=False if you don't even want to execute the test function. "
+        "If only specific exception(s) are expected, you can list them in "
+        "raises, and if the test fails in other ways, it will be reported as "
+        "a true failure. See https://docs.pytest.org/en/stable/reference.html#pytest-mark-xfail",
+    )
+
+
+def evaluate_condition(item: Item, mark: Mark, condition: object) -> Tuple[bool, str]:
+    """Evaluate a single skipif/xfail condition.
+
+    If an old-style string condition is given, it is eval()'d, otherwise the
+    condition is bool()'d. If this fails, an appropriately formatted pytest.fail
+    is raised.
+
+    Returns (result, reason). The reason is only relevant if the result is True.
+    """
+    # String condition.
+    if isinstance(condition, str):
+        globals_ = {
+            "os": os,
+            "sys": sys,
+            "platform": platform,
+            "config": item.config,
+        }
+        if hasattr(item, "obj"):
+            globals_.update(item.obj.__globals__)  # type: ignore[attr-defined]
+        try:
+            condition_code = _pytest._code.compile(condition, mode="eval")
+            result = eval(condition_code, globals_)
+        except SyntaxError as exc:
+            msglines = [
+                "Error evaluating %r condition" % mark.name,
+                "    " + condition,
+                "    " + " " * (exc.offset or 0) + "^",
+                "SyntaxError: invalid syntax",
+            ]
+            fail("\n".join(msglines), pytrace=False)
+        except Exception as exc:
+            msglines = [
+                "Error evaluating %r condition" % mark.name,
+                "    " + condition,
+                *traceback.format_exception_only(type(exc), exc),
+            ]
+            fail("\n".join(msglines), pytrace=False)
+
+    # Boolean condition.
+    else:
+        try:
+            result = bool(condition)
+        except Exception as exc:
+            msglines = [
+                "Error evaluating %r condition as a boolean" % mark.name,
+                *traceback.format_exception_only(type(exc), exc),
+            ]
+            fail("\n".join(msglines), pytrace=False)
+
+    reason = mark.kwargs.get("reason", None)
+    if reason is None:
+        if isinstance(condition, str):
+            reason = "condition: " + condition
+        else:
+            # XXX better be checked at collection time
+            msg = (
+                "Error evaluating %r: " % mark.name
+                + "you need to specify reason=STRING when using booleans as conditions."
+            )
+            fail(msg, pytrace=False)
+
+    return result, reason
+
+
+@attr.s(slots=True, frozen=True)
+class Skip:
+    """The result of evaluate_skip_marks()."""
+
+    reason = attr.ib(type=str)
+
+
+def evaluate_skip_marks(item: Item) -> Optional[Skip]:
+    """Evaluate skip and skipif marks on item, returning Skip if triggered."""
+    for mark in item.iter_markers(name="skipif"):
+        if "condition" not in mark.kwargs:
+            conditions = mark.args
+        else:
+            conditions = (mark.kwargs["condition"],)
+
+        # Unconditional.
+        if not conditions:
+            reason = mark.kwargs.get("reason", "")
+            return Skip(reason)
+
+        # If any of the conditions are true.
+        for condition in conditions:
+            result, reason = evaluate_condition(item, mark, condition)
+            if result:
+                return Skip(reason)
+
+    for mark in item.iter_markers(name="skip"):
+        if "reason" in mark.kwargs:
+            reason = mark.kwargs["reason"]
+        elif mark.args:
+            reason = mark.args[0]
+        else:
+            reason = "unconditional skip"
+        return Skip(reason)
+
+    return None
+
+
+@attr.s(slots=True, frozen=True)
+class Xfail:
+    """The result of evaluate_xfail_marks()."""
+
+    reason = attr.ib(type=str)
+    run = attr.ib(type=bool)
+    strict = attr.ib(type=bool)
+    raises = attr.ib(type=Optional[Tuple["Type[BaseException]", ...]])
+
+
+def evaluate_xfail_marks(item: Item) -> Optional[Xfail]:
+    """Evaluate xfail marks on item, returning Xfail if triggered."""
+    for mark in item.iter_markers(name="xfail"):
+        run = mark.kwargs.get("run", True)
+        strict = mark.kwargs.get("strict", item.config.getini("xfail_strict"))
+        raises = mark.kwargs.get("raises", None)
+        if "condition" not in mark.kwargs:
+            conditions = mark.args
+        else:
+            conditions = (mark.kwargs["condition"],)
+
+        # Unconditional.
+        if not conditions:
+            reason = mark.kwargs.get("reason", "")
+            return Xfail(reason, run, strict, raises)
+
+        # If any of the conditions are true.
+        for condition in conditions:
+            result, reason = evaluate_condition(item, mark, condition)
+            if result:
+                return Xfail(reason, run, strict, raises)
+
+    return None
+
+
+# Whether skipped due to skip or skipif marks.
+skipped_by_mark_key = StoreKey[bool]()
+# Saves the xfail mark evaluation. Can be refreshed during call if None.
+xfailed_key = StoreKey[Optional[Xfail]]()
+unexpectedsuccess_key = StoreKey[str]()
+
+
+@hookimpl(tryfirst=True)
+def pytest_runtest_setup(item: Item) -> None:
+    item._store[skipped_by_mark_key] = False
+
+    skipped = evaluate_skip_marks(item)
+    if skipped:
+        item._store[skipped_by_mark_key] = True
+        skip(skipped.reason)
+
+    if not item.config.option.runxfail:
+        item._store[xfailed_key] = xfailed = evaluate_xfail_marks(item
+
+testing/test_skipping.py:
+import sys
+
+import pytest
+from _pytest.runner import runtestprotocol
+from _pytest.skipping import evaluate_skip_marks
+from _pytest.skipping import evaluate_xfail_marks
+from _pytest.skipping import pytest_runtest_setup
+
+
+class TestEvaluation:
+    def test_no_marker(self, testdir):
+        item = testdir.getitem("def test_func(): pass")
+        skipped = evaluate_skip_marks(item)
+        assert not skipped
+
+    def test_marked_xfail_no_args(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.xfail
+            def test_func():
+                pass
+        """
+        )
+        xfailed = evaluate_xfail_marks(item)
+        assert xfailed
+        assert xfailed.reason == ""
+        assert xfailed.run
+
+    def test_marked_skipif_no_args(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.skipif
+            def test_func():
+                pass
+        """
+        )
+        skipped = evaluate_skip_marks(item)
+        assert skipped
+        assert skipped.reason == ""
+
+    def test_marked_one_arg(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.skipif("hasattr(os, 'sep')")
+            def test_func():
+                pass
+        """
+        )
+        skipped = evaluate_skip_marks(item)
+        assert skipped
+        assert skipped.reason == "condition: hasattr(os, 'sep')"
+
+    def test_marked_one_arg_with_reason(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.skipif("hasattr(os, 'sep')", attr=2, reason="hello world")
+            def test_func():
+                pass
+        """
+        )
+        skipped = evaluate_skip_marks(item)
+        assert skipped
+        assert skipped.reason == "hello world"
+
+    def test_marked_one_arg_twice(self, testdir):
+        lines = [
+            """@pytest.mark.skipif("not hasattr(os, 'murks')")""",
+            """@pytest.mark.skipif(condition="hasattr(os, 'murks')")""",
+        ]
+        for i in range(0, 2):
+            item = testdir.getitem(
+                """
+                import pytest
+                %s
+                %s
+                def test_func():
+                    pass
+            """
+                % (lines[i], lines[(i + 1) % 2])
+            )
+            skipped = evaluate_skip_marks(item)
+            assert skipped
+            assert skipped.reason == "condition: not hasattr(os, 'murks')"
+
+    def test_marked_one_arg_twice2(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.skipif("hasattr(os, 'murks')")
+            @pytest.mark.skipif("not hasattr(os, 'murks')")
+            def test_func():
+                pass
+        """
+        )
+        skipped = evaluate_skip_marks(item)
+        assert skipped
+        assert skipped.reason == "condition: not hasattr(os, 'murks')"
+
+    def test_marked_skipif_with_boolean_without_reason(self, testdir) -> None:
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.skipif(False)
+            def test_func():
+                pass
+        """
+        )
+        with pytest.raises(pytest.fail.Exception) as excinfo:
+            evaluate_skip_marks(item)
+        assert excinfo.value.msg is not None
+        assert (
+            """Error evaluating 'skipif': you need to specify reason=STRING when using booleans as conditions."""
+            in excinfo.value.msg
+        )
+
+    def test_marked_skipif_with_invalid_boolean(self, testdir) -> None:
+        item = testdir.getitem(
+            """
+            import pytest
+
+            class InvalidBool:
+                def __bool__(self):
+                    raise TypeError("INVALID")
+
+            @pytest.mark.skipif(InvalidBool(), reason="xxx")
+            def test_func():
+                pass
+        """
+        )
+        with pytest.raises(pytest.fail.Exception) as excinfo:
+            evaluate_skip_marks(item)
+        assert excinfo.value.msg is not None
+        assert "Error evaluating 'skipif' condition as a boolean" in excinfo.value.msg
+        assert "INVALID" in excinfo.value.msg
+
+    def test_skipif_class(self, testdir):
+        (item,) = testdir.getitems(
+            """
+            import pytest
+            class TestClass(object):
+                pytestmark = pytest.mark.skipif("config._hackxyz")
+                def test_func(self):
+                    pass
+        """
+        )
+        item.config._hackxyz = 3
+        skipped = evaluate_skip_marks(item)
+        assert skipped
+        assert skipped.reason == "condition: config._hackxyz"
+
+
+class TestXFail:
+    @pytest.mark.parametrize("strict", [True, False])
+    def test_xfail_simple(self, testdir, strict):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.xfail(strict=%s)
+            def test_func():
+                assert 0
+        """
+            % strict
+        )
+        reports = runtestprotocol(item, log=False)
+        assert len(reports) == 3
+        callreport = reports[1]
+        assert callreport.skipped
+        assert callreport.wasxfail == ""
+
+    def test_xfail_xpassed(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.xfail(reason="this is an xfail")
+            def test_func():
+                assert 1
+        """
+        )
+        reports = runtestprotocol(item, log=False)
+        assert len(reports) == 3
+        callreport = reports[1]
+        assert callreport.passed
+        assert callreport.wasxfail == "this is an xfail"
+
+    def test_xfail_using_platform(self, testdir):
+        """
+        Verify that platform can be used with xfail statements.
+        """
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.xfail("platform.platform() == platform.platform()")
+            def test_func():
+                assert 0
+        """
+        )
+        reports = runtestprotocol(item, log=False)
+        assert len(reports) == 3
+        callreport = reports[1]
+        assert callreport.wasxfail
+
+    def test_xfail_xpassed_strict(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.xfail(strict=True, reason="nope")
+            def test_func():
+                assert 1
+        """
+        )
+        reports = runtestprotocol(item, log=False)
+        assert len(reports) == 3
+        callreport = reports[1]
+        assert callreport.failed
+        assert str(callreport.longrepr) == "[XPASS(strict)] nope"
+        assert not hasattr(callreport, "wasxfail")
+
+    def test_xfail_run_anyway(self, testdir):
+        testdir.makepyfile(
+            """
+            import pytest
+            @pytest.mark.xfail
+            def test_func():
+                assert 0
+            def test_func2():
+                pytest.xfail("hello")
+        """
+        )
+        result = testdir.runpytest("--runxfail")
+        result.stdout.fnmatch_lines(
+            ["*def test_func():*", "*assert 0*", "*1 failed*1 pass*"]
+        )
+
+    def test_xfail_evalfalse_but_fails(self, testdir):
+        item = testdir.getitem(
+            """
+            import pytest
+            @pytest.mark.xfail('False')
+            def test_func():
+                assert 0
+        """
+        )
+        reports = runtestprotocol(item, log=False)
+        callreport = reports[1]
+        assert callreport.failed
+        assert not hasattr(callreport, "wasxfail")
+        assert "xfail" in callreport.keywords
+
+    def test_xfail_not_report_default(self, testdir):
+        p = testdir.makepyfile(
+            test_one="""
+            import pytest
+            @pytest.mark.xfail
+            def test_this():
+                assert 0
+        """
+        )
+        testdir.runpytest(p, "-v")
+        # result.stdout.fnmatch_lines([
+        #    "*H
+
+scripts/release-on-comment.py:
+"""
+This script is part of the pytest release process which is triggered by comments
+in issues.
+
+This script is started by the `prepare_release.yml` workflow, which is triggered by two comment
+related events:
+
+* https://help.github.com/en/actions/reference/events-that-trigger-workflows#issue-comment-event-issue_comment
+* https://help.github.com/en/actions/reference/events-that-trigger-workflows#issues-event-issues
+
+This script receives the payload and a secrets on the command line.
+
+The payload must contain a comment with a phrase matching this regular expression:
+
+    @pytestbot please prepare release from <branch name>
+
+Then the appropriate version will be obtained based on the given branch name:
+
+* a feature or bug fix release from master (based if there are features in the current changelog
+  folder)
+* a bug fix from a maintenance branch
+
+After that, it will create a release using the `release` tox environment, and push a new PR.
+
+**Secret**: currently the secret is defined in the @pytestbot account, which the core maintainers
+have access to. There we created a new secret named `chatops` with write access to the repository.
+"""
+import argparse
+import json
+import os
+import re
+import sys
+from pathlib import Path
+from subprocess import CalledProcessError
+from subprocess import check_call
+from subprocess import check_output
+from subprocess import run
+from textwrap import dedent
+from typing import Dict
+from typing import Optional
+from typing import Tuple
+
+from colorama import Fore
+from colorama import init
+from github3.repos import Repository
+
+
+class InvalidFeatureRelease(Exception):
+    pass
+
+
+SLUG = "pytest-dev/pytest"
+
+PR_BODY = """\
+Created automatically from {comment_url}.
+
+Once all builds pass and it has been **approved** by one or more maintainers, the build
+can be released by pushing a tag `{version}` to this repository.
+"""
+
+
+def login(token: str) -> Repository:
+    import github3
+
+    github = github3.login(token=token)
+    owner, repo = SLUG.split("/")
+    return github.repository(owner, repo)
+
+
+def get_comment_data(payload: Dict) -> str:
+    if "comment" in payload:
+        return payload["comment"]
+    else:
+        return payload["issue"]
+
+
+def validate_and_get_issue_comment_payload(
+    issue_payload_path: Optional[Path],
+) -> Tuple[str, str]:
+    payload = json.loads(issue_payload_path.read_text(encoding="UTF-8"))
+    body = get_comment_data(payload)["body"]
+    m = re.match(r"@pytestbot please prepare release from ([\w\-_\.]+)", body)
+    if m:
+        base_branch = m.group(1)
+    else:
+        base_branch = None
+    return payload, base_branch
+
+
+def print_and_exit(msg) -> None:
+    print(msg)
+    raise SystemExit(1)
+
+
+def trigger_release(payload_path: Path, token: str) -> None:
+    error_contents = ""  # to be used to store error output in case any command fails
+    payload, base_branch = validate_and_get_issue_comment_payload(payload_path)
+    if base_branch is None:
+        url = get_comment_data(payload)["html_url"]
+        print_and_exit(
+            f"Comment {Fore.CYAN}{url}{Fore.RESET} did not match the trigger command."
+        )
+    print()
+    print(f"Precessing release for branch {Fore.CYAN}{base_branch}")
+
+    repo = login(token)
+
+    issue_number = payload["issue"]["number"]
+    issue = repo.issue(issue_number)
+
+    check_call(["git", "checkout", f"origin/{base_branch}"])
+    print("DEBUG:", check_output(["git", "rev-parse", "HEAD"]))
+
+    try:
+        version = find_next_version(base_branch)
+    except InvalidFeatureRelease as e:
+        issue.create_comment(str(e))
+        print_and_exit(f"{Fore.RED}{e}")
+
+    try:
+        print(f"Version: {Fore.CYAN}{version}")
+
+        release_branch = f"release-{version}"
+
+        run(
+            ["git", "config", "user.name", "pytest bot"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        run(
+            ["git", "config", "user.email", "pytestbot@gmail.com"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+        run(
+            ["git", "checkout", "-b", release_branch, f"origin/{base_branch}"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+        print(f"Branch {Fore.CYAN}{release_branch}{Fore.RESET} created.")
+
+        run(
+            [sys.executable, "scripts/release.py", version, "--skip-check-links"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+
+        oauth_url = f"https://{token}:x-oauth-basic@github.com/{SLUG}.git"
+        run(
+            ["git", "push", oauth_url, f"HEAD:{release_branch}", "--force"],
+            text=True,
+            check=True,
+            capture_output=True,
+        )
+        print(f"Branch {Fore.CYAN}{release_branch}{Fore.RESET} pushed.")
+
+        body = PR_BODY.format(
+            comment_url=get_comment_data(payload)["html_url"], version=version
+        )
+        pr = repo.create_pull(
+            f"Prepare release {version}",
+            base=base_branch,
+            head=release_branch,
+            body=body,
+        )
+        print(f"Pull request {Fore.CYAN}{pr.url}{Fore.RESET} created.")
+
+        comment = issue.create_comment(
+            f"As requested, opened a PR for release `{version}`: #{pr.number}."
+        )
+        print(f"Notified in original comment {Fore.CYAN}{comment.url}{Fore.RESET}.")
+
+        print(f"{Fore.GREEN}Success.")
+    except CalledProcessError as e:
+        error_contents = e.output
+    except Exception as e:
+        error_contents = str(e)
+        link = f"https://github.com/{SLUG}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+        issue.create_comment(
+            dedent(
+                f"""
+            Sorry, the request to prepare release `{version}` from {base_branch} failed with:
+
+            ```
+            {e}
+            ```
+
+            See: {link}.
+            """
+            )
+        )
+        print_and_exit(f"{Fore.RED}{e}")
+
+    if error_contents:
+        link = f"https://github.com/{SLUG}/actions/runs/{os.environ['GITHUB_RUN_ID']}"
+        issue.create_comment(
+            dedent(
+                f"""
+                Sorry, the request to prepare release `{version}` from {base_branch} failed with:
+
+                ```
+                {error_contents}
+                ```
+
+                See: {link}.
+                """
+            )
+        )
+        print_and_exit(f"{Fore.RED}{error_contents}")
+
+
+def find_next_version(base_branch: str) -> str:
+    output = check_output(["git", "tag"], encoding="UTF-8")
+    valid_versions = []
+    for v in output.splitlines():
+        m = re.match(r"\d.\d.\d+$", v.strip())
+        if m:
+            valid_versions.append(tuple(int(x) for x in v.split(".")))
+
+    valid_versions.sort()
+    last_version = valid_versions[-1]
+
+    changelog = Path("changelog")
+
+    features = list(changelog.glob("*.feature.rst"))
+    breaking = list(changelog.glob("*.breaking.rst"))
+    is_feature_release = features or breaking
+
+    if is_feature_release and base_branch != "master":
+        msg = dedent(
+            f"""
+            Found features or breaking changes in `{base_branch}`, and feature releases can only be
+            created from `master`.":
+        """
+        )
+        msg += "\n".join(f"* `{x.name}`" for x in sorted(features + breaking))
+        raise InvalidFeatureRelease(msg)
+
+    if is_feature_release:
+        return f"{last_version[0]}.{last_version[1] + 1}.0"
+    else:
+        return f"{last_version[0]}.{last_version[1]}.{last_version[2] + 1}"
+
+
+def main() -> None:
+    init(autoreset=True)
+    parser = argparse.ArgumentParser()
+    parser.add_argument("payload")
+    parser.add_argument("token")
+    options = parser.parse_args()
+    trigger_release(Path(options.payload), options.token)
+
+
+if __name__ == "__main__":
+    main()
+
+
+src/_pytest/stepwise.py:
+from typing import List
+from typing import Optional
+
+import pytest
+from _pytest import nodes
+from _pytest.config import Config
+from _pytest.config.argparsing import Parser
+from _pytest.main import Session
+from _pytest.reports import TestReport
+
+
+def pytest_addoption(parser: Parser) -> None:
+    group = parser.getgroup("general")
+    group.addoption(
+        "--sw",
+        "--stepwise",
+        action="store_true",
+        dest="stepwise",
+        help="exit on test failure and continue from last failing test next time",
+    )
+    group.addoption(
+        "--stepwise-skip",
+        action="store_true",
+        dest="stepwise_skip",
+        help="ignore the first failing test but stop on the next failing test",
+    )
+
+
+@pytest.hookimpl
+def pytest_configure(config: Config) -> None:
+    config.pluginmanager.register(StepwisePlugin(config), "stepwiseplugin")
+
+
+class StepwisePlugin:
+    def __init__(self, config: Config) -> None:
+        self.config = config
+        self.active = config.getvalue("stepwise")
+        self.session = None  # type: Optional[Session]
+        self.report_status = ""
+
+        if self.active:
+            assert config.cache is not None
+            self.lastfailed = config.cache.get("cache/stepwise", None)
+            self.skip = config.getvalue("stepwise_skip")
+
+    def pytest_sessionstart(self, session: Session) -> None:
+        self.session = session
+
+    def pytest_collection_modifyitems(
+        self, session: Session, config: Config, items: List[nodes.Item]
+    ) -> None:
+        if not self.active:
+            return
+        if not self.lastfailed:
+            self.report_status = "no previously failed tests, not skipping."
+            return
+
+        already_passed = []
+        found = False
+
+        # Make a list of all tests that have been run before the last failing one.
+        for item in items:
+            if item.nodeid == self.lastfailed:
+                found = True
+                break
+            else:
+                already_passed.append(item)
+
+        # If the previously failed test was not found among the test items,
+        # do not skip any tests.
+        if not found:
+            self.report_status = "previously failed test not found, not skipping."
+            already_passed = []
+        else:
+            self.report_status = "skipping {} already passed items.".format(
+                len(already_passed)
+            )
+
+        for item in already_passed:
+            items.remove(item)
+
+        config.hook.pytest_deselected(items=already_passed)
+
+    def pytest_runtest_logreport(self, report: TestReport) -> None:
+        if not self.active:
+            return
+
+        if report.failed:
+            if self.skip:
+                # Remove test from the failed ones (if it exists) and unset the skip option
+                # to make sure the following tests will not be skipped.
+                if report.nodeid == self.lastfailed:
+                    self.lastfailed = None
+
+                self.skip = False
+            else:
+                # Mark test as the last failing and interrupt the test session.
+                self.lastfailed = report.nodeid
+                assert self.session is not None
+                self.session.shouldstop = (
+                    "Test failed, continuing from this test next run."
+                )
+
+        else:
+            # If the test was actually run and did pass.
+            if report.when == "call":
+                # Remove test from the failed ones, if exists.
+                if report.nodeid == self.lastfailed:
+                    self.lastfailed = None
+
+    def pytest_report_collectionfinish(self) -> Optional[str]:
+        if self.active and self.config.getoption("verbose") >= 0 and self.report_status:
+            return "stepwise: %s" % self.report_status
+        return None
+
+    def pytest_sessionfinish(self, session: Session) -> None:
+        assert self.config.cache is not None
+        if self.active:
+            self.config.cache.set("cache/stepwise", self.lastfailed)
+        else:
+            # Clear the list of failing tests if the plugin is not active.
+            self.config.cache.set("cache/stepwise", [])
+
+
+src/_pytest/assertion/__init__.py:
+"""
+support for presenting detailed information in failing assertions.
+"""
+import sys
+from typing import Any
+from typing import Generator
+from typing import List
+from typing import Optional
+
+from _pytest.assertion import rewrite
+from _pytest.assertion import truncate
+from _pytest.assertion import util
+from _pytest.assertion.rewrite import assertstate_key
+from _pytest.compat import TYPE_CHECKING
+from _pytest.config import Config
+from _pytest.config import hookimpl
+from _pytest.config.argparsing import Parser
+from _pytest.nodes import Item
+
+if TYPE_CHECKING:
+    from _pytest.main import Session
+
+
+def pytest_addoption(parser: Parser) -> None:
+    group = parser.getgroup("debugconfig")
+    group.addoption(
+        "--assert",
+        action="store",
+        dest="assertmode",
+        choices=("rewrite", "plain"),
+        default="rewrite",
+        metavar="MODE",
+        help=(
+            "Control assertion debugging tools.\n"
+            "'plain' performs no assertion debugging.\n"
+            "'rewrite' (the default) rewrites assert statements in test modules"
+            " on import to provide assert expression information."
+        ),
+    )
+    parser.addini(
+        "enable_assertion_pass_hook",
+        type="bool",
+        default=False,
+        help="Enables the pytest_assertion_pass hook."
+        "Make sure to delete any previously generated pyc cache files.",
+    )
+
+
+def register_assert_rewrite(*names: str) -> None:
+    """Register one or more module names to be rewritten on import.
+
+    This function will make sure that this module or all modules inside
+    the package will get their assert statements rewritten.
+    Thus you should make sure to call this before the module is
+    actually imported, usually in your __init__.py if you are a plugin
+    using a package.
+
+    :raise TypeError: if the given module names are not strings.
+    """
+    for name in names:
+        if not isinstance(name, str):
+            msg = "expected module names as *args, got {0} instead"
+            raise TypeError(msg.format(repr(names)))
+    for hook in sys.meta_path:
+        if isinstance(hook, rewrite.AssertionRewritingHook):
+            importhook = hook
+            break
+    else:
+        # TODO(typing): Add a protocol for mark_rewrite() and use it
+        # for importhook and for PytestPluginManager.rewrite_hook.
+        importhook = DummyRewriteHook()  # type: ignore
+    importhook.mark_rewrite(*names)
+
+
+class DummyRewriteHook:
+    """A no-op import hook for when rewriting is disabled."""
+
+    def mark_rewrite(self, *names: str) -> None:
+        pass
+
+
+class AssertionState:
+    """State for the assertion plugin."""
+
+    def __init__(self, config: Config, mode) -> None:
+        self.mode = mode
+        self.trace = config.trace.root.get("assertion")
+        self.hook = None  # type: Optional[rewrite.AssertionRewritingHook]
+
+
+def install_importhook(config: Config) -> rewrite.AssertionRewritingHook:
+    """Try to install the rewrite hook, raise SystemError if it fails."""
+    config._store[assertstate_key] = AssertionState(config, "rewrite")
+    config._store[assertstate_key].hook = hook = rewrite.AssertionRewritingHook(config)
+    sys.meta_path.insert(0, hook)
+    config._store[assertstate_key].trace("installed rewrite import hook")
+
+    def undo() -> None:
+        hook = config._store[assertstate_key].hook
+        if hook is not None and hook in sys.meta_path:
+            sys.meta_path.remove(hook)
+
+    config.add_cleanup(undo)
+    return hook
+
+
+def pytest_collection(session: "Session") -> None:
+    # this hook is only called when test modules are collected
+    # so for example not in the master process of pytest-xdist
+    # (which does not collect test modules)
+    assertstate = session.config._store.get(assertstate_key, None)
+    if assertstate:
+        if assertstate.hook is not None:
+            assertstate.hook.set_session(session)
+
+
+@hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_protocol(item: Item) -> Generator[None, None, None]:
+    """Setup the pytest_assertrepr_compare and pytest_assertion_pass hooks
+
+    The rewrite module will use util._reprcompare if
+    it exists to use custom reporting via the
+    pytest_assertrepr_compare hook.  This sets up this custom
+    comparison for the test.
+    """
+
+    ihook = item.ihook
+
+    def callbinrepr(op, left: object, right: object) -> Optional[str]:
+        """Call the pytest_assertrepr_compare hook and prepare the result
+
+        This uses the first result from the hook and then ensures the
+        following:
+        * Overly verbose explanations are truncated unless configured otherwise
+          (eg. if running in verbose mode).
+        * Embedded newlines are escaped to help util.format_explanation()
+          later.
+        * If the rewrite mode is used embedded %-characters are replaced
+          to protect later % formatting.
+
+        The result can be formatted by util.format_explanation() for
+        pretty printing.
+        """
+        hook_result = ihook.pytest_assertrepr_compare(
+            config=item.config, op=op, left=left, right=right
+        )
+        for new_expl in hook_result:
+            if new_expl:
+                new_expl = truncate.truncate_if_required(new_expl, item)
+                new_expl = [line.replace("\n", "\\n") for line in new_expl]
+                res = "\n~".join(new_expl)
+                if item.config.getvalue("assertmode") == "rewrite":
+                    res = res.replace("%", "%%")
+                return res
+        return None
+
+    saved_assert_hooks = util._reprcompare, util._assertion_pass
+    util._reprcompare = callbinrepr
+
+    if ihook.pytest_assertion_pass.get_hookimpls():
+
+        def call_assertion_pass_hook(lineno: int, orig: str, expl: str) -> None:
+            ihook.pytest_assertion_pass(item=item, lineno=lineno, orig=orig, expl=expl)
+
+        util._assertion_pass = call_assertion_pass_hook
+
+    yield
+
+    util._reprcompare, util._assertion_pass = saved_assert_hooks
+
+
+def pytest_sessionfinish(session: "Session") -> None:
+    assertstate = session.config._store.get(assertstate_key, None)
+    if assertstate:
+        if assertstate.hook is not None:
+            assertstate.hook.set_session(None)
+
+
+def pytest_assertrepr_compare(
+    config: Config, op: str, left: Any, right: Any
+) -> Optional[List[str]]:
+    return util.assertrepr_compare(config=config, op=op, left=left, right=right)

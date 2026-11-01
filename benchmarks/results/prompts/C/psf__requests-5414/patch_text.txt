@@ -1,0 +1,17 @@
+requests/models.py
+<<<<<<< SEARCH
+        try:
+            host = self._get_idna_encoded_host(host)
+        except UnicodeError:
+            raise InvalidURL('URL has an invalid label.')
+=======
+        if not isinstance(host, bytes) and any(
+            not label for label in host.rstrip('.').split('.')
+        ):
+            raise InvalidURL('URL has an invalid label.')
+
+        try:
+            host = self._get_idna_encoded_host(host)
+        except UnicodeError:
+            raise InvalidURL('URL has an invalid label.')
+>>>>>>> REPLACE

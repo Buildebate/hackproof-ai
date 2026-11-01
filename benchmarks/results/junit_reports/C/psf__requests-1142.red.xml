@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.193" timestamp="2026-11-01T04:51:12.760035+00:00" hostname="94545298d5d3"><testcase classname="test_repro_49d3b3520ffe" name="test_get_does_not_send_content_length" time="0.006"><failure message="AssertionError: assert 'Content-Length' not in {'Content-Length': '0'}&#10; +  where {'Content-Length': '0'} = &lt;PreparedRequest [GET]&gt;.headers">def test_get_does_not_send_content_length():
+        req = requests.Request('GET', 'http://example.com')
+        prepped = req.prepare()
+&gt;       assert 'Content-Length' not in prepped.headers
+E       AssertionError: assert 'Content-Length' not in {'Content-Length': '0'}
+E        +  where {'Content-Length': '0'} = &lt;PreparedRequest [GET]&gt;.headers
+
+test_repro_49d3b3520ffe.py:7: AssertionError</failure></testcase></testsuite></testsuites>

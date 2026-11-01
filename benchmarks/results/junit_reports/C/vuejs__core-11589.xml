@@ -1,0 +1,655 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="80" failures="60" errors="0" time="2.128">
+    <testsuite name="packages/runtime-core/__tests__/apiWatch.spec.ts" timestamp="2026-11-01T07:26:32.526Z" hostname="8f9e858b9176" tests="79" failures="59" errors="0" skipped="0" time="0.121">
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect" time="0.015">
+            <failure message="expected +0 to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:51:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: getter" time="0.004">
+            <failure message="expected undefined to match object [ 1, +0 ]" type="AssertionError">
+AssertionError: expected undefined to match object [ 1, +0 ]
+
+- Expected: 
+Array [
+  1,
+  0,
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:70:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: ref" time="0.002">
+            <failure message="expected undefined to match object [ 1, +0 ]" type="AssertionError">
+AssertionError: expected undefined to match object [ 1, +0 ]
+
+- Expected: 
+Array [
+  1,
+  0,
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:86:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: array" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:95:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not call functions inside a reactive source array" time="0.002">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not unwrap refs in a reactive source array" time="0.003">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:119:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire if watched getter result did not change" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:130:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching single source: computed ref" time="0.001">
+            <failure message="expected undefined to match object [ 2, 1 ]" type="AssertionError">
+AssertionError: expected undefined to match object [ 2, 1 ]
+
+- Expected: 
+Array [
+  2,
+  1,
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:152:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching primitive with deep: true" time="0.002">
+            <failure message="expected undefined to match object [ 1, +0 ]" type="AssertionError">
+AssertionError: expected undefined to match object [ 1, +0 ]
+
+- Expected: 
+Array [
+  1,
+  0,
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:169:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object (with automatic deep: true)" time="0.001">
+            <failure message="expected undefined to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected: 
+1
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:182:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive object with explicit deep: false" time="0.002">
+            <failure message="expected undefined to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected: 
+1
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:210:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; directly watching reactive array with explicit deep: false" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:227:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching shallow reactive array with deep: false" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:253:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should still respect deep: true on shallowReactive source" time="0.001">
+            <failure message="expected undefined to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected undefined to be 2 // Object.is equality
+
+- Expected: 
+2
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:271:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources" time="0.001">
+            <failure message="expected undefined to match object [ [ 2, 2, 3 ], [ 1, 1, 2 ] ]" type="AssertionError">
+AssertionError: expected undefined to match object [ [ 2, 2, 3 ], [ 1, 1, 2 ] ]
+
+- Expected: 
+Array [
+  Array [
+    2,
+    2,
+    3,
+  ],
+  Array [
+    1,
+    1,
+    2,
+  ],
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:290:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: undefined initial values and immediate: true" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: readonly array" time="0.001">
+            <failure message="expected undefined to match object [ [ 2, true ], [ 1, false ] ]" type="AssertionError">
+AssertionError: expected undefined to match object [ [ 2, true ], [ 1, false ] ]
+
+- Expected: 
+Array [
+  Array [
+    2,
+    true,
+  ],
+  Array [
+    1,
+    false,
+  ],
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:330:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: reactive object (with automatic deep: true)" time="0.001">
+            <failure message="expected undefined to match object { count: 1 }" type="AssertionError">
+AssertionError: expected undefined to match object { count: 1 }
+
+- Expected: 
+Object {
+  &quot;count&quot;: 1,
+}
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:346:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn invalid watch source" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn invalid watch source: multiple sources" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; stopping the watcher (effect)" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; stopping the watcher (with source)" time="0.001">
+            <failure message="expected undefined to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected: 
+1
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:387:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; cleanup registration (effect)" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:408:21
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; cleanup registration (with source)" time="0.001">
+            <failure message="expected undefined to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected undefined to be 1 // Object.is equality
+
+- Expected: 
+1
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:427:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: pre (default)" time="0.006">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:475:23
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: post" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:505:23
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchPostEffect" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:531:23
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush timing: sync" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 3 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 3 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:577:23
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchSyncEffect" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 3 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 3 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:619:23
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on component unmount w/ flush: post" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on component unmount w/ flush: pre" time="0.003">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not fire on child component unmount w/ flush: pre" time="0.006">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre watcher in child component should not fire before parent update" time="0.003">
+            <failure message="expected [ &apos;render parent&apos;, &apos;render child&apos; ] to deeply equal [ &apos;render parent&apos;, …(5) ]" type="AssertionError">
+AssertionError: expected [ &apos;render parent&apos;, &apos;render child&apos; ] to deeply equal [ &apos;render parent&apos;, …(5) ]
+
+- Expected
++ Received
+
+  Array [
+    &quot;render parent&quot;,
+    &quot;render child&quot;,
+-   &quot;watcher parent&quot;,
+-   &quot;render parent&quot;,
+-   &quot;watcher child&quot;,
+-   &quot;render child&quot;,
+  ]
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:749:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre watcher watching props should fire before child update" time="0.002">
+            <failure message="expected [ &apos;render&apos; ] to deeply equal [ &apos;render&apos;, &apos;watcher 1&apos;, …(2) ]" type="AssertionError">
+AssertionError: expected [ &apos;render&apos; ] to deeply equal [ &apos;render&apos;, &apos;watcher 1&apos;, …(2) ]
+
+- Expected
++ Received
+
+  Array [
+    &quot;render&quot;,
+-   &quot;watcher 1&quot;,
+-   &quot;watcher 2&quot;,
+-   &quot;render&quot;,
+  ]
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:808:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: pre triggered in component setup should be buffered and called before mounted" time="0.002">
+            <failure message="expected [ &apos;mounted&apos; ] to match object [ &apos;watch 3&apos;, &apos;mounted&apos; ]" type="AssertionError">
+AssertionError: expected [ &apos;mounted&apos; ] to match object [ &apos;watch 3&apos;, &apos;mounted&apos; ]
+
+- Expected
++ Received
+
+  Array [
+-   &quot;watch 3&quot;,
+    &quot;mounted&quot;,
+  ]
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:835:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; flush: post watcher should fire after template refs updated" time="0.001">
+            <failure message="Cannot read properties of null (reading &apos;tag&apos;)" type="TypeError">
+TypeError: Cannot read properties of null (reading &apos;tag&apos;)
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:866:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep" time="0.001">
+            <failure message="expected undefined to deeply equal [ 1, 1, 1, true ]" type="AssertionError">
+AssertionError: expected undefined to deeply equal [ 1, 1, 1, true ]
+
+- Expected: 
+Array [
+  1,
+  1,
+  1,
+  true,
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:898:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching deep ref" time="0.001">
+            <failure message="expected undefined to deeply equal [ 1, 2 ]" type="AssertionError">
+AssertionError: expected undefined to deeply equal [ 1, 2 ]
+
+- Expected: 
+Array [
+  1,
+  2,
+]
+
++ Received: 
+undefined
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:932:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; deep with symbols" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:963:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate" time="0">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:988:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is null" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; immediate: triggers when initial value is undefined" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1005:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn immediate option when using effect" time="0.001">
+            <failure message="expected +0 to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1031:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; warn and not respect deep option when using effect" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; onTrack" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; onTrigger" time="0.001">
+            <failure message="expected 1 to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1105:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should work sync" time="0.001">
+            <failure message="expected +0 to be 1 // Object.is equality" type="AssertionError">
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1141:19
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should force trigger on triggerRef when watching a shallow ref" time="0.001">
+            <failure message="expected +0 to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1164:24
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should force trigger on triggerRef when watching multiple sources: shallow ref array" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1179:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should force trigger on triggerRef with toRef from reactive" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 1 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 1 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1198:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchEffect should not recursively trigger itself" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; computed refs should not trigger watch if value has no change" time="0">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1224:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; $watch should always register its effects with its own instance" time="0.003">
+            <failure message="expected 1 to be falsy" type="AssertionError">
+AssertionError: expected 1 to be falsy
+
+- Expected: 
+1
+
++ Received: 
+false
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1276:67
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; this.$watch should pass `this.proxy` to watch source as the first argument " time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should not leak `this.proxy` to setup()" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; pre watcher callbacks should not track dependencies" time="0.002">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1344:21
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching keypath" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 2 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 2 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1378:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching sources: ref&lt;any[]&gt;" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1389:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching multiple sources: computed" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watch should not register in owner component if created inside detached scope" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchEffect should keep running if created in a detached scope" time="0.002">
+            <failure message="expected 1 to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected 1 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 1
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1451:21
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch&apos;" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1491:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with deep&apos;" time="0">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1491:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with flush: s…&apos;" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1491:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with flush: p…&apos;" time="0">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1491:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; &apos;only trigger once watch with immediate&apos;" time="0">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; OnCleanup also needs to be cleaned，" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1519:18
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive depth" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1554:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching ref depth" time="0">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1584:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching array depth" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1609:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; pause / resume" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1631:16
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; shallowReactive" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1683:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watching reactive with deep: false" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1712:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; effect should be removed from scope&apos;s effects after it is stopped" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; sync watcher should not be batched" time="0">
+            <failure message="expected +0 to be 2 // Object.is equality" type="AssertionError">
+AssertionError: expected +0 to be 2 // Object.is equality
+
+- Expected
++ Received
+
+- 2
++ 0
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1771:21
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watchEffect should not fire on computed deps that did not change" time="0.001">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; circular reference" time="0.001">
+            <failure message="expected &quot;spy&quot; to be called 1 times, but got 0 times" type="AssertionError">
+AssertionError: expected &quot;spy&quot; to be called 1 times, but got 0 times
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1800:17
+            </failure>
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; watch immediate error in effect scope should be catched by onErrorCaptured" time="0.002">
+        </testcase>
+        <testcase classname="packages/runtime-core/__tests__/apiWatch.spec.ts" name="api: watch &gt; should be executed correctly" time="0.001">
+            <failure message="expected &apos;&apos; to be &apos;12&apos; // Object.is equality" type="AssertionError">
+AssertionError: expected &apos;&apos; to be &apos;12&apos; // Object.is equality
+
+- Expected
++ Received
+
+- 12
+
+ ❯ packages/runtime-core/__tests__/apiWatch.spec.ts:1885:17
+            </failure>
+        </testcase>
+    </testsuite>
+    <testsuite name="packages/runtime-core/__tests__/repro-69b6c58de88d.test.ts" timestamp="2026-11-01T07:26:32.585Z" hostname="8f9e858b9176" tests="1" failures="1" errors="0" skipped="0" time="0.014">
+        <testcase classname="packages/runtime-core/__tests__/repro-69b6c58de88d.test.ts" name="sync watcher order on computed &gt; executes sync watchers in definition order (FIFO)" time="0.012">
+            <failure message="expected [] to deeply equal [ +0, 1, 2, 3, 4 ]" type="AssertionError">
+AssertionError: expected [] to deeply equal [ +0, 1, 2, 3, 4 ]
+
+- Expected
++ Received
+
+- Array [
+-   0,
+-   1,
+-   2,
+-   3,
+-   4,
+- ]
++ Array []
+
+ ❯ packages/runtime-core/__tests__/repro-69b6c58de88d.test.ts:13:19
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

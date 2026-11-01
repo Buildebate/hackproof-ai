@@ -686,7 +686,7 @@ def audit_results_dir(out_dir: Path | str) -> dict[str, object]:
     For every ``results/<mode>/<task>.json`` present, checks that the
     recorded ``junit_sha256`` matches the bytes of
     ``junit_reports/<mode>/<task>.xml`` (when the record carries one),
-    and that every Mode B run has a guard report. Step 4.3b.7 (R12):
+    and that every Mode B/C run has a guard report. Step 4.3b.7 (R12):
     records carrying an ``evidence`` block (runs produced after the
     archival rollout) additionally require their flagged artifacts —
     collect stdout/stderr, pip freeze, debate prompts — plus two
@@ -733,9 +733,10 @@ def audit_results_dir(out_dir: Path | str) -> dict[str, object]:
                         junit_mismatch.append(f"{mode}/{task_id}:missing-xml")
                     elif sha256_bytes(junit_path.read_bytes()) != expected:
                         junit_mismatch.append(f"{mode}/{task_id}:sha-drift")
-                if mode == "B":
+                if mode in ("B", "C"):
                     guard_path = (
-                        root / "guard_reports" / "B" / f"{task_id}.json"
+                        root / "guard_reports" / str(mode)
+                        / f"{task_id}.json"
                     )
                     if not guard_path.is_file():
                         missing_guard.append(str(task_id))

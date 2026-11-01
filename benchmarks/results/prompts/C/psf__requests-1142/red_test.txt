@@ -1,0 +1,7 @@
+import requests
+
+
+def test_get_does_not_send_content_length():
+    req = requests.Request('GET', 'http://example.com')
+    prepped = req.prepare()
+    assert 'Content-Length' not in prepped.headers

@@ -1,0 +1,14 @@
+src/_pytest/skipping.py
+<<<<<<< SEARCH
+    elif (
+        item._store.get(skipped_by_mark_key, True)
+        and rep.skipped
+        and type(rep.longrepr) is tuple
+    ):
+=======
+    if (
+        item._store.get(skipped_by_mark_key, True)
+        and rep.skipped
+        and type(rep.longrepr) is tuple
+    ):
+>>>>>>> REPLACE

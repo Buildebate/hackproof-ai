@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.185" timestamp="2026-11-01T05:57:24.242888" hostname="0226db104211"><testcase classname="testing.test_repro_a8d900ae2a4c" name="test_unittest_setUpClass_fixture_is_private" time="0.153"><failure message="AssertionError: assert '_unittest_setUpClass_fixture_Tests' in '============================= test session starts ==============================\nplatform linux -- Python 3.8.20, py...t.py:144: no docstring available\n\n\n============================ no tests ran in 0.13s ============================='&#10; +  where '============================= test session starts ==============================\nplatform linux -- Python 3.8.20, py...t.py:144: no docstring available\n\n\n============================ no tests ran in 0.13s =============================' = &lt;bound method LineMatcher.str of &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt;&gt;()&#10; +    where &lt;bound method LineMatcher.str of &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt;&gt; = &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt;.str&#10; +      where &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt; = &lt;RunResult ret=ExitCode.OK len(stdout.lines)=172 len(stderr.lines)=0 duration=0.15s&gt;.stdout">pytester = &lt;Pytester PosixPath('/tmp/pytest-of-root/pytest-0/test_unittest_setUpClass_fixture_is_private0')&gt;
+
+    def test_unittest_setUpClass_fixture_is_private(pytester: Pytester) -&gt; None:
+        pytester.makepyfile(
+            """
+            import unittest
+    
+            class Tests(unittest.TestCase):
+                @classmethod
+                def setUpClass(cls):
+                    pass
+    
+                def test_1(self):
+                    pass
+            """
+        )
+        result = pytester.runpytest("--fixtures", "-v")
+        assert result.ret == 0
+&gt;       assert "_unittest_setUpClass_fixture_Tests" in result.stdout.str()
+E       AssertionError: assert '_unittest_setUpClass_fixture_Tests' in '============================= test session starts ==============================\nplatform linux -- Python 3.8.20, py...t.py:144: no docstring available\n\n\n============================ no tests ran in 0.13s ============================='
+E        +  where '============================= test session starts ==============================\nplatform linux -- Python 3.8.20, py...t.py:144: no docstring available\n\n\n============================ no tests ran in 0.13s =============================' = &lt;bound method LineMatcher.str of &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt;&gt;()
+E        +    where &lt;bound method LineMatcher.str of &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt;&gt; = &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt;.str
+E        +      where &lt;_pytest.pytester.LineMatcher object at 0xfc42b5547910&gt; = &lt;RunResult ret=ExitCode.OK len(stdout.lines)=172 len(stderr.lines)=0 duration=0.15s&gt;.stdout
+
+/home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-8399/C/testing/test_repro_a8d900ae2a4c.py:20: AssertionError</failure></testcase></testsuite></testsuites>

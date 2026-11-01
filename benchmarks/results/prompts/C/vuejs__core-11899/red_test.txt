@@ -1,0 +1,13 @@
+import { compileStyle } from '../src'
+
+describe('scoped nested at-rule regression', () => {
+  test('@media declarations inside nested scoped rule keep scoping selector', () => {
+    const { code } = compileStyle({
+      source: `.foo {\n  background-color: red;\n  .bar {}\n  @media only screen and (max-width: 800px) {\n    background-color: green;\n  }\n}`,
+      filename: 'test.css',
+      id: 'data-v-test',
+      scoped: true,
+    })
+    expect(code.slice(code.indexOf('@media'))).toContain('[data-v-test]')
+  })
+})

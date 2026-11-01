@@ -1,0 +1,9 @@
+ImportError while loading conftest '/home/ubuntu/hackproof-bench/runs/psf__requests-5414/C/tests/conftest.py'.
+tests/conftest.py:15: in <module>
+    from requests.compat import urljoin
+requests/__init__.py:135: in <module>
+    from .models import Request, Response, PreparedRequest
+E     File "/home/ubuntu/hackproof-bench/runs/psf__requests-5414/C/requests/models.py", line 402
+E       if not isinstance(host, bytes) and any(
+E       ^^
+E   IndentationError: expected an indented block after 'if' statement on line 401

@@ -1,0 +1,15 @@
+import { ref, computed, watch } from 'vue'
+
+describe('sync watcher order on computed', () => {
+  it('executes sync watchers in definition order (FIFO)', () => {
+    const n = ref(0)
+    const compN = computed(() => n.value)
+    const order = []
+    for (let i = 0; i < 5; i++) {
+      const id = i
+      watch(compN, () => { order.push(id) }, { flush: 'sync' })
+    }
+    n.value++
+    expect(order).toEqual([0, 1, 2, 3, 4])
+  })
+})

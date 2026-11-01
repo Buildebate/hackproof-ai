@@ -174,6 +174,11 @@ def wave_of(issue: object) -> str:
         parts = issue.split(":")
         if len(parts) > 1 and parts[1] == "ablation":
             return "bench4.3-ablation"
+        if "ablation" in parts[0]:
+            # Plan 45 wave label (bench4.3e-ablation:task:C): the
+            # prefix itself is the bucket — ablation rows must not
+            # masquerade as any numbered wave.
+            return parts[0]
         match = re.search(r"wave(\d+)", parts[0])
         if match:
             return f"bench4.3-wave{match.group(1)}"

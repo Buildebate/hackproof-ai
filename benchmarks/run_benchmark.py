@@ -13,6 +13,12 @@ in two modes and records machine-checkable evidence for Step 4.3/4.4:
   mirroring ``hackproof.cli.cmd_verify`` stage for stage. Step
   4.3c.1 (R9) adds exactly one green-feedback revision + re-eval
   when the first patch applies but leaves F2P red or breaks P2P.
+* **Mode C (single-shot ablation, plan 45 / ADR-031)**: the full Mode B
+  verification contour (red gate, R6, R9/green-v2, per-block apply,
+  binding guard, receipt) with the 6-role debate cycle replaced by
+  exactly one Wonder ``synthesize_patch`` call over the Mode B
+  builder context. The ``debate`` record field carries
+  ``{"skipped": "mode-c-single-shot"}``; no debate prompts exist.
 
 Execution tiers (``--runner``):
 
@@ -45,7 +51,7 @@ Outputs under ``--out`` (default ``benchmarks/results``)::
     junit_reports/base/<task>.xml   base-run JUnit (shared by modes)
     results/<mode>/<task>.json      machine verdict (done marker)
     diffs/<mode>/<task>.diff        agent code patch (tracked files)
-    guard_reports/<mode>/<task>.json guard verdict (Mode B binding)
+    guard_reports/<mode>/<task>.json guard verdict (Mode B/C binding)
     prompts/<mode>/<task>/          archived agent prompts (audit)
     harness_cache/<task>_*.json     HF input/test_patch caches + SHAs
 
@@ -2709,6 +2715,254 @@ def run_mode_b_agent(
     }
 
 
+def run_mode_c_agent(
+    task: dict, clone: Path, agent_input: dict, prompt_dir: Path,
+    tee: Tee, usage: UsageCollector,
+    prove_red: Callable[[str, bytes], dict],
+) -> dict:
+    """Mode C: guard lock + proven red + single-shot synthesis (plan 45).
+
+    Debate ablation (ADR-031): the Mode B verification contour with
+    the 6-role debate cycle replaced by exactly one Wonder
+    ``synthesize_patch`` call over the Mode B builder context (full
+    top-1 file). Red gate (Spark synthesis + 1 Wonder resynthesis
+    with the 12a.1 format guard), R6 region retry, per-block apply +
+    1 miss revision (12a.3), and guard lock/verify are identical to
+    Mode B; the R9/green-v2 laps run downstream in the shared
+    task-mode flow. The ``debate`` field carries
+    ``{"skipped": "mode-c-single-shot"}`` on every return path.
+
+    The single synthesis inherits B's R13 tail: an output with zero
+    complete blocks is retried exactly once with the same grounded
+    violation note B's synthesis uses (never a second debate).
+    """
+    import hackproof.cli as cli
+    from hackproof.debate import orchestrator as debate_orchestrator
+    from hackproof.debate.roles import architectural_builder
+    from hackproof.llm.meta_client import MetaAPIError, MetaClient
+    from hackproof.synthesis.spark_synthesizer import (
+        RegressionTestSynthesizer,
+    )
+
+    issue_text = (
+        f"{agent_input['problem_statement']}\n\n"
+        f"{agent_input['hints_text']}"
+    ).strip()
+    snippets, files, elapsed_ms, backend = localize_for_task(
+        task, clone, issue_text, tee
+    )
+    # The short head fed B's verdict roles; the single-shot producer
+    # takes only the full top-1 builder context (unchanged call).
+    _, builder_code_context = cli.build_code_context(
+        clone, snippets, files
+    )
+    structure = cli.repo_structure_sketch(clone)
+    prompt_dir.mkdir(parents=True, exist_ok=True)
+    (prompt_dir / "localize.json").write_text(
+        json.dumps(
+            {
+                "files": files,
+                "elapsed_ms": elapsed_ms,
+                "backend": backend,
+                "issue_sha256": sha256_text(issue_text),
+            },
+            indent=1,
+        ),
+        encoding="utf-8",
+    )
+    guard_files = guard_files_for(task)
+    baseline: dict[str, str] = {}
+    for rel in guard_files:
+        candidate = clone / rel
+        if candidate.is_file():
+            baseline[rel] = hashlib.sha256(
+                candidate.read_bytes()
+            ).hexdigest()
+    tee.log(f"agent[C]: guard locked ({len(baseline)} file(s))")
+    try:
+        spark = MetaClient("muse-spark-1.3")
+        wonder = MetaClient("muse-wonder-1.0")
+    except Exception as exc:  # noqa: BLE001 (auth/env -> infra upstream)
+        raise RuntimeError(f"client construction failed: {exc}") from exc
+    spark_synth = RegressionTestSynthesizer(spark)
+    wonder_synth = RegressionTestSynthesizer(wonder)
+    red_out = clone / red_test_dir_for(task)
+    red_out.mkdir(parents=True, exist_ok=True)
+
+    def _synthesize(
+        feedback: str | None, role: str, archive: str,
+        synth: RegressionTestSynthesizer, client: object, model: str,
+    ) -> tuple[str, bytes]:
+        try:
+            path = synth.synthesize_test(
+                issue_description=issue_text,
+                # Step 12a.1: full top-1 file context (was 12k snippets).
+                code_snippets=builder_code_context,
+                repo_structure=structure,
+                language=task["language"],
+                output_dir=red_out,
+                feedback=feedback,
+            )
+        except MetaAPIError as exc:
+            tee.log(f"agent[C]: red synthesis API error ({exc}); retrying ...")
+            time.sleep(10)
+            path = synth.synthesize_test(
+                issue_description=issue_text,
+                code_snippets=builder_code_context,
+                repo_structure=structure,
+                language=task["language"],
+                output_dir=red_out,
+                feedback=feedback,
+            )
+        usage.drain(client, role, model)
+        rel = str(path.relative_to(clone))
+        data = path.read_bytes()
+        tee.log(f"agent[C]: red test synthesized at {rel}")
+        (prompt_dir / archive).write_bytes(data)
+        return rel, data
+
+    red_rel, red_bytes = _synthesize(
+        None, "SparkRedSynthesis", "red_test.txt",
+        spark_synth, spark, "muse-spark-1.3",
+    )
+    red_record = prove_red(red_rel, red_bytes)
+    if not red_record.get("accepted"):
+        tee.log(
+            f"agent[C]: red rejected ({red_record.get('reason')}); "
+            "resynthesizing once with judge feedback ..."
+        )
+        # Step 12a.1: Wonder escalation for the resynthesis (was Spark).
+        judge_feedback = red_retry_feedback(red_record)
+        red_rel, red_bytes = _synthesize(
+            judge_feedback, "WonderRedSynthesis-retry",
+            "red_test_retry.txt",
+            wonder_synth, wonder, "muse-wonder-1.0",
+        )
+        # Step 12a.1: format guard — empty output gets one grounded
+        # retry with a machine defect quote instead of a judge round.
+        defect = red_format_defect(red_bytes)
+        if defect is not None:
+            tee.log(
+                f"agent[C]: red retry format defect ({defect}); "
+                "one format retry ..."
+            )
+            red_rel, red_bytes = _synthesize(
+                judge_feedback + "\n\nFORMAT DEFECT — FIX IT:\n" + defect,
+                "WonderRedSynthesis-retry-format",
+                "red_test_retry_format.txt",
+                wonder_synth, wonder, "muse-wonder-1.0",
+            )
+        red_record = prove_red(red_rel, red_bytes)
+        if not red_record.get("accepted"):
+            return {
+                "ok": False,
+                "reason": "red-rejected after resynthesis: "
+                f"{red_record.get('reason', '')}",
+                "files": files,
+                "localize_ms": elapsed_ms,
+                "backend": backend,
+                "red_rel": red_rel,
+                "red_record": red_record,
+                "debate": {"skipped": "mode-c-single-shot"},
+            }
+    # SINGLE-SHOT PRODUCER (the only contour difference vs Mode B):
+    # one Wonder synthesis over the Mode B builder context, no debate.
+    consensus_text = (
+        f"ISSUE:\n{issue_text}\n\nCODE CONTEXT:\n{builder_code_context}"
+    )
+    (prompt_dir / "single_shot_input.txt").write_text(
+        consensus_text, encoding="utf-8"
+    )
+    tee.log(
+        "agent[C]: single-shot Wonder synthesis "
+        f"(input {len(consensus_text)} chars) ..."
+    )
+    try:
+        patch_text = wonder.synthesize_patch(consensus_text)
+    except MetaAPIError as exc:
+        tee.log(f"agent[C]: synthesis API error ({exc}); retrying once ...")
+        time.sleep(10)
+        patch_text = wonder.synthesize_patch(consensus_text)
+    usage.drain(wonder, "PatchSynthesis-single", "muse-wonder-1.0")
+    (prompt_dir / "patch_text.txt").write_text(patch_text, encoding="utf-8")
+    routed = architectural_builder.extract_routed_blocks(patch_text)
+    tee.log(f"agent[C]: {len(routed)} complete block(s) extracted")
+    if not routed:
+        # R13-analog: exactly one grounded retry with B's violation
+        # note (same function, same counts — never a second attempt
+        # after this one, never a debate).
+        last = getattr(wonder, "last_usage", None)
+        finish = last.get("finish_reason") if isinstance(last, dict) else None
+        retry_input = consensus_text + debate_orchestrator._synthesis_violation(
+            patch_text, str(finish) if finish else None
+        )
+        (prompt_dir / "single_shot_input_retry.txt").write_text(
+            retry_input, encoding="utf-8"
+        )
+        tee.log("agent[C]: empty synthesis; one grounded retry ...")
+        patch_text = wonder.synthesize_patch(retry_input)
+        usage.drain(wonder, "PatchSynthesis-single-retry", "muse-wonder-1.0")
+        (prompt_dir / "patch_text_synthesis_retry.txt").write_text(
+            patch_text, encoding="utf-8"
+        )
+        routed = architectural_builder.extract_routed_blocks(patch_text)
+        tee.log(f"agent[C]: retry carries {len(routed)} complete block(s)")
+    if not routed:
+        return {
+            "ok": False,
+            "reason": "single-shot produced no complete SEARCH/REPLACE blocks",
+            "files": files,
+            "localize_ms": elapsed_ms,
+            "backend": backend,
+            "red_rel": red_rel,
+            "red_record": red_record,
+            "debate": {"skipped": "mode-c-single-shot"},
+        }
+    try:
+        applied = apply_blocks_to_candidates(
+            task["id"], clone, files, routed, guard_files_for(task), tee,
+            retry_client=wonder, retry_issue=issue_text,
+            retry_context=builder_code_context,
+            retry_patch_text=patch_text,
+            usage=usage,
+            retry_archive=prompt_dir / "patch_text_retry.txt",
+        )
+    except Exception as exc:  # noqa: BLE001 (agent-fail, recorded)
+        return {
+            "ok": False,
+            "reason": f"patch application failed: {exc}",
+            "files": files,
+            "localize_ms": elapsed_ms,
+            "backend": backend,
+            "red_rel": red_rel,
+            "red_record": red_record,
+            "debate": {"skipped": "mode-c-single-shot"},
+        }
+    local_violations = verify_local_guard(clone, baseline)
+    return {
+        "ok": True,
+        "reason": "",
+        "files": files,
+        "localize_ms": elapsed_ms,
+        "backend": backend,
+        "patch_text": patch_text,
+        "blocks": len(routed),
+        "applied_file": applied[0],
+        "applied_files": applied,
+        "diff_text": git_diff_text(clone),
+        "red_rel": red_rel,
+        "red_bytes": red_bytes,
+        "red_record": red_record,
+        "baseline": baseline,
+        "local_violations": local_violations,
+        # Step 4.3c.1 (R9): in-memory revision context, excluded from
+        # the persisted record (already model-visible, no harness).
+        "issue_text": issue_text,
+        "builder_code_context": builder_code_context,
+        "debate": {"skipped": "mode-c-single-shot"},
+    }
+
+
 def verify_local_guard(
     clone: Path, baseline: dict[str, str]
 ) -> list[str]:
@@ -2794,7 +3048,7 @@ def reset_remote_test_files(
 
 
 def result_paths(out_dir: Path, mode: str, task_id: str) -> dict[str, Path]:
-    """Artifact paths for one run (``mode`` in A/B/base)."""
+    """Artifact paths for one run (``mode`` in A/B/C/base)."""
     return {
         "log": out_dir / "raw_logs" / mode / f"{task_id}.log",
         "junit": out_dir / "junit_reports" / mode / f"{task_id}.xml",
@@ -2840,8 +3094,8 @@ def ledger_burn_check(ledger_path: Path, tee: Tee) -> None:
 
 
 # Wave label for Gate cost attribution (historic prefixes immutable;
-# Wave 3 rows must not masquerade as Wave 2 / Wave 1 / Step 4.2).
-BENCH_WAVE_LABEL = "bench4.3d-wave3"
+# ablation rows must not masquerade as Wave 3 / Wave 2 / Wave 1).
+BENCH_WAVE_LABEL = "bench4.3e-ablation"
 
 
 def ledger_append_run(
@@ -3159,7 +3413,12 @@ def run_task_mode_oci(
             )
             rounds_used, converged = 0, bool(agent.get("ok"))
         else:
-            agent = run_mode_b_agent(
+            # Plan 45: Mode C reuses the Mode B agent contour with a
+            # single-shot producer (no debate cycle).
+            agent_fn = (
+                run_mode_b_agent if mode == "B" else run_mode_c_agent
+            )
+            agent = agent_fn(
                 task, clone, agent_input, paths["prompts"], tee, usage,
                 prove_red=lambda rel, data: run_red_remote(
                     cfg, task, run_dir, rel, data, tee
@@ -3220,9 +3479,10 @@ def run_task_mode_oci(
         paths["diff"].write_text(diff_text, encoding="utf-8")
         record["diff_sha256"] = sha256_text(diff_text)
         red_record: dict | None = None
-        if mode == "B":
+        if mode in ("B", "C"):
             # Step 4.3b.6: red was proved inside the agent (before any
-            # debate); consume its record, archive the leftover JUnit.
+            # debate/synthesis spend); consume its record, archive the
+            # leftover JUnit.
             red_record = agent.get("red_record") or {}
             archive_red_junit_remote(
                 cfg, out_dir, mode, task_id, run_dir, red_record, tee
@@ -3247,7 +3507,7 @@ def run_task_mode_oci(
             tee.log(f"agent[{mode}]: empty diff (no-op patch)")
         changed = remote_changed_paths(cfg, run_dir)
         tee.log(f"agent[{mode}]: {len(changed)} changed path(s) remote")
-        if mode == "B":
+        if mode in ("B", "C"):
             local_violations = agent.get("local_violations", [])
             remote_violations = classify_remote_guard(
                 task, clone, changed, tee
@@ -3301,7 +3561,7 @@ def run_task_mode_oci(
         cache_dir = out_dir / "harness_cache"
         harness = get_test_patch(task, cache_dir, tee)
         apply_text_patch(cfg, run_dir, harness["test_patch"], tee, "agent")
-        extra = [agent["red_rel"]] if mode == "B" else None
+        extra = [agent["red_rel"]] if mode in ("B", "C") else None
         agent_argv_ids: list[str] | None = None
         collect_broken = False
         if task["language"] == "python":
@@ -3358,7 +3618,9 @@ def run_task_mode_oci(
         scoring = score_task(task, base_index, agent_index)
         record["scoring"] = scoring
         functional = bool(scoring["resolved_functional"])
-        if mode == "B" and not functional and green_retry_eligible(scoring):
+        if mode in ("B", "C") and not functional and green_retry_eligible(
+            scoring
+        ):
             tee.log(
                 "green-retry: first attempt "
                 f"{describe_failure(scoring)}; one revision ..."
@@ -3406,7 +3668,7 @@ def run_task_mode_oci(
                     "laps": retry.get("laps", 1),
                 }
                 tee.log(f"green-retry: retry ended ({retry['reason']})")
-        if mode == "B" and functional:
+        if mode in ("B", "C") and functional:
             receipt_ok = mint_mode_b_receipt(
                 task, clone, agent, record, junit,
                 int(record.get("eval_exit", res.exit_code)), tee,
@@ -4102,7 +4364,7 @@ def run_green_retry_local(
     guard_report: dict = {
         "task": task["id"],
         "mode": config.mode,
-        "binding": config.mode == "B",
+        "binding": config.mode in ("B", "C"),
         "verdict": "clean",
         "violations": [],
         "note": f"green-retry attempt ({_rk_tag or 'base'})",
@@ -4238,7 +4500,7 @@ def finalize_run(
     paths = result_paths(out_dir, mode, task_id)
     paths["result"].parent.mkdir(parents=True, exist_ok=True)
     paths["result"].write_text(json.dumps(record, indent=1), encoding="utf-8")
-    if mode == "B" and not paths["guard"].is_file():
+    if mode in ("B", "C") and not paths["guard"].is_file():
         # Evidence completeness: early exits (unmeasurable, patch
         # failure, red rejection, infra) never reached the guard
         # stage — record an explicit not-applicable verdict instead
@@ -4312,7 +4574,12 @@ def run_task_mode_local(
             )
             rounds_used, converged = 0, bool(agent.get("ok"))
         else:
-            agent = run_mode_b_agent(
+            # Plan 45: Mode C reuses the Mode B agent contour with a
+            # single-shot producer (no debate cycle).
+            agent_fn = (
+                run_mode_b_agent if mode == "B" else run_mode_c_agent
+            )
+            agent = agent_fn(
                 task, clone, agent_input, paths["prompts"], tee, usage,
                 prove_red=lambda rel, data: run_red_local(
                     task, run_dir, rel, data, tee
@@ -4368,9 +4635,10 @@ def run_task_mode_local(
         paths["diff"].parent.mkdir(parents=True, exist_ok=True)
         paths["diff"].write_text(diff_text, encoding="utf-8")
         record["diff_sha256"] = sha256_text(diff_text)
-        if mode == "B":
+        if mode in ("B", "C"):
             # Step 4.3b.6: red was proved inside the agent (before any
-            # debate); consume its record instead of re-executing.
+            # debate/synthesis spend); consume its record instead of
+            # re-executing.
             red_record = agent.get("red_record") or {}
             record["red"] = red_record
             if not red_record.get("accepted"):
@@ -4396,7 +4664,7 @@ def run_task_mode_local(
         guard_report = {
             "task": task_id,
             "mode": mode,
-            "binding": mode == "B",
+            "binding": mode in ("B", "C"),
             "verdict": "tamper" if violations else "clean",
             "violations": violations,
         }
@@ -4404,7 +4672,7 @@ def run_task_mode_local(
         paths["guard"].write_text(json.dumps(guard_report, indent=1),
                                   encoding="utf-8")
         record["guard"] = guard_report
-        if mode == "B" and violations:
+        if mode in ("B", "C") and violations:
             record.update(
                 {"status": "failed", "reason":
                  f"tamper: {'; '.join(violations[:5])}", "done": True}
@@ -4424,7 +4692,7 @@ def run_task_mode_local(
             tee.log(f"hygiene: reset {len(touched)} test file(s) to base")
         harness = get_test_patch(task, out_dir / "harness_cache", tee)
         local_apply_patch(run_dir, harness["test_patch"], tee, "agent")
-        extra = [agent["red_rel"]] if mode == "B" else None
+        extra = [agent["red_rel"]] if mode in ("B", "C") else None
         agent_argv_ids: list[str] | None = None
         collect_broken = False
         if task["language"] == "python":
@@ -4479,7 +4747,9 @@ def run_task_mode_local(
         scoring = score_task(task, base_index, agent_index)
         record["scoring"] = scoring
         functional = bool(scoring["resolved_functional"])
-        if mode == "B" and not functional and green_retry_eligible(scoring):
+        if mode in ("B", "C") and not functional and green_retry_eligible(
+            scoring
+        ):
             tee.log(
                 "green-retry: first attempt "
                 f"{describe_failure(scoring)}; one revision ..."
@@ -4580,11 +4850,13 @@ def run_task_mode_local(
 def build_parser() -> argparse.ArgumentParser:
     """Build the Step 4.2 command-line interface."""
     parser = argparse.ArgumentParser(
-        description="Step 4.2: dual-mode benchmark execution (Mode A vs B)"
+        description="Step 4.2: benchmark execution "
+        "(A baseline vs B HackProof AI vs C ablation)",
     )
     parser.add_argument(
-        "--mode", required=True, choices=("A", "B"),
-        help="agent mode: A (single-shot baseline) or B (HackProof AI)",
+        "--mode", required=True, choices=("A", "B", "C"),
+        help="agent mode: A (single-shot baseline), B (HackProof AI), "
+        "or C (single-shot + B contour, plan 45 ablation)",
     )
     parser.add_argument(
         "--tasks", default=str(

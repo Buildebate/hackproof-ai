@@ -1,0 +1,23 @@
+requests/utils.py
+<<<<<<< SEARCH
+    if scheme is None:
+        scheme = new_scheme
+    if path is None:
+        path = ''
+
+    return urlunparse((scheme, netloc, path, '', query, fragment))
+=======
+    if scheme is None:
+        scheme = new_scheme
+    if path is None:
+        path = ''
+
+    if auth:
+        if netloc:
+            if '@' not in netloc:
+                netloc = '@'.join([auth, netloc])
+        elif host:
+            netloc = '@'.join([auth, host])
+
+    return urlunparse((scheme, netloc, path, '', query, fragment))
+>>>>>>> REPLACE

@@ -1,0 +1,3 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [P2P] test_requests.py::TestRequests::test_params_bytes_are_encoded (base=passed agent=failed):
+  TypeError: Cannot mix str and non-str arguments

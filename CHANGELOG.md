@@ -12,6 +12,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Zero-falsification integrity verifier (Roadmap Step 4.3):
+  new `scripts/verify_benchmark_integrity.py` re-derives every claim
+  from raw bytes (JUnit/diff/guard/red SHA chains, per-side rescore,
+  hidden-golden replay, dossier recount) — exit 0, 0 mismatches,
+  5037 sub-checks green. Caught + fixed a first-attempt scoring
+  artifact: A/6028 rescored `failed` → `resolved` offline
+  (`benchmarks/rescore_6028_A.py`, 12a.0 chain, F2P unchanged) —
+  baseline now **A 6/12** (B 9/12, C 7/12 held). `REDACTION.md`
+  policy: raw tree ships byte-identical (secret scan clean).
+- Mode-C ablation wave + dossier (Plan 45 Steps 13b.1-13b.2, ADR-031):
+  12/12 done, C **7/12** vs B 9/12 — **H0 verdict** (gap 2, debates
+  stay; H1 published negatively as pre-committed, n=12 frame).
+  Invariants: red 12/12, guard 10 clean + 0 tamper, receipts 7/7,
+  audit clean; 878,060 tokens / 37 calls (distributions in dossier,
+  money-free per ADR-031). Executed 8 tasks on-phone + 4 on OCI
+  (phone reboots under torch load; same code/backend/pins).
+  Honest finding: 0-byte first-synthesis red accepted once
+  (11739-C, vitest quirk; verdicts unaffected) — first-synthesis
+  format check proposed as follow-up. Plan 45 complete.
+- Mode C single-shot ablation agent (Plan 45 Step 13a.0, ADR-031):
+  new `run_mode_c_agent` — the full Mode B verification contour
+  (red gate, R6, R9/green-v2, per-block apply, binding guard,
+  receipt) with the 6-role debate cycle replaced by exactly one
+  Wonder `synthesize_patch` call over the Mode B builder context;
+  `debate` field carries `{"skipped": "mode-c-single-shot"}`.
+  Wired through both tiers (`--mode C`), wave label rotated to
+  `bench4.3e-ablation` with its own repricer bucket, audit requires
+  guard reports for C. Suite 391 passed + 5 skipped (base 381 + 10
+  new vectors), ruff clean, TGRES-minted (`sig=68d6f4fe`).
 - Wave 3 final dossier (Steps 12b.4-12b.5): `benchmarks/SUMMARY.md` +
   `benchmarks/evidence_dossier.json` — honest B 9/12 / A 5/12 (goal 9/12
   MET), reconciled against ledger and the 12-row B matrix; 1142 flipped

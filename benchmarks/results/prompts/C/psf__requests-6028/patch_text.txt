@@ -1,0 +1,15 @@
+requests/utils.py
+<<<<<<< SEARCH
+    if not scheme:
+        scheme = new_scheme
+    if not path:
+        path = '/'
+=======
+    if auth:
+        netloc = '@'.join([auth, netloc])
+
+    if not scheme:
+        scheme = new_scheme
+    if not path:
+        path = '/'
+>>>>>>> REPLACE

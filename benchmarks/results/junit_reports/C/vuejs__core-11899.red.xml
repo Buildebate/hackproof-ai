@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="2.007">
+    <testsuite name="packages/compiler-sfc/__tests__/repro-59fcf089fbd3.test.ts" timestamp="2026-11-01T08:04:05.601Z" hostname="dc868b4b2c5f" tests="1" failures="1" errors="0" skipped="0" time="0.02">
+        <testcase classname="packages/compiler-sfc/__tests__/repro-59fcf089fbd3.test.ts" name="scoped nested at-rule regression &gt; @media declarations inside nested scoped rule keep scoping selector" time="0.019">
+            <failure message="expected &apos;@media only screen and (max-width: 80…&apos; to contain &apos;[data-v-test]&apos;" type="AssertionError">
+AssertionError: expected &apos;@media only screen and (max-width: 80…&apos; to contain &apos;[data-v-test]&apos;
+
+- Expected
++ Received
+
+- [data-v-test]
++ @media only screen and (max-width: 800px) {
++     background-color: green;
++ }
++ }
+
+ ❯ packages/compiler-sfc/__tests__/repro-59fcf089fbd3.test.ts:11:48
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

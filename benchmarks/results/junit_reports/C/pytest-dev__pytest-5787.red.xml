@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="1" hostname="02be08ac71f8" name="pytest" skipped="0" tests="1" time="0.052" timestamp="2026-11-01T05:35:52.346389"><testcase classname="testing.test_repro_d82935519622" file="testing/test_repro_d82935519622.py" line="4" name="test_chained_exception_serialization_roundtrip" time="0.023"><failure message="AssertionError: def test_chained_exception_serialization_roundtrip():
+          inner_msg = &quot;chain-&quot; + &quot;inner&quot;
+          middle_msg = &quot;chain-&quot; + &quot;middle&quot;
+          outer_msg = &quot;chain-&quot; + &quot;outer&quot;
+      
+          def raise_inner():
+              raise ValueError(inner_msg)
+      
+          def raise_middle():
+              try:
+                  raise_inner()
+              except Exception as exc:
+                  raise ValueError(middle_msg) from exc
+      
+          def raise_outer():
+              try:
+                  raise_middle()
+              except Exception as exc:
+                  raise ValueError(outer_msg) from exc
+      
+          with pytest.raises(ValueError) as excinfo:
+  &gt;           raise_outer()
+  
+  testing/test_repro_d82935519622.py:26: 
+  _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+  
+      def raise_outer():
+          try:
+              raise_middle()
+          except Exception as exc:
+  &gt;           raise ValueError(outer_msg) from exc
+  E           ValueError: chain-outer
+  
+  testing/test_repro_d82935519622.py:23: ValueError
+assert (&apos;ValueError: &apos; + &apos;chain-inner&apos;) in &apos;def test_chained_exception_serialization_roundtrip():\n        inner_msg = &quot;chain-&quot; + &quot;inner&quot;\n        middle_msg = &quot;...lueError(outer_msg) from exc\nE           ValueError: chain-outer\n\ntesting/test_repro_d82935519622.py:23: ValueError&apos;">def test_chained_exception_serialization_roundtrip():
+        inner_msg = &quot;chain-&quot; + &quot;inner&quot;
+        middle_msg = &quot;chain-&quot; + &quot;middle&quot;
+        outer_msg = &quot;chain-&quot; + &quot;outer&quot;
+    
+        def raise_inner():
+            raise ValueError(inner_msg)
+    
+        def raise_middle():
+            try:
+                raise_inner()
+            except Exception as exc:
+                raise ValueError(middle_msg) from exc
+    
+        def raise_outer():
+            try:
+                raise_middle()
+            except Exception as exc:
+                raise ValueError(outer_msg) from exc
+    
+        with pytest.raises(ValueError) as excinfo:
+            raise_outer()
+    
+        longrepr = excinfo.getrepr(style=&quot;long&quot;)
+        original_text = str(longrepr)
+        assert &quot;ValueError: &quot; + inner_msg in original_text, original_text
+        assert &quot;ValueError: &quot; + middle_msg in original_text, original_text
+        assert &quot;ValueError: &quot; + outer_msg in original_text, original_text
+    
+        report = TestReport(
+            nodeid=&quot;test_chained.py::test_chained&quot;,
+            location=(&quot;test_chained.py&quot;, 0, &quot;test_chained&quot;),
+            keywords={},
+            outcome=&quot;failed&quot;,
+            longrepr=longrepr,
+            when=&quot;call&quot;,
+        )
+        try:
+            restored = TestReport._from_json(report._to_json())
+            restored_text = str(restored.longrepr)
+        except Exception as exc:
+            restored = None
+            restored_text = &quot;serialization failed: {!r}&quot;.format(exc)
+    
+        assert restored is not None, restored_text
+        assert hasattr(restored.longrepr, &quot;chain&quot;) or hasattr(
+            restored.longrepr, &quot;reprtraceback&quot;
+        ), restored_text
+&gt;       assert &quot;ValueError: &quot; + inner_msg in restored_text, restored_text
+E       AssertionError: def test_chained_exception_serialization_roundtrip():
+E                 inner_msg = &quot;chain-&quot; + &quot;inner&quot;
+E                 middle_msg = &quot;chain-&quot; + &quot;middle&quot;
+E                 outer_msg = &quot;chain-&quot; + &quot;outer&quot;
+E             
+E                 def raise_inner():
+E                     raise ValueError(inner_msg)
+E             
+E                 def raise_middle():
+E                     try:
+E                         raise_inner()
+E                     except Exception as exc:
+E                         raise ValueError(middle_msg) from exc
+E             
+E                 def raise_outer():
+E                     try:
+E                         raise_middle()
+E                     except Exception as exc:
+E                         raise ValueError(outer_msg) from exc
+E             
+E                 with pytest.raises(ValueError) as excinfo:
+E         &gt;           raise_outer()
+E         
+E         testing/test_repro_d82935519622.py:26: 
+E         _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ 
+E         
+E             def raise_outer():
+E                 try:
+E                     raise_middle()
+E                 except Exception as exc:
+E         &gt;           raise ValueError(outer_msg) from exc
+E         E           ValueError: chain-outer
+E         
+E         testing/test_repro_d82935519622.py:23: ValueError
+E       assert (&apos;ValueError: &apos; + &apos;chain-inner&apos;) in &apos;def test_chained_exception_serialization_roundtrip():\n        inner_msg = &quot;chain-&quot; + &quot;inner&quot;\n        middle_msg = &quot;...lueError(outer_msg) from exc\nE           ValueError: chain-outer\n\ntesting/test_repro_d82935519622.py:23: ValueError&apos;
+
+testing/test_repro_d82935519622.py:53: AssertionError</failure></testcase></testsuite></testsuites>

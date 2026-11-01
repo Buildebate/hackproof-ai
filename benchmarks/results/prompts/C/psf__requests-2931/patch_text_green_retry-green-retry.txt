@@ -1,0 +1,9 @@
+requests/models.py
+<<<<<<< SEARCH
+                    body = self._encode_params(data)
+=======
+                    if isinstance(data, (str, bytes)):
+                        body = data
+                    else:
+                        body = self._encode_params(data)
+>>>>>>> REPLACE

@@ -1,0 +1,76 @@
+{
+ "task": "vuejs__core-11899",
+ "mode": "C",
+ "tier": "oci",
+ "ts": "2026-11-01T08:13:48.670588+00:00",
+ "base_ref": "706d4ac1d0210b2d9134b3228280187fe02fc971",
+ "agent": {
+  "ok": false,
+  "reason": "single-shot produced no complete SEARCH/REPLACE blocks",
+  "files": [
+   "packages/compiler-sfc/__tests__/cssVars.spec.ts",
+   "packages/runtime-core/src/customFormatter.ts",
+   "packages/shared/src/patchFlags.ts",
+   "packages-private/dts-test/defineComponent.test-d.tsx",
+   "packages/runtime-core/src/compat/compatConfig.ts"
+  ],
+  "localize_ms": 376454,
+  "backend": "hybrid-rrf-contriever-cpu",
+  "red_rel": "packages/compiler-sfc/__tests__/repro-59fcf089fbd3.test.ts",
+  "debate": {
+   "skipped": "mode-c-single-shot"
+  }
+ },
+ "usage": {
+  "prompt_tokens": 38027,
+  "completion_tokens": 70911,
+  "total_tokens": 108938,
+  "per_call": [
+   {
+    "role": "SparkRedSynthesis",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 12944,
+    "completion_tokens": 5375,
+    "total_tokens": 18319,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "PatchSynthesis-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 12505,
+    "completion_tokens": 32768,
+    "total_tokens": 45273,
+    "finish_reason": "length"
+   },
+   {
+    "role": "PatchSynthesis-single-retry",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 12578,
+    "completion_tokens": 32768,
+    "total_tokens": 45346,
+    "finish_reason": "length"
+   }
+  ]
+ },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
+ "status": "failed",
+ "reason": "single-shot produced no complete SEARCH/REPLACE blocks",
+ "done": true,
+ "red": {
+  "rel": "packages/compiler-sfc/__tests__/repro-59fcf089fbd3.test.ts",
+  "sha256": "0bfefcff5fb011525cf5ddb37fe8a455060d590ba83d60fcd74d3af9b74dc7f9",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 1075,
+  "junit_sha256": "77b3271633c067aa7558a45010ef4fac65624c95a72d4c85a6d93aa34142380e"
+ }
+}

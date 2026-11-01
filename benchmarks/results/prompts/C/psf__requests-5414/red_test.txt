@@ -1,0 +1,15 @@
+import requests
+from requests.exceptions import InvalidURL
+
+
+def test_leading_dot_hostname_raises_invalid_url():
+    s = requests.Session()
+    s.trust_env = False
+    try:
+        s.get("http://.example.com", timeout=5)
+    except InvalidURL:
+        pass
+    except Exception as e:
+        assert False, f"Expected InvalidURL, got {type(e).__name__}: {e}"
+    else:
+        assert False, "Expected InvalidURL for http://.example.com"

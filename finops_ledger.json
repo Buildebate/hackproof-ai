@@ -1,6 +1,6 @@
 {
   "budget_usd": 150.0,
-  "total_spent_usd": 78.48,
+  "total_spent_usd": 88.33,
   "entries": [
     {
       "ts": "2026-10-30T04:11:08.685381+00:00",
@@ -5182,6 +5182,463 @@
           "prompt_tokens": 18079,
           "completion_tokens": 32768,
           "total_tokens": 50847,
+          "finish_reason": "length"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T04:53:01.996578+00:00",
+      "issue": "bench4.3e-ablation:psf__requests-1142:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 39838,
+      "completion_tokens": 16951,
+      "total_tokens": 56789,
+      "est_cost_usd": 0.391596,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 13356,
+          "completion_tokens": 2762,
+          "total_tokens": 16118,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13008,
+          "completion_tokens": 10718,
+          "total_tokens": 23726,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13474,
+          "completion_tokens": 3471,
+          "total_tokens": 16945,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T04:59:02.180531+00:00",
+      "issue": "bench4.3e-ablation:psf__requests-2931:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 26134,
+      "completion_tokens": 34526,
+      "total_tokens": 60660,
+      "est_cost_usd": 0.7121762,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 8828,
+          "completion_tokens": 2447,
+          "total_tokens": 11275,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 8470,
+          "completion_tokens": 2452,
+          "total_tokens": 10922,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-green-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 8836,
+          "completion_tokens": 29627,
+          "total_tokens": 38463,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T05:04:00.524214+00:00",
+      "issue": "bench4.3e-ablation:psf__requests-5414:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 14289,
+      "completion_tokens": 36325,
+      "total_tokens": 50614,
+      "est_cost_usd": 0.6515495,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 7311,
+          "completion_tokens": 5232,
+          "total_tokens": 12543,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 6978,
+          "completion_tokens": 31093,
+          "total_tokens": 38071,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T05:10:32.523472+00:00",
+      "issue": "bench4.3e-ablation:psf__requests-6028:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 38065,
+      "completion_tokens": 40263,
+      "total_tokens": 78328,
+      "est_cost_usd": 0.8577076000000001,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 9560,
+          "completion_tokens": 3158,
+          "total_tokens": 12718,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 9227,
+          "completion_tokens": 12974,
+          "total_tokens": 22201,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 9661,
+          "completion_tokens": 5058,
+          "total_tokens": 14719,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-green-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 9617,
+          "completion_tokens": 19073,
+          "total_tokens": 28690,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T05:28:46.202212+00:00",
+      "issue": "bench4.3e-ablation:pytest-dev__pytest-10081:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 40791,
+      "completion_tokens": 26427,
+      "total_tokens": 67218,
+      "est_cost_usd": 0.3949755,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 13699,
+          "completion_tokens": 12288,
+          "total_tokens": 25987,
+          "finish_reason": "length"
+        },
+        {
+          "role": "WonderRedSynthesis-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13780,
+          "completion_tokens": 11811,
+          "total_tokens": 25591,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13312,
+          "completion_tokens": 2328,
+          "total_tokens": 15640,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T05:47:57.488810+00:00",
+      "issue": "bench4.3e-ablation:pytest-dev__pytest-5787:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 64732,
+      "completion_tokens": 124303,
+      "total_tokens": 189035,
+      "est_cost_usd": 2.4615663,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 10287,
+          "completion_tokens": 12288,
+          "total_tokens": 22575,
+          "finish_reason": "length"
+        },
+        {
+          "role": "WonderRedSynthesis-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 10368,
+          "completion_tokens": 22934,
+          "total_tokens": 33302,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 9891,
+          "completion_tokens": 32768,
+          "total_tokens": 42659,
+          "finish_reason": "length"
+        },
+        {
+          "role": "PatchSynthesis-single-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 9963,
+          "completion_tokens": 24639,
+          "total_tokens": 34602,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 11921,
+          "completion_tokens": 8611,
+          "total_tokens": 20532,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "ArchitecturalBuilder-green-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 12302,
+          "completion_tokens": 23063,
+          "total_tokens": 35365,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T05:52:40.128650+00:00",
+      "issue": "bench4.3e-ablation:pytest-dev__pytest-7432:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 21397,
+      "completion_tokens": 8026,
+      "total_tokens": 29423,
+      "est_cost_usd": 0.0743679,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 10909,
+          "completion_tokens": 6525,
+          "total_tokens": 17434,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 10488,
+          "completion_tokens": 1501,
+          "total_tokens": 11989,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T05:58:52.986861+00:00",
+      "issue": "bench4.3e-ablation:pytest-dev__pytest-8399:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 22582,
+      "completion_tokens": 12342,
+      "total_tokens": 34924,
+      "est_cost_usd": 0.2375539,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 11479,
+          "completion_tokens": 2770,
+          "total_tokens": 14249,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 11103,
+          "completion_tokens": 9572,
+          "total_tokens": 20675,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T07:31:36.793741+00:00",
+      "issue": "bench4.3e-ablation:vuejs__core-11589:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 26629,
+      "completion_tokens": 19978,
+      "total_tokens": 46607,
+      "est_cost_usd": 0.3770475,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 13533,
+          "completion_tokens": 3851,
+          "total_tokens": 17384,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 13096,
+          "completion_tokens": 16127,
+          "total_tokens": 29223,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T07:48:49.832229+00:00",
+      "issue": "bench4.3e-ablation:vuejs__core-11739:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 42979,
+      "completion_tokens": 77824,
+      "total_tokens": 120803,
+      "est_cost_usd": 1.4281731,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 14595,
+          "completion_tokens": 12288,
+          "total_tokens": 26883,
+          "finish_reason": "length"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14156,
+          "completion_tokens": 32768,
+          "total_tokens": 46924,
+          "finish_reason": "length"
+        },
+        {
+          "role": "PatchSynthesis-single-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14228,
+          "completion_tokens": 32768,
+          "total_tokens": 46996,
+          "finish_reason": "length"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T07:56:43.605182+00:00",
+      "issue": "bench4.3e-ablation:vuejs__core-11870:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 26253,
+      "completion_tokens": 8468,
+      "total_tokens": 34721,
+      "est_cost_usd": 0.13536099999999998,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 13346,
+          "completion_tokens": 4392,
+          "total_tokens": 17738,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 12907,
+          "completion_tokens": 4076,
+          "total_tokens": 16983,
+          "finish_reason": "stop"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T08:13:48.788924+00:00",
+      "issue": "bench4.3e-ablation:vuejs__core-11899:C",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 38027,
+      "completion_tokens": 70911,
+      "total_tokens": 108938,
+      "est_cost_usd": 1.4134213999999998,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "SparkRedSynthesis",
+          "model": "muse-spark-1.3",
+          "prompt_tokens": 12944,
+          "completion_tokens": 5375,
+          "total_tokens": 18319,
+          "finish_reason": "stop"
+        },
+        {
+          "role": "PatchSynthesis-single",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 12505,
+          "completion_tokens": 32768,
+          "total_tokens": 45273,
+          "finish_reason": "length"
+        },
+        {
+          "role": "PatchSynthesis-single-retry",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 12578,
+          "completion_tokens": 32768,
+          "total_tokens": 45346,
+          "finish_reason": "length"
+        }
+      ]
+    },
+    {
+      "ts": "2026-11-01T09:26:30.970072+00:00",
+      "issue": "analysis:probe-11739-blocksonly-suffix",
+      "rounds_used": 0,
+      "converged": false,
+      "prompt_tokens": 14177,
+      "completion_tokens": 32768,
+      "total_tokens": 46945,
+      "est_cost_usd": 0.712068,
+      "priced": true,
+      "per_call": [
+        {
+          "role": "PatchSynthesis-probe",
+          "model": "muse-wonder-1.0",
+          "prompt_tokens": 14177,
+          "completion_tokens": 32768,
+          "total_tokens": 46945,
           "finish_reason": "length"
         }
       ]

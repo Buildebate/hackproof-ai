@@ -1,0 +1,12 @@
+{
+ "files": [
+  "packages/compiler-sfc/__tests__/cssVars.spec.ts",
+  "packages/runtime-core/src/customFormatter.ts",
+  "packages/shared/src/patchFlags.ts",
+  "packages-private/dts-test/defineComponent.test-d.tsx",
+  "packages/runtime-core/src/compat/compatConfig.ts"
+ ],
+ "elapsed_ms": 376454,
+ "backend": "hybrid-rrf-contriever-cpu",
+ "issue_sha256": "cf27baedb01b20fd8ef7caba96a5f661676478d7bd11d25e27c9ae7d5b6be760"
+}

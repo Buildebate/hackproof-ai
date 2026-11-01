@@ -1,14 +1,14 @@
 {
- "dossier": "Step 4.4 Metrics & Evidence Dossier — Wave 3 final (plan 44, steps 12b.4/12b.5)",
+ "dossier": "Step 4.4 Metrics & Evidence Dossier \u2014 Wave 3 final (plan 44, steps 12b.4/12b.5)",
  "scoreboard": {
   "mode_B_resolved": 9,
-  "mode_A_resolved": 5,
+  "mode_A_resolved": 6,
   "denominator": 12,
   "history_B": "0/12 raw 4.2 -> 1/12 rescore -> 4/12 wave1 -> 7/12 wave2 -> 8/12 (12a.0 rescore 6028) -> 9/12 wave3",
-  "history_A": "0/12 raw 4.2 -> 2/12 rescore -> 2/12 wave1 -> 5/12 wave2 (held, not rerun in W3)",
+  "history_A": "0/12 raw 4.2 -> 2/12 rescore -> 2/12 wave1 -> 5/12 wave2 -> 6/12 (4.3 rescore 6028, first-attempt remap artifact)",
   "goal_9_12": "MET (honest 9/12); 12/12 ideal not reached (stochastic/content ceiling)",
   "b_superset_of_a": false,
-  "b_superset_note": "1142 now resolved in BOTH modes (A held since W2); B leads 9/12 vs 5/12"
+  "b_superset_note": "1142 now resolved in BOTH modes (A held since W2); B leads 9/12 vs 6/12"
  },
  "verdicts": {
   "A": {
@@ -28,9 +28,10 @@
     "done": true
    },
    "psf__requests-6028": {
-    "status": "failed",
-    "reason": "p2p-broken:1",
-    "done": true
+    "status": "resolved",
+    "reason": "",
+    "done": true,
+    "rescore": "4.3 offline rescore (rescore_6028_A.py): first-attempt scorer used base resolution on agent JUnit; per-side re-derivation from raw JUnit scores passed; F2P unchanged"
    },
    "pytest-dev__pytest-10081": {
     "status": "failed",
@@ -240,7 +241,7 @@
    "cap_usd": 18.0,
    "incl_ablation_usd": 2.75,
    "total_usd": 24.51,
-   "verdict": "OVERRUN +$3.76 — cause measured: TS ramble (11739 $4.69 + 11589 $4.66 + 11899 $2.74 = 68% of B spend)"
+   "verdict": "OVERRUN +$3.76 \u2014 cause measured: TS ramble (11739 $4.69 + 11589 $4.66 + 11899 $2.74 = 68% of B spend)"
   },
   "wave2_per_task": [
    {
@@ -394,7 +395,7 @@
   "wave3_envelope": {
    "cap_usd": 14.0,
    "total_usd": 18.59,
-   "verdict": "OVERRUN +$4.59 — cause measured: green-v2 extra laps (1142 flip on 22 calls; 5787 Wonder resynthesis + full debate + repair lap) + bounded ramble spend (13 length truncations, stop-rule capped)"
+   "verdict": "OVERRUN +$4.59 \u2014 cause measured: green-v2 extra laps (1142 flip on 22 calls; 5787 Wonder resynthesis + full debate + repair lap) + bounded ramble spend (13 length truncations, stop-rule capped)"
   },
   "wave3_per_task": [
    {
@@ -492,16 +493,16 @@
   "outcome": "7/12 -> Wave 3 DECISION REQUIRED (founder)",
   "recommendation": "CONDITIONAL GO: rerun 5 B-misses B-only (~$10-12, inside $18 W3 envelope and $84 remainder); 2-of-5 flips reach 9/12",
   "iterability": {
-   "psf__requests-1142": "content (f2p-not-fixed:1) — MEDIUM, stochastic flip plausible",
-   "psf__requests-6028": "content (p2p-broken:1, F2P fixed by R9) — MEDIUM",
-   "vuejs__core-11899": "content+match (green-retry SEARCH miss) — MEDIUM",
-   "vuejs__core-11739": "ramble+match (5 length truncations, $4.69 burn) — LOW without anti-ramble mechanism",
-   "pytest-dev__pytest-5787": "red-quality (empty JUnit after resynthesis) — LOW without red-synthesis work"
+   "psf__requests-1142": "content (f2p-not-fixed:1) \u2014 MEDIUM, stochastic flip plausible",
+   "psf__requests-6028": "content (p2p-broken:1, F2P fixed by R9) \u2014 MEDIUM",
+   "vuejs__core-11899": "content+match (green-retry SEARCH miss) \u2014 MEDIUM",
+   "vuejs__core-11739": "ramble+match (5 length truncations, $4.69 burn) \u2014 LOW without anti-ramble mechanism",
+   "pytest-dev__pytest-5787": "red-quality (empty JUnit after resynthesis) \u2014 LOW without red-synthesis work"
   },
   "scope_note": "B-only (A parity already proved guardrail transfer 2/12->5/12); optional 4.3c.4 anti-ramble guard would raise 11739 odds"
  },
  "wave4_decision": {
-  "criterion": "plan 44 §12b.5: 12/12 -> close phase; 10-11/12 -> W4 only from remainder (~$6); <=9/12 -> new root-cause, no blind W4",
+  "criterion": "plan 44 \u00a712b.5: 12/12 -> close phase; 10-11/12 -> W4 only from remainder (~$6); <=9/12 -> new root-cause, no blind W4",
   "outcome": "9/12 -> GOAL MET, phase target reached; NO blind W4",
   "rationale": "all remaining misses are pure content-class (clean guard, accepted red, applied patches): 5787 genuine-hard (deep pytest internals), 11739/11899 one F2P each (scoped CSS); every addressable W2-autopsy mechanism is built and live-validated 4/4, so a further wave without a new root-cause theory would re-roll stochastic content at ~$4-5/task with no addressable lever",
   "requirement": "W4 needs a fresh mechanism proposal + founder authorization"
@@ -516,5 +517,63 @@
   "ledger": "packages/hackproof-ai/finops_ledger.json",
   "results": "packages/hackproof-ai/benchmarks/results/",
   "mode": "DEGRADED_SINGLE_AGENT (self-attested; independent verification: deterministic tool exit codes + SHA-pinned JUnit + public CI)"
+ },
+ "ablation_c": {
+  "dossier": "Mode-C debate ablation (plan 45, ADR-031)",
+  "verdict": "H0 (C 7/12 vs B 9/12, gap 2; debates stay; H1 published negatively as pre-committed)",
+  "sample_frame": "n=12, claims hold on this task sample only",
+  "resolved": [
+   "psf__requests-1142",
+   "psf__requests-2931",
+   "psf__requests-6028",
+   "pytest-dev__pytest-10081",
+   "pytest-dev__pytest-7432",
+   "pytest-dev__pytest-8399",
+   "vuejs__core-11870"
+  ],
+  "failed": {
+   "psf__requests-5414": "patch breaks collection",
+   "pytest-dev__pytest-5787": "f2p-not-fixed:2 + p2p-broken:4",
+   "vuejs__core-11589": "f2p-not-fixed:1 + p2p-broken:58",
+   "vuejs__core-11739": "no complete blocks (incl. 1 grounded retry)",
+   "vuejs__core-11899": "no complete blocks (retry 0 bytes)"
+  },
+  "measurability": "12/12 done",
+  "red": "12/12 accepted (incl. 1 vacuous 0-byte accept on 11739-C, disclosed)",
+  "guard": {
+   "clean": 10,
+   "tamper": 0,
+   "no_patch_no_verdict": 2
+  },
+  "receipts": "7/7 resolves, machine_proof=True",
+  "audit": {
+   "junit_mismatches": 0,
+   "missing_guard_reports": 0,
+   "missing_evidence_reports": 0
+  },
+  "tokens_total": ">=878060 (lower bound; one cap-scale R9 call missing via id() drain gap)",
+  "calls_total": ">=37 (lower bound)",
+  "tokens_per_task": {
+   "psf__requests-1142": 56789,
+   "psf__requests-2931": 60660,
+   "psf__requests-5414": 50614,
+   "psf__requests-6028": 78328,
+   "pytest-dev__pytest-10081": 67218,
+   "pytest-dev__pytest-5787": 189035,
+   "pytest-dev__pytest-7432": 29423,
+   "pytest-dev__pytest-8399": 34924,
+   "vuejs__core-11589": 46607,
+   "vuejs__core-11739": 120803,
+   "vuejs__core-11870": 34721,
+   "vuejs__core-11899": 108938
+  },
+  "ledger_bucket": "bench4.3e-ablation (raw internal-ops record; no dollars in dossier per ADR-031)",
+  "execution_split": "8 orchestration-on-phone + 4 on OCI (phone reboots under torch load); same code a5890e0, same contriever backend, pinned deps; noted drifts: torch cu132-vs-cpu-only build, pydantic 2.14.2-vs-2.14.1; one wave label, all runs fresh",
+  "no_gold": "held (single-shot input = issue + builder context, archived per run)",
+  "followups": [
+   "red-gate: extend format guard to first synthesis (0-byte TS accept hole)",
+   "synthesis robustness on 11739/11899-class misses",
+   "ledger: replace id()-keyed drain dedup with monotonic client keys"
+  ]
  }
 }

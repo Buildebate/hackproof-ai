@@ -1,0 +1,170 @@
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+        tbfilter: bool = True,
+        funcargs: bool = False,
+        truncate_locals: bool = True,
+        truncate_args: bool = True,
+        chain: bool = True,
+=======
+        tbfilter: bool = True,
+        funcargs: bool = False,
+        truncate_locals: bool = True,
+        chain: bool = True,
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+        if chain and style in ("long", "short"):
+            _infos = []
+            _cur = self
+            _seen = set()
+            while _cur is not None and id(_cur.value) not in _seen:
+                _seen.add(id(_cur.value))
+                _infos.append(_cur)
+                _cause = getattr(_cur.value, "__cause__", None)
+                _context = getattr(_cur.value, "__context__", None)
+                if _cause is not None:
+                    _nxt = _cause
+                elif _context is not None and not getattr(
+                    _cur.value, "__suppress_context__", False
+                ):
+                    _nxt = _context
+                else:
+                    break
+                try:
+                    _cur = ExceptionInfo.from_exc_info(
+                        (type(_nxt), _nxt, _nxt.__traceback__)
+                    )
+                except AttributeError:
+                    _cur = ExceptionInfo(  # type: ignore[call-arg]
+                        (type(_nxt), _nxt, _nxt.__traceback__)
+                    )
+            if len(_infos) > 1:
+                _infos.reverse()
+                _chain = []
+                for _i, _info in enumerate(_infos):
+                    _repr = _info.getrepr(
+                        showlocals=showlocals,
+                        style=style,
+                        abspath=abspath,
+                        tbfilter=tbfilter,
+                        funcargs=funcargs,
+                        truncate_locals=truncate_locals,
+                        truncate_args=truncate_args,
+                        chain=False,
+                    )
+                    if _i == 0:
+                        _descr = None
+                    elif getattr(_info.value, "__cause__", None) is _infos[_i - 1].value:
+                        _descr = "The above exception was the direct cause of the following exception:"
+                    else:
+                        _descr = "During handling of the above exception, another exception occurred:"
+                    _chain.append((_repr.reprtraceback, _repr.reprcrash, _descr))  # type: ignore[attr-defined]
+                return ReprExceptionInfo(_chain[-1][0], _chain[-1][1], chain=_chain)
+        if style == "native":
+=======
+        if style == "native":
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+    def __init__(self, reprtraceback, reprcrash, chain=None):
+        super().__init__()
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+        self.chain = list(chain) if chain is not None else []
+
+    def toterminal(self, tw):
+        if getattr(self, "chain", None):
+            for _traceback, _crash, _description in self.chain:
+                if _description is not None:
+                    tw.line()
+                    tw.line(_description, yellow=True)
+                    tw.line()
+                _traceback.toterminal(tw)
+                if _crash is not None:
+                    _crash.toterminal(tw)
+            super().toterminal(tw)
+            return
+        self.reprtraceback.toterminal(tw)
+        super().toterminal(tw)
+=======
+    def __init__(self, reprtraceback, reprcrash):
+        super().__init__()
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+
+    def toterminal(self, tw):
+        self.reprtraceback.toterminal(tw)
+        super().toterminal(tw)
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        if isinstance(rep, ReprExceptionInfo):
+            return {
+                "reprcrash": serialize_repr_crash(rep.reprcrash),
+                "reprtraceback": serialize_repr_traceback(rep.reprtraceback),
+                "sections": rep.sections,
+            }
+        elif isinstance(rep, ReprFileLocation):
+            return dataclasses.asdict(rep)
+=======
+        from _pytest._code.code import ExceptionChainRepr
+
+        if isinstance(rep, ReprExceptionInfo):
+            return {
+                "reprcrash": serialize_repr_crash(rep.reprcrash),
+                "reprtraceback": serialize_repr_traceback(rep.reprtraceback),
+                "sections": rep.sections,
+            }
+        elif isinstance(rep, ExceptionChainRepr):
+            return {
+                "chain": [
+                    [
+                        serialize_repr_traceback(traceback),
+                        serialize_repr_crash(crash),
+                        description,
+                    ]
+                    for traceback, crash, description in rep.chain
+                ],
+                "sections": rep.sections,
+            }
+        elif isinstance(rep, ReprFileLocation):
+            return dataclasses.asdict(rep)
+>>>>>>> REPLACE
+src/_pytest/reports.py
+<<<<<<< SEARCH
+        if "reprcrash" in data:
+            return ReprExceptionInfo(
+                deserialize_repr_traceback(data["reprtraceback"]),
+                deserialize_repr_crash(data["reprcrash"]),
+            )
+        else:
+            return ReprFileLocation(**data)
+=======
+        from _pytest._code.code import ExceptionChainRepr
+
+        if "chain" in data:
+            chain = []
+            for traceback_data, crash_data, description in data["chain"]:
+                chain.append(
+                    (
+                        deserialize_repr_traceback(traceback_data),
+                        deserialize_repr_crash(crash_data),
+                        description,
+                    )
+                )
+            try:
+                return ExceptionChainRepr(chain)
+            except TypeError:
+                return ExceptionChainRepr(
+                    chain,
+                    deserialize_repr_traceback(data["reprtraceback"]),
+                    deserialize_repr_crash(data["reprcrash"]),
+                )
+        elif "reprcrash" in data:
+            return ReprExceptionInfo(
+                deserialize_repr_traceback(data["reprtraceback"]),
+                deserialize_repr_crash(data["reprcrash"]),
+            )
+        else:
+            return ReprFileLocation(**data)
+>>>>>>> REPLACE

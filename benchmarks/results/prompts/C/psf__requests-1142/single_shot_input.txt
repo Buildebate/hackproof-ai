@@ -1,0 +1,1699 @@
+ISSUE:
+requests.get is ALWAYS sending content length
+Hi,
+
+It seems like that request.get always adds 'content-length' header to the request.
+I think that the right behavior is not to add this header automatically in GET requests or add the possibility to not send it.
+
+For example http://amazon.com returns 503 for every get request that contains 'content-length' header.
+
+Thanks,
+
+Oren
+
+
+
+This was done in issue #957 - Attach Content-Length to everything.
+
+OK, I don't think it's the right solution.
+imho GET requests shouldn't contain by default 'content-length' header.
+
+Related: geemus/excon/pull/113
+
+There's nothing stopping you from sending data in a GET request.
+
+At the moment the following code:
+requests.get('http://amazon.com') returns 503, because the package automatically adds the header content length to the request.
+
+If I remove that header it works fine. The thing is that currently since issue #957 this header is added automaticlly to every request and that's the cause of the problem.
+
+Hmm, let's find some more URLs that do this.
+
+It isn't against the HTTP/1.1 spec last I saw so I don't see why Amazon is returning a 503
+
+GET requests don't normally include data payload in the body, and I presume their server assumes that it does because there is a content-length, but it doesn't handle the empty edge case.
+
+It's semantically ambiguous - does a request with a Content-Length header mean "zero length body" or does it mean "no body was included in this message"?
+
+I believe that Requests should follow the conventional wisdom, which is that most UAs do not send the Content-Length header for GET requests.
+
+I tried to reproduce this and got weird behavior, sometimes it does work:
+
+```
+>>> r = requests.get('https://amazon.com', allow_redirects=False)
+>>> print r.text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.amazon.com/">here</a>.</p>
+</body></html>
+
+>>> print r.status_code
+301
+```
+
+but sometimes it doesn't:
+
+```
+>>> print requests.get('https://amazon.com', allow_redirects=False).status_code
+503
+
+>>> print requests.get('https://amazon.com', allow_redirects=False).text
+<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">
+<html><head>
+<title>301 Moved Permanently</title>
+</head><body>
+<h1>Moved Permanently</h1>
+<p>The document has moved <a href="https://www.amazon.com/">here</a>.</p>
+</body></html>
+```
+
+In fact, sometimes it seems like it might be an Amazon bug:
+
+```
+>>> print requests.get('https://amazon.com', allow_redirects=False).status_code
+503
+>>> print requests.get('http://amazon.com', allow_redirects=False).status_code
+301
+>>> print requests.get('http://amazon.com', allow_redirects=False).status_code
+503
+>>> print requests.get('http://amazon.com', allow_redirects=False).status_code
+503
+```
+
+I'm not sure if it's relevant that I switched from ssl to plain http when I got that 301.
+
+```
+>>> print requests.__version__
+1.0.3
+```
+
+Try allowing for redirects. The 301 would be followed otherwise. Printing the text for a 503 would be helpful too.
+
+sigmavirus24: yeah, I explicitly added the allow_redirects to see what would happen: in the rare-ish cases where I get a 301 it actually does work.
+
+And, sorry about the double-301 text, I copied the wrong thing. This is what the 503 page looks like:
+
+```
+>>> r = requests.get('http://amazon.com') ; print r.text
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html;charset=iso-8859-1"/>
+<title>500 Service Unavailable Error</title>
+</head>
+<body style="padding:1% 10%;font-family:Verdana,Arial,Helvetica,sans-serif">
+  <a href="http://www.amazon.com/"><img src="https://images-na.ssl-images-amazon.com/images/G/01/img09/x-site/other/a_com_logo_200x56.gif" alt="Amazon.com" width="200" height="56" border="0"/></a>
+  <table>
+    <tr>
+      <td valign="top" style="width:52%;font-size:10pt"><br/><h2 style="color:#E47911">Oops!</h2><p>We're very sorry, but we're having trouble doing what you just asked us to do. Please give us another chance--click the Back button on your browser and try your request again. Or start from the beginning on our <a href="http://www.amazon.com/">homepage</a>.</p></td>
+      <th><img src="https://images-na.ssl-images-amazon.com/images/G/01/x-locale/common/errors-alerts/product-fan-500.jpg" alt="product collage"/></th>
+    </tr>
+  </table>
+</body>
+</html>
+>>> r.status_code
+503
+```
+
+But, also, isn't 503 the wrong error code for a malformed request? [503 means](http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.5.4) "unable to process request due to high load". I feel like if Amazon was doing this intentionally they would return a 400 or at least something in the 4xx range.
+
+Not that I'm saying you should ignore a problem with one of the top-10 websites on earth just because they might be being crazy.
+
+I'm not saying we ignore it, I'm just saying it isn't against spec. And yeah, I agree that the 503 looks like it's a malformed request error. I'll mock up conditional addition for GETs tonight and see if @kennethreitz wouldn't mind the minor extra complexity.
+
+Is there a decision or any progress with this issue?
+
+I have encountered other sensitive servers that barf because of headers. While it would be best to get something merged into requests upstream, another option is to look at [careful-requests](https://github.com/kanzure/careful-requests) which aims to handle requests that need sensitive headers (it just monkeypatches requests). At the moment this doesn't include Content-Length on GET but that is trivial to add, I think. I hope this helps.
+
+I frankly forgot about this, but I'll get to it tonight or tomorrow I hope. 
+
+I'm going to go ahead and give this a shot; sigmavirus24 is going to take #1133 in the meantime.
+
+CODE CONTEXT:
+TOP-1 FULL FILE requests/cookies.py:
+# -*- coding: utf-8 -*-
+
+"""
+Compatibility code to be able to use `cookielib.CookieJar` with requests.
+
+requests.utils imports from here, so be careful with imports.
+"""
+
+import collections
+from .compat import cookielib, urlparse, Morsel
+
+try:
+    import threading
+    # grr, pyflakes: this fixes "redefinition of unused 'threading'"
+    threading
+except ImportError:
+    import dummy_threading as threading
+
+
+class MockRequest(object):
+    """Wraps a `requests.Request` to mimic a `urllib2.Request`.
+
+    The code in `cookielib.CookieJar` expects this interface in order to correctly
+    manage cookie policies, i.e., determine whether a cookie can be set, given the
+    domains of the request and the cookie.
+
+    The original request object is read-only. The client is responsible for collecting
+    the new headers via `get_new_headers()` and interpreting them appropriately. You
+    probably want `get_cookie_header`, defined below.
+    """
+
+    def __init__(self, request):
+        self._r = request
+        self._new_headers = {}
+        self.type = urlparse(self._r.url).scheme
+
+    def get_type(self):
+        return self.type
+
+    def get_host(self):
+        return urlparse(self._r.url).netloc
+
+    def get_origin_req_host(self):
+        return self.get_host()
+
+    def get_full_url(self):
+        return self._r.url
+
+    def is_unverifiable(self):
+        return True
+
+    def has_header(self, name):
+        return name in self._r.headers or name in self._new_headers
+
+    def get_header(self, name, default=None):
+        return self._r.headers.get(name, self._new_headers.get(name, default))
+
+    def add_header(self, key, val):
+        """cookielib has no legitimate use for this method; add it back if you find one."""
+        raise NotImplementedError("Cookie headers should be added with add_unredirected_header()")
+
+    def add_unredirected_header(self, name, value):
+        self._new_headers[name] = value
+
+    def get_new_headers(self):
+        return self._new_headers
+
+    @property
+    def unverifiable(self):
+        return self.is_unverifiable()
+
+
+class MockResponse(object):
+    """Wraps a `httplib.HTTPMessage` to mimic a `urllib.addinfourl`.
+
+    ...what? Basically, expose the parsed HTTP headers from the server response
+    the way `cookielib` expects to see them.
+    """
+
+    def __init__(self, headers):
+        """Make a MockResponse for `cookielib` to read.
+
+        :param headers: a httplib.HTTPMessage or analogous carrying the headers
+        """
+        self._headers = headers
+
+    def info(self):
+        return self._headers
+
+    def getheaders(self, name):
+        self._headers.getheaders(name)
+
+
+def extract_cookies_to_jar(jar, request, response):
+    """Extract the cookies from the response into a CookieJar.
+
+    :param jar: cookielib.CookieJar (not necessarily a RequestsCookieJar)
+    :param request: our own requests.Request object
+    :param response: urllib3.HTTPResponse object
+    """
+    # the _original_response field is the wrapped httplib.HTTPResponse object,
+    req = MockRequest(request)
+    # pull out the HTTPMessage with the headers and put it in the mock:
+    res = MockResponse(response._original_response.msg)
+    jar.extract_cookies(res, req)
+
+
+def get_cookie_header(jar, request):
+    """Produce an appropriate Cookie header string to be sent with `request`, or None."""
+    r = MockRequest(request)
+    jar.add_cookie_header(r)
+    return r.get_new_headers().get('Cookie')
+
+
+def remove_cookie_by_name(cookiejar, name, domain=None, path=None):
+    """Unsets a cookie by name, by default over all domains and paths.
+
+    Wraps CookieJar.clear(), is O(n).
+    """
+    clearables = []
+    for cookie in cookiejar:
+        if cookie.name == name:
+            if domain is None or domain == cookie.domain:
+                if path is None or path == cookie.path:
+                    clearables.append((cookie.domain, cookie.path, cookie.name))
+
+    for domain, path, name in clearables:
+        cookiejar.clear(domain, path, name)
+
+
+class CookieConflictError(RuntimeError):
+    """There are two cookies that meet the criteria specified in the cookie jar.
+    Use .get and .set and include domain and path args in order to be more specific."""
+
+
+class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
+    """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+
+    This is the CookieJar we create by default for requests and sessions that
+    don't specify one, since some clients may expect response.cookies and
+    session.cookies to support dict operations.
+
+    Don't use the dict interface internally; it's just for compatibility with
+    with external client code. All `requests` code should work out of the box
+    with externally provided instances of CookieJar, e.g., LWPCookieJar and
+    FileCookieJar.
+
+    Caution: dictionary operations that are normally O(1) may be O(n).
+
+    Unlike a regular CookieJar, this class is pickleable.
+    """
+
+    def get(self, name, default=None, domain=None, path=None):
+        """Dict-like get() that also supports optional domain and path args in
+        order to resolve naming collisions from using one cookie jar over
+        multiple domains. Caution: operation is O(n), not O(1)."""
+        try:
+            return self._find_no_duplicates(name, domain, path)
+        except KeyError:
+            return default
+
+    def set(self, name, value, **kwargs):
+        """Dict-like set() that also supports optional domain and path args in
+        order to resolve naming collisions from using one cookie jar over
+        multiple domains."""
+        # support client code that unsets cookies by assignment of a None value:
+        if value is None:
+            remove_cookie_by_name(self, name, domain=kwargs.get('domain'), path=kwargs.get('path'))
+            return
+
+        if isinstance(value, Morsel):
+            c = morsel_to_cookie(value)
+        else:
+            c = create_cookie(name, value, **kwargs)
+        self.set_cookie(c)
+        return c
+
+    def keys(self):
+        """Dict-like keys() that returns a list of names of cookies from the jar.
+        See values() and items()."""
+        keys = []
+        for cookie in iter(self):
+            keys.append(cookie.name)
+        return keys
+
+    def values(self):
+        """Dict-like values() that returns a list of values of cookies from the jar.
+        See keys() and items()."""
+        values = []
+        for cookie in iter(self):
+            values.append(cookie.value)
+        return values
+
+    def items(self):
+        """Dict-like items() that returns a list of name-value tuples from the jar.
+        See keys() and values(). Allows client-code to call "dict(RequestsCookieJar)
+        and get a vanilla python dict of key value pairs."""
+        items = []
+        for cookie in iter(self):
+            items.append((cookie.name, cookie.value))
+        return items
+
+    def list_domains(self):
+        """Utility method to list all the domains in the jar."""
+        domains = []
+        for cookie in iter(self):
+            if cookie.domain not in domains:
+                domains.append(cookie.domain)
+        return domains
+
+    def list_paths(self):
+        """Utility method to list all the paths in the jar."""
+        paths = []
+        for cookie in iter(self):
+            if cookie.path not in paths:
+                paths.append(cookie.path)
+        return paths
+
+    def multiple_domains(self):
+        """Returns True if there are multiple domains in the jar.
+        Returns False otherwise."""
+        domains = []
+        for cookie in iter(self):
+            if cookie.domain is not None and cookie.domain in domains:
+                return True
+            domains.append(cookie.domain)
+        return False  # there is only one domain in jar
+
+    def get_dict(self, domain=None, path=None):
+        """Takes as an argument an optional domain and path and returns a plain old
+        Python dict of name-value pairs of cookies that meet the requirements."""
+        dictionary = {}
+        for cookie in iter(self):
+            if (domain is None or cookie.domain == domain) and (path is None
+                                                or cookie.path == path):
+                dictionary[cookie.name] = cookie.value
+        return dictionary
+
+    def __getitem__(self, name):
+        """Dict-like __getitem__() for compatibility with client code. Throws exception
+        if there are more than one cookie with name. In that case, use the more
+        explicit get() method instead. Caution: operation is O(n), not O(1)."""
+        return self._find_no_duplicates(name)
+
+    def __setitem__(self, name, value):
+        """Dict-like __setitem__ for compatibility with client code. Throws exception
+        if there is already a cookie of that name in the jar. In that case, use the more
+        explicit set() method instead."""
+        self.set(name, value)
+
+    def __delitem__(self, name):
+        """Deletes a cookie given a name. Wraps cookielib.CookieJar's remove_cookie_by_name()."""
+        remove_cookie_by_name(self, name)
+
+    def _find(self, name, domain=None, path=None):
+        """Requests uses this method internally to get cookie values. Takes as args name
+        and optional domain and path. Returns a cookie.value. If there are conflicting cookies,
+        _find arbitrarily chooses one. See _find_no_duplicates if you want an exception thrown
+        if there are conflicting cookies."""
+        for cookie in iter(self):
+            if cookie.name == name:
+                if domain is None or cookie.domain == domain:
+                    if path is None or cookie.path == path:
+                        return cookie.value
+
+        raise KeyError('name=%r, domain=%r, path=%r' % (name, domain, path))
+
+    def _find_no_duplicates(self, name, domain=None, path=None):
+        """__get_item__ and get call _find_no_duplicates -- never used in Requests internally.
+        Takes as args name and optional domain and path. Returns a cookie.value.
+        Throws KeyError if cookie is not found and CookieConflictError if there are
+        multiple cookies that match name and optionally domain and path."""
+        toReturn = None
+        for cookie in iter(self):
+            if cookie.name == name:
+                if domain is None or cookie.domain == domain:
+                    if path is None or cookie.path == path:
+                        if toReturn is not None:  # if there are multiple cookies that meet passed in criteria
+                            raise CookieConflictError('There are multiple cookies with name, %r' % (name))
+                        toReturn = cookie.value  # we will eventually return this as long as no cookie conflict
+
+        if toReturn:
+            return toReturn
+        raise KeyError('name=%r, domain=%r, path=%r' % (name, domain, path))
+
+    def __getstate__(self):
+        """Unlike a normal CookieJar, this class is pickleable."""
+        state = self.__dict__.copy()
+        # remove the unpickleable RLock object
+        state.pop('_cookies_lock')
+        return state
+
+    def __setstate__(self, state):
+        """Unlike a normal CookieJar, this class is pickleable."""
+        self.__dict__.update(state)
+        if '_cookies_lock' not in self.__dict__:
+            self._cookies_lock = threading.RLock()
+
+    def copy(self):
+        """This is not implemented. Calling this will throw an exception."""
+        raise NotImplementedError
+
+
+def create_cookie(name, value, **kwargs):
+    """Make a cookie from underspecified parameters.
+
+    By default, the pair of `name` and `value` will be set for the domain ''
+    and sent on every request (this is sometimes called a "supercookie").
+    """
+    result = dict(
+        version=0,
+        name=name,
+        value=value,
+        port=None,
+        domain='',
+        path='/',
+        secure=False,
+        expires=None,
+        discard=True,
+        comment=None,
+        comment_url=None,
+        rest={'HttpOnly': None},
+        rfc2109=False,)
+
+    badargs = set(kwargs) - set(result)
+    if badargs:
+        err = 'create_cookie() got unexpected keyword arguments: %s'
+        raise TypeError(err % list(badargs))
+
+    result.update(kwargs)
+    result['port_specified'] = bool(result['port'])
+    result['domain_specified'] = bool(result['domain'])
+    result['domain_initial_dot'] = result['domain'].startswith('.')
+    result['path_specified'] = bool(result['path'])
+
+    return cookielib.Cookie(**result)
+
+
+def morsel_to_cookie(morsel):
+    """Convert a Morsel object into a Cookie containing the one k/v pair."""
+    c = create_cookie(
+        name=morsel.key,
+        value=morsel.value,
+        version=morsel['version'] or 0,
+        port=None,
+        port_specified=False,
+        domain=morsel['domain'],
+        domain_specified=bool(morsel['domain']),
+        domain_initial_dot=morsel['domain'].startswith('.'),
+        path=morsel['path'],
+        path_specified=bool(morsel['path']),
+        secure=bool(morsel['secure']),
+        expires=morsel['max-age'] or morsel['expires'],
+        discard=False,
+        comment=morsel['comment'],
+        comment_url=bool(morsel['comment']),
+        rest={'HttpOnly': morsel['httponly']},
+        rfc2109=False,)
+    return c
+
+
+def cookiejar_from_dict(cookie_dict, cookiejar=None):
+    """Returns a CookieJar from a key/value dictionary.
+
+    :param cookie_dict: Dict of key/values to insert into CookieJar.
+    """
+    if cookiejar is None:
+        cookiejar = RequestsCookieJar()
+
+    if cookie_dict is not None:
+        for name in cookie_dict:
+            cookiejar.set_cookie(create_cookie(name, cookie_dict[name]))
+    return cookiejar
+
+
+requests/cookies.py:
+# -*- coding: utf-8 -*-
+
+"""
+Compatibility code to be able to use `cookielib.CookieJar` with requests.
+
+requests.utils imports from here, so be careful with imports.
+"""
+
+import collections
+from .compat import cookielib, urlparse, Morsel
+
+try:
+    import threading
+    # grr, pyflakes: this fixes "redefinition of unused 'threading'"
+    threading
+except ImportError:
+    import dummy_threading as threading
+
+
+class MockRequest(object):
+    """Wraps a `requests.Request` to mimic a `urllib2.Request`.
+
+    The code in `cookielib.CookieJar` expects this interface in order to correctly
+    manage cookie policies, i.e., determine whether a cookie can be set, given the
+    domains of the request and the cookie.
+
+    The original request object is read-only. The client is responsible for collecting
+    the new headers via `get_new_headers()` and interpreting them appropriately. You
+    probably want `get_cookie_header`, defined below.
+    """
+
+    def __init__(self, request):
+        self._r = request
+        self._new_headers = {}
+        self.type = urlparse(self._r.url).scheme
+
+    def get_type(self):
+        return self.type
+
+    def get_host(self):
+        return urlparse(self._r.url).netloc
+
+    def get_origin_req_host(self):
+        return self.get_host()
+
+    def get_full_url(self):
+        return self._r.url
+
+    def is_unverifiable(self):
+        return True
+
+    def has_header(self, name):
+        return name in self._r.headers or name in self._new_headers
+
+    def get_header(self, name, default=None):
+        return self._r.headers.get(name, self._new_headers.get(name, default))
+
+    def add_header(self, key, val):
+        """cookielib has no legitimate use for this method; add it back if you find one."""
+        raise NotImplementedError("Cookie headers should be added with add_unredirected_header()")
+
+    def add_unredirected_header(self, name, value):
+        self._new_headers[name] = value
+
+    def get_new_headers(self):
+        return self._new_headers
+
+    @property
+    def unverifiable(self):
+        return self.is_unverifiable()
+
+
+class MockResponse(object):
+    """Wraps a `httplib.HTTPMessage` to mimic a `urllib.addinfourl`.
+
+    ...what? Basically, expose the parsed HTTP headers from the server response
+    the way `cookielib` expects to see them.
+    """
+
+    def __init__(self, headers):
+        """Make a MockResponse for `cookielib` to read.
+
+        :param headers: a httplib.HTTPMessage or analogous carrying the headers
+        """
+        self._headers = headers
+
+    def info(self):
+        return self._headers
+
+    def getheaders(self, name):
+        self._headers.getheaders(name)
+
+
+def extract_cookies_to_jar(jar, request, response):
+    """Extract the cookies from the response into a CookieJar.
+
+    :param jar: cookielib.CookieJar (not necessarily a RequestsCookieJar)
+    :param request: our own requests.Request object
+    :param response: urllib3.HTTPResponse object
+    """
+    # the _original_response field is the wrapped httplib.HTTPResponse object,
+    req = MockRequest(request)
+    # pull out the HTTPMessage with the headers and put it in the mock:
+    res = MockResponse(response._original_response.msg)
+    jar.extract_cookies(res, req)
+
+
+def get_cookie_header(jar, request):
+    """Produce an appropriate Cookie header string to be sent with `request`, or None."""
+    r = MockRequest(request)
+    jar.add_cookie_header(r)
+    return r.get_new_headers().get('Cookie')
+
+
+def remove_cookie_by_name(cookiejar, name, domain=None, path=None):
+    """Unsets a cookie by name, by default over all domains and paths.
+
+    Wraps CookieJar.clear(), is O(n).
+    """
+    clearables = []
+    for cookie in cookiejar:
+        if cookie.name == name:
+            if domain is None or domain == cookie.domain:
+                if path is None or path == cookie.path:
+                    clearables.append((cookie.domain, cookie.path, cookie.name))
+
+    for domain, path, name in clearables:
+        cookiejar.clear(domain, path, name)
+
+
+class CookieConflictError(RuntimeError):
+    """There are two cookies that meet the criteria specified in the cookie jar.
+    Use .get and .set and include domain and path args in order to be more specific."""
+
+
+class RequestsCookieJar(cookielib.CookieJar, collections.MutableMapping):
+    """Compatibility class; is a cookielib.CookieJar, but exposes a dict interface.
+
+    This is the CookieJar we create by default for requests and sessions that
+    don't specify one, since some clients may expect response.cookies and
+    session.cookies to support dict operations.
+
+    Don't use the dict interface internally; it's just for compatibility with
+    with external client code. All `requests` code should work out of the box
+    with externally provided instances of CookieJar, e.g., LWPCookieJar and
+    FileCookieJar.
+
+    Caution: dictionary operations that are normally O(1) may be O(n).
+
+    Unlike a regular CookieJar, this class is pickleable.
+    """
+
+    def get(self, name, default=None, domain=None, path=None):
+        """Dict-like get() that also supports optional domain and path args in
+        order to resolve naming collisions from using one cookie jar over
+        multiple domains. Caution: operation is O(n), not O(1)."""
+        try:
+            return self._find_no_duplicates(name, domain, path)
+        except KeyError:
+            return default
+
+    def set(self, name, value, **kwargs):
+        """Dict-like set() that also supports optional domain and path args in
+        order to resolve naming collisions from using one cookie jar over
+        multiple domains."""
+        # support client code that unsets cookies by assignment of a None value:
+        if value is None:
+            remove_cookie_by_name(self, name, domain=kwargs.get('domain'), path=kwargs.get('path'))
+            return
+
+        if isinstance(value, Morsel):
+            c = morsel_to_cookie(value)
+        else:
+            c = create_cookie(name, value, **kwargs)
+        self.set_cookie(c)
+        return c
+
+    def keys(self):
+        """Dict-like keys() that returns a list of names of cookies from the jar.
+        See values() and items()."""
+        keys = []
+        for cookie in iter(self):
+            keys.append(cookie.name)
+        return keys
+
+    def values(self):
+        """Dict-like values() that returns a list of values of cookies from the jar.
+        See keys() and items()."""
+        values = []
+        for cookie in iter(self):
+            values.append(cookie.value)
+        return values
+
+    def items(self):
+        """Dict-like items() that returns a list of name-value tuples from the jar.
+        See keys() and values(). Allows client-code to call "dict(RequestsCookieJar)
+        and get a vanilla python dict of key value pairs."""
+        items = []
+        for cookie in iter(self):
+            items.append((cookie.name, cookie.value))
+        return items
+
+    def list_domains(self):
+        """Utility method to list all the domains in the jar."""
+        domains = []
+        for cookie in iter(self):
+            if cookie.domain not in domains:
+                domains.append(cookie.domain)
+        return domains
+
+    def list_paths(self):
+        """Utility method to list all the paths in the jar."""
+        paths = []
+        for cookie in iter(self):
+            if cookie.path not in paths:
+                paths.append(cookie.path)
+        return paths
+
+    def multiple_domains(self):
+        """Returns True if there are multiple domains in the jar.
+        Returns False otherwise."""
+        domains = []
+        for cookie in iter(self):
+            if cookie.domain is not None and cookie.domain in domains:
+                return True
+            domains.append(cookie.domain)
+        return False  # there is only one domain in jar
+
+    def get_dict(self, domain=None, path=None):
+        """Takes as an argument an optional domain and path and returns a plain old
+        Python dict of name-value pairs of cookies that meet the
+
+requests/utils.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.utils
+~~~~~~~~~~~~~~
+
+This module provides utility functions that are used within Requests
+that are also useful for external consumption.
+
+"""
+
+import cgi
+import codecs
+import os
+import platform
+import re
+import sys
+import zlib
+from netrc import netrc, NetrcParseError
+
+from . import __version__
+from . import certs
+from .compat import parse_http_list as _parse_list_header
+from .compat import quote, urlparse, bytes, str, OrderedDict, urlunparse
+from .cookies import RequestsCookieJar, cookiejar_from_dict
+
+_hush_pyflakes = (RequestsCookieJar,)
+
+NETRC_FILES = ('.netrc', '_netrc')
+
+DEFAULT_CA_BUNDLE_PATH = certs.where()
+
+def dict_to_sequence(d):
+    """Returns an internal sequence dictionary update."""
+
+    if hasattr(d, 'items'):
+        d = d.items()
+
+    return d
+
+def super_len(o):
+    if hasattr(o, '__len__'):
+        return len(o)
+    if hasattr(o, 'len'):
+        return o.len
+    if hasattr(o, 'fileno'):
+        return os.fstat(o.fileno()).st_size
+
+def get_netrc_auth(url):
+    """Returns the Requests tuple auth for a given url from netrc."""
+
+    try:
+        locations = (os.path.expanduser('~/{0}'.format(f)) for f in NETRC_FILES)
+        netrc_path = None
+
+        for loc in locations:
+            if os.path.exists(loc) and not netrc_path:
+                netrc_path = loc
+
+        # Abort early if there isn't one.
+        if netrc_path is None:
+            return netrc_path
+
+        ri = urlparse(url)
+
+        # Strip port numbers from netloc
+        host = ri.netloc.split(':')[0]
+
+        try:
+            _netrc = netrc(netrc_path).authenticators(host)
+            if _netrc:
+                # Return with login / password
+                login_i = (0 if _netrc[0] else 1)
+                return (_netrc[login_i], _netrc[2])
+        except (NetrcParseError, IOError):
+            # If there was a parsing error or a permissions issue reading the file,
+            # we'll just skip netrc auth
+            pass
+
+    # AppEngine hackiness.
+    except (ImportError, AttributeError):
+        pass
+
+
+def guess_filename(obj):
+    """Tries to guess the filename of the given object."""
+    name = getattr(obj, 'name', None)
+    if name and name[0] != '<' and name[-1] != '>':
+        return name
+
+
+def from_key_val_list(value):
+    """Take an object and test to see if it can be represented as a
+    dictionary. Unless it can not be represented as such, return an
+    OrderedDict, e.g.,
+
+    ::
+
+        >>> from_key_val_list([('key', 'val')])
+        OrderedDict([('key', 'val')])
+        >>> from_key_val_list('string')
+        ValueError: need more than 1 value to unpack
+        >>> from_key_val_list({'key': 'val'})
+        OrderedDict([('key', 'val')])
+    """
+    if value is None:
+        return None
+
+    if isinstance(value, (str, bytes, bool, int)):
+        raise ValueError('cannot encode objects that are not 2-tuples')
+
+    return OrderedDict(value)
+
+
+def to_key_val_list(value):
+    """Take an object and test to see if it can be represented as a
+    dictionary. If it can be, return a list of tuples, e.g.,
+
+    ::
+
+        >>> to_key_val_list([('key', 'val')])
+        [('key', 'val')]
+        >>> to_key_val_list({'key': 'val'})
+        [('key', 'val')]
+        >>> to_key_val_list('string')
+        ValueError: cannot encode objects that are not 2-tuples.
+    """
+    if value is None:
+        return None
+
+    if isinstance(value, (str, bytes, bool, int)):
+        raise ValueError('cannot encode objects that are not 2-tuples')
+
+    if isinstance(value, dict):
+        value = value.items()
+
+    return list(value)
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def parse_list_header(value):
+    """Parse lists as described by RFC 2068 Section 2.
+
+    In particular, parse comma-separated lists where the elements of
+    the list may include quoted-strings.  A quoted-string could
+    contain a comma.  A non-quoted string could have quotes in the
+    middle.  Quotes are removed automatically after parsing.
+
+    It basically works like :func:`parse_set_header` just that items
+    may appear multiple times and case sensitivity is preserved.
+
+    The return value is a standard :class:`list`:
+
+    >>> parse_list_header('token, "quoted value"')
+    ['token', 'quoted value']
+
+    To create a header from the :class:`list` again, use the
+    :func:`dump_header` function.
+
+    :param value: a string with a list header.
+    :return: :class:`list`
+    """
+    result = []
+    for item in _parse_list_header(value):
+        if item[:1] == item[-1:] == '"':
+            item = unquote_header_value(item[1:-1])
+        result.append(item)
+    return result
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def parse_dict_header(value):
+    """Parse lists of key, value pairs as described by RFC 2068 Section 2 and
+    convert them into a python dict:
+
+    >>> d = parse_dict_header('foo="is a fish", bar="as well"')
+    >>> type(d) is dict
+    True
+    >>> sorted(d.items())
+    [('bar', 'as well'), ('foo', 'is a fish')]
+
+    If there is no value for a key it will be `None`:
+
+    >>> parse_dict_header('key_without_value')
+    {'key_without_value': None}
+
+    To create a header from the :class:`dict` again, use the
+    :func:`dump_header` function.
+
+    :param value: a string with a dict header.
+    :return: :class:`dict`
+    """
+    result = {}
+    for item in _parse_list_header(value):
+        if '=' not in item:
+            result[item] = None
+            continue
+        name, value = item.split('=', 1)
+        if value[:1] == value[-1:] == '"':
+            value = unquote_header_value(value[1:-1])
+        result[name] = value
+    return result
+
+
+# From mitsuhiko/werkzeug (used with permission).
+def unquote_header_value(value, is_filename=False):
+    r"""Unquotes a header value.  (Reversal of :func:`quote_header_value`).
+    This does not use the real unquoting but what browsers are actually
+    using for quoting.
+
+    :param value: the header value to unquote.
+    """
+    if value and value[0] == value[-1] == '"':
+        # this is not the real unquoting, but fixing this so that the
+        # RFC is met will result in bugs with internet explorer and
+        # probably some other browsers as well.  IE for example is
+        # uploading files with "C:\foo\bar.txt" as filename
+        value = value[1:-1]
+
+        # if this is a filename and the starting characters look like
+        # a UNC path, then just return the value without quotes.  Using the
+        # replace sequence below on a UNC path has the effect of turning
+        # the leading double slash into a single slash and then
+        # _fix_ie_filename() doesn't work correctly.  See #458.
+        if not is_filename or value[:2] != '\\\\':
+            return value.replace('\\\\', '\\').replace('\\"', '"')
+    return value
+
+
+def dict_from_cookiejar(cj):
+    """Returns a key/value dictionary from a CookieJar.
+
+    :param cj: CookieJar object to extract cookies from.
+    """
+
+    cookie_dict = {}
+
+    for cookie in cj:
+        cookie_dict[cookie.name] = cookie.value
+
+    return cookie_dict
+
+
+def add_dict_to_cookiejar(cj, cookie_dict):
+    """Returns a CookieJar from a key/value dictionary.
+
+    :param cj: CookieJar to insert cookies into.
+    :param cookie_dict: Dict of key/values to insert into CookieJar.
+    """
+
+    cj2 = cookiejar_from_dict(cookie_dict)
+    for cookie in cj2:
+        cj.set_cookie(cookie)
+    return cj
+
+
+def get_encodings_from_content(content):
+    """Returns encodings from given content string.
+
+    :param content: bytestring to extract encodings from.
+    """
+
+    charset_re = re.compile(r'<meta.*?charset=["\']*(.+?)["\'>]', flags=re.I)
+
+    return charset_re.findall(content)
+
+
+def get_encoding_from_headers(headers):
+    """Returns encodings from given HTTP Header Dict.
+
+    :param headers: dictionary to extract encoding from.
+    """
+
+    content_type = headers.get('content-type')
+
+    if not content_type:
+        return None
+
+    content_type, params = cgi.parse_header(content_
+
+requests/packages/urllib3/request.py:
+# urllib3/request.py
+# Copyright 2008-2012 Andrey Petrov and contributors (see CONTRIBUTORS.txt)
+#
+# This module is part of urllib3 and is released under
+# the MIT License: http://www.opensource.org/licenses/mit-license.php
+
+try:
+    from urllib.parse import urlencode
+except ImportError:
+    from urllib import urlencode
+
+from .filepost import encode_multipart_formdata
+
+
+__all__ = ['RequestMethods']
+
+
+class RequestMethods(object):
+    """
+    Convenience mixin for classes who implement a :meth:`urlopen` method, such
+    as :class:`~urllib3.connectionpool.HTTPConnectionPool` and
+    :class:`~urllib3.poolmanager.PoolManager`.
+
+    Provides behavior for making common types of HTTP request methods and
+    decides which type of request field encoding to use.
+
+    Specifically,
+
+    :meth:`.request_encode_url` is for sending requests whose fields are encoded
+    in the URL (such as GET, HEAD, DELETE).
+
+    :meth:`.request_encode_body` is for sending requests whose fields are
+    encoded in the *body* of the request using multipart or www-orm-urlencoded
+    (such as for POST, PUT, PATCH).
+
+    :meth:`.request` is for making any kind of request, it will look up the
+    appropriate encoding format and use one of the above two methods to make
+    the request.
+
+    Initializer parameters:
+
+    :param headers:
+        Headers to include with all requests, unless other headers are given
+        explicitly.
+    """
+
+    _encode_url_methods = set(['DELETE', 'GET', 'HEAD', 'OPTIONS'])
+    _encode_body_methods = set(['PATCH', 'POST', 'PUT', 'TRACE'])
+
+    def __init__(self, headers=None):
+        self.headers = headers or {}
+
+    def urlopen(self, method, url, body=None, headers=None,
+                encode_multipart=True, multipart_boundary=None,
+                **kw): # Abstract
+        raise NotImplemented("Classes extending RequestMethods must implement "
+                             "their own ``urlopen`` method.")
+
+    def request(self, method, url, fields=None, headers=None, **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the appropriate encoding of
+        ``fields`` based on the ``method`` used.
+
+        This is a convenience method that requires the least amount of manual
+        effort. It can be used in most situations, while still having the option
+        to drop down to more specific methods when necessary, such as
+        :meth:`request_encode_url`, :meth:`request_encode_body`,
+        or even the lowest level :meth:`urlopen`.
+        """
+        method = method.upper()
+
+        if method in self._encode_url_methods:
+            return self.request_encode_url(method, url, fields=fields,
+                                            headers=headers,
+                                            **urlopen_kw)
+        else:
+            return self.request_encode_body(method, url, fields=fields,
+                                             headers=headers,
+                                             **urlopen_kw)
+
+    def request_encode_url(self, method, url, fields=None, **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the ``fields`` encoded in
+        the url. This is useful for request methods like GET, HEAD, DELETE, etc.
+        """
+        if fields:
+            url += '?' + urlencode(fields)
+        return self.urlopen(method, url, **urlopen_kw)
+
+    def request_encode_body(self, method, url, fields=None, headers=None,
+                            encode_multipart=True, multipart_boundary=None,
+                            **urlopen_kw):
+        """
+        Make a request using :meth:`urlopen` with the ``fields`` encoded in
+        the body. This is useful for request methods like POST, PUT, PATCH, etc.
+
+        When ``encode_multipart=True`` (default), then
+        :meth:`urllib3.filepost.encode_multipart_formdata` is used to encode the
+        payload with the appropriate content type. Otherwise
+        :meth:`urllib.urlencode` is used with the
+        'application/x-www-form-urlencoded' content type.
+
+        Multipart encoding must be used when posting files, and it's reasonably
+        safe to use it in other times too. However, it may break request signing,
+        such as with OAuth.
+
+        Supports an optional ``fields`` parameter of key/value strings AND
+        key/filetuple. A filetuple is a (filename, data, MIME type) tuple where
+        the MIME type is optional. For example: ::
+
+            fields = {
+                'foo': 'bar',
+                'fakefile': ('foofile.txt', 'contents of foofile'),
+                'realfile': ('barfile.txt', open('realfile').read()),
+                'typedfile': ('bazfile.bin', open('bazfile').read(),
+                              'image/jpeg'),
+                'nonamefile': 'contents of nonamefile field',
+            }
+
+        When uploading a file, providing a filename (the first parameter of the
+        tuple) is optional but recommended to best mimick behavior of browsers.
+
+        Note that if ``headers`` are supplied, the 'Content-Type' header will be
+        overwritten because it depends on the dynamic random boundary string
+        which is used to compose the body of the request. The random boundary
+        string can be explicitly set with the ``multipart_boundary`` parameter.
+        """
+        if encode_multipart:
+            body, content_type = encode_multipart_formdata(fields or {},
+                                    boundary=multipart_boundary)
+        else:
+            body, content_type = (urlencode(fields or {}),
+                                    'application/x-www-form-urlencoded')
+
+        if headers is None:
+            headers = self.headers
+
+        headers_ = {'Content-Type': content_type}
+        headers_.update(headers)
+
+        return self.urlopen(method, url, body=body, headers=headers_,
+                            **urlopen_kw)
+
+
+requests/sessions.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.session
+~~~~~~~~~~~~~~~~
+
+This module provides a Session object to manage and persist settings across
+requests (cookies, auth, proxies).
+
+"""
+import os
+
+from .compat import cookielib
+from .cookies import cookiejar_from_dict
+from .models import Request
+from .hooks import default_hooks, dispatch_hook
+from .utils import from_key_val_list, default_headers
+from .exceptions import TooManyRedirects, InvalidSchema
+
+from .compat import urlparse, urljoin
+from .adapters import HTTPAdapter
+
+from .utils import requote_uri, get_environ_proxies, get_netrc_auth
+
+from .status_codes import codes
+REDIRECT_STATI = (codes.moved, codes.found, codes.other, codes.temporary_moved)
+DEFAULT_REDIRECT_LIMIT = 30
+
+
+def merge_kwargs(local_kwarg, default_kwarg):
+    """Merges kwarg dictionaries.
+
+    If a local key in the dictionary is set to None, it will be removed.
+    """
+
+    if default_kwarg is None:
+        return local_kwarg
+
+    if isinstance(local_kwarg, str):
+        return local_kwarg
+
+    if local_kwarg is None:
+        return default_kwarg
+
+    # Bypass if not a dictionary (e.g. timeout)
+    if not hasattr(default_kwarg, 'items'):
+        return local_kwarg
+
+    default_kwarg = from_key_val_list(default_kwarg)
+    local_kwarg = from_key_val_list(local_kwarg)
+
+    # Update new values in a case-insensitive way
+    def get_original_key(original_keys, new_key):
+        """
+        Finds the key from original_keys that case-insensitive matches new_key.
+        """
+        for original_key in original_keys:
+            if key.lower() == original_key.lower():
+                return original_key
+        return new_key
+
+    kwargs = default_kwarg.copy()
+    original_keys = kwargs.keys()
+    for key, value in local_kwarg.items():
+        kwargs[get_original_key(original_keys, key)] = value
+
+    # Remove keys that are set to None.
+    for (k, v) in local_kwarg.items():
+        if v is None:
+            del kwargs[k]
+
+    return kwargs
+
+
+class SessionRedirectMixin(object):
+
+    def resolve_redirects(self, resp, req, stream=False, timeout=None, verify=True, cert=None, proxies=None):
+        """Receives a Response. Returns a generator of Responses."""
+
+        i = 0
+
+        # ((resp.status_code is codes.see_other))
+        while (('location' in resp.headers and resp.status_code in REDIRECT_STATI)):
+
+            resp.content  # Consume socket so it can be released
+
+            if i >= self.max_redirects:
+                raise TooManyRedirects('Exceeded %s redirects.' % self.max_redirects)
+
+            # Release the connection back into the pool.
+            resp.close()
+
+            url = resp.headers['location']
+            method = req.method
+
+            # Handle redirection without scheme (see: RFC 1808 Section 4)
+            if url.startswith('//'):
+                parsed_rurl = urlparse(resp.url)
+                url = '%s:%s' % (parsed_rurl.scheme, url)
+
+            # Facilitate non-RFC2616-compliant 'location' headers
+            # (e.g. '/path/to/resource' instead of 'http://domain.tld/path/to/resource')
+            if not urlparse(url).netloc:
+                # Compliant with RFC3986, we percent encode the url.
+                url = urljoin(resp.url, requote_uri(url))
+
+            # http://www.w3.org/Protocols/rfc2616/rfc2616-sec10.html#sec10.3.4
+            if resp.status_code is codes.see_other and req.method != 'HEAD':
+                method = 'GET'
+
+            # Do what the browsers do, despite standards...
+            if resp.status_code in (codes.moved, codes.found) and req.method == 'POST':
+                method = 'GET'
+
+            # Remove the cookie headers that were sent.
+            headers = req.headers
+            try:
+                del headers['Cookie']
+            except KeyError:
+                pass
+
+            resp = self.request(
+                    url=url,
+                    method=method,
+                    headers=headers,
+                    auth=req.auth,
+                    cookies=req.cookies,
+                    allow_redirects=False,
+                    stream=stream,
+                    timeout=timeout,
+                    verify=verify,
+                    cert=cert,
+                    proxies=proxies,
+                    hooks=req.hooks,
+            )
+
+            i += 1
+            yield resp
+
+
+class Session(SessionRedirectMixin):
+    """A Requests session.
+
+    Provides cookie persistience, connection-pooling, and configuration.
+
+    Basic Usage::
+
+      >>> import requests
+      >>> s = requests.Session()
+      >>> s.get('http://httpbin.org/get')
+      200
+    """
+
+    def __init__(self):
+
+        #: A case-insensitive dictionary of headers to be sent on each
+        #: :class:`Request <Request>` sent from this
+        #: :class:`Session <Session>`.
+        self.headers = default_headers()
+
+        #: Default Authentication tuple or object to attach to
+        #: :class:`Request <Request>`.
+        self.auth = None
+
+        #: Dictionary mapping protocol to the URL of the proxy (e.g.
+        #: {'http': 'foo.bar:3128'}) to be used on each
+        #: :class:`Request <Request>`.
+        self.proxies = {}
+
+        #: Event-handling hooks.
+        self.hooks = default_hooks()
+
+        #: Dictionary of querystring data to attach to each
+        #: :class:`Request <Request>`. The dictionary values may be lists for
+        #: representing multivalued query parameters.
+        self.params = {}
+
+        #: Stream response content default.
+        self.stream = False
+
+        #: SSL Verification default.
+        self.verify = True
+
+        #: SSL certificate default.
+        self.cert = None
+
+        #: Maximum number of redirects to follow.
+        self.max_redirects = DEFAULT_REDIRECT_LIMIT
+
+        #: Should we trust the environment?
+        self.trust_env = True
+
+        # Set up a CookieJar to be used by default
+        self.cookies = cookiejar_from_dict({})
+
+        # Default connection adapters.
+        self.adapters = {}
+        self.mount('http://', HTTPAdapter())
+        self.mount('https://', HTTPAdapter())
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *args):
+        self.close()
+
+    def request(self, method, url,
+        params=None,
+        data=None,
+        headers=None,
+        cookies=None,
+        files=None,
+        auth=None,
+        timeout=None,
+        allow_redirects=True,
+        proxies=None,
+        hooks=None,
+        stream=None,
+        verify=None,
+        cert=None):
+
+        cookies = cookies or {}
+        proxies = proxies or {}
+
+        # Bootstrap CookieJar.
+        if not isinstance(cookies, cookielib.CookieJar):
+            cookies = cookiejar_from_dict(cookies)
+
+        # Bubble down session cookies.
+        for cookie in self.cookies:
+            cookies.set_cookie(cookie)
+
+        # Gather clues from the surrounding environment.
+        if self.trust_env:
+            # Set environment's proxies.
+            env_proxies = get_environ_proxies(url) or {}
+            for (k, v) in env_proxies.items():
+                proxies.setdefault(k, v)
+
+            # Set environment's basic authentication.
+            if not auth:
+                auth = get_netrc_auth(url)
+
+            # Look for configuration.
+            if not verify and verify is not False:
+                verify = os.environ.get('REQUESTS_CA_BUNDLE')
+
+            # Curl compatibility.
+            if not verify and verify is not False:
+                verify = os.environ.get('CURL_CA_BUNDLE')
+
+
+        # Merge all the kwargs.
+        params = merge_kwargs(params, self.params)
+        headers = merge_kwargs(headers, self.headers)
+        auth = merge_kwargs(auth, self.auth)
+        proxies = merge_kwargs(proxies, self.proxies)
+        hooks = merge_kwargs(hooks, self.hooks)
+        stream = merge_kwargs(stream, self.stream)
+        verify = merge_kwargs(verify, self.verify)
+        cert = merge_kwargs(cert, self.cert)
+
+
+        # Create the Request.
+        req = Request()
+      
+
+requests/models.py:
+# -*- coding: utf-8 -*-
+
+"""
+requests.models
+~~~~~~~~~~~~~~~
+
+This module contains the primary objects that power Requests.
+"""
+
+import collections
+import logging
+
+from io import BytesIO
+from .hooks import default_hooks
+from .structures import CaseInsensitiveDict
+from .status_codes import codes
+
+from .auth import HTTPBasicAuth
+from .cookies import cookiejar_from_dict, get_cookie_header
+from .packages.urllib3.filepost import encode_multipart_formdata
+from .exceptions import HTTPError, RequestException, MissingSchema, InvalidURL
+from .utils import (
+    stream_untransfer, guess_filename, requote_uri,
+    stream_decode_response_unicode, to_key_val_list, parse_header_links,
+    iter_slices, guess_json_utf, super_len)
+from .compat import (
+    cookielib, urlparse, urlunparse, urlsplit, urlencode, str, bytes, StringIO,
+    is_py2, chardet, json, builtin_str, basestring)
+
+REDIRECT_STATI = (codes.moved, codes.found, codes.other, codes.temporary_moved)
+CONTENT_CHUNK_SIZE = 10 * 1024
+ITER_CHUNK_SIZE = 512
+
+log = logging.getLogger(__name__)
+
+
+class RequestEncodingMixin(object):
+    @property
+    def path_url(self):
+        """Build the path URL to use."""
+
+        url = []
+
+        p = urlsplit(self.url)
+
+        path = p.path
+        if not path:
+            path = '/'
+
+        url.append(path)
+
+        query = p.query
+        if query:
+            url.append('?')
+            url.append(query)
+
+        return ''.join(url)
+
+    @staticmethod
+    def _encode_params(data):
+        """Encode parameters in a piece of data.
+
+        Will successfully encode parameters when passed as a dict or a list of
+        2-tuples. Order is retained if data is a list of 2-tuples but abritrary
+        if parameters are supplied as a dict.
+        """
+
+        if isinstance(data, (str, bytes)):
+            return data
+        elif hasattr(data, 'read'):
+            return data
+        elif hasattr(data, '__iter__'):
+            result = []
+            for k, vs in to_key_val_list(data):
+                if isinstance(vs, basestring) or not hasattr(vs, '__iter__'):
+                    vs = [vs]
+                for v in vs:
+                    if v is not None:
+                        result.append(
+                            (k.encode('utf-8') if isinstance(k, str) else k,
+                             v.encode('utf-8') if isinstance(v, str) else v))
+            return urlencode(result, doseq=True)
+        else:
+            return data
+
+    @staticmethod
+    def _encode_files(files, data):
+        """Build the body for a multipart/form-data request.
+
+        Will successfully encode files when passed as a dict or a list of
+        2-tuples. Order is retained if data is a list of 2-tuples but abritrary
+        if parameters are supplied as a dict.
+
+        """
+        if (not files) or isinstance(data, str):
+            return None
+
+        new_fields = []
+        fields = to_key_val_list(data or {})
+        files = to_key_val_list(files or {})
+
+        for field, val in fields:
+            if isinstance(val, list):
+                for v in val:
+                    new_fields.append((field, builtin_str(v)))
+            else:
+                new_fields.append((field, builtin_str(val)))
+
+        for (k, v) in files:
+            # support for explicit filename
+            ft = None
+            if isinstance(v, (tuple, list)):
+                if len(v) == 2:
+                    fn, fp = v
+                else:
+                    fn, fp, ft = v
+            else:
+                fn = guess_filename(v) or k
+                fp = v
+            if isinstance(fp, str):
+                fp = StringIO(fp)
+            if isinstance(fp, bytes):
+                fp = BytesIO(fp)
+
+            if ft:
+                new_v = (fn, fp.read(), ft)
+            else:
+                new_v = (fn, fp.read())
+            new_fields.append((k, new_v))
+
+        body, content_type = encode_multipart_formdata(new_fields)
+
+        return body, content_type
+
+
+class RequestHooksMixin(object):
+    def register_hook(self, event, hook):
+        """Properly register a hook."""
+
+        if isinstance(hook, collections.Callable):
+            self.hooks[event].append(hook)
+        elif hasattr(hook, '__iter__'):
+            self.hooks[event].extend(h for h in hook if isinstance(h, collections.Callable))
+
+    def deregister_hook(self, event, hook):
+        """Deregister a previously registered hook.
+        Returns True if the hook existed, False if not.
+        """
+
+        try:
+            self.hooks[event].remove(hook)
+            return True
+        except ValueError:
+            return False
+
+
+class Request(RequestHooksMixin):
+    """A user-created :class:`Request <Request>` object.
+
+    Used to prepare a :class:`PreparedRequest <PreparedRequest>`, which is sent to the server.
+
+    :param method: HTTP method to use.
+    :param url: URL to send.
+    :param headers: dictionary of headers to send.
+    :param files: dictionary of {filename: fileobject} files to multipart upload.
+    :param data: the body to attach the request. If a dictionary is provided, form-encoding will take place.
+    :param params: dictionary of URL parameters to append to the URL.
+    :param auth: Auth handler or (user, pass) tuple.
+    :param cookies: dictionary or CookieJar of cookies to attach to this request.
+    :param hooks: dictionary of callback hooks, for internal usage.
+
+    Usage::
+
+      >>> import requests
+      >>> req = requests.Request('GET', 'http://httpbin.org/get')
+      >>> req.prepare()
+      <PreparedRequest [GET]>
+
+    """
+    def __init__(self,
+        method=None,
+        url=None,
+        headers=None,
+        files=None,
+        data=dict(),
+        params=dict(),
+        auth=None,
+        cookies=None,
+        hooks=None):
+
+
+        # Default empty dicts for dict params.
+        data = [] if data is None else data
+        files = [] if files is None else files
+        headers = {} if headers is None else headers
+        params = {} if params is None else params
+        hooks = {} if hooks is None else hooks
+
+        self.hooks = default_hooks()
+        for (k, v) in list(hooks.items()):
+            self.register_hook(event=k, hook=v)
+
+        self.method = method
+        self.url = url
+        self.headers = headers
+        self.files = files
+        self.data = data
+        self.params = params
+        self.auth = auth
+        self.cookies = cookies
+        self.hooks = hooks
+
+    def __repr__(self):
+        return '<Request [%s]>' % (self.method)
+
+    def prepare(self):
+        """Constructs a :class:`PreparedRequest <PreparedRequest>` for transmission and returns it."""
+        p = PreparedRequest()
+
+        p.prepare_method(self.method)
+        p.prepare_url(self.url, self.params)
+        p.prepare_headers(self.headers)
+        p.prepare_cookies(self.cookies)
+        p.prepare_body(self.data, self.files)
+        # Note that prepare_auth must be last to enable authentication schemes
+        # such as OAuth to work on a fully prepared request.
+        p.prepare_auth(self.auth)
+        # This MUST go after prepare_auth. Authenticators could add a hook
+        p.prepare_hooks(self.hooks)
+
+        return p
+
+
+class PreparedRequest(RequestEncodingMixin, RequestHooksMixin):
+    """The fully mutable :class:`PreparedRequest <PreparedRequest>` object,
+    containing the exact bytes that will be sent to the server.
+
+    Generated from either a :class:`Request <Request>` object or manually.
+
+    Usage::
+
+      >>> import requests
+      >>> req = requests.Request('GET', 'http://httpbin.org/get')
+      >>> r = req.prepare()
+      <PreparedRequest [GET]>
+
+      >>> s = requests.Session()
+      >>> s.send(r)
+      <Response [200]>
+
+    """
+
+    def __init__(self):
+        #: HTTP verb to send to the server.
+        self.method = None
+        #: HTTP URL to send the request to.
+        self.url = None
+        #: dictionary of HTTP headers.
+        self.headers = None
+        #: request body to send to the server.
+        self.body = 

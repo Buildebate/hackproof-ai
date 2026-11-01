@@ -1,0 +1,12 @@
+{
+ "files": [
+  "packages/runtime-core/src/apiSetupHelpers.ts",
+  "packages/server-renderer/src/render.ts",
+  "packages/compiler-core/src/options.ts",
+  "packages/compiler-ssr/src/transforms/ssrTransformElement.ts",
+  "packages/compiler-core/src/compat/compatConfig.ts"
+ ],
+ "elapsed_ms": 377872,
+ "backend": "hybrid-rrf-contriever-cpu",
+ "issue_sha256": "33a1a9860146d68172aa7d7bb00717d068ae2177d728e24a55beb6d390763091"
+}

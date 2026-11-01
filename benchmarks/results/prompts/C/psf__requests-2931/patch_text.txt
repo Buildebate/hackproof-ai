@@ -1,0 +1,10 @@
+requests/models.py
+<<<<<<< SEARCH
+        if isinstance(data, (str, bytes)):
+            return to_native_string(data)
+        elif hasattr(data, 'read'):
+=======
+        if isinstance(data, (str, bytes)):
+            return data
+        elif hasattr(data, 'read'):
+>>>>>>> REPLACE

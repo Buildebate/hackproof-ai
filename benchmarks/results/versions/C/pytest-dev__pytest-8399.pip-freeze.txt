@@ -1,0 +1,10 @@
+attrs==25.3.0
+iniconfig==2.1.0
+packaging==26.2
+pip==25.0.1
+pluggy==1.0.0.dev0
+py==1.11.0
+# Editable install with no version control (pytest==6.3.0.dev229+g6e7dc8bac)
+-e /home/ubuntu/hackproof-bench/runs/pytest-dev__pytest-8399/prep
+setuptools==56.0.0
+toml==0.10.2

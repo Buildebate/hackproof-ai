@@ -1,0 +1,20 @@
+from _pytest.pytester import Pytester
+
+
+def test_unittest_setUpClass_fixture_is_private(pytester: Pytester) -> None:
+    pytester.makepyfile(
+        """
+        import unittest
+
+        class Tests(unittest.TestCase):
+            @classmethod
+            def setUpClass(cls):
+                pass
+
+            def test_1(self):
+                pass
+        """
+    )
+    result = pytester.runpytest("--fixtures", "-v")
+    assert result.ret == 0
+    assert "_unittest_setUpClass_fixture_Tests" in result.stdout.str()

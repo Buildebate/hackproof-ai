@@ -1,0 +1,8 @@
+{
+ "task": "vuejs__core-11739",
+ "mode": "C",
+ "binding": true,
+ "verdict": "not-applicable",
+ "violations": [],
+ "note": "no agent patch evaluated (failed: single-shot produced no complete SEARCH/REPLACE blocks)"
+}

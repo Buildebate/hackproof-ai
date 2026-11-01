@@ -1,0 +1,63 @@
+GREEN RESULT: patch applied, evaluated, not resolved. Still-failing tests (names + observed assertion excerpts):
+- [F2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should be executed correctly (base=failed agent=failed):
+  expected '' to be '12' // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > effect (base=passed agent=failed):
+  expected +0 to be 1 // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: getter (base=passed agent=failed):
+  expected undefined to match object [ 1, +0 ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: ref (base=passed agent=failed):
+  expected undefined to match object [ 1, +0 ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: array (base=passed agent=failed):
+  expected "spy" to be called 1 times, but got 0 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not unwrap refs in a reactive source array (base=passed agent=failed):
+  expected "spy" to be called 2 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should not fire if watched getter result did not change (base=passed agent=failed):
+  expected "spy" to be called 1 times, but got 0 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching single source: computed ref (base=passed agent=failed):
+  expected undefined to match object [ 2, 1 ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching primitive with deep: true (base=passed agent=failed):
+  expected undefined to match object [ 1, +0 ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive object (with automatic deep: true) (base=passed agent=failed):
+  expected undefined to be 1 // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive object with explicit deep: false (base=passed agent=failed):
+  expected undefined to be 1 // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > directly watching reactive array with explicit deep: false (base=passed agent=failed):
+  expected "spy" to be called 2 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching shallow reactive array with deep: false (base=passed agent=failed):
+  expected "spy" to be called 1 times, but got 0 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > should still respect deep: true on shallowReactive source (base=passed agent=failed):
+  expected undefined to be 2 // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources (base=passed agent=failed):
+  expected undefined to match object [ [ 2, 2, 3 ], [ 1, 1, 2 ] ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: readonly array (base=passed agent=failed):
+  expected undefined to match object [ [ 2, true ], [ 1, false ] ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watching multiple sources: reactive object (with automatic deep: true) (base=passed agent=failed):
+  expected undefined to match object { count: 1 }
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > stopping the watcher (with source) (base=passed agent=failed):
+  expected undefined to be 1 // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > cleanup registration (effect) (base=passed agent=failed):
+  expected "spy" to be called 1 times, but got 0 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > cleanup registration (with source) (base=passed agent=failed):
+  expected undefined to be 1 // Object.is equality
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: pre (default) (base=passed agent=failed):
+  expected "spy" to be called 2 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: post (base=passed agent=failed):
+  expected "spy" to be called 2 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchPostEffect (base=passed agent=failed):
+  expected "spy" to be called 2 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush timing: sync (base=passed agent=failed):
+  expected "spy" to be called 3 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > watchSyncEffect (base=passed agent=failed):
+  expected "spy" to be called 3 times, but got 1 times
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre watcher in child component should not fire before parent update (base=passed agent=failed):
+  expected [ 'render parent', 'render child' ] to deeply equal [ 'render parent', …(5) ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre watcher watching props should fire before child update (base=passed agent=failed):
+  expected [ 'render' ] to deeply equal [ 'render', 'watcher 1', …(2) ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: pre triggered in component setup should be buffered and called before mounted (base=passed agent=failed):
+  expected [ 'mounted' ] to match object [ 'watch 3', 'mounted' ]
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > flush: post watcher should fire after template refs updated (base=passed agent=failed):
+  Cannot read properties of null (reading 'tag')
+- [P2P] packages/runtime-core/__tests__/apiWatch.spec.ts > api: watch > deep (base=passed agent=failed):
+  expected undefined to deeply equal [ 1, 1, 1, true ]
+- [P2P] packages
+…[report truncated]

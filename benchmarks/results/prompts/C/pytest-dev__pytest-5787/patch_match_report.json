@@ -1,0 +1,41 @@
+[
+ {
+  "applied": {
+   "src/_pytest/_code/code.py": [
+    3
+   ]
+  },
+  "missed": [
+   {
+    "position": 0,
+    "file": "src/_pytest/_code/code.py",
+    "search_head": "reprtraceback: \"ReprTraceback\", reprcrash: Optional[\"ReprFileLocation\"], sections: Iterable[Tuple[str, str, str]] = (), ",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 899-905, similarity 0.55):\n891 | \n892 |     def toterminal(self, tw):\n893 |         for element in self.chain:\n894 |             element[0].toterminal(tw)\n895 |             if element[2] is not None:\n896 |                 tw.line(\"\")\n897 |                 tw.line(element[2], yellow=True)\n898 |         super().toterminal(tw)\n899 | \n900 | \n901 | class ReprExceptionInfo(ExceptionRepr):\n902 |     def __init__(self, reprtraceback, reprcrash):\n903 |         super().__init__()\n904 |         self.reprtraceback = reprtraceback\n905 |         self.reprcrash = reprcrash\n906 | \n907 |     def toterminal(self, tw):\n908 |         self.reprtraceback.toterminal(tw)\n909 |         super().toterminal(tw)\n910 | \n911 | \n912 | class ReprTraceback(TerminalRepr):\n913 |     entrysep = \"_ \""
+   },
+   {
+    "position": 1,
+    "file": "src/_pytest/_code/code.py",
+    "search_head": "def toterminal(self, tw: TerminalWriter) -> None: self.reprtraceback.toterminal(tw)",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 907-908, similarity 0.83):\n899 | \n900 | \n901 | class ReprExceptionInfo(ExceptionRepr):\n902 |     def __init__(self, reprtraceback, reprcrash):\n903 |         super().__init__()\n904 |         self.reprtraceback = reprtraceback\n905 |         self.reprcrash = reprcrash\n906 | \n907 |     def toterminal(self, tw):\n908 |         self.reprtraceback.toterminal(tw)\n909 |         super().toterminal(tw)\n910 | \n911 | \n912 | class ReprTraceback(TerminalRepr):\n913 |     entrysep = \"_ \"\n914 | \n915 |     def __init__(self, reprentries, extraline, style):\n916 |         self.reprentries = reprentries"
+   },
+   {
+    "position": 2,
+    "file": "src/_pytest/_code/code.py",
+    "search_head": "def getrepr( self, showlocals: bool = False, style: str = \"long\", abspath: bool = False, tbfilter: bool = True, funcargs",
+    "error": "SEARCH not found (0 matches at exact/ws/fuzzy>=0.90)\nclosest region (lines 535-544, similarity 0.86):\n527 |         return isinstance(self.value, exc)\n528 | \n529 |     def _getreprcrash(self) -> \"ReprFileLocation\":\n530 |         exconly = self.exconly(tryshort=True)\n531 |         entry = self.traceback.getcrashentry()\n532 |         path, lineno = entry.frame.code.raw.co_filename, entry.lineno\n533 |         return ReprFileLocation(path, lineno + 1, exconly)\n534 | \n535 |     def getrepr(\n536 |         self,\n537 |         showlocals: bool = False,\n538 |         style: str = \"long\",\n539 |         abspath: bool = False,\n540 |         tbfilter: bool = True,\n541 |         funcargs: bool = False,\n542 |         truncate_locals: bool = True,\n543 |         chain: bool = True,\n544 |     ):\n545 |         \"\"\"\n546 |         Return str()able representation of this exception info.\n547 | \n548 |         :param bool showlocals:\n549 |             Show locals per traceback entry.\n550 |             Ignored if ``style==\"native\"``.\n551 | \n552 |         :param str style: long|short|no|native traceback style"
+   }
+  ],
+  "round": 0
+ },
+ {
+  "applied": {
+   "src/_pytest/_code/code.py": [
+    0,
+    1,
+    2
+   ]
+  },
+  "missed": [],
+  "round": 1
+ }
+]

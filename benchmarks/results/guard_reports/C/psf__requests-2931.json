@@ -1,0 +1,8 @@
+{
+ "task": "psf__requests-2931",
+ "mode": "C",
+ "binding": true,
+ "verdict": "clean",
+ "violations": [],
+ "note": "green-retry attempt (-green-retry)"
+}

@@ -1,0 +1,7 @@
+import requests
+
+def test_binary_payload_preserved():
+    data = u"ööö".encode("utf-8")
+    req = requests.Request("PUT", "http://example.com/put", data=data)
+    prep = req.prepare()
+    assert prep.body == data, "binary payload corrupted: %r != %r" % (prep.body, data)

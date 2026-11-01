@@ -1,0 +1,43 @@
+import subprocess
+import sys
+
+
+def test_teardown_not_run_for_unittest_skip_class_with_pdb(tmp_path):
+    marker = tmp_path / "teardown_called.txt"
+    inner = tmp_path / "test_inner_skip_class.py"
+    inner.write_text(
+        "import unittest\n"
+        "\n"
+        "@unittest.skip('hello')\n"
+        "class TestSkippedCase(unittest.TestCase):\n"
+        "    def test_one(self):\n"
+        "        pass\n"
+        "    def tearDown(self):\n"
+        f"        __import__('pathlib').Path({str(marker)!r}).write_text('called')\n"
+    )
+    try:
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "pytest",
+                "--pdb",
+                "-v",
+                "-p",
+                "no:cacheprovider",
+                str(inner),
+            ],
+            cwd=str(tmp_path),
+            input=b"",
+            stdout=subprocess.PIPE,
+            stderr=subprocess.STDOUT,
+            timeout=60,
+        )
+    except subprocess.TimeoutExpired:
+        assert False, "inner --pdb run timed out"
+    output = result.stdout.decode("utf-8", "replace")
+    assert result.returncode == 0, output
+    assert "1 skipped" in output, output
+    assert not marker.exists(), (
+        "tearDown executed for class marked @unittest.skip under --pdb"
+    )

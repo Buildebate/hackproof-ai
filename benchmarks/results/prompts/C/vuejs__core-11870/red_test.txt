@@ -1,0 +1,20 @@
+import { describe, it, expect } from 'vitest'
+import { shallowReactive, ref, isReactive, isRef } from '@vue/reactivity'
+import { renderList } from '@vue/runtime-core'
+
+describe('shallowReactive array v-for', () => {
+  it('should not convert shallowReactive array item to reactive', () => {
+    const inner = ref('aaa1')
+    const arr = shallowReactive([{ aaa: inner }])
+    let vForItem: any
+    renderList(arr as any, (item: any) => {
+      vForItem = item
+      return null as any
+    })
+    expect(typeof (arr[0] as any).aaa).toBe('object')
+    expect(isRef((arr[0] as any).aaa)).toBe(true)
+    expect(isReactive(vForItem)).toBe(false)
+    expect(isRef(vForItem.aaa)).toBe(true)
+    expect(typeof vForItem.aaa).toBe('object')
+  })
+})

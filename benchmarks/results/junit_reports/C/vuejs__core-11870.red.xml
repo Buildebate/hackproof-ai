@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<testsuites name="vitest tests" tests="1" failures="1" errors="0" time="1.274">
+    <testsuite name="packages/runtime-core/__tests__/helpers/repro-60a6484e1e95.test.ts" timestamp="2026-11-01T07:56:08.841Z" hostname="95785376b524" tests="1" failures="1" errors="0" skipped="0" time="0.011">
+        <testcase classname="packages/runtime-core/__tests__/helpers/repro-60a6484e1e95.test.ts" name="shallowReactive array v-for &gt; should not convert shallowReactive array item to reactive" time="0.01">
+            <failure message="expected true to be false // Object.is equality" type="AssertionError">
+AssertionError: expected true to be false // Object.is equality
+
+- Expected
++ Received
+
+- false
++ true
+
+ ❯ packages/runtime-core/__tests__/helpers/repro-60a6484e1e95.test.ts:16:34
+            </failure>
+        </testcase>
+    </testsuite>
+</testsuites>

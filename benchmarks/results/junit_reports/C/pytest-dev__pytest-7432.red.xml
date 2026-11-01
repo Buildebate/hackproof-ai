@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites><testsuite errors="0" failures="1" hostname="593abda0ba24" name="pytest" skipped="0" tests="1" time="0.267" timestamp="2026-11-01T05:52:01.760026"><testcase classname="testing.test_repro_228b2884e36c" file="testing/test_repro_228b2884e36c.py" line="4" name="test_skip_location_with_runxfail" time="0.238"><failure message="AssertionError: assert &apos;test_it.py:3&apos; in &apos;============================= test session starts ==============================\nplatform linux -- Python 3.8.20, py...kipping.py:239: unconditional skip\n============================== 1 skipped in 0.01s ==============================\n&apos;">tmp_path = PosixPath(&apos;/tmp/pytest-of-root/pytest-0/test_skip_location_with_runxfa0&apos;)
+
+    def test_skip_location_with_runxfail(tmp_path):
+        p = tmp_path.joinpath(&quot;test_it.py&quot;)
+        p.write_text(&quot;import pytest\n@pytest.mark.skip\ndef test_skip_location():\n    assert 0\n&quot;)
+        proc = subprocess.run([sys.executable, &quot;-m&quot;, &quot;pytest&quot;, str(p), &quot;-rs&quot;, &quot;--runxfail&quot;], cwd=str(tmp_path), stdout=subprocess.PIPE, stderr=subprocess.PIPE, universal_newlines=True)
+        out = proc.stdout + proc.stderr
+&gt;       assert &quot;test_it.py:3&quot; in out
+E       AssertionError: assert &apos;test_it.py:3&apos; in &apos;============================= test session starts ==============================\nplatform linux -- Python 3.8.20, py...kipping.py:239: unconditional skip\n============================== 1 skipped in 0.01s ==============================\n&apos;
+
+testing/test_repro_228b2884e36c.py:10: AssertionError</failure></testcase></testsuite></testsuites>

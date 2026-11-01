@@ -1,0 +1,7 @@
+{
+ "task": "pytest-dev__pytest-7432",
+ "mode": "C",
+ "binding": true,
+ "verdict": "clean",
+ "violations": []
+}

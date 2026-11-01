@@ -10,11 +10,14 @@ Machine-readable companion: [`evidence_dossier.json`](evidence_dossier.json)
 | Mode | Wave 1 | Wave 2 | Wave 3 | Goal |
 |---|---|---|---|---|
 | B (HackProof: guard → red → debate → patch → green + R9/R13 + W3 mechanisms) | 4/12 | 7/12 | **9/12** | 9/12 — **MET** |
-| A (single-shot Wonder baseline) | 2/12 | **5/12** | not rerun (held) | comparison only |
+| A (single-shot Wonder baseline) | 2/12 | **5/12** | not rerun (held) → **6/12** via 4.3 offline rescore 6028 | comparison only |
 
 History B: `0/12` raw 4.2 → `1/12` rescore → `4/12` W1 → `7/12` W2 →
 `8/12` (12a.0 rescore 6028) → **`9/12` W3**.
-History A: `0/12` raw 4.2 → `2/12` rescore → `2/12` W1 → **`5/12` W2** (held).
+History A: `0/12` raw 4.2 → `2/12` rescore → `2/12` W1 → **`5/12` W2** (held)
+→ **`6/12`** via Step 4.3 offline rescore (`rescore_6028_A.py`: first-attempt
+scorer applied base resolution to the agent JUnit; per-side re-derivation
+from raw bytes scores the env-path P2P `passed`; F2P unchanged, guard clean).
 B is still **not** a superset story: `1142` now resolved in BOTH modes
 (A already had it since W2); every W2 B-resolve held through W3 untouched.
 
@@ -112,3 +115,64 @@ W4 requires a fresh mechanism proposal + founder authorization.
   [`ADR-030`](../../../docs/decisions/ADR-030-wave3-anti-ramble-and-partial-patch-application.md).
 - Mode: `DEGRADED_SINGLE_AGENT` (self-attested; verification via deterministic tool
   exit codes, SHA-pinned JUnit, and public CI).
+
+## 8. Mode-C debate ablation (plan 45, ADR-031 — H0: debates stay)
+
+Single-shot producer (1 Wonder `synthesize_patch` over the Mode B builder
+context) + the full Mode B verification contour (red gate, R6, R9/green-v2,
+per-block apply, binding guard, receipt). Pre-commit bands: H1 parity 8–10/12
+→ debates become the control group; H0 gap (≤7/12) → debates stay.
+Sample-size frame: n=12, claims hold «on this task sample» only.
+
+**Verdict: H0 — C 7/12 vs B 9/12 (gap 2). Debates stay; H1 published
+negatively as pre-committed.** No money in this section (ADR-031):
+token distributions below; ledger bucket `bench4.3e-ablation` in
+[`finops_ledger.json`](../finops_ledger.json) is the raw internal-ops record.
+
+| Task | C verdict | Class |
+|---|---|---|
+| psf__requests-1142 | **resolved** (receipt live) | — |
+| psf__requests-2931 | **resolved** (receipt live) | — |
+| psf__requests-5414 | failed (patch breaks collection) | harness-loud, no eval |
+| psf__requests-6028 | **resolved** (receipt live) | — |
+| pytest-dev__pytest-10081 | **resolved** (receipt live) | — |
+| pytest-dev__pytest-5787 | failed (f2p-not-fixed:2 + p2p-broken:4) | genuine-hard content |
+| pytest-dev__pytest-7432 | **resolved** (receipt live) | — |
+| pytest-dev__pytest-8399 | **resolved** (receipt live) | — |
+| vuejs__core-11589 | failed (f2p-not-fixed:1 + p2p-broken:58) | content |
+| vuejs__core-11739 | failed (no complete blocks, incl. 1 grounded retry) | synthesis miss |
+| vuejs__core-11870 | **resolved** (receipt live) | — |
+| vuejs__core-11899 | failed (no complete blocks, retry output 0 bytes) | synthesis miss |
+
+Invariants: 12/12 `done`; red 12/12 accepted; guard 10 `clean` + 0 tamper
+(2 no-patch runs carry no verdict — nothing to guard); receipts 7/7 resolves
+(`machine_proof=True`); audit clean (0 JUnit mismatches, 0 missing guards,
+0 missing evidence).
+
+Token distribution (measured, per ledger `per_call` splits; cache discounts
+unmeasured): total **≥878,060 tokens / ≥37 calls** (lower bounds — one
+cap-scale R9 revision call, 11589, ~5 min to `length`, is missing from the
+ledger via the `id()`-collision drain gap, see finding 3) — 1142 `56,789`/3;
+2931 `60,660`/3; 5414 `50,614`/2; 6028 `78,328`/4; 10081 `67,218`/3;
+5787 `189,035`/6; 7432 `29,423`/2; 8399 `34,924`/2; 11589 `46,607`/2;
+11739 `120,803`/3; 11870 `34,721`/2; 11899 `108,938`/3.
+
+Execution note (validity): 8 tasks ran orchestration-on-phone, 4 on OCI
+after repeated phone reboots under torch load — same code
+(`a5890e0`), same `hybrid-rrf-contriever-cpu` backend, same pinned
+deps (torch 2.15.0, transformers 5.21.0, faiss 1.15.1; torch build
+cu132-vs-cpu-only and pydantic 2.14.2-vs-2.14.1 are the only noted
+drifts), same containers, one wave label, all 12 runs fresh (no mixing).
+
+Honesty findings: (1) red-gate hole — run 11739-C accepted a **0-byte**
+first synthesis as red (vitest reports the empty spec as 1 failure;
+the 12a.1 format guard covers the retry only). Verdict unaffected
+(run failed at synthesis) and the judge is shared B/C (no differential
+bias), but first-synthesis format checks are now proposed follow-up work.
+(2) No-Gold boundary held — the single-shot input is issue + builder
+context only, archived per run (`single_shot_input.txt`).
+(3) Ledger accounting gap — `UsageCollector.drain` dedups by `id(client)`,
+so a GC-recycled client id silently drops that call's record (observed:
+11589-C R9 revision missing from `per_call` despite a completed 5-minute
+call). Wave token/dollar totals are lower bounds; the fix (monotonic
+client keys) is proposed follow-up work alongside finding 1.

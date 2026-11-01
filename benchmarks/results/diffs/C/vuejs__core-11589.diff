@@ -1,0 +1,13 @@
+diff --git a/packages/reactivity/src/dep.ts b/packages/reactivity/src/dep.ts
+index 4ce73ac..d6308da 100644
+--- a/packages/reactivity/src/dep.ts
++++ b/packages/reactivity/src/dep.ts
+@@ -145,7 +145,7 @@ export class Dep {
+           }
+         }
+       }
+-      for (let link = this.subs; link; link = link.prevSub) {
++for (let link = this.subsTail; link; link = link.prevSub) {
+         link.sub.notify()
+       }
+     } finally {

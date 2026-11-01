@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?><testsuites name="pytest tests"><testsuite name="pytest" errors="0" failures="1" skipped="0" tests="1" time="0.063" timestamp="2026-11-01T05:05:13.668968+00:00" hostname="8e6738e94ae1"><testcase classname="tests.test_repro_e77aea158847" name="test_prepend_scheme_if_needed_preserves_proxy_auth" time="0.001"><failure message="AssertionError: proxy auth stripped: http://host:8080/path&#10;assert 'user:pwd@' in 'http://host:8080/path'">def test_prepend_scheme_if_needed_preserves_proxy_auth():
+        result = prepend_scheme_if_needed("http://user:pwd@host:8080/path", "http")
+&gt;       assert "user:pwd@" in result, f"proxy auth stripped: {result}"
+E       AssertionError: proxy auth stripped: http://host:8080/path
+E       assert 'user:pwd@' in 'http://host:8080/path'
+
+tests/test_repro_e77aea158847.py:6: AssertionError</failure></testcase></testsuite></testsuites>

@@ -1,0 +1,6 @@
+from requests.utils import prepend_scheme_if_needed
+
+
+def test_prepend_scheme_if_needed_preserves_proxy_auth():
+    result = prepend_scheme_if_needed("http://user:pwd@host:8080/path", "http")
+    assert "user:pwd@" in result, f"proxy auth stripped: {result}"

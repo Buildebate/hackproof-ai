@@ -1,0 +1,160 @@
+{
+ "task": "vuejs__core-11870",
+ "mode": "C",
+ "tier": "oci",
+ "ts": "2026-11-01T07:56:40.668836+00:00",
+ "base_ref": "67d6596d40b1807b9cd8eb0d9282932ea77be3c0",
+ "agent": {
+  "ok": true,
+  "reason": "",
+  "files": [
+   "packages/reactivity/src/ref.ts",
+   "packages/runtime-core/src/customFormatter.ts",
+   "packages/runtime-core/src/apiSetupHelpers.ts",
+   "packages/runtime-core/src/helpers/renderList.ts",
+   "packages/reactivity/src/reactive.ts"
+  ],
+  "localize_ms": 377326,
+  "backend": "hybrid-rrf-contriever-cpu",
+  "blocks": 2,
+  "applied_file": "packages/runtime-core/src/helpers/renderList.ts",
+  "applied_files": [
+   "packages/runtime-core/src/helpers/renderList.ts"
+  ],
+  "red_rel": "packages/runtime-core/__tests__/helpers/repro-60a6484e1e95.test.ts",
+  "local_violations": [],
+  "debate": {
+   "skipped": "mode-c-single-shot"
+  }
+ },
+ "usage": {
+  "prompt_tokens": 26253,
+  "completion_tokens": 8468,
+  "total_tokens": 34721,
+  "per_call": [
+   {
+    "role": "SparkRedSynthesis",
+    "model": "muse-spark-1.3",
+    "prompt_tokens": 13346,
+    "completion_tokens": 4392,
+    "total_tokens": 17738,
+    "finish_reason": "stop"
+   },
+   {
+    "role": "PatchSynthesis-single",
+    "model": "muse-wonder-1.0",
+    "prompt_tokens": 12907,
+    "completion_tokens": 4076,
+    "total_tokens": 16983,
+    "finish_reason": "stop"
+   }
+  ]
+ },
+ "evidence": {
+  "language": "typescript",
+  "collect": false,
+  "freeze": false,
+  "debate_prompts": false
+ },
+ "diff_sha256": "97df58d2a16c4a046fa11adaf80e17a4693ba0d1dc666fcea60958dffe05e85c",
+ "red": {
+  "rel": "packages/runtime-core/__tests__/helpers/repro-60a6484e1e95.test.ts",
+  "sha256": "7770dfc3588067410a755514a0a39420fe387c4b97ba7cd31b84b9766c2e69aa",
+  "exit_code": 1,
+  "timed_out": false,
+  "accepted": true,
+  "reason": "red accepted (1 failure(s), 0 errors)",
+  "failures": 1,
+  "errors": 0,
+  "junit_bytes": 896,
+  "junit_sha256": "ec20222d2b0e72941f684ad65665534a426b389ae9dda55720a9120250908e64"
+ },
+ "guard": {
+  "task": "vuejs__core-11870",
+  "mode": "C",
+  "binding": true,
+  "verdict": "clean",
+  "violations": []
+ },
+ "junit_sha256": "1ccea60bc3eb086a2e71e94faa7cee00727a642fc64decc241c8a5de225e9525",
+ "eval_exit": 0,
+ "eval_timed_out": false,
+ "scoring": {
+  "f2p": {
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render items in a reactive array correctly": {
+    "base": "failed",
+    "agent": "passed"
+   }
+  },
+  "p2p": {
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render items in an array": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render characters of a string": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render integers 1 through N when given a number N": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "yes"
+   },
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should warn when given a non-integer N": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render properties in an object": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render an item for entry in an iterable": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   },
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should return empty array when source is undefined": {
+    "base": "passed",
+    "agent": "passed",
+    "golden": "no"
+   }
+  },
+  "f2p_fixed": [
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render items in a reactive array correctly"
+  ],
+  "f2p_not_fixed": [],
+  "f2p_not_red_at_base": [],
+  "p2p_broken": [],
+  "p2p_env_limited": [],
+  "p2p_kept": [
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render items in an array",
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render characters of a string",
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render integers 1 through N when given a number N",
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should warn when given a non-integer N",
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render properties in an object",
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should render an item for entry in an iterable",
+   "packages/runtime-core/__tests__/helpers/renderList.spec.ts > renderList > should return empty array when source is undefined"
+  ],
+  "resolved_functional": true,
+  "unmatched_agent_cases": [],
+  "missing_agent_ids": []
+ },
+ "receipt": {
+  "receipt_version": "1.0",
+  "base_commit": "67d6596d40b1807b9cd8eb0d9282932ea77be3c0",
+  "test_hash": "7770dfc3588067410a755514a0a39420fe387c4b97ba7cd31b84b9766c2e69aa",
+  "patch_hash": "90598d82ad82a6372ce27d65055c5a0c93a170ffcd76c2c36700c4ded67ee051",
+  "red_junit_hash": "ec20222d2b0e72941f684ad65665534a426b389ae9dda55720a9120250908e64",
+  "green_junit_hash": "1ccea60bc3eb086a2e71e94faa7cee00727a642fc64decc241c8a5de225e9525",
+  "minted_at_utc": "2026-11-01T07:56:43.603699+00:00",
+  "receipt_sha256": "25fc27536a6732ff44da55b04e30b8fdb1da5234584e94090d7759117392f71d"
+ },
+ "machine_proof": true,
+ "status": "resolved",
+ "reason": "",
+ "done": true
+}

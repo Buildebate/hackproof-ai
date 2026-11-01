@@ -1,0 +1,61 @@
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+class ReprExceptionInfo(ExceptionRepr):
+    def __init__(self, reprtraceback, reprcrash):
+        super().__init__()
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+=======
+class ReprExceptionInfo(ExceptionRepr):
+    def __init__(self, reprtraceback, reprcrash, chain=None):
+        super().__init__()
+        self.reprtraceback = reprtraceback
+        self.reprcrash = reprcrash
+        self.chain = list(chain) if chain is not None else []
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+    def toterminal(self, tw):
+        self.reprtraceback.toterminal(tw)
+        super().toterminal(tw)
+=======
+    def toterminal(self, tw):
+        if getattr(self, "chain", None):
+            for _traceback, _crash, _description in self.chain:
+                if _description is not None:
+                    tw.line()
+                    tw.line(_description, yellow=True)
+                    tw.line()
+                _traceback.toterminal(tw)
+                if _crash is not None:
+                    _crash.toterminal(tw)
+            super().toterminal(tw)
+            return
+        self.reprtraceback.toterminal(tw)
+        super().toterminal(tw)
+>>>>>>> REPLACE
+src/_pytest/_code/code.py
+<<<<<<< SEARCH
+    def getrepr(
+        self,
+        showlocals: bool = False,
+        style: str = "long",
+        abspath: bool = False,
+        tbfilter: bool = True,
+        funcargs: bool = False,
+        truncate_locals: bool = True,
+        chain: bool = True,
+    ):
+=======
+    def getrepr(
+        self,
+        showlocals: bool = False,
+        style: str = "long",
+        abspath: bool = False,
+        tbfilter: bool = True,
+        funcargs: bool = False,
+        truncate_locals: bool = True,
+        truncate_args: bool = True,
+        chain: bool = True,
+    ):
+>>>>>>> REPLACE

@@ -1692,3 +1692,407 @@ def test_mode_b_agent_archives_debate_prompts_and_flags(
     assert payload["turns"] == []  # scripted debate makes no client calls
     assert agent["evidence"] == {"debate_prompts": True}
     assert [e["role"] for e in usage.per_call] == ["SparkRedSynthesis"]
+
+
+# ---------------------------------------------------------------------------
+# Plan 45 (ADR-031): Mode C single-shot ablation vectors (offline, mocked LLM)
+# ---------------------------------------------------------------------------
+
+C_PATCH_A = (
+    "a.py\n"
+    "<<<<<<< SEARCH\n"
+    "x = 1\n"
+    "=======\n"
+    "x = 2\n"
+    ">>>>>>> REPLACE\n"
+)
+
+C_PATCH_GUARD = (
+    "tests/test_x.py\n"
+    "<<<<<<< SEARCH\n"
+    "SENTINEL = 1\n"
+    "=======\n"
+    "SENTINEL = 2\n"
+    ">>>>>>> REPLACE\n"
+)
+
+
+class _StrictNoDebate:
+    """Debate orchestrator tripwire: Mode C must never instantiate it."""
+
+    def __init__(self, *args, **kwargs) -> None:  # noqa: ANN001, ANN002
+        raise AssertionError("debate must not run in Mode C")
+
+
+class _ScriptedWonderC:
+    """Wonder stand-in: scripted synthesize + red-retry + R6 bodies."""
+
+    def __init__(
+        self,
+        synth_bodies: list[str],
+        red_bodies: list[str] | None = None,
+        revision_bodies: list[str] | None = None,
+    ) -> None:
+        self._synth = list(synth_bodies)
+        self._red = list(red_bodies or [])
+        self._revisions = list(revision_bodies or [])
+        self.synth_inputs: list[str] = []
+        self.issues: list[str] = []
+        self.contexts: list[str] = []
+        self.revision_prompts: list[str] = []
+        self.usage_log: list[dict] = []
+        self.last_usage: dict = {
+            "prompt_tokens": 0, "completion_tokens": 0,
+            "total_tokens": 0, "finish_reason": "stop",
+        }
+
+    def _record(self) -> None:
+        entry = {
+            "prompt_tokens": 10, "completion_tokens": 5,
+            "total_tokens": 15, "finish_reason": "stop",
+        }
+        self.usage_log.append(entry)
+        self.last_usage = dict(entry)
+
+    def generate_regression_test(
+        self, issue_description: str, code_context: str
+    ) -> str:
+        if not self._red:
+            raise AssertionError("red retry must not happen in this vector")
+        self.issues.append(issue_description)
+        self.contexts.append(code_context)
+        self._record()
+        return self._red[min(len(self.issues) - 1, len(self._red) - 1)]
+
+    def synthesize_patch(self, consensus: str) -> str:
+        if len(self.synth_inputs) >= len(self._synth):
+            raise AssertionError("unexpected extra synthesize_patch call")
+        self.synth_inputs.append(consensus)
+        self._record()
+        return self._synth[len(self.synth_inputs) - 1]
+
+    def debate_round(self, role: str, prompt: str, history: list) -> str:
+        if not self._revisions:
+            raise AssertionError("R6 revision must not fire in this vector")
+        self.revision_prompts.append(prompt)
+        self._record()
+        return self._revisions[
+            min(len(self.revision_prompts) - 1, len(self._revisions) - 1)
+        ]
+
+
+def _wire_mode_c(monkeypatch, spark, wonder, tmp_path: Path) -> tuple:
+    """Stage a Mode C agent run with scripted LLM and no debate."""
+    monkeypatch.setattr(
+        run_benchmark, "localize_for_task",
+        lambda task, clone, issue, tee: ([], ["a.py"], 1, "test"),
+    )
+    monkeypatch.setattr(
+        "hackproof.cli.build_code_context", lambda *a: ("ctx", "bctx")
+    )
+    monkeypatch.setattr(
+        "hackproof.cli.repo_structure_sketch", lambda *a: "struct"
+    )
+    monkeypatch.setattr(
+        "hackproof.llm.meta_client.MetaClient",
+        lambda model: {"muse-spark-1.3": spark,
+                       "muse-wonder-1.0": wonder}[model],
+    )
+    monkeypatch.setattr(
+        "hackproof.debate.orchestrator.DebateOrchestrator", _StrictNoDebate
+    )
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    return clone, tmp_path / "prompts"
+
+
+def _run_c_agent(tmp_path: Path, clone: Path, prompt_dir: Path,
+                 wonder, proof) -> tuple:
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        usage = run_benchmark.UsageCollector()
+        agent = run_benchmark.run_mode_c_agent(
+            _b_task(), clone,
+            {"problem_statement": "bug", "hints_text": "hint"},
+            prompt_dir, tee, usage, prove_red=proof,
+        )
+    finally:
+        tee.close()
+    return agent, usage
+
+
+def test_mode_c_single_shot_no_debate(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Accepted red → 1 synthesis → applied; debate never runs."""
+    spark = _ScriptedSpark([FIXED_RED])
+    wonder = _ScriptedWonderC([C_PATCH_A])
+    clone, prompt_dir = _wire_mode_c(monkeypatch, spark, wonder, tmp_path)
+    (clone / "a.py").write_text("x = 1\n", encoding="utf-8")
+    prove = _prove_scripted([(1, FAILING_RED_JUNIT)])
+    agent, usage = _run_c_agent(tmp_path, clone, prompt_dir, wonder, prove)
+    assert agent["ok"] is True
+    assert agent["debate"] == {"skipped": "mode-c-single-shot"}
+    assert agent["applied_files"] == ["a.py"]
+    assert (clone / "a.py").read_text(encoding="utf-8") == "x = 2\n"
+    assert len(wonder.synth_inputs) == 1
+    assert "ISSUE:\nbug" in wonder.synth_inputs[0]
+    assert wonder.synth_inputs[0].endswith("bctx")
+    assert (prompt_dir / "patch_text.txt").read_text(
+        encoding="utf-8") == C_PATCH_A
+    assert not (prompt_dir / "debate_prompts.json").exists()
+    assert "evidence" not in agent
+    assert agent["issue_text"] == "bug\n\nhint"
+    assert agent["builder_code_context"] == "bctx"
+    assert agent["red_record"]["accepted"] is True
+    assert [e["role"] for e in usage.per_call] == [
+        "SparkRedSynthesis", "PatchSynthesis-single",
+    ]
+    assert [e["model"] for e in usage.per_call] == [
+        "muse-spark-1.3", "muse-wonder-1.0",
+    ]
+
+
+def test_mode_c_never_references_debate_orchestrator() -> None:
+    """Static guard: the Mode C agent cannot reach the debate loop."""
+    assert "DebateOrchestrator" not in (
+        run_benchmark.run_mode_c_agent.__code__.co_names
+    )
+
+
+def test_mode_c_red_rejected_then_rescued(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Vacuous red → Wonder retry with judge feedback → synthesis runs."""
+    spark = _ScriptedSpark([VACUOUS_RED_10081])
+    wonder = _ScriptedWonderC([C_PATCH_A], red_bodies=[FIXED_RED])
+    clone, prompt_dir = _wire_mode_c(monkeypatch, spark, wonder, tmp_path)
+    (clone / "a.py").write_text("x = 1\n", encoding="utf-8")
+    prove = _prove_scripted(
+        [(0, VACUOUS_RED_JUNIT_10081), (1, FAILING_RED_JUNIT)]
+    )
+    agent, usage = _run_c_agent(tmp_path, clone, prompt_dir, wonder, prove)
+    assert agent["ok"] is True
+    assert len(wonder.issues) == 1
+    assert "red run exited 0 (test passed on unpatched base)" in (
+        wonder.issues[0]
+    )
+    assert len(wonder.synth_inputs) == 1
+    assert agent["debate"] == {"skipped": "mode-c-single-shot"}
+    assert [e["role"] for e in usage.per_call] == [
+        "SparkRedSynthesis", "WonderRedSynthesis-retry",
+        "PatchSynthesis-single",
+    ]
+
+
+def test_mode_c_double_reject_skips_synthesis(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Two vacuous reds: no synthesis spend, loud red-rejected reason."""
+    spark = _ScriptedSpark([VACUOUS_RED_10081])
+    wonder = _ScriptedWonderC([], red_bodies=[VACUOUS_RED_10081])
+    clone, prompt_dir = _wire_mode_c(monkeypatch, spark, wonder, tmp_path)
+    prove = _prove_scripted([(0, VACUOUS_RED_JUNIT_10081)] * 2)
+    agent, usage = _run_c_agent(tmp_path, clone, prompt_dir, wonder, prove)
+    assert agent["ok"] is False
+    assert agent["reason"].startswith("red-rejected after resynthesis")
+    assert wonder.synth_inputs == []
+    assert agent["debate"] == {"skipped": "mode-c-single-shot"}
+    assert [e["role"] for e in usage.per_call] == [
+        "SparkRedSynthesis", "WonderRedSynthesis-retry",
+    ]
+
+
+def test_mode_c_guard_reject_before_write(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Guard-touching patch is rejected before any write (both rounds)."""
+    spark = _ScriptedSpark([FIXED_RED])
+    wonder = _ScriptedWonderC(
+        [C_PATCH_GUARD], revision_bodies=[C_PATCH_GUARD]
+    )
+    clone, prompt_dir = _wire_mode_c(monkeypatch, spark, wonder, tmp_path)
+    guard_path = clone / "tests" / "test_x.py"
+    guard_path.parent.mkdir(parents=True)
+    guard_path.write_text("SENTINEL = 1\n", encoding="utf-8")
+    prove = _prove_scripted([(1, FAILING_RED_JUNIT)])
+    agent, usage = _run_c_agent(tmp_path, clone, prompt_dir, wonder, prove)
+    assert agent["ok"] is False
+    assert "guard" in agent["reason"]
+    assert guard_path.read_text(encoding="utf-8") == "SENTINEL = 1\n"
+    assert len(wonder.revision_prompts) == 1
+    assert "guard" in wonder.revision_prompts[0]
+    assert [e["role"] for e in usage.per_call] == [
+        "SparkRedSynthesis", "PatchSynthesis-single",
+        "ArchitecturalBuilder-retry",
+    ]
+
+
+def test_mode_c_empty_synthesis_grounded_retry(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Empty synthesis → 1 grounded retry with the R13 violation note."""
+    spark = _ScriptedSpark([FIXED_RED])
+    wonder = _ScriptedWonderC(["", C_PATCH_A])
+    clone, prompt_dir = _wire_mode_c(monkeypatch, spark, wonder, tmp_path)
+    (clone / "a.py").write_text("x = 1\n", encoding="utf-8")
+    prove = _prove_scripted([(1, FAILING_RED_JUNIT)])
+    agent, usage = _run_c_agent(tmp_path, clone, prompt_dir, wonder, prove)
+    assert agent["ok"] is True
+    assert len(wonder.synth_inputs) == 2
+    assert "FORMAT VIOLATION" in wonder.synth_inputs[1]
+    assert (prompt_dir / "patch_text_synthesis_retry.txt").read_text(
+        encoding="utf-8") == C_PATCH_A
+    assert [e["role"] for e in usage.per_call] == [
+        "SparkRedSynthesis", "PatchSynthesis-single",
+        "PatchSynthesis-single-retry",
+    ]
+
+
+def test_mode_c_context_feeds_green_revision(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """C agent context (issue + builder ctx + patch) drives an R9 lap."""
+    spark = _ScriptedSpark([FIXED_RED])
+    wonder = _ScriptedWonderC([C_PATCH_A])
+    clone, prompt_dir = _wire_mode_c(monkeypatch, spark, wonder, tmp_path)
+    (clone / "a.py").write_text("x = 1\n", encoding="utf-8")
+    prove = _prove_scripted([(1, FAILING_RED_JUNIT)])
+    agent, _ = _run_c_agent(tmp_path, clone, prompt_dir, wonder, prove)
+    assert agent["ok"] is True
+    green_wonder = _ScriptedSpark(["ignored"])
+    monkeypatch.setattr(
+        "hackproof.llm.meta_client.MetaClient",
+        lambda model: green_wonder,
+    )
+
+    def _fake_revise(client, **kw) -> str:
+        client.usage_log.append(
+            {
+                "prompt_tokens": 10, "completion_tokens": 5,
+                "total_tokens": 15, "finish_reason": "stop",
+            }
+        )
+        return C_PATCH_A
+
+    monkeypatch.setattr(
+        "hackproof.debate.roles.architectural_builder."
+        "revise_patch_from_green",
+        _fake_revise,
+    )
+    tee = run_benchmark.Tee(tmp_path / "g.log")
+    try:
+        usage = run_benchmark.UsageCollector()
+        revision = run_benchmark.run_green_revision(
+            _b_task(), agent, "F2P still red: test_fix", prompt_dir,
+            tee, usage,
+        )
+    finally:
+        tee.close()
+    assert revision is not None
+    assert revision["patch_text"] == C_PATCH_A
+    assert revision["routed"] == [("a.py", "x = 1", "x = 2")]
+    assert (prompt_dir / "green_retry_report.txt").is_file()
+    assert [e["role"] for e in usage.per_call] == [
+        "ArchitecturalBuilder-green-retry",
+    ]
+
+
+class _ScriptedWonderA:
+    """Wonder stand-in replaying one single-shot patch + usage."""
+
+    def __init__(self, patch_text: str) -> None:
+        self._patch = patch_text
+        self.prompts: list[str] = []
+        self.usage_log: list[dict] = []
+
+    def debate_round(self, role: str, prompt: str, history: list) -> str:
+        self.prompts.append(prompt)
+        self.usage_log.append(
+            {
+                "prompt_tokens": 10, "completion_tokens": 5,
+                "total_tokens": 15, "finish_reason": "stop",
+            }
+        )
+        return self._patch
+
+
+def test_mode_a_single_shot_deterministic(
+    tmp_path: Path, monkeypatch
+) -> None:
+    """Mode A wiring pinned: 1 Wonder call → applied, same roles."""
+    wonder = _ScriptedWonderA(C_PATCH_A)
+    monkeypatch.setattr(
+        run_benchmark, "localize_for_task",
+        lambda task, clone, issue, tee: ([], ["a.py"], 1, "test"),
+    )
+    monkeypatch.setattr(
+        "hackproof.cli.build_code_context", lambda *a: ("ctx", "bctx")
+    )
+    monkeypatch.setattr(
+        "hackproof.llm.meta_client.MetaClient", lambda model: wonder
+    )
+    clone = tmp_path / "clone"
+    clone.mkdir()
+    (clone / "a.py").write_text("x = 1\n", encoding="utf-8")
+    prompt_dir = tmp_path / "prompts"
+    tee = run_benchmark.Tee(tmp_path / "t.log")
+    try:
+        usage = run_benchmark.UsageCollector()
+        agent = run_benchmark.run_mode_a_agent(
+            _b_task(), clone,
+            {"problem_statement": "bug", "hints_text": "hint"},
+            prompt_dir, tee, usage,
+        )
+    finally:
+        tee.close()
+    assert agent["ok"] is True
+    assert agent["applied_files"] == ["a.py"]
+    assert (clone / "a.py").read_text(encoding="utf-8") == "x = 2\n"
+    assert len(wonder.prompts) == 1
+    assert wonder.prompts[0].endswith("ROUND: 1")
+    assert [e["role"] for e in usage.per_call] == [
+        "ArchitecturalBuilder-single",
+    ]
+
+
+def test_build_parser_accepts_mode_c() -> None:
+    args = run_benchmark.build_parser().parse_args(["--mode", "C"])
+    assert args.mode == "C"
+
+
+def test_audit_requires_guard_report_for_mode_c(tmp_path: Path) -> None:
+    """C runs need guard reports; debate prompts are never required."""
+    junit = _junit_bytes()
+    record = {
+        "task": "t1", "mode": "C", "status": "resolved",
+        "junit_sha256": hashlib.sha256(junit).hexdigest(),
+        "agent": {"debate": {"skipped": "mode-c-single-shot"}},
+        "evidence": {
+            "language": "python", "collect": True, "freeze": True,
+            "debate_prompts": False,
+        },
+    }
+    out = tmp_path / "results"
+    (out / "results" / "C").mkdir(parents=True)
+    (out / "results" / "C" / "t1.json").write_text(
+        json.dumps(record), encoding="utf-8"
+    )
+    for rel, body in {
+        "junit_reports/C/t1.xml": junit.decode("utf-8"),
+        "guard_reports/C/t1.json": "{}",
+        "collect_reports/C/t1.out": "tests/test_x.py::T::t\n",
+        "collect_reports/C/t1.err": "",
+        "versions/C/t1.pip-freeze.txt": "requests==2.9.0\n",
+    }.items():
+        path = out / rel
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(body, encoding="utf-8")
+    audit = audit_results_dir(out)
+    assert audit["missing_evidence_reports"] == []
+    assert audit["junit_mismatches"] == []
+    assert audit["missing_guard_reports"] == []
+    (out / "guard_reports" / "C" / "t1.json").unlink()
+    audit = audit_results_dir(out)
+    assert audit["missing_guard_reports"] == ["t1"]
+    assert audit["missing_evidence_reports"] == []
