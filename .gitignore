@@ -1,0 +1,24 @@
+# Bytecode & caches (also keeps Action-pushed verified branches clean)
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# Worktree-local JUnit reports (red/green verification artifacts)
+*-junit.xml
+test_repro_*-red.xml
+
+# Local envs & builds
+.venv/
+venv/
+dist/
+build/
+*.egg-info/
+
+# Secrets (never commit)
+.env
+.env.*
+*.pem
+*.key
