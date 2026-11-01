@@ -262,7 +262,7 @@ The suite verifies package import, version reporting, both CLI backends
 sandbox guards, debate, patching, and provenance — all offline via
 injected mocks except opt-in `--live` API smokes.
 
-## Demo video (Step 5.1)
+## Demo video
 
 [![HackProof AI — 3-minute technical screencast](https://img.youtube.com/vi/6u6ks0zCbx0/maxresdefault.jpg)](https://www.youtube.com/watch?v=6u6ks0zCbx0)
 
