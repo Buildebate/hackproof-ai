@@ -8,14 +8,14 @@
 # output. Voiceover: media/voiceover_en.txt (6 scenes, 1 paragraph each).
 #
 # Timing budget (TypingSpeed 40ms + measured exec + explicit holds):
-#   Scene 1 cold open  0:00-0:15 (15s)  voiceover 0:01-0:15
-#   Scene 2 problem    0:15-0:37 (22s)  voiceover 0:15-0:35
-#   Scene 3 live demo  0:37-1:52 (75s)  voiceover 0:37-1:13, then silent demo
-#   Scene 4 proof      1:52-2:32 (40s)  voiceover 1:52-2:22
-#   Scene 5 stack      2:32-2:47 (15s)  voiceover 2:32-2:44
-#   Scene 6 ask        2:47-3:00 (13s)  voiceover 2:47-2:59
-# Total: 180s. First OCI render measures the real duration; if outside
-# 175-185s, adjust one Sleep and re-run vhs only (TTS is cached).
+#   Scene 1 cold open  0:01-0:16 (15s)  voiceover 0:00-0:15
+#   Scene 2 problem    0:16-0:39 (23s)  voiceover 0:16-0:31
+#   Scene 3 live demo  0:39-1:48 (69s)  voiceover 0:39-1:04, then silent demo
+#   Scene 4 proof      1:48-2:29 (41s)  voiceover 1:48-2:10
+#   Scene 5 stack      2:29-2:44 (15s)  voiceover 2:29-2:40
+#   Scene 6 ask        2:44-3:00 (16s)  voiceover 2:44-2:55
+# Total: 180s VIDEO time (measured vhs_raw 180.16s on OCI 720p; nominal
+# tape time x0.9187). Scene starts verified via clear-frames + thumbs.
 
 Output media/vhs_raw.mp4
 

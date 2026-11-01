@@ -67,8 +67,11 @@ CAPTURE_W, CAPTURE_H = 1280, 720
 FINAL_W, FINAL_H = 1920, 1080
 
 SCENE_NAMES = ["cold-open", "problem", "live-demo", "proof", "meta-stack", "ask"]
-# Audio placement = DRAFT srt scene starts (s); retime keeps these anchors.
-SCENE_OFFSETS_S = [1.0, 15.5, 37.0, 112.0, 152.0, 167.0]
+# Audio placement = MEASURED vhs scene starts (s) + ~0.5s settle; retime
+# keeps these anchors. Measured on OCI 720p (vhs_raw 180.16s): computed
+# nominal x 0.9187, cross-checked against clear-frame events (±1s sc1-4)
+# and boundary thumbnails (sc5/sc6 confirmed visually).
+SCENE_OFFSETS_S = [0.5, 16.0, 39.5, 108.5, 149.0, 164.5]
 # 1-based inclusive DRAFT-card ranges per scene (22 cards total).
 SCENE_CARDS = [(1, 3), (4, 6), (7, 12), (13, 17), (18, 19), (20, 22)]
 
