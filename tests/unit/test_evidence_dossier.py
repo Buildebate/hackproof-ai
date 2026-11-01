@@ -172,8 +172,17 @@ def test_ledger_total_and_budget() -> None:
         k: round(v, 2) for k, v in sorted(waves.items())
     }
     unpriced = [e for e in ledger["entries"] if not e.get("priced")]
-    assert len(unpriced) == 1
-    assert unpriced[0]["total_tokens"] == 118215
+    # Phase-4 freeze pin: the bench4.2 mixed-model row is immutable.
+    legacy = [
+        e for e in unpriced if not e.get("issue", "").startswith("gate3-e2e:")
+    ]
+    assert len(legacy) == 1
+    assert legacy[0]["total_tokens"] == 118215
+    # Post-freeze operational rows (Gate 3 CI backfills) are allowed only
+    # with a disclosed conservative upper bound, excluded from the total.
+    for entry in unpriced:
+        if entry.get("issue", "").startswith("gate3-e2e:"):
+            assert entry.get("est_cost_upper_usd", 0) > 0
 
 
 def test_debate_latency_recomputed_from_raw() -> None:

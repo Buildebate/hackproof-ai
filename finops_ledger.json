@@ -5663,6 +5663,78 @@
           "finish_reason": "stop"
         }
       ]
+    },
+    {
+      "ts": "2026-11-01T14:03:09+00:00",
+      "issue": "gate3-e2e:ci-run-41314134093",
+      "rounds_used": 1,
+      "converged": true,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 19998,
+      "est_cost_usd": 0.0,
+      "priced": false,
+      "per_call": [
+        {
+          "role": "debate-aggregate-from-ci-log",
+          "model": "mixed",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 19998,
+          "finish_reason": "stop",
+          "note": "CI ledger ephemeral; per-call split lost with runner; red Spark call unlogged; recovered from CI log line debate tokens=19998 (score 0.92); run 41314134093 conclusion=failure: green-check exit=2 (lean yaml/.env gap, pre-fix)"
+        }
+      ],
+      "est_cost_upper_usd": 0.39996,
+      "cost_note": "unpriceable exactly (unknown model 'mixed'); upper bound $0.40 at Wonder-output rate, excluded from priced total"
+    },
+    {
+      "ts": "2026-11-01T14:31:35+00:00",
+      "issue": "gate3-e2e:ci-run-41316506038",
+      "rounds_used": 1,
+      "converged": true,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 18063,
+      "est_cost_usd": 0.0,
+      "priced": false,
+      "per_call": [
+        {
+          "role": "debate-aggregate-from-ci-log",
+          "model": "mixed",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 18063,
+          "finish_reason": "stop",
+          "note": "CI ledger ephemeral; per-call split lost with runner; red Spark call unlogged; recovered from CI log line debate tokens=18063 (score 0.92); run 41316506038 conclusion=success: green verified; verified-PR API blocked by org policy (pre-switch)"
+        }
+      ],
+      "est_cost_upper_usd": 0.36126,
+      "cost_note": "unpriceable exactly (unknown model 'mixed'); upper bound $0.36 at Wonder-output rate, excluded from priced total"
+    },
+    {
+      "ts": "2026-11-01T14:53:54+00:00",
+      "issue": "gate3-e2e:ci-run-41318345099",
+      "rounds_used": 1,
+      "converged": true,
+      "prompt_tokens": 0,
+      "completion_tokens": 0,
+      "total_tokens": 18622,
+      "est_cost_usd": 0.0,
+      "priced": false,
+      "per_call": [
+        {
+          "role": "debate-aggregate-from-ci-log",
+          "model": "mixed",
+          "prompt_tokens": 0,
+          "completion_tokens": 0,
+          "total_tokens": 18622,
+          "finish_reason": "stop",
+          "note": "CI ledger ephemeral; per-call split lost with runner; red Spark call unlogged; recovered from CI log line debate tokens=18622 (score 0.92); run 41318345099 conclusion=success: green verified + verified PR #5 (branch hackproof/issue-4)"
+        }
+      ],
+      "est_cost_upper_usd": 0.37244,
+      "cost_note": "unpriceable exactly (unknown model 'mixed'); upper bound $0.37 at Wonder-output rate, excluded from priced total"
     }
   ],
   "pricing": {
