@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   (manifest tests need it; heavy backends still excluded) and the
   dotenv test is hermetic (no repo-root `.env` dependence), so the
   post-patch suite passes on clean checkouts.
+- Ship `.gitignore` so Action-pushed verified branches stay clean
+  (no `__pycache__` / JUnit artifacts in the verified PR).
 
 ### Added
 - Nothing yet.
