@@ -11,6 +11,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+- 3-minute technical screencast (`media/hackproof-screencast-1080p.mp4`,
+  183s, 1080p60): real terminal demo, ElevenLabs English voiceover,
+  burned-in subtitles + sidecar SRT, end-card (reproducible via
+  `scripts/render_video.py` + `media/demo.tape`).
+
 ### Fixed
 - E2E green-check in lean runners: the action now installs `pyyaml`
   (manifest tests need it; heavy backends still excluded) and the
@@ -18,9 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   post-patch suite passes on clean checkouts.
 - Ship `.gitignore` so Action-pushed verified branches stay clean
   (no `__pycache__` / JUnit artifacts in the verified PR).
-
-### Added
-- Nothing yet.
 
 ## [1.0.0] - 2026-11-01 (first stable PROD release)
 
