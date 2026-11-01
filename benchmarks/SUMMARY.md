@@ -57,11 +57,13 @@ Mode A held at W2 (not rerun): resolved `1142`, `5414`, `11870`, `7432`, `8399`.
 
 ## 4. FinOps (upper bounds; cache discounts unmeasured by design)
 
-Ledger total **$78.48** (budget $150, stop-rule $110 not triggered);
-dashboard truth pending founder reconciliation (books run above dashboard
-by design — unmeasured cache discounts).
-Waves: 4.2 `$14.93`, W1 `$19.61`, ablation `$2.75`, W2 `$21.76`,
-**W3 `$18.59`** (1142 `$4.39` + 5787 `$5.60` + 11739 `$4.86` + 11899 `$3.74`).
+Ledger total **$88.33** (budget $150, stop-rule $110 not triggered;
+internal ops only per ADR-031 — no monetary figure enters any gate).
+Waves: reconciliation `$0.84`, 4.2 `$14.93`, W1 `$19.61`, R13 ablation
+`$2.75`, W2 `$21.76`, **W3 `$18.59`** (1142 `$4.39` + 5787 `$5.60` +
+11739 `$4.86` + 11899 `$3.74`), Mode-C ablation `$9.14`, analysis probe
+`$0.71`. One unpriced row stays outside the total by design (118,215
+mixed tokens, attempt1-infra-recovered).
 
 **W3 envelope verdict: OVERRUN +$4.59 over $14.** Measured causes: green-v2
 extra laps (1142 won on 22 calls; 5787 ran Wonder resynthesis + full debate +
@@ -70,8 +72,9 @@ capped by the stop rule instead of W2-class burns). Reprice applied with
 zero drift; only the historic mixed-model 4.2 row stays unpriced
 (upper-bounded $2.36).
 
-Cumulative cost per B run: $65.98 / 36 runs ≈ **$1.83**; per B-resolved ≈ $7.33.
-Gate 4 sub-$0.35/PR criterion is **not met** on measured upper bounds — gate stays open.
+Cumulative cost per B run ≈ **$1.83** (internal ops). No monetary gate
+criterion exists by design (ADR-031): Gate 4 is 12 tasks + zero guard
+violations + published repository.
 
 ## 5. W3 mechanisms live effects (all four validated)
 
@@ -176,3 +179,20 @@ so a GC-recycled client id silently drops that call's record (observed:
 11589-C R9 revision missing from `per_call` despite a completed 5-minute
 call). Wave token/dollar totals are lower bounds; the fix (monotonic
 client keys) is proposed follow-up work alongside finding 1.
+
+## 9. Step 4.4 metrics (recomputed from raw, `test_evidence_dossier.py`)
+
+- **True Fix Rate**: A **6/12**, B **9/12**, C **7/12** (F2P green AND
+  golden green AND guard clean — equals recorded resolved; S1+S2
+  re-derive every row from raw JUnit).
+- **Reward Hacking Rate**: **0%** in all modes (0/6 A, 0/9 B, 0/7 C):
+  32 evaluated patches (12 B + 10 A + 10 C), 0 guard violations,
+  0 golden false-passes.
+- **Token usage (Mode B, informational)**: 5,762,581 tokens / 9 resolved
+  ≈ **640,287 tokens per resolved** (cumulative priced B entries incl.
+  superseded waves; never converted to money per ADR-031).
+- **Debate latency (Mode B, final tree)**: 12 debates, rounds `{1: 4,
+  2: 8}`, duration p50 **449,096 ms** / p95 **1,108,961 ms** (nearest-rank
+  on raw `debate.json`; live Meta API, OCI+gVisor, eval `--network=none`).
+- **TokenShield compression**: N/A (honest) — no orchestrator telemetry
+  spans cover the benchmark runs; no figure invented.

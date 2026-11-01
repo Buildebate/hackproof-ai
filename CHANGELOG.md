@@ -12,6 +12,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+- Final metrics + dossier sync (Roadmap Step 4.4): True Fix Rate A
+  **6/12** / B **9/12** / C **7/12**; Reward Hacking **0%** all modes
+  (0/32 evaluated, 0 guard violations, 0 golden false-passes); Mode B
+  5,762,581 tokens / 9 ≈ **640,287 per resolved** (informational,
+  ADR-031); debate latency p50 **449,096 ms** / p95 **1,108,961 ms**;
+  TokenShield compression honest N/A. Dossier gains `metrics_4_4` +
+  `debate_telemetry_B_final`; finops synced to ledger $88.33/$150.
+  All numbers re-derived from raw artifacts (`test_evidence_dossier.py`).
 - Zero-falsification integrity verifier (Roadmap Step 4.3):
   new `scripts/verify_benchmark_integrity.py` re-derives every claim
   from raw bytes (JUnit/diff/guard/red SHA chains, per-side rescore,

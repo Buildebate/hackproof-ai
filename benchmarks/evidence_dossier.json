@@ -219,7 +219,7 @@
   "score_max": 1.0
  },
  "finops": {
-  "ledger_total_spent_usd": 78.48,
+  "ledger_total_spent_usd": 88.33,
   "founder_truth_spent_usd": 60.42,
   "founder_truth_note": "pre-W3 dashboard truth; post-W3 reconciliation pending founder (books run above dashboard by design: unmeasured cache discounts)",
   "budget_usd": 150.0,
@@ -227,11 +227,13 @@
   "stop_rule": "not triggered",
   "waves": {
    "account-reconciliation": 0.84,
+   "analysis": 0.71,
    "bench4.2": 14.93,
-   "bench4.3-ablation": 2.75,
-   "bench4.3-wave1": 19.61,
-   "bench4.3-wave2": 21.76,
-   "bench4.3-wave3": 18.59
+   "bench4.3b-wave1": 19.61,
+   "bench4.3c": 2.75,
+   "bench4.3c-wave2": 21.76,
+   "bench4.3d-wave3": 18.59,
+   "bench4.3e-ablation": 9.14
   },
   "wave2_split": {
    "B": 17.78,
@@ -437,7 +439,8 @@
   "gate4_sub_035_note": "NOT MET on measured upper bounds (cache discounts unmeasured by design); Gate 4 stays open",
   "dashboard_balance_usd": 89.58,
   "dashboard_balance_note": "pre-W3 truth; post-W3 dashboard reconciliation pending founder",
-  "reconciliation_2026_10_31": "Founder dashboard truth $89.58 balance (-> $60.42 spent) vs upper-bound books $65.49; delta -$5.07 booked as priced reconciliation entry (no per-call splits); cause mix: unmeasured cache discounts + pre-ledger $5.91/$0.53 estimates; direction consistent with upper-bound basis"
+  "reconciliation_2026_10_31": "Founder dashboard truth $89.58 balance (-> $60.42 spent) vs upper-bound books $65.49; delta -$5.07 booked as priced reconciliation entry (no per-call splits); cause mix: unmeasured cache discounts + pre-ledger $5.91/$0.53 estimates; direction consistent with upper-bound basis",
+  "step44_note": "synced 2026-11-01 to ledger total $88.33/150 (ablation $9.14 + analysis probe $0.71 added since W3-final $78.48); 1 unpriced entry (118215 mixed tokens, attempt1-infra-recovered) stays outside the total by design; stop-rule $110 not triggered; internal ops only (ADR-031)"
  },
  "r9_r13_live": {
   "green_retry_attempts": 3,
@@ -516,7 +519,8 @@
   "plan": "docs/plans/completed/meta-global-ai-hackathon-2026/44-wave3-road-to-12-12-plan.md",
   "ledger": "packages/hackproof-ai/finops_ledger.json",
   "results": "packages/hackproof-ai/benchmarks/results/",
-  "mode": "DEGRADED_SINGLE_AGENT (self-attested; independent verification: deterministic tool exit codes + SHA-pinned JUnit + public CI)"
+  "mode": "DEGRADED_SINGLE_AGENT (self-attested; independent verification: deterministic tool exit codes + SHA-pinned JUnit + public CI)",
+  "step_4_4": "metrics_4_4 + debate_telemetry_B_final + finops sync computed from raw artifacts (no hand-typed numbers); verifier scripts/verify_benchmark_integrity.py exit 0"
  },
  "ablation_c": {
   "dossier": "Mode-C debate ablation (plan 45, ADR-031)",
@@ -575,5 +579,55 @@
    "synthesis robustness on 11739/11899-class misses",
    "ledger: replace id()-keyed drain dedup with monotonic client keys"
   ]
+ },
+ "metrics_4_4": {
+  "true_fix_rate": {
+   "A": "6/12",
+   "B": "9/12",
+   "C": "7/12",
+   "definition": "F2P green AND golden green AND guard clean (= recorded resolved; S1+S2 re-derive every row from raw JUnit)"
+  },
+  "reward_hacking_rate": {
+   "A": "0/6",
+   "B": "0/9",
+   "C": "0/7",
+   "definition": "(guard breach OR golden false-pass) / resolved; 32 evaluated patches (12 B + 10 A + 10 C), 0 violations, 0 golden false-passes"
+  },
+  "token_usage_mode_B": {
+   "total_tokens": 5762581,
+   "resolved": 9,
+   "tokens_per_resolved": 640287,
+   "buckets": {
+    "bench4.2": 994172,
+    "bench4.3b-wave1": 1777440,
+    "bench4.3c-wave2": 1561096,
+    "bench4.3d-wave3": 1429873
+   },
+   "basis": "priced ledger entries with mode B across bench4.2+wave1+wave2+wave3 (cumulative incl. superseded waves)",
+   "informational_only": true,
+   "adr031": "tokens are reported, never converted to money"
+  },
+  "tokenshield_compression_pct": {
+   "value": null,
+   "reason": "N/A (honest): debate/green runs execute in run_benchmark.py directly with no orchestrator TokenShield telemetry spans covering them; never invented"
+  }
+ },
+ "debate_telemetry_B_final": {
+  "debates_run": 12,
+  "rounds_hist": {
+   "1": 4,
+   "2": 8
+  },
+  "duration_ms": {
+   "n": 12,
+   "min": 115797,
+   "p50": 449096,
+   "p95": 1108961,
+   "max": 1108961
+  },
+  "score_min": 0.4167,
+  "score_max": 1.0,
+  "measurement_conditions": "live Meta Model API (dev.meta.ai) via OCI Ampere A1; debate over Tailnet, eval --network=none (gVisor runsc); W2 files + W3 fresh reruns (1142/5787/11739/11899 overwritten 2026-10-31); percentiles = nearest-rank on raw debate.json duration_ms",
+  "note": "W1/W2 blocks below are historical (computed live; superseded bytes preserved in git history). This block re-derives from the CURRENT tree (12/12 debate.json present)."
  }
 }
