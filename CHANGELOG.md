@@ -16,6 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   183s, 1080p60): real terminal demo, ElevenLabs English voiceover,
   burned-in subtitles + sidecar SRT, end-card (reproducible via
   `scripts/render_video.py` + `media/demo.tape`).
+- Devpost submission dossier (`DEVPOST.md`): final links, architecture
+  memo, honest benchmark headline, release provenance (v1.0.0 tag).
 
 ### Fixed
 - E2E green-check in lean runners: the action now installs `pyyaml`
