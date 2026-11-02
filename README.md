@@ -106,13 +106,6 @@ hackproof verify --issue <url> --runner oci   # gVisor sandbox on OCI over SSH
 hackproof test-guard --baseline HEAD~1
 ```
 
-Exit codes: `0` verified-clean, `1` pipeline failure, `2` usage error,
-`3` guard/tamper breach (details printed per file). Live runs need
-`META_API_KEY` (model calls) and optionally `GITHUB_TOKEN` (issue fetch
-rate limits); `--runner oci` additionally needs `OCI_SSH_HOST`,
-`OCI_SSH_USER`, `OCI_SSH_KEY`. Every live run appends token usage to
-`finops_ledger.json`.
-
 ### Dual-mode CLI
 
 The CLI runs in two modes with an identical interface:
